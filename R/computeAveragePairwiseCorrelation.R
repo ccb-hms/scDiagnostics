@@ -1,0 +1,89 @@
+#' Compute Average Pairwise Correlation between Cell Types
+#'
+#' This function computes the pairwise correlations between query and reference cells based on the provided correlation method.
+#' It then calculates the average correlation for each pair of cell types.
+#'
+#' @param query_data An object of class "SingleCellExperiment" containing the query cell data.
+#' @param ref_data An object of class "SingleCellExperiment" containing the reference cell data.
+#' @param query_cell_type_col A character string specifying the column name for cell types in query_data.
+#' @param ref_cell_type_col A character string specifying the column name for cell types in ref_data.
+#' @param cell_types A character vector specifying the cell types to consider.
+#' @param correlation_method The correlation method to use for calculating pairwise correlations.
+#'
+#' @import SingleCellExperiment
+#' @return The average pairwise correlation matrix.
+#' @export
+#'
+#' @examples
+#' library(scater)
+#' library(scran)
+#' library(scRNAseq)
+#' library(SingleR)
+#'
+#' # Load data
+#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+#'
+#' # Divide the data into reference and query datasets
+#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
+#' ref_data <- sce[, indices]
+#' query_data <- sce[, -indices]
+#'
+#' # log transform datasets
+#' ref_data <- logNormCounts(ref_data)
+#' query_data <- logNormCounts(query_data)
+#'
+#' # Get cell type scores using SingleR
+#' scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
+#'
+#' # Add labels to query object
+#' colData(query_data)$labels <- scores$labels
+#'
+#' # Compute Pairwise Correlations
+#' ## Note: The selection of highly variable genes and desired cell types may vary based on user preference.
+#' ## Note: The cell type annotation method used in this example is SingleR. You can use any other method for cell type annotation and provide the corresponding labels in the metadata.
+#' ## Here, we are demonstrating the usage with arbitrary choices.
+#'
+#' # Selecting highly variable genes
+#' ref_var <- getTopHVGs(ref_data, n = 2000)
+#' query_var <- getTopHVGs(query_data, n = 2000)
+#'
+#' # Intersect the gene symbols to obtain common genes
+#' common_genes <- intersect(ref_var, query_var)
+#'
+#' # Select desired cell types
+#' selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
+#' ref_data_subset <- ref_data[common_genes, ref_data$reclustered.broad %in% selected_cell_types]
+#' query_data_subset <- query_data[common_genes, query_data$reclustered.broad %in% selected_cell_types]
+#'
+#' # Compute pairwise correlations
+#' cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data_subset, ref_data_subset, "labels", "reclustered.broad", selected_cell_types, "spearman")
+#'
+#' # Visualize the results using any visualization method of choice
+#' # (Add code here for visualization)
+#'
+computeAveragePairwiseCorrelation <- function(query_data, ref_data, query_cell_type_col, ref_cell_type_col, cell_types, correlation_method) {
+
+  # Create an empty matrix to store the pairwise average correlations
+  cor_matrix_avg <- matrix(0, nrow = length(cell_types), ncol = length(cell_types),
+                           dimnames = list(cell_types, cell_types))
+
+  # Compute pairwise average correlations
+  for (i in 1:length(cell_types)) {
+    for (j in 1:length(cell_types)) {
+      query_cell_type <- cell_types[i]
+      ref_cell_type <- cell_types[j]
+
+      query_subset <- query_data[, query_data[[query_cell_type_col]] == query_cell_type]
+      ref_subset <- ref_data[, ref_data[[ref_cell_type_col]] == ref_cell_type]
+
+      query_mat <- as.matrix(assay(query_subset, "logcounts"))
+      ref_mat <- as.matrix(assay(ref_subset, "logcounts"))
+
+      cor_matrix <- cor(query_mat, ref_mat, method = correlation_method)
+      cor_avg <- mean(cor_matrix)
+
+      cor_matrix_avg[i, j] <- cor_avg
+    }
+  }
+  return(cor_matrix_avg)
+}
