@@ -169,8 +169,6 @@ plotGeneSetScores(query_data, method = "PCA", feature = "geneSetScores")
 
 In the provided example, we demonstrate the usage of the plotGeneSetScores function using the AUCell package to compute gene set or pathway scores. Custom gene sets are generated for demonstration purposes, but users can provide their own gene set scores using any method of their choice. It is important to ensure that the scores are assigned to the colData of the query_data object and specify the correct feature name for visualization.
 
-By visualizing gene set or pathway scores on a dimensional reduction plot, you can gain a comprehensive understanding of the functional landscape within your single-cell gene expression dataset and explore the relationships between gene set activities and cellular phenotypes.
-
 ## Visualizing Reference and Query Cell Types using Multidimensional Scaling (MDS)
 
 Here, we perform Multidimensional Scaling (MDS) analysis on the query and reference datasets to examine their similarity. The dissimilarity matrix is calculated based on the correlation between the datasets, and MDS is used to obtain low-dimensional coordinates for each cell. Subsequently, a scatter plot is generated, where each data point represents a cell, and the cell types are color-coded using custom colors provided by the user. This visualization enables the comparison of cell type distributions between the query and reference datasets in a reduced-dimensional space.
