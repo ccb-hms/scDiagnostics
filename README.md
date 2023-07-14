@@ -194,7 +194,7 @@ To gain insights into the gene expression patterns and their
 representation in a dimensional reduction space, we can utilize the
 plotGeneExpressionDimred function. This function allows us to plot the
 gene expression values of a specific gene on a dimensional reduction
-plot generated using methods like t-SNE, UMAP, or PCA. Each single cell
+plot generated using methods like tSNE, UMAP, or PCA. Each single cell
 is color-coded based on its expression level of the gene of interest.
 
 In the provided example, we are visualizing the gene expression values
@@ -220,19 +220,16 @@ expression of “VPREB3” is distributed across the cells.
 In addition to examining individual gene expression patterns, it is
 often useful to assess the collective activity of gene sets or pathways
 within single cells. This can provide insights into the functional
-states or biological processes associated with specific cell types or
-conditions. To facilitate this analysis, the scDiagnosis package
+states or biological processes associated with specific cell types. 
+To facilitate this analysis, the scDiagnosis package
 includes a function called plotGeneSetScores that enables the
 visualization of gene set or pathway scores on a dimensional reduction
 plot.
 
 The plotGeneSetScores function allows you to plot gene set or pathway
 scores on a dimensional reduction plot generated using methods such as
-PCA, t-SNE, or UMAP. Each single cell is color-coded based on its scores
-for specific gene sets or pathways. This visualization helps identify
-the heterogeneity and patterns of gene set or pathway activity within
-the dataset, potentially revealing subpopulations with distinct
-functional characteristics.
+PCA, tSNE, or UMAP. Each single cell is color-coded based on its scores
+for specific gene sets or pathways.
 
 ``` r
 
