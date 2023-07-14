@@ -240,7 +240,7 @@ By providing their own gene expression profiles and choosing specific genes, use
 
 ## Pairwise Distance Analysis and Density Visualization
 
-his function allows for the calculation of pairwise distances between query and reference cells of a specific cell type in a single-cell gene expression dataset. The pairwise distances are calculated using a specified distance metric, such as "euclidean", "manhattan", etc. Subsequently, the function generates density plots to visualize the distribution of distances for different pairwise comparisons.
+This function allows for the calculation of pairwise distances between query and reference cells of a specific cell type in a single-cell gene expression dataset. The pairwise distances are calculated using a specified distance metric, such as "euclidean", "manhattan", etc. Subsequently, the function generates density plots to visualize the distribution of distances for different pairwise comparisons.
 
 The analysis focuses on the specific cell type "CD8", and the pairwise distances are calculated using the "euclidean" distance metric.
 
