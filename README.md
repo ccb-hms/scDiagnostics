@@ -366,7 +366,7 @@ interest to their research question.
 
 ## Pairwise Distance Analysis and Density Visualization
 
-his function allows for the calculation of pairwise distances between
+This function allows for the calculation of pairwise distances between
 query and reference cells of a specific cell type in a single-cell gene
 expression dataset. The pairwise distances are calculated using a
 specified distance metric, such as “euclidean”, “manhattan”, etc.
