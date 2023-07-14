@@ -11,7 +11,6 @@
 #' @importFrom gridExtra grid.arrange
 #'
 #' @return A grid.arrange object displaying histograms of log-transformed counts and scores.
-#'         This object can be further customized or used for additional plot manipulations.
 #' @export
 #'
 #' @examples
@@ -40,7 +39,6 @@
 #' plotCellTypeDistribution(cell_type_scores, query_data, "CD4")
 #'
 #' # Note: Users can use any cell type annotation method of their choice to obtain the scores.
-#' # Ensure that the scores and log-transformed counts are provided to the function for visualization.
 #'
 plotCellTypeDistribution <- function(cell_type_scores, query_data, cell_type) {
 
