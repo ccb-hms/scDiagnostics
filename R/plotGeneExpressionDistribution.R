@@ -11,11 +11,9 @@
 #'
 #' @import ggplot2
 #' @importFrom ggplot2 ggplot
-#' @importFrom gridExtra grid.arrange
 #' @import SingleCellExperiment
 #'
 #' @return A ggplot object displaying the histogram plots of gene expression distribution from the overall dataset and cell type-specific perspective.
-#'         This object can be further customized or used for additional plot manipulations.
 #' @export
 #'
 #' @examples
@@ -51,8 +49,8 @@
 plotGeneExpressionDistribution <- function(query_data, cell_type_labels, cell_type, feature) {
   # Get expression of the specified feature
   overall <- as.data.frame(assay(query_data, "logcounts")[feature, ])
-  ind <- which(colData(query_data)[, cell_type_labels] == cell_type)
-  cell_specific <- as.data.frame(assay(query_data, "logcounts")[feature, ind])
+  indx <- which(colData(query_data)[, cell_type_labels] == cell_type)
+  cell_specific <- as.data.frame(assay(query_data, "logcounts")[feature, indx])
 
   # Assign a common column name to expression values
   colnames(overall) <- colnames(cell_specific) <- feature
