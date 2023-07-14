@@ -264,11 +264,6 @@ method of their choice. It is important to ensure that the scores are
 assigned to the colData of the query_data object and specify the correct
 feature name for visualization.
 
-By visualizing gene set or pathway scores on a dimensional reduction
-plot, you can gain a comprehensive understanding of the functional
-landscape within your single-cell gene expression dataset and explore
-the relationships between gene set activities and cellular phenotypes.
-
 ## Visualizing Reference and Query Cell Types using Multidimensional Scaling (MDS)
 
 Here, we perform Multidimensional Scaling (MDS) analysis on the query
