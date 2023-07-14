@@ -442,9 +442,7 @@ are significantly associated with the cell types. This analysis helps
 uncover whether there is a systematic variation in PC values across
 different cell types. Understanding the relationship between PC values
 and cell types can provide valuable insights into the biological or
-technical factors driving cellular heterogeneity. It can help identify
-PC dimensions that capture variation specific to certain cell types or
-distinguish different cellular states.
+technical factors driving cellular heterogeneity.
 
 ## Conclusion
 
@@ -457,13 +455,4 @@ annotation scores, gene expression distributions, dimensional reduction
 plots, gene set scores, pairwise correlations, pairwise distances, and
 linear regression analysis.
 
-Through the scatter plots, histograms, and dimensional reduction plots,
-we were able to gain insights into the relationships between gene
-expression patterns, cell types, and the distribution of cells in a
-reduced-dimensional space. The examination of gene expression
-distributions, gene sets, and pathways allowed us to explore the
-functional landscape and identify subpopulations with distinct
-characteristics within the dataset. Additionally, the pairwise
-correlation and distance analyses provided a deeper understanding of the
-similarities and differences between cell types, highlighting potential
-relationships and patterns.
+
