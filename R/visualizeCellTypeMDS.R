@@ -12,11 +12,6 @@
 #'
 #' @importFrom stats cmdscale cor
 #' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 aes
-#' @importFrom ggplot2 geom_point
-#' @importFrom ggplot2 scale_color_manual
-#' @importFrom ggplot2 theme_bw
-#' @importFrom ggplot2 guides
 #'
 #' @return A ggplot object representing the MDS scatter plot with cell type coloring.
 #' @export
