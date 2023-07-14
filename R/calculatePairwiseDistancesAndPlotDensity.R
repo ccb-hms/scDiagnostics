@@ -8,7 +8,7 @@
 #' @param query_cell_type_col The column name in the query_data metadata specifying the cell types
 #' @param ref_cell_type_col The column name in the ref_data metadata specifying the cell types
 #' @param cell_type The cell type for which distances or correlations are calculated.
-#' @param distance_metric The distance metric to use for calculating pairwise distances, such as "euclidean" or "manhattan".
+#' @param distance_metric The distance metric to use for calculating pairwise distances, such as "euclidean" or "manhattan" etc.
 #'                        Set it to "correlation" for calculating correlation coefficients.
 #' @param correlation_method The correlation method to use when distance_metric is "correlation".
 #'                           Possible values: "pearson", "spearman".
