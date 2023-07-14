@@ -214,10 +214,7 @@ plotGeneExpressionDimred(query_data, "PCA", c(1, 2), "VPREB3")
 
 The dimensional reduction plot allows us to observe how the gene
 expression of “VPREB3” is distributed across the cells and whether any
-clusters or patterns emerge in the data. It provides a visual
-representation of the gene expression landscape and can help identify
-potential relationships or subpopulations based on the expression of the
-gene of interest.
+clusters or patterns emerge in the data.
 
 ## Visualize Gene Sets or Pathway Scores on Dimensional Reduction Plot
 
