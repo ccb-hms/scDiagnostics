@@ -5,7 +5,7 @@
 #' @param se_object An object of class "SingleCellExperiment" containing numeric expression matrix and other metadata.
 #'        It can be either a reference or query dataset.
 #' @param method A character string indicating the method for visualization ("PCA", "TSNE", or "UMAP").
-#' @param feature A character string representing the name of the feature (score) in the colData(query_data) to plot.
+#' @param feature A character string representing the name of the feature (score) in the colData(query_data or reference data) to plot.
 #'
 #' @import scater
 #' @importFrom scater plotPCA plotTSNE plotUMAP
