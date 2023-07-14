@@ -1,10 +1,10 @@
 #' Perform Linear Regression Analysis on Single-Cell Data
 #'
-#' This function performs linear regression on a SingleCellExperiment object, where the dependent variable is specified by the user as one of the principal components (PC1, PC2, etc.) from the dimension reduction slot, and the independent variable is provided as a column name in the SingleCellExperiment object.
+#' This function performs linear regression on a SingleCellExperiment object, where the dependent variable is specified by the user as one of the principal components (PC1, PC2, etc.) from the dimension reduction slot, and the independent variable is provided as a column name in the colData of SingleCellExperiment object.
 #'
 #' @param se_object A SingleCellExperiment object containing the data for regression analysis
 #' @param dependent_var A character string specifying the dependent variable principal component (e.g., "PC1", "PC2", etc.)
-#' @param independent_var A character string specifying the column name for the independent variable in the SingleCellExperiment object
+#' @param independent_var A character string specifying the column name for the independent variable in the colData of SingleCellExperiment object
 #'
 #' @importFrom stats lm
 #' @import SingleCellExperiment
@@ -41,8 +41,7 @@
 #' # Perform linear regression on PC1 and a specific variable (e.g., "labels")
 #' performLinearRegression(query_data, "PC1", "labels")
 #'
-#' # Note: Instead of using SingleR, you can use any other method to obtain the scores for regression analysis.
-#' # Make sure to provide the appropriate dependent and independent variables to the performLinearRegression function.
+#' # Note: Instead of using SingleR, you can use any other method to obtain the cell labels for regression analysis.
 #'
 performLinearRegression <- function(se_object, dependent_var, independent_var) {
 
