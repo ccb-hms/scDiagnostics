@@ -5,7 +5,7 @@
 #' @param se_object An object of class "SingleCellExperiment" containing numeric expression matrix and other metadata.
 #'        It can be either a reference or query dataset.
 #' @param method A character string indicating the method for visualization ("PCA", "TSNE", or "UMAP").
-#' @param feature A character string representing the name of the feature (score) in the colData(query_data or reference data) to plot.
+#' @param feature A character string representing the name of the feature (score) in the colData(query data or reference data) to plot.
 #'
 #' @import scater
 #' @importFrom scater plotPCA plotTSNE plotUMAP
@@ -54,11 +54,11 @@ plotGeneSetScores <- function(se_object, method, feature) {
 
   # Create the plot object
   if (method == "PCA") {
-    plot_obj <- scater::plotPCA(query_data, colour_by = feature)
+    plot_obj <- plotPCA(query_data, colour_by = feature)
   } else if (method == "TSNE") {
-    plot_obj <- scater::plotTSNE(query_data, colour_by = feature)
+    plot_obj <- plotTSNE(query_data, colour_by = feature)
   } else if (method == "UMAP") {
-    plot_obj <- scater::plotUMAP(query_data, colour_by = feature)
+    plot_obj <- plotUMAP(query_data, colour_by = feature)
   }
 
   return(plot_obj)
