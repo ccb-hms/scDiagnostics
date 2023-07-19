@@ -31,14 +31,14 @@
 #' query_data <- logNormCounts(query_data)
 #'
 #' # Get cell type scores using SingleR
-#' pred <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
+#' scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
 #'
 #' # Extract scores and labels for a specific cell type
 #' cell_type <- "CD4"
 #' score <- pred$scores[pred$labels == cell_type, cell_type]
 #'
 #' # Assign labels to query data
-#' colData(query_data)$labels <- score$labels
+#' colData(query_data)$labels <- scores$labels
 #'
 #' # Generate scatter plot for Total UMIs vs. Annotation Scores
 #' plotUMIsAnnotationScatter(query_data, score, "labels", "CD4")
