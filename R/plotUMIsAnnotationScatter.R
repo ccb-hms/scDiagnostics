@@ -38,19 +38,19 @@
 #' score <- pred$scores[pred$labels == cell_type, cell_type]
 #'
 #' # Assign labels to query data
-#' colData(query_data)$labels <- pred$labels
+#' colData(query_data)$labels <- score$labels
 #'
 #' # Generate scatter plot for Total UMIs vs. Annotation Scores
 #' plotUMIsAnnotationScatter(query_data, score, "labels", "CD4")
 #'
-#' # Note: Users can use any cell type annotation method of their choice to obtain the cell type scores
-#' # and then provide them to the function for plotting.
+#' # Note: Users can use any cell type annotation method of their choice to obtain the cell type scores.
+#' 
 #'
 plotUMIsAnnotationScatter <- function(query_data, cell_type_scores, cell_type_labels, cell_type) {
 
   # Pre-process expression matrix and extract scores for a specific cell type
-  index <- query_data[[cell_type_labels]] == cell_type
-  total_umis <- colSums(as.matrix(assay(query_data, "logcounts")[,index]))
+  indx <- query_data[[cell_type_labels]] == cell_type
+  total_umis <- colSums(as.matrix(assay(query_data, "logcounts")[,indx]))
 
   # Combine total UMIs and annotation scores into a data frame
   data <- data.frame(TotalUMIs = total_umis, Scores = cell_type_scores)
