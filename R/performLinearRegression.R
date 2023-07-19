@@ -1,6 +1,6 @@
 #' Perform Linear Regression Analysis on Single-Cell Data
 #'
-#' This function performs linear regression on a SingleCellExperiment object, where the dependent variable is specified by the user as one of the principal components (PC1, PC2, etc.) from the dimension reduction slot, and the independent variable is provided as a column name in the colData of SingleCellExperiment object.
+#' This function performs linear regression on a reaference or query object, where the dependent variable is specified by the user as one of the principal components (PC1, PC2, etc.) from the dimension reduction slot, and the independent variable is provided as a column name in the colData of SingleCellExperiment object.
 #'
 #' @param se_object A SingleCellExperiment object containing the data for regression analysis
 #' @param dependent_var A character string specifying the dependent variable principal component (e.g., "PC1", "PC2", etc.)
