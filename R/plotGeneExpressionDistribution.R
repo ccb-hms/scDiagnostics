@@ -5,9 +5,9 @@
 #'
 #' @param se_object An object of class "SingleCellExperiment" containing log-transformed expression matrix and other metadata.
 #'        It can be either a reference or query dataset.
-#' @param cell_type_labels A character column name from the colData table of the SingleCellExperiment object representing cell type information.
+#' @param cell_type_labels A character column name from the colData slot of the SingleCellExperiment object representing cell type information.
 #' @param cell_type A character string representing the name of the cell type for which the specific gene distribution is to be visualized.
-#' @param feature A character string representing the gene name for which the distribution is to be visualized.
+#' @param feature A character string representing the gene name or feature for which the distribution is to be visualized.
 #'
 #' @import ggplot2
 #' @importFrom ggplot2 ggplot
@@ -40,7 +40,6 @@
 #' # Add labels to query object
 #' colData(query_data)$labels <- scores$labels
 #'
-#' # # Visualize the distribution of log-transformed counts and scores for the se_object
 #' # Note: Users can use SingleR or any other method to obtain the cell type scores.
 #' # Ensure that the scores and log-transformed counts are provided to the function for visualization.
 #' # For demonstration we have used query_data.
