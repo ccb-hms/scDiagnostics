@@ -57,17 +57,11 @@ library(gridExtra)
 
 ## Scatter Plot: Total UMI Counts vs. Annotation Scores
 
-Let's load the Marrow dataset for demonstration purposes. The dataset represents single-cell gene expression profiles of Marrow tissue. In this example, we will analyze the relationship between total UMI (Unique Molecular Identifier) counts and SingleR scores for a specific cell type.
+Load the Marrow dataset for demonstration purposes. The dataset represents single-cell gene expression profiles of Marrow tissue. In this example, we will analyze the relationship between total UMI (Unique Molecular Identifier) counts and SingleR scores for a specific cell type.
 
-To perform this analysis, we first divide the dataset into reference and query datasets. The reference dataset serves as a reference for cell type annotation, while the query dataset contains cells that we want to assign cell types to. We then log-transform the expression values in both datasets for further analysis.
+To perform this analysis, we first divide the dataset into reference and query datasets. The reference dataset serves as a reference for cell type annotation, while the query dataset contains cells that we want to assign cell types to. We then log-transform the expression values in both datasets for further analysis. Next, we use the SingleR package to obtain cell type scores for the query dataset. 
 
-Next, we use the SingleR package to obtain cell type scores for the query dataset. These scores provide information about the likelihood of each cell being a certain cell type.
-
-For the scatter plot, we focus on a specific cell type, in this case, "CD4". We extract the corresponding SingleR scores for this cell type from the SingleR results.
-
-To overlay the total UMI counts and SingleR scores, we assign the SingleR scores to the colData of the query dataset. This allows us to access the scores for each cell when generating the scatter plot. The scatter plot displays the log-transformed total UMI counts on the x-axis and the SingleR scores on the y-axis.
-
-It's important to note that the use of SingleR for cell type annotation is just one example. Users can use any other cell type annotation method to obtain cell type scores. The scatter plot provides a visual representation of this relationship, allowing for further examination and interpretation of the cell type assignments in the dataset.
+For the scatter plot, we focus on a specific cell type, in this case, CD4. We extract the corresponding SingleR scores for this cell type from the SingleR results. We then assign the SingleR scores to the colData of the query dataset for easy accessibility. It’s important to note that the use of SingleR for cell type annotation is just one example. Users can use any other cell type annotation method to obtain cell type scores. The scatter plot can be used for further examination and interpretation of the cell type assignments in the dataset.
 
 ```{r Scatter plot Total UMIs vs annotation scores, warning=FALSE, message=FALSE}
 
@@ -103,20 +97,22 @@ It's important to note that the use of SingleR for cell type annotation is just 
 
 ## Examining Distribution of UMI Counts and Annotation Scores
 
-In addition to the scatter plot, we can gain further insights into the gene expression profiles by visualizing the distribution of total UMI (Unique Molecular Identifier) counts and annotation scores for a specific cell type. This allows us to examine the variation and patterns in expression levels and scores across cells assigned to the cell type of interest.
+In addition to the scatter plot, we can gain further visualize the distribution of total UMI (Unique Molecular Identifier) counts 
+and annotation scores for a specific cell type. This can help in investigation of variations and patterns in cell type scores and gene expression levels.
 
-To accomplish this, we create two separate histograms. The first histogram displays the distribution of the annotation scores.  The x-axis represents the scores, while the y-axis represents the frequency of cells with a given score.
+To accomplish this, we create two separate histograms. The first histogram displays the distribution of the annotation scores. 
 
-The second histogram visualizes the distribution of total log-transformed UMI counts per cell. This provides insights into the overall gene expression levels for the specific cell type. The x-axis represents the total logcounts, while the y-axis represents the frequency of cells within each count range.
+The second histogram visualizes the distribution of total log-transformed UMI counts per cell. This provides insights into the
+overall gene expression levels for the specific cell type. 
 
-By examining the histograms, we can observe the range, shape, and potential outliers in the distribution of both annotation scores and total UMI counts. This allows us to assess the appropriateness of the cell type assignments and identify any potential discrepancies or patterns in the gene expression profiles for the specific cell type.
+Histograms of both annotation scores and total UMI counts can give insights into the range, shape, and potential outliers in the distributions.
 
 ```{r Distribution of UMIs and Annotation Score, warning=FALSE, message=FALSE}
 # Generate histogram
 plotCellTypeDistribution(score, query_data, cell_type)
 ```
 
-The example code provided demonstrates how to utilize the plotCellTypeDistribution function with the necessary data and packages. Here we are visualizing the distribution of counts and scores for the "CD4" cell type.
+The example code provided demonstrates how to use the plotCellTypeDistribution function. Here we are visualizing the distribution of counts and scores for the CD4 cell type.
 
 ## Exploring Gene Expression Distribution
 
@@ -127,26 +123,26 @@ To gain insights into the gene expression values for a specific gene and its dis
 plotGeneExpressionDistribution(query_data, "labels", "B_and_plasma", "VPREB3")
 ```
 
-In the provided example, we are examining the distribution of expression values for the gene "VPREB3" in the dataset. The function generates a histogram to display the distribution of expression values across all cells, with the x-axis representing the expression values and the y-axis representing the frequency of cells within each expression range. Additionally, the expression values can be further stratified by specific cell types, providing insights into the gene expression patterns within different cell populations.
+In the provided example, we are examining the distribution of expression values for the gene VPREB3 in the dataset. The function generates a histogram to display the distribution of expression values across all cells. Additionally, the expression values can be further stratified by specific cell types.
 
 ## Visualize Gene Expression on Dimensional Reduction Plot
 
-To gain insights into the gene expression patterns and their representation in a dimensional reduction space, we can utilize the plotGeneExpressionDimred function. This function allows us to plot the gene expression values of a specific gene on a dimensional reduction plot generated using methods like tSNE, UMAP, or PCA. Each single cell is color-coded based on its expression level of the gene of interest.
+To gain insights into the marker gene expression patterns and their representation in a dimensional reduction space, we can utilize the plotGeneExpressionDimred function. This function allows user to plot the gene expression values of a specific gene on a dimensional reduction plot generated using methods like TSNE, UMAP, or PCA.
 
-In the provided example, we are visualizing the gene expression values of the gene "VPREB3" on a PCA plot. The PCA plot represents the cells in a lower-dimensional space, where the x-axis corresponds to the first principal component (Dimension 1) and the y-axis corresponds to the second principal component (Dimension 2). Each cell is represented as a point on the plot, and its color reflects the expression level of the gene "VPREB3," ranging from low (lighter color) to high (darker color).
+In the provided example, we are visualizing the gene expression values of the gene VPREB3 on a PCA plot. Each cell is represented as a point on the plot, and its color reflects the expression level of the gene VPREB3 ranging from low (lighter color) to high (darker color).
 
 ```{r scatter plot gene expression, warning=FALSE, message=FALSE}
 # Generate dimension reduction plot color code by gene expression
 plotGeneExpressionDimred(query_data, "PCA", c(1, 2), "VPREB3")
 ```
 
-The dimensional reduction plot allows us to observe how the gene expression of "VPREB3" is distributed across the cells.
-
 ## Visualize Gene Sets or Pathway Scores on Dimensional Reduction Plot
 
-In addition to examining individual gene expression patterns, it is often useful to assess the collective activity of gene sets or pathways within single cells. This can provide insights into the functional states or biological processes associated with specific cell types. To facilitate this analysis, the scDiagnosis package includes a function called plotGeneSetScores that enables the visualization of gene set or pathway scores on a dimensional reduction plot.
+It is often useful to assess the collective activity of gene sets or pathways within single cells. This can provide insights into the functional states associated with specific cell types. To facilitate this analysis, the scDiagnosis package 
+includes a function called plotGeneSetScores that enables the visualization of gene set or pathway scores on a dimensional reduction plot.
 
-The plotGeneSetScores function allows you to plot gene set or pathway scores on a dimensional reduction plot generated using methods such as PCA, tSNE, or UMAP. Each single cell is color-coded based on its scores for specific gene sets or pathways.
+The plotGeneSetScores function allows you to plot gene set or pathway scores on a dimensional reduction plot generated using methods such as PCA, TSNE, or UMAP. 
+
 
 ```{r Visualize gene set or pathway scores on dimensional reduction scatter plot , warning=FALSE, message=FALSE}
 
@@ -171,7 +167,7 @@ colData(query_data)$geneSetScores <- assay(cells_AUC)["geneSet1", ]
 plotGeneSetScores(query_data, method = "PCA", feature = "geneSetScores")
 ```
 
-In the provided example, we demonstrate the usage of the plotGeneSetScores function using the AUCell package to compute gene set or pathway scores. Custom gene sets are generated for demonstration purposes, but users can provide their own gene set scores using any method of their choice. It is important to ensure that the scores are assigned to the colData of the query_data object and specify the correct feature name for visualization.
+In the provided example, we demonstrate the usage of the plotGeneSetScores function using the AUCell package to compute gene set or pathway scores. Example gene sets are generated for demonstration purposes, but users can provide their own gene set scores using any method of their choice. It is important to ensure that the scores are assigned to the colData of the query_data object and specify the correct feature name for visualization.
 
 ## Visualizing Reference and Query Cell Types using Multidimensional Scaling (MDS)
 
@@ -210,18 +206,18 @@ cell_type_colors <- color_mapping[cell_types]
 visualizeCellTypeMDS(query_data_subset, ref_data_subset, mdata, cell_type_colors, legend_order)
 ```
 
-Upon examining the MDS scatter plot, we observe that the "CD4" and "CD8" cell types overlap to some extent.By observing the proximity or overlap of different cell types, we can gain insights into their potential relationships or shared characteristics.
+Upon examining the MDS scatter plot, we observe that the CD4 and CD8 cell types overlap to some extent. By observing the proximity or overlap of different cell types, we can gain insights into their potential relationships or shared characteristics.
 
-The selection of custom genes and desired cell types depends on the user's research interests and goals. It allows for flexibility in focusing on specific genes and examining particular cell types of interest in the visualization.
+The selection of custom genes and desired cell types depends on the user’s research interests and goals, allowing for flexibility in focusing on specific genes and examining particular cell types of interest for investigating into their similarities or dissimilarities.
 
 ## Cell Type-specific Pairwise Correlation Analysis and Visualization
 
-This analysis aims to explore the correlation patterns between different cell types in a single-cell gene expression dataset. It involves comparing the gene expression profiles of cells from a reference dataset and a query dataset.
+This analysis aims to explore the correlation patterns between different cell types in a query and reference dataset. It involves
+comparing the gene expression profiles of cells from a reference dataset and a query dataset.
 
-To perform the analysis, we start by computing the pairwise correlations between the query and reference cells for selected cell types ("CD4", "CD8", "B_and_plasma"). The Spearman correlation method is used, user can also use Pearsons correlation coeefficient.
+To perform the analysis, we start by computing the pairwise correlations between the query and reference cells for selected cell types. As an example, we have considered CD4, CD8, B_and_plasma cells. The Spearman correlation method is used, user can also use Pearsons correlation coeefficient.
 
-This will return average correlation matrix which can be visulaized by user's method of choice. Here,
-the results are visualized as a correlation plot using the corrplot package.
+This will return average correlation matrix which can be visulaized by user’s method of choice. Here, the results are visualized as a correlation plot using the corrplot package.
 
 
 ```{r Cell Type-specific Pairwise Correlation Analysis and Visualization , warning=FALSE, message=FALSE}
@@ -232,17 +228,16 @@ cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data_subset, ref_data_
 corrplot(cor_matrix_avg, method = "number", tl.col = "black")
 ```
 
-This analysis allows us to examine the correlation patterns between different cell types in the single-cell gene expression dataset. By visualizing the average pairwise correlations, we can gain insights into the relationships and similarities between cell types based on their gene expression profiles.
+This analysis allows us to examine the correlation patterns between different cell types in the query and reference datasets. By
+visualizing the average pairwise correlations, we can gain insights into the dissimilarties and similarities between cell types based on their gene expression profiles.
 
-In this case, users have the flexibility to extract the gene expression profiles of specific cell types from the reference and query datasets and provide these profiles as input to the function. Additionally, they can select their own set of genes that they consider relevant for computing the pairwise correlations. For demonstartion we have used common highly variable genes from reference and query dataset.
-
-By providing their own gene expression profiles and choosing specific genes, users can focus the analysis on the cell types and genes of interest to their research question.
+Users can select their own set of genes and cell types that they consider relevant for computing the pairwise correlations. For demonstartion we have used common highly variable genes from reference and query dataset.
 
 ## Pairwise Distance Analysis and Density Visualization
 
-This function allows for the calculation of pairwise distances between query and reference cells of a specific cell type in a single-cell gene expression dataset. The pairwise distances are calculated using a specified distance metric, such as "euclidean", "manhattan", etc. Subsequently, the function generates density plots to visualize the distribution of distances for different pairwise comparisons.
+This function allows for the calculation of pairwise distances between query and reference cells of a specific cell type in a single cell gene expression dataset. The pairwise distances are calculated using a specified distance metric, such as euclidean, manhattan, etc. The function generates density plots to visualize the distribution of distances for different pairwise comparisons.
 
-The analysis focuses on the specific cell type "CD8", and the pairwise distances are calculated using the "euclidean" distance metric.
+The analysis focuses on the specific cell type CD8 and the pairwise distances are calculated using the euclidean distance metric.
 
 ```{r Pairwise Distance Analysis and Density Visualization, warning=FALSE, message=FALSE, fig.width=8}
 calculatePairwiseDistancesAndPlotDensity(query_data_subset, ref_data_subset, "labels", "reclustered.broad", "CD8", "euclidean")
@@ -250,17 +245,18 @@ calculatePairwiseDistancesAndPlotDensity(query_data_subset, ref_data_subset, "la
 
 Further, user can also use correlation for calculation of pairwise distances between query and reference cells of a specific cell type.
 
-The analysis focuses on the specific cell type "CD8", and the pairwise distances are calculated using the  correlation distance metric. User can use spearman or pearson correlation coefficient as a method of choice.
+The analysis focuses on the specific cell type CD8 and the pairwise distances are calculated using the correlation distance metric. User can use spearman or pearson correlation coefficient as a method of choice.
 
 ```{r Pairwise Distance Analysis and Density Visualization correlation based, warning=FALSE, message=FALSE, fig.width=8}
 calculatePairwiseDistancesAndPlotDensity(query_data_subset, ref_data_subset, "labels", "reclustered.broad", "CD8", "correlation" ,"spearman")
 ```
 
-By utilizing this function, users can explore the pairwise distances between query and reference cells of a specific cell type and gain insights into the distribution of distances through density plots. This analysis aids in understanding the similarities and differences in gene expression profiles for the selected cell type within the query and reference datasets.
+Users can explore the pairwise distances between query and reference cells of a specific cell type and gain insights into the distribution of distances through density plots. This analysis aids in understanding the similarities and differences for the selected cell type within the query and reference datasets.
 
 ## Linear regression analysis
 
-Performing linear regression analysis on a SingleCellExperiment object enables users to examine the relationship between a principal component (PC) from the dimension reduction slot and an independent variable of interest. By specifying the desired dependent variable as one of the principal components (e.g., "PC1", "PC2", etc.) and providing the corresponding independent variable from the colData slot, users can explore the associations between these variables within the single-cell gene expression dataset (reference and query).
+Performing linear regression analysis on a reference or query dataset enables users to examine the relationship between a principal component (PC) from the dimension reduction slot and an independent variable of interest. By specifying the desired dependent variable as one of the principal components and providing the corresponding independent variable from the colData slot, users can explore the associations between these variables within the single-cell
+gene expression dataset (reference and query).
 
 ```{r linear regression ,warning=FALSE, message=FALSE}
 summary <- performLinearRegression(query_data, "PC1", "labels")
