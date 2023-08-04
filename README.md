@@ -1,11 +1,11 @@
-scDiagnosis
+scDiagnostics
 ================
 Smriti Chawla
-2023-07-08
+2023-08-04
 
 <h2>
-scDiagnosis: The package implements set of diagnostic functions to check
-appropriateness of cell assignments in single cell gene expression
+scDiagnostics: The package implements set of diagnostic functions to
+check appropriateness of cell assignments in single cell gene expression
 profiles
 </h2>
 <h3>
@@ -17,7 +17,7 @@ Prerequisites
 
 R version tested: 4.2.3 (2023-03-15)
 
-To use the scDiagnosis package, you need the following R packages
+To use the scDiagnostics package, you need the following R packages
 installed:
 
 - SingleCellExperiment
@@ -30,11 +30,10 @@ installed:
 - Matrix
 - corrplot
 - RColorBrewer
-- gridExtra
 
 ## Usage
 
-To explore the capabilities of the scDiagnosis package, you can load
+To explore the capabilities of the scDiagnostics package, you can load
 your own data or use the provided example with publicly available data
 of Marrow tissue single cell gene expression profiles from He S et
 al. (2020). Single-cell transcriptome profiling of an adult human cell
@@ -47,7 +46,7 @@ query data.
 
 ``` r
 ## Loading libraries
-library(scDiagnosis)
+library(scDiagnostics)
 library(scater)
 library(scran)
 library(scRNAseq)
@@ -55,16 +54,14 @@ library(RColorBrewer)
 library(SingleR)
 library(AUCell)
 library(corrplot)
-library(gridExtra)
 ```
 
-## Scatter Plot: Total UMI Counts vs. Annotation Scores
+## Scatter Plot: QC stats vs. Annotation Scores
 
 Let’s load the Marrow dataset for demonstration purposes. The dataset
 represents single-cell gene expression profiles of Marrow tissue. In
-this example, we will analyze the relationship between total UMI (Unique
-Molecular Identifier) counts and SingleR scores for a specific cell
-type.
+this example, we will analyze the relationship between user-defined QC
+stats and SingleR scores for a specific cell type.
 
 To perform this analysis, we first divide the dataset into reference and
 query datasets. The reference dataset serves as a reference for cell
@@ -73,18 +70,10 @@ assign cell types to. We then log-transform the expression values in
 both datasets for further analysis.
 
 Next, we use the SingleR package to obtain cell type scores for the
-query dataset. These scores provide information about the likelihood of
-each cell being a certain cell type.
-
-For the scatter plot, we focus on a specific cell type, in this case,
-“CD4”. We extract the corresponding SingleR scores for this cell type
-from the SingleR results.
-
-To overlay the total UMI counts and SingleR scores, we assign the
-SingleR scores to the colData of the query dataset. This allows us to
-access the scores for each cell when generating the scatter plot. The
-scatter plot displays the log-transformed total UMI counts on the x-axis
-and the SingleR scores on the y-axis.
+query dataset. The scatter plot is generated to examine the relationship
+between the percentage of mitocondrial genes QC metric and SingleR
+scores. It allow users to visulaize relation of QC stats for all
+celltypes or celltypes of interest.
 
 It’s important to note that the use of SingleR for cell type annotation
 is just one example. Users can use any other cell type annotation method
@@ -112,28 +101,45 @@ and interpretation of the cell type assignments in the dataset.
 
    # Get cell type scores using SingleR
    pred <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-
-   # Extract scores and labels for a specific cell type
-   cell_type <- "CD4"
-   score <- pred$scores[pred$labels == cell_type, cell_type]
-  
+   pred <- as.data.frame(pred)
+   
    # Assign labels to query data
    colData(query_data)$labels <- pred$labels
+   
+   # get scores
+   scores <- apply(pred[,1:4], 1, max)
 
-   # Generate scatter plot for Total UMIs vs. Annotation Scores
-   plotUMIsAnnotationScatter(query_data, score, "labels", cell_type)
+   # Assign scores to query data
+   colData(query_data)$cell_scores <- scores
+
+   # Generate scatter plots
+   p1 <- plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", c("CD4", "CD8"))
+   p1 + xlab("percent.mito")
 ```
 
-<img src="man/figures/Scatter plot Total UMIs vs annotation scores-1.png" width="100%" />
+<img src="man/figures/Scatter plot QC stats vs annotation scores-1.png" width="100%" />
 
-## Examining Distribution of UMI Counts and Annotation Scores
+``` r
+   p2 <- plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", c("CD4", "CD8"))
+   p2 + xlab("percent.mito")
+```
+
+<img src="man/figures/Scatter plot QC stats vs annotation scores-2.png" width="100%" />
+
+``` r
+   p3 <- plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
+   p3 + xlab("percent.mito")
+```
+
+<img src="man/figures/Scatter plot QC stats vs annotation scores-3.png" width="100%" />
+
+## Examining Distribution of library size and Annotation Scores
 
 In addition to the scatter plot, we can gain further insights into the
-gene expression profiles by visualizing the distribution of total UMI
-(Unique Molecular Identifier) counts and annotation scores for a
-specific cell type. This allows us to examine the variation and patterns
-in expression levels and scores across cells assigned to the cell type
-of interest.
+gene expression profiles by visualizing the distribution of library size
+and annotation scores for a specific cell type. This allows us to
+examine the variation and patterns in expression levels and scores
+across cells assigned to the cell type of interest.
 
 To accomplish this, we create two separate histograms. The first
 histogram displays the distribution of the annotation scores. The x-axis
@@ -148,16 +154,17 @@ frequency of cells within each count range.
 
 By examining the histograms, we can observe the range, shape, and
 potential outliers in the distribution of both annotation scores and
-total UMI counts. This allows us to assess the appropriateness of the
-cell type assignments and identify any potential discrepancies or
-patterns in the gene expression profiles for the specific cell type.
+library size. This allows us to assess the appropriateness of the cell
+type assignments and identify any potential discrepancies or patterns in
+the gene expression profiles for the specific cell type.
 
 ``` r
 # Generate histogram
-plotCellTypeDistribution(score, query_data, cell_type)
+cell_type_scores <- pred$scores.CD4
+plotCellTypeDistribution(cell_type_scores, query_data, "labels", "CD4")
 ```
 
-<img src="man/figures/Distribution of UMIs and Annotation Score-1.png" width="100%" />
+<img src="man/figures/Distribution of library size and Annotation Score-1.png" width="100%" />
 
 The example code provided demonstrates how to utilize the
 plotCellTypeDistribution function with the necessary data and packages.
@@ -225,7 +232,7 @@ In addition to examining individual gene expression patterns, it is
 often useful to assess the collective activity of gene sets or pathways
 within single cells. This can provide insights into the functional
 states or biological processes associated with specific cell types or
-conditions. To facilitate this analysis, the scDiagnosis package
+conditions. To facilitate this analysis, the scDiagnostics package
 includes a function called plotGeneSetScores that enables the
 visualization of gene set or pathway scores on a dimensional reduction
 plot.
@@ -433,20 +440,41 @@ summary <- performLinearRegression(query_data, "PC1", "labels")
 #> 
 #> Residuals:
 #>     Min      1Q  Median      3Q     Max 
-#> -8.1992 -2.5498 -0.5047  2.2330 14.3817 
+#> -13.685  -2.120   0.529   2.332   7.635 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -8.0845     0.2954  -27.37   <2e-16 ***
-#> IndependentCD4       4.4826     0.3520   12.74   <2e-16 ***
-#> IndependentCD8      13.8634     0.3430   40.42   <2e-16 ***
-#> IndependentMyeloid   8.2913     0.5863   14.14   <2e-16 ***
+#> (Intercept)          8.7010     0.2738   31.77   <2e-16 ***
+#> IndependentCD4      -5.4749     0.3305  -16.57   <2e-16 ***
+#> IndependentCD8     -14.6250     0.3210  -45.55   <2e-16 ***
+#> IndependentMyeloid  -8.4922     0.5921  -14.34   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.581 on 965 degrees of freedom
-#> Multiple R-squared:  0.6953, Adjusted R-squared:  0.6944 
-#> F-statistic: 734.2 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.442 on 965 degrees of freedom
+#> Multiple R-squared:  0.7265, Adjusted R-squared:  0.7257 
+#> F-statistic: 854.5 on 3 and 965 DF,  p-value: < 2.2e-16
+print(summary)
+#> 
+#> Call:
+#> lm(formula = Dependent ~ Independent, data = df)
+#> 
+#> Residuals:
+#>     Min      1Q  Median      3Q     Max 
+#> -13.685  -2.120   0.529   2.332   7.635 
+#> 
+#> Coefficients:
+#>                    Estimate Std. Error t value Pr(>|t|)    
+#> (Intercept)          8.7010     0.2738   31.77   <2e-16 ***
+#> IndependentCD4      -5.4749     0.3305  -16.57   <2e-16 ***
+#> IndependentCD8     -14.6250     0.3210  -45.55   <2e-16 ***
+#> IndependentMyeloid  -8.4922     0.5921  -14.34   <2e-16 ***
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> 
+#> Residual standard error: 3.442 on 965 degrees of freedom
+#> Multiple R-squared:  0.7265, Adjusted R-squared:  0.7257 
+#> F-statistic: 854.5 on 3 and 965 DF,  p-value: < 2.2e-16
 ```
 
 By conducting linear regression, one can assess whether the PC values
@@ -461,7 +489,7 @@ distinguish different cellular states.
 ## Conclusion
 
 In this analysis, we have demonstrated the capabilities of the
-scDiagnosis package for assessing the appropriateness of cell
+scDiagnostics package for assessing the appropriateness of cell
 assignments in single-cell gene expression profiles. By utilizing
 various diagnostic functions and visualization techniques, we have
 explored different aspects of the data, including total UMI counts,
