@@ -435,42 +435,42 @@ summary <- performLinearRegression(query_data, "PC1", "labels")
 #> lm(formula = Dependent ~ Independent, data = df)
 #> 
 #> Residuals:
-#>    Min     1Q Median     3Q    Max 
-#> -7.790 -2.721 -0.887  2.514 13.685 
+#>      Min       1Q   Median       3Q      Max 
+#> -15.2062  -2.3150   0.8288   2.6483   7.8053 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -7.6273     0.2967  -25.71   <2e-16 ***
-#> IndependentCD4       4.3084     0.3568   12.07   <2e-16 ***
-#> IndependentCD8      13.6682     0.3516   38.87   <2e-16 ***
-#> IndependentMyeloid   8.1576     0.6823   11.96   <2e-16 ***
+#> (Intercept)          7.7625     0.2838   27.36   <2e-16 ***
+#> IndependentCD4      -4.6590     0.3437  -13.56   <2e-16 ***
+#> IndependentCD8     -13.9545     0.3399  -41.05   <2e-16 ***
+#> IndependentMyeloid  -8.4053     0.6258  -13.43   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.788 on 965 degrees of freedom
-#> Multiple R-squared:  0.6709, Adjusted R-squared:  0.6698 
-#> F-statistic: 655.6 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.7 on 965 degrees of freedom
+#> Multiple R-squared:  0.6853, Adjusted R-squared:  0.6843 
+#> F-statistic: 700.3 on 3 and 965 DF,  p-value: < 2.2e-16
 print(summary)
 #> 
 #> Call:
 #> lm(formula = Dependent ~ Independent, data = df)
 #> 
 #> Residuals:
-#>    Min     1Q Median     3Q    Max 
-#> -7.790 -2.721 -0.887  2.514 13.685 
+#>      Min       1Q   Median       3Q      Max 
+#> -15.2062  -2.3150   0.8288   2.6483   7.8053 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -7.6273     0.2967  -25.71   <2e-16 ***
-#> IndependentCD4       4.3084     0.3568   12.07   <2e-16 ***
-#> IndependentCD8      13.6682     0.3516   38.87   <2e-16 ***
-#> IndependentMyeloid   8.1576     0.6823   11.96   <2e-16 ***
+#> (Intercept)          7.7625     0.2838   27.36   <2e-16 ***
+#> IndependentCD4      -4.6590     0.3437  -13.56   <2e-16 ***
+#> IndependentCD8     -13.9545     0.3399  -41.05   <2e-16 ***
+#> IndependentMyeloid  -8.4053     0.6258  -13.43   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.788 on 965 degrees of freedom
-#> Multiple R-squared:  0.6709, Adjusted R-squared:  0.6698 
-#> F-statistic: 655.6 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.7 on 965 degrees of freedom
+#> Multiple R-squared:  0.6853, Adjusted R-squared:  0.6843 
+#> F-statistic: 700.3 on 3 and 965 DF,  p-value: < 2.2e-16
 ```
 
 By conducting linear regression, one can assess whether the PC values
