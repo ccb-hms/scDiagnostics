@@ -127,7 +127,7 @@ mitochondrial gene and cell annotation scores for the cell types.
    p2 + xlab("percent.mito")
 ```
 
-<img src="man/figures/Scatter plot QC stats vs annotation scores all cell types-1.png" width="100%" />
+<img src="man/figures/QC stats vs annotation scores all-1.png" width="100%" />
 
 ## Examining Distribution of library size and Annotation Scores
 
@@ -160,7 +160,7 @@ cell_type_scores <- pred$scores.CD4
 plotCellTypeDistribution(cell_type_scores, query_data, "labels", "CD4")
 ```
 
-<img src="man/figures/Distribution of library size and Annotation Score-1.png" width="100%" />
+<img src="man/figures/Distribution of library size and annotation Score-1.png" width="100%" />
 
 The example code provided demonstrates how to utilize the
 plotCellTypeDistribution function with the necessary data and packages.
@@ -435,42 +435,42 @@ summary <- performLinearRegression(query_data, "PC1", "labels")
 #> lm(formula = Dependent ~ Independent, data = df)
 #> 
 #> Residuals:
-#>     Min      1Q  Median      3Q     Max 
-#> -8.3453 -2.3218 -0.6221  2.1325 13.7265 
+#>    Min     1Q Median     3Q    Max 
+#> -7.790 -2.721 -0.887  2.514 13.685 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -8.4628     0.2754  -30.73   <2e-16 ***
-#> IndependentCD4       5.6905     0.3330   17.09   <2e-16 ***
-#> IndependentCD8      14.2444     0.3260   43.69   <2e-16 ***
-#> IndependentMyeloid   8.6233     0.5588   15.43   <2e-16 ***
+#> (Intercept)         -7.6273     0.2967  -25.71   <2e-16 ***
+#> IndependentCD4       4.3084     0.3568   12.07   <2e-16 ***
+#> IndependentCD8      13.6682     0.3516   38.87   <2e-16 ***
+#> IndependentMyeloid   8.1576     0.6823   11.96   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.506 on 965 degrees of freedom
-#> Multiple R-squared:  0.701,  Adjusted R-squared:  0.7001 
-#> F-statistic: 754.1 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.788 on 965 degrees of freedom
+#> Multiple R-squared:  0.6709, Adjusted R-squared:  0.6698 
+#> F-statistic: 655.6 on 3 and 965 DF,  p-value: < 2.2e-16
 print(summary)
 #> 
 #> Call:
 #> lm(formula = Dependent ~ Independent, data = df)
 #> 
 #> Residuals:
-#>     Min      1Q  Median      3Q     Max 
-#> -8.3453 -2.3218 -0.6221  2.1325 13.7265 
+#>    Min     1Q Median     3Q    Max 
+#> -7.790 -2.721 -0.887  2.514 13.685 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -8.4628     0.2754  -30.73   <2e-16 ***
-#> IndependentCD4       5.6905     0.3330   17.09   <2e-16 ***
-#> IndependentCD8      14.2444     0.3260   43.69   <2e-16 ***
-#> IndependentMyeloid   8.6233     0.5588   15.43   <2e-16 ***
+#> (Intercept)         -7.6273     0.2967  -25.71   <2e-16 ***
+#> IndependentCD4       4.3084     0.3568   12.07   <2e-16 ***
+#> IndependentCD8      13.6682     0.3516   38.87   <2e-16 ***
+#> IndependentMyeloid   8.1576     0.6823   11.96   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.506 on 965 degrees of freedom
-#> Multiple R-squared:  0.701,  Adjusted R-squared:  0.7001 
-#> F-statistic: 754.1 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.788 on 965 degrees of freedom
+#> Multiple R-squared:  0.6709, Adjusted R-squared:  0.6698 
+#> F-statistic: 655.6 on 3 and 965 DF,  p-value: < 2.2e-16
 ```
 
 By conducting linear regression, one can assess whether the PC values

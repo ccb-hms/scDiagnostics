@@ -102,7 +102,7 @@ It's important to note that the use of SingleR for cell type annotation is just 
 
 Scatter plot for visualizing relationship between percentage of mitochondrial gene and cell annotation scores for the cell types.
 
-```{r Scatter plot QC stats vs annotation scores all cell types, warning=FALSE, message=FALSE}
+```{r QC stats vs annotation scores all, warning=FALSE, message=FALSE}
    p2 <- plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
    p2 + xlab("percent.mito")
 ```
@@ -118,7 +118,7 @@ The second histogram visualizes the distribution of total log-transformed UMI co
 By examining the histograms, we can observe the range, shape, and potential outliers in the distribution of both annotation scores and library size. This allows us to assess the appropriateness of the cell type assignments and identify any potential discrepancies or patterns in the gene expression profiles for the specific cell type.
 
 
-```{r Distribution of library size and Annotation Score, warning=FALSE, message=FALSE}
+```{r Distribution of library size and annotation Score, warning=FALSE, message=FALSE}
 # Generate histogram
 cell_type_scores <- pred$scores.CD4
 plotCellTypeDistribution(cell_type_scores, query_data, "labels", "CD4")
