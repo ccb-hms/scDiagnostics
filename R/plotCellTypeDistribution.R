@@ -7,10 +7,10 @@
 #' @param cell_type A character string specifying the name of the cell type for which the distribution of log-transformed counts per cell is to be visualized.
 #'
 #' @import ggplot2
-#' @importFrom ggplot2 ggplot
 #' @importFrom gridExtra grid.arrange
 #'
-#' @return A grid.arrange object displaying histograms of log-transformed counts and scores.
+#' @return A grid.arrange object displaying histograms of counts and scores.
+#'         This object can be further customized or used for additional plot manipulations.
 #' @export
 #'
 #' @examples
@@ -35,18 +35,19 @@
 #' # Get cell type scores using SingleR
 #' cell_type_scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)$scores[, "CD4"]
 #'
-#' # Visualize the distribution of log-transformed counts and scores
+#' # Visualize the distribution ofcounts and scores
 #' plotCellTypeDistribution(cell_type_scores, query_data, "CD4")
 #'
 #' # Note: Users can use any cell type annotation method of their choice to obtain the scores.
+#' # Ensure that the scores and log-transformed counts are provided to the function for visualization.
 #'
 plotCellTypeDistribution <- function(cell_type_scores, query_data, cell_type) {
 
   scores_df <- data.frame(Scores = cell_type_scores)
 
   # Pre-process logcounts
-  log_expr <- as.matrix(assay(query_data, "logcounts"))
-  counts_per_cell <- data.frame(CountsPerCell = colSums(log_expr))
+  counts <- as.matrix(assay(query_data))
+  counts_per_cell <- data.frame(CountsPerCell = log2(colSums(counts)+1))
 
   # Create a plot object for scores histogram
   scores_plot <- ggplot(scores_df, aes(x = Scores)) +
@@ -58,7 +59,7 @@ plotCellTypeDistribution <- function(cell_type_scores, query_data, cell_type) {
   # Create a plot object for total logcounts histogram
   counts_per_cell_plot <- ggplot(counts_per_cell, aes(x = CountsPerCell)) +
     geom_histogram(color = "black", fill = "white") +
-    xlab("Total Logcounts") +
+    xlab("Library Size") +
     ylab("Frequency") +
     theme_bw()
 

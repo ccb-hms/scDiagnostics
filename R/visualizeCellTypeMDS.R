@@ -2,7 +2,7 @@
 #'
 #' This function performs Multidimensional Scaling (MDS) on the query and reference datasets and generates a scatter plot
 #' with cell types color-coded using custom colors provided by the user. The distance matrix used for MDS is computed
-#' based on a user choice of genes and cells.
+#' based on a custom set of genes selected by the user.
 #'
 #' @param query_data An object of class "SingleCellExperiment" containing a numeric expression matrix.
 #' @param ref_data An object of class "SingleCellExperiment" containing a numeric expression matrix.

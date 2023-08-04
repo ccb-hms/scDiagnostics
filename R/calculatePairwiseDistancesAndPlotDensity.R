@@ -3,12 +3,12 @@
 #' This function calculates pairwise distances or correlations between query and reference cells of a specific cell type based on the provided distance or correlation metric.
 #' It then plots density plots to visualize the distribution of distances or correlations for different pairwise comparisons.
 #'
-#' @param query_data A SingleCellExperiment object containing numeric expression matrix for the query cells.
-#' @param ref_data A SingleCellExperiment object containing numeric expression matrix for the reference cells.
-#' @param query_cell_type_col The column name in the query_data metadata specifying the cell types.
-#' @param ref_cell_type_col The column name in the ref_data metadata specifying the cell types.
+#' @param query_data A SingleCellExperiment object containing numeric expression matrix for the query cells
+#' @param ref_data A SingleCellExperiment object containing numeric expression matrix for the reference cells
+#' @param query_cell_type_col The column name in the query_data metadata specifying the cell types
+#' @param ref_cell_type_col The column name in the ref_data metadata specifying the cell types
 #' @param cell_type The cell type for which distances or correlations are calculated.
-#' @param distance_metric The distance metric to use for calculating pairwise distances, such as "euclidean" or "manhattan" etc.
+#' @param distance_metric The distance metric to use for calculating pairwise distances, such as "euclidean" or "manhattan".
 #'                        Set it to "correlation" for calculating correlation coefficients.
 #' @param correlation_method The correlation method to use when distance_metric is "correlation".
 #'                           Possible values: "pearson", "spearman".

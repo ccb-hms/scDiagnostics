@@ -5,8 +5,8 @@
 #'
 #' @param query_data An object of class "SingleCellExperiment" containing the query cell data.
 #' @param ref_data An object of class "SingleCellExperiment" containing the reference cell data.
-#' @param query_cell_type_col The column name in the query_data metadata specifying the cell types.
-#' @param ref_cell_type_col The column name in the ref_data metadata specifying the cell types.
+#' @param query_cell_type_col A character string specifying the column name for cell types in query_data.
+#' @param ref_cell_type_col A character string specifying the column name for cell types in ref_data.
 #' @param cell_types A character vector specifying the cell types to consider.
 #' @param correlation_method The correlation method to use for calculating pairwise correlations.
 #'
@@ -40,7 +40,7 @@
 #'
 #' # Compute Pairwise Correlations
 #' ## Note: The selection of highly variable genes and desired cell types may vary based on user preference.
-#' ## Note: The cell type annotation method used in this example is SingleR. You can use any other method for cell type annotation and provide the corresponding labels in the colData slot.
+#' ## Note: The cell type annotation method used in this example is SingleR. You can use any other method for cell type annotation and provide the corresponding labels in the metadata.
 #' ## Here, we are demonstrating the usage with arbitrary choices.
 #'
 #' # Selecting highly variable genes
@@ -53,12 +53,13 @@
 #' # Select desired cell types
 #' selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
 #' ref_data_subset <- ref_data[common_genes, ref_data$reclustered.broad %in% selected_cell_types]
-#' query_data_subset <- query_data[common_genes, query_data$labels %in% selected_cell_types]
+#' query_data_subset <- query_data[common_genes, query_data$reclustered.broad %in% selected_cell_types]
 #'
 #' # Compute pairwise correlations
 #' cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data_subset, ref_data_subset, "labels", "reclustered.broad", selected_cell_types, "spearman")
 #'
 #' # Visualize the results using any visualization method of choice
+#' # (Add code here for visualization)
 #'
 computeAveragePairwiseCorrelation <- function(query_data, ref_data, query_cell_type_col, ref_cell_type_col, cell_types, correlation_method) {
 

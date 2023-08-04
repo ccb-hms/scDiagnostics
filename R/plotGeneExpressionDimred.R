@@ -1,10 +1,10 @@
 #' Visualize gene expression on a dimensional reduction plot
 #'
-#' This function plots gene expression on a dimensional reduction plot using methods like tSNE, UMAP, or PCA. Each single cell is color-coded based on the expression of a specific gene or feature.
+#' This function plots gene expression on a dimensional reduction plot using methods like t-SNE, UMAP, or PCA. Each single cell is color-coded based on the expression of a specific gene or feature.
 #'
 #' @param se_object An object of class "SingleCellExperiment" containing log-transformed expression matrix and other metadata.
 #'        It can be either a reference or query dataset.
-#' @param method The reduction method to use for visualization. It should be one of the supported methods: "TSNE", "UMAP", or "PCA".
+#' @param method The reduction method to use for visualization. It should be one of the supported methods: "tSNE", "UMAP", or "PCA".
 #' @param n_components A numeric vector of length 2 indicating the first two dimensions to be used for plotting.
 #' @param feature A character string representing the name of the gene or feature to be visualized.
 #'
@@ -40,7 +40,7 @@
 plotGeneExpressionDimred <- function(query_data, method, n_components = c(1, 2), feature) {
 
   # Error handling and validation
-  supported_methods <- c("TSNE", "UMAP", "PCA")
+  supported_methods <- c("tSNE", "UMAP", "PCA")
   if (!(method %in% supported_methods)) {
     stop("Unsupported method. Please choose one of: ", paste(supported_methods, collapse = ", "))
   }

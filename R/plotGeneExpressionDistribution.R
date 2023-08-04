@@ -5,15 +5,17 @@
 #'
 #' @param se_object An object of class "SingleCellExperiment" containing log-transformed expression matrix and other metadata.
 #'        It can be either a reference or query dataset.
-#' @param cell_type_labels A character column name from the colData slot of the SingleCellExperiment object representing cell type information.
+#' @param cell_type_labels A character column name from the colData table of the SingleCellExperiment object representing cell type information.
 #' @param cell_type A character string representing the name of the cell type for which the specific gene distribution is to be visualized.
-#' @param feature A character string representing the gene name or feature for which the distribution is to be visualized.
+#' @param feature A character string representing the gene name for which the distribution is to be visualized.
 #'
 #' @import ggplot2
 #' @importFrom ggplot2 ggplot
+#' @importFrom gridExtra grid.arrange
 #' @import SingleCellExperiment
 #'
 #' @return A ggplot object displaying the histogram plots of gene expression distribution from the overall dataset and cell type-specific perspective.
+#'         This object can be further customized or used for additional plot manipulations.
 #' @export
 #'
 #' @examples
@@ -40,6 +42,7 @@
 #' # Add labels to query object
 #' colData(query_data)$labels <- scores$labels
 #'
+#' # # Visualize the distribution of log-transformed counts and scores for the se_object
 #' # Note: Users can use SingleR or any other method to obtain the cell type scores.
 #' # Ensure that the scores and log-transformed counts are provided to the function for visualization.
 #' # For demonstration we have used query_data.
@@ -48,8 +51,8 @@
 plotGeneExpressionDistribution <- function(query_data, cell_type_labels, cell_type, feature) {
   # Get expression of the specified feature
   overall <- as.data.frame(assay(query_data, "logcounts")[feature, ])
-  indx <- which(colData(query_data)[, cell_type_labels] == cell_type)
-  cell_specific <- as.data.frame(assay(query_data, "logcounts")[feature, indx])
+  ind <- which(colData(query_data)[, cell_type_labels] == cell_type)
+  cell_specific <- as.data.frame(assay(query_data, "logcounts")[feature, ind])
 
   # Assign a common column name to expression values
   colnames(overall) <- colnames(cell_specific) <- feature

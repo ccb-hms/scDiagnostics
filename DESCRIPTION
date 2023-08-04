@@ -1,13 +1,18 @@
-Package: scDiagnosis
+Package: scDiagnostics
 Type: Package
 Title: Cell type annotation diagnostics 
-Version: 0.1.0
-Author: Smriti Chawla
-Maintainer: The package maintainer <smriti_chawla@g.hms.harvard>
-Description: The scDiag pacakge implements various diagnostic functions to check appropriatness of cell assignments.
-License: GPL-3
+Version: 0.99.0
+Authors@R: c(person("Smriti", "Chawla", email = "smriti_chawla@g.harvard.edu", role = c("aut", "cre")),
+            person("Ludwig", "Geistlinger", role = c("aut", "ctb")))
+Description: scDiagnostics package provides  various diagnostic functions  and visualizations to check appropriateness of cell assignments 
+             in single cell expression profiles to assess the reliability of cell type annotations, investigate gene expression patterns, 
+             and explore relationships between different cell types in query and reference datasets allowing users 
+             to detect potential misalignments between reference and query datasets. 
+License: Artistic-2.0
 Encoding: UTF-8
 LazyData: true
+URL: https://github.com/ccb-hms/scDiagnostics
+BugReports: https://github.com/ccb-hms/scDiagnostics/issues
 RoxygenNote: 7.2.3
 Depends:
  R (>= 4.2.0),
