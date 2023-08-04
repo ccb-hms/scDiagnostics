@@ -78,6 +78,5 @@ query_data_subset <- query_data[common_genes, query_data$reclustered.broad \%in\
 cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data_subset, ref_data_subset, "labels", "reclustered.broad", selected_cell_types, "spearman")
 
 # Visualize the results using any visualization method of choice
-# (Add code here for visualization)
 
 }

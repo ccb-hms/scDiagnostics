@@ -4,7 +4,8 @@
 #'
 #' @param cell_type_scores A numeric vector of scores for the specific cell type obtained from a cell type annotation method.
 #' @param query_data An object of class "SingleCellExperiment" containing a numeric expression matrix.
-#' @param cell_type A character string specifying the name of the cell type for which the distribution of log-transformed counts per cell is to be visualized.
+#' @param label_col A character string specifying the column name in the colData(query_data) that contains the cell type labels.
+#' @param cell_type A character string specifying the name of the cell type for which the distribution of counts per cell is to be visualized.
 #'
 #' @import ggplot2
 #' @importFrom gridExtra grid.arrange
@@ -41,11 +42,13 @@
 #' # Note: Users can use any cell type annotation method of their choice to obtain the scores.
 #' # Ensure that the scores and log-transformed counts are provided to the function for visualization.
 #'
-plotCellTypeDistribution <- function(cell_type_scores, query_data, cell_type) {
+plotCellTypeDistribution <- function(cell_type_scores, query_data, label_col, cell_type) {
 
   scores_df <- data.frame(Scores = cell_type_scores)
 
   # Pre-process logcounts
+  index <- which(colData(query_data)[[label_col]] %in% cell_type)
+  query_data <- query_data[, index]
   counts <- as.matrix(assay(query_data))
   counts_per_cell <- data.frame(CountsPerCell = log2(colSums(counts)+1))
 

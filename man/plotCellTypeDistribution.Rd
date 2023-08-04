@@ -4,17 +4,19 @@
 \alias{plotCellTypeDistribution}
 \title{Exploring Cell-Type Specific Patterns: Counts per Cell and Annotation Scores Visualization}
 \usage{
-plotCellTypeDistribution(cell_type_scores, query_data, cell_type)
+plotCellTypeDistribution(cell_type_scores, query_data, label_col, cell_type)
 }
 \arguments{
 \item{cell_type_scores}{A numeric vector of scores for the specific cell type obtained from a cell type annotation method.}
 
 \item{query_data}{An object of class "SingleCellExperiment" containing a numeric expression matrix.}
 
-\item{cell_type}{A character string specifying the name of the cell type for which the distribution of log-transformed counts per cell is to be visualized.}
+\item{label_col}{A character string specifying the column name in the colData(query_data) that contains the cell type labels.}
+
+\item{cell_type}{A character string specifying the name of the cell type for which the distribution of counts per cell is to be visualized.}
 }
 \value{
-A grid.arrange object displaying histograms of log-transformed counts and scores.
+A grid.arrange object displaying histograms of counts and scores.
         This object can be further customized or used for additional plot manipulations.
 }
 \description{
@@ -42,7 +44,7 @@ query_data <- logNormCounts(query_data)
 # Get cell type scores using SingleR
 cell_type_scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)$scores[, "CD4"]
 
-# Visualize the distribution of log-transformed counts and scores
+# Visualize the distribution ofcounts and scores
 plotCellTypeDistribution(cell_type_scores, query_data, "CD4")
 
 # Note: Users can use any cell type annotation method of their choice to obtain the scores.
