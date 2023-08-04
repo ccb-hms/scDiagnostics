@@ -1,4 +1,40 @@
-.Rproj.user
-.Rhistory
+# R specific .gitignore entries
+*.Rproj.user/
+*.Rhistory
+*.RData
+*.Ruserdata
+.Rproj*
+.Rcheck/
+.Rcache/
+.R-environment
 .RData
-.Ruserdata
+.Rhistory
+.Rproj*
+.Rcheck/
+*.log
+*.pdf
+*.html
+*.tex
+*.docx
+
+# Build artifacts
+/man/*
+/NAMESPACE
+/R/R
+/src/*.so
+/src/*.o
+.Rbuildignore
+*.tar.gz
+*.Rcheck/
+
+# RStudio-specific
+.Rproj.user/
+*.Rproj.user
+
+# Mac-specific
+.DS_Store
+
+
+# Editor-specific
+*.swp
+*.~lock.*
