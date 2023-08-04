@@ -58,7 +58,7 @@ Let's load the Marrow dataset for demonstration purposes. The dataset represents
 
 To perform this analysis, we first divide the dataset into reference and query datasets. The reference dataset serves as a reference for cell type annotation, while the query dataset contains cells that we want to assign cell types to. We then log-transform the expression values in both datasets for further analysis.
 
-Next, we use the SingleR package to obtain cell type scores for the query dataset. The scatter plot is generated to examine the relationship between the percentage of mitocondrial genes QC metric and SingleR scores. It allow users to visulaize relation of QC stats for all celltypes or celltypes of interest.
+Next, we use the SingleR package to obtain cell type scores for the query dataset. The scatter plot is generated to examine the relationship between the percentage of mitochondrial genes and SingleR scores. It allow users to visulaize relation of QC stats for all cell types or cell types of interest.
 
 It's important to note that the use of SingleR for cell type annotation is just one example. Users can use any other cell type annotation method to obtain cell type scores. The scatter plot provides a visual representation of this relationship, allowing for further examination and interpretation of the cell type assignments in the dataset.
 
@@ -96,10 +96,15 @@ It's important to note that the use of SingleR for cell type annotation is just 
    # Generate scatter plots
    p1 <- plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", c("CD4", "CD8"))
    p1 + xlab("percent.mito")
-   p2 <- plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", c("CD4", "CD8"))
+   
+```
+
+
+Scatter plot for visualizing relationship between percentage of mitochondrial gene and cell annotation scores for the cell types.
+
+```{r Scatter plot QC stats vs annotation scores all cell types, warning=FALSE, message=FALSE}
+   p2 <- plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
    p2 + xlab("percent.mito")
-   p3 <- plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
-   p3 + xlab("percent.mito")
 ```
 
 ## Examining Distribution of library size and Annotation Scores

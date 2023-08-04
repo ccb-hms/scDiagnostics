@@ -71,9 +71,9 @@ both datasets for further analysis.
 
 Next, we use the SingleR package to obtain cell type scores for the
 query dataset. The scatter plot is generated to examine the relationship
-between the percentage of mitocondrial genes QC metric and SingleR
-scores. It allow users to visulaize relation of QC stats for all
-celltypes or celltypes of interest.
+between the percentage of mitochondrial genes and SingleR scores. It
+allow users to visulaize relation of QC stats for all cell types or cell
+types of interest.
 
 It’s important to note that the use of SingleR for cell type annotation
 is just one example. Users can use any other cell type annotation method
@@ -119,19 +119,15 @@ and interpretation of the cell type assignments in the dataset.
 
 <img src="man/figures/Scatter plot QC stats vs annotation scores-1.png" width="100%" />
 
+Scatter plot for visualizing relationship between percentage of
+mitochondrial gene and cell annotation scores for the cell types.
+
 ``` r
-   p2 <- plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", c("CD4", "CD8"))
+   p2 <- plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
    p2 + xlab("percent.mito")
 ```
 
-<img src="man/figures/Scatter plot QC stats vs annotation scores-2.png" width="100%" />
-
-``` r
-   p3 <- plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
-   p3 + xlab("percent.mito")
-```
-
-<img src="man/figures/Scatter plot QC stats vs annotation scores-3.png" width="100%" />
+<img src="man/figures/Scatter plot QC stats vs annotation scores all cell types-1.png" width="100%" />
 
 ## Examining Distribution of library size and Annotation Scores
 
@@ -440,20 +436,20 @@ summary <- performLinearRegression(query_data, "PC1", "labels")
 #> 
 #> Residuals:
 #>     Min      1Q  Median      3Q     Max 
-#> -13.685  -2.120   0.529   2.332   7.635 
+#> -8.3453 -2.3218 -0.6221  2.1325 13.7265 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          8.7010     0.2738   31.77   <2e-16 ***
-#> IndependentCD4      -5.4749     0.3305  -16.57   <2e-16 ***
-#> IndependentCD8     -14.6250     0.3210  -45.55   <2e-16 ***
-#> IndependentMyeloid  -8.4922     0.5921  -14.34   <2e-16 ***
+#> (Intercept)         -8.4628     0.2754  -30.73   <2e-16 ***
+#> IndependentCD4       5.6905     0.3330   17.09   <2e-16 ***
+#> IndependentCD8      14.2444     0.3260   43.69   <2e-16 ***
+#> IndependentMyeloid   8.6233     0.5588   15.43   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.442 on 965 degrees of freedom
-#> Multiple R-squared:  0.7265, Adjusted R-squared:  0.7257 
-#> F-statistic: 854.5 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.506 on 965 degrees of freedom
+#> Multiple R-squared:  0.701,  Adjusted R-squared:  0.7001 
+#> F-statistic: 754.1 on 3 and 965 DF,  p-value: < 2.2e-16
 print(summary)
 #> 
 #> Call:
@@ -461,20 +457,20 @@ print(summary)
 #> 
 #> Residuals:
 #>     Min      1Q  Median      3Q     Max 
-#> -13.685  -2.120   0.529   2.332   7.635 
+#> -8.3453 -2.3218 -0.6221  2.1325 13.7265 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          8.7010     0.2738   31.77   <2e-16 ***
-#> IndependentCD4      -5.4749     0.3305  -16.57   <2e-16 ***
-#> IndependentCD8     -14.6250     0.3210  -45.55   <2e-16 ***
-#> IndependentMyeloid  -8.4922     0.5921  -14.34   <2e-16 ***
+#> (Intercept)         -8.4628     0.2754  -30.73   <2e-16 ***
+#> IndependentCD4       5.6905     0.3330   17.09   <2e-16 ***
+#> IndependentCD8      14.2444     0.3260   43.69   <2e-16 ***
+#> IndependentMyeloid   8.6233     0.5588   15.43   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.442 on 965 degrees of freedom
-#> Multiple R-squared:  0.7265, Adjusted R-squared:  0.7257 
-#> F-statistic: 854.5 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.506 on 965 degrees of freedom
+#> Multiple R-squared:  0.701,  Adjusted R-squared:  0.7001 
+#> F-statistic: 754.1 on 3 and 965 DF,  p-value: < 2.2e-16
 ```
 
 By conducting linear regression, one can assess whether the PC values

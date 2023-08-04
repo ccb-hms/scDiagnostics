@@ -44,7 +44,6 @@
 #'
 #' # Generate scatter plots
 #' plotQCvsMultipleCellTypes(query_data, "percent.mito", "labels", "cell_scores", c("CD4", "CD8"))
-#' plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", c("CD4", "CD8"))
 #' plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
 #'
 plotQCvsAnnotation <- function(query_data, qc_col, label_col, score_col, label = NULL) {
