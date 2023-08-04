@@ -4,9 +4,7 @@ Smriti Chawla
 2023-08-04
 
 <h2>
-scDiagnostics: The package implements set of diagnostic functions to
-check appropriateness of cell assignments in single cell gene expression
-profiles
+scDiagnostics: diagnostic functions to assess the quality of cell type assignments in single-cell RNA-seq data
 </h2>
 <h3>
 Getting started
