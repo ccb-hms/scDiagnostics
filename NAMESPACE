@@ -2,8 +2,8 @@
 
 export(calculatePairwiseDistancesAndPlotDensity)
 export(computeAveragePairwiseCorrelation)
+export(histQCvsAnnotation)
 export(performLinearRegression)
-export(plotCellTypeDistribution)
 export(plotGeneExpressionDimred)
 export(plotGeneExpressionDistribution)
 export(plotGeneSetScores)
