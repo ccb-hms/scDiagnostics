@@ -10,7 +10,10 @@
 #'
 #' @import ggplot2
 #'
-#' @return A ggplot object displaying histograms of QC stats and annotation scores.
+#' #' @return A list of ggplot objects containing histograms of QC stats and annotation scores.
+#' The list contains two ggplot objects: the first one displays the histogram of QC stats,
+#' and the second one displays the histogram of annotation scores.
+#'
 #' @export
 #'
 #' @examples
@@ -77,5 +80,5 @@ histQCvsAnnotation <- function(query_data, qc_col, label_col, score_col, label =
     theme_bw()
   
   # Return a grid.arrange object displaying histograms of QC stats and annotation scores
-  return(grid.arrange(qc_histogram, scores_histogram, ncol = 2))
+  return(list(qc_histogram, scores_histogram))
 }
