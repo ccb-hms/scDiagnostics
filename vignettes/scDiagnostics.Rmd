@@ -38,12 +38,6 @@ BiocManager::install("ccb-hms/scDiagnostics",
                      dependencies = TRUE)
 ```
 
-Once you have the package installed, you can inspect the vignettes from within R via:
-
-```{r view_vignettes, eval=TRUE}
-browseVignettes("scDiagnostics")
-```
-
 
 To install a package directly from a GitHub repository, you will need a remotes package and command is as follows:
 

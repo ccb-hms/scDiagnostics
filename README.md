@@ -28,14 +28,6 @@ BiocManager::install("ccb-hms/scDiagnostics",
                      dependencies = TRUE)
 ```
 
-Once you have the package installed, you can inspect the vignettes from
-within R via:
-
-``` r
-browseVignettes("scDiagnostics")
-#> No vignettes found by browseVignettes("scDiagnostics")
-```
-
 To install a package directly from a GitHub repository, you will need a
 remotes package and command is as follows:
 
@@ -147,7 +139,7 @@ and interpretation of the cell type assignments in the dataset.
    p1 + xlab("percent.mito")
 ```
 
-![](README_files/figure-gfm/Scatter%20plot%20QC%20stats%20vs%20annotation%20scores-1.png)<!-- -->
+<img src="man/figures/Scatter plot QC stats vs annotation scores-1.png" width="100%" />
 
 Scatter plot for visualizing relationship between percentage of
 mitochondrial gene and cell annotation scores for the cell types.
@@ -157,7 +149,7 @@ mitochondrial gene and cell annotation scores for the cell types.
    p2 + xlab("percent.mito")
 ```
 
-![](README_files/figure-gfm/Scatter%20plot%20QC%20stats%20vs%20annotation%20scores%20all%20cell%20types-1.png)<!-- -->
+<img src="man/figures/Scatter plot QC stats vs annotation scores all cell types-1.png" width="100%" />
 
 ## Examining Distribution of QC stats and Annotation Scores
 
@@ -193,7 +185,7 @@ qc_histogram <- p[[1]]
 qc_histogram
 ```
 
-![](README_files/figure-gfm/Distribution%20of%20library%20size%20and%20Annotation%20Score-1.png)<!-- -->
+<img src="man/figures/Distribution of library size and Annotation Score-1.png" width="100%" />
 
 ``` r
 
@@ -202,7 +194,7 @@ scores_histogram <- p[[2]]
 scores_histogram
 ```
 
-![](README_files/figure-gfm/Distribution%20of%20library%20size%20and%20Annotation%20Score-2.png)<!-- -->
+<img src="man/figures/Distribution of library size and Annotation Score-2.png" width="100%" />
 
 The example code provided demonstrates how to utilize the
 plotCellTypeDistribution function with the necessary data and packages.
@@ -222,7 +214,7 @@ interest, both overall and within specific cell types.
 plotGeneExpressionDistribution(query_data, "labels", "B_and_plasma", "VPREB3")
 ```
 
-![](README_files/figure-gfm/histogram%20gene%20expression-1.png)<!-- -->
+<img src="man/figures/histogram gene expression-1.png" width="100%" />
 
 In the provided example, we are examining the distribution of expression
 values for the gene “VPREB3” in the dataset. The function generates a
@@ -255,7 +247,7 @@ gene “VPREB3,” ranging from low (lighter color) to high (darker color).
 plotGeneExpressionDimred(query_data, "PCA", c(1, 2), "VPREB3")
 ```
 
-![](README_files/figure-gfm/scatter%20plot%20gene%20expression-1.png)<!-- -->
+<img src="man/figures/scatter plot gene expression-1.png" width="100%" />
 
 The dimensional reduction plot allows us to observe how the gene
 expression of “VPREB3” is distributed across the cells and whether any
@@ -306,7 +298,7 @@ colData(query_data)$geneSetScores <- assay(cells_AUC)["geneSet1", ]
 plotGeneSetScores(query_data, method = "PCA", feature = "geneSetScores")
 ```
 
-![](README_files/figure-gfm/Visualize%20gene%20set%20or%20pathway%20scores%20on%20dimensional%20reduction%20scatter%20plot%20-1.png)<!-- -->
+<img src="man/figures/Visualize gene set or pathway scores on dimensional reduction scatter plot -1.png" width="100%" />
 
 In the provided example, we demonstrate the usage of the
 plotGeneSetScores function using the AUCell package to compute gene set
@@ -366,7 +358,7 @@ cell_type_colors <- color_mapping[cell_types]
 visualizeCellTypeMDS(query_data_subset, ref_data_subset, mdata, cell_type_colors, legend_order)
 ```
 
-![](README_files/figure-gfm/CMD%20scatter%20plot-1.png)<!-- -->
+<img src="man/figures/CMD scatter plot-1.png" width="100%" />
 
 Upon examining the MDS scatter plot, we observe that the “CD4” and “CD8”
 cell types overlap to some extent.By observing the proximity or overlap
@@ -402,7 +394,7 @@ cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data_subset, ref_data_
 corrplot(cor_matrix_avg, method = "number", tl.col = "black")
 ```
 
-![](README_files/figure-gfm/Cell%20Type-specific%20Pairwise%20Correlation%20Analysis%20and%20Visualization%20-1.png)<!-- -->
+<img src="man/figures/Cell Type-specific Pairwise Correlation Analysis and Visualization -1.png" width="100%" />
 
 This analysis allows us to examine the correlation patterns between
 different cell types in the single-cell gene expression dataset. By
@@ -437,7 +429,7 @@ distances are calculated using the “euclidean” distance metric.
 calculatePairwiseDistancesAndPlotDensity(query_data_subset, ref_data_subset, "labels", "reclustered.broad", "CD8", "euclidean")
 ```
 
-![](README_files/figure-gfm/Pairwise%20Distance%20Analysis%20and%20Density%20Visualization-1.png)<!-- -->
+<img src="man/figures/Pairwise Distance Analysis and Density Visualization-1.png" width="100%" />
 
 Further, user can also use correlation for calculation of pairwise
 distances between query and reference cells of a specific cell type.
@@ -450,7 +442,7 @@ use spearman or pearson correlation coefficient as a method of choice.
 calculatePairwiseDistancesAndPlotDensity(query_data_subset, ref_data_subset, "labels", "reclustered.broad", "CD8", "correlation" ,"spearman")
 ```
 
-![](README_files/figure-gfm/Pairwise%20Distance%20Analysis%20and%20Density%20Visualization%20correlation%20based-1.png)<!-- -->
+<img src="man/figures/Pairwise Distance Analysis and Density Visualization correlation based-1.png" width="100%" />
 
 By utilizing this function, users can explore the pairwise distances
 between query and reference cells of a specific cell type and gain
@@ -477,42 +469,42 @@ summary <- performLinearRegression(query_data, "PC1", "labels")
 #> lm(formula = Dependent ~ Independent, data = df)
 #> 
 #> Residuals:
-#>      Min       1Q   Median       3Q      Max 
-#> -14.8786  -2.2964   0.6205   2.5693   7.8438 
+#>     Min      1Q  Median      3Q     Max 
+#> -8.4684 -2.4142 -0.7017  2.0922 15.5537 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          7.9964     0.2850   28.06   <2e-16 ***
-#> IndependentCD4      -4.8380     0.3472  -13.94   <2e-16 ***
-#> IndependentCD8     -13.8761     0.3383  -41.01   <2e-16 ***
-#> IndependentMyeloid  -8.6494     0.6255  -13.83   <2e-16 ***
+#> (Intercept)         -8.2479     0.2892  -28.52   <2e-16 ***
+#> IndependentCD4       4.7333     0.3441   13.76   <2e-16 ***
+#> IndependentCD8      13.8447     0.3351   41.32   <2e-16 ***
+#> IndependentMyeloid   9.4121     0.5908   15.93   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.694 on 965 degrees of freedom
-#> Multiple R-squared:  0.6832, Adjusted R-squared:  0.6823 
-#> F-statistic: 693.8 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.494 on 965 degrees of freedom
+#> Multiple R-squared:  0.7014, Adjusted R-squared:  0.7005 
+#> F-statistic: 755.7 on 3 and 965 DF,  p-value: < 2.2e-16
 print(summary)
 #> 
 #> Call:
 #> lm(formula = Dependent ~ Independent, data = df)
 #> 
 #> Residuals:
-#>      Min       1Q   Median       3Q      Max 
-#> -14.8786  -2.2964   0.6205   2.5693   7.8438 
+#>     Min      1Q  Median      3Q     Max 
+#> -8.4684 -2.4142 -0.7017  2.0922 15.5537 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          7.9964     0.2850   28.06   <2e-16 ***
-#> IndependentCD4      -4.8380     0.3472  -13.94   <2e-16 ***
-#> IndependentCD8     -13.8761     0.3383  -41.01   <2e-16 ***
-#> IndependentMyeloid  -8.6494     0.6255  -13.83   <2e-16 ***
+#> (Intercept)         -8.2479     0.2892  -28.52   <2e-16 ***
+#> IndependentCD4       4.7333     0.3441   13.76   <2e-16 ***
+#> IndependentCD8      13.8447     0.3351   41.32   <2e-16 ***
+#> IndependentMyeloid   9.4121     0.5908   15.93   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.694 on 965 degrees of freedom
-#> Multiple R-squared:  0.6832, Adjusted R-squared:  0.6823 
-#> F-statistic: 693.8 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.494 on 965 degrees of freedom
+#> Multiple R-squared:  0.7014, Adjusted R-squared:  0.7005 
+#> F-statistic: 755.7 on 3 and 965 DF,  p-value: < 2.2e-16
 ```
 
 By conducting linear regression, one can assess whether the PC values

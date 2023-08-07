@@ -5,10 +5,12 @@ date: "2023-07-08"
 output: github_document
 ---
 
-```{r setup, include = FALSE}
+```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.path = "man/figures/",
+  out.width = "100%"
 )
 ```
 
@@ -30,12 +32,6 @@ To build the package vignettes upon installation use:
 BiocManager::install("ccb-hms/scDiagnostics",
                      build_vignettes = TRUE,
                      dependencies = TRUE)
-```
-
-Once you have the package installed, you can inspect the vignettes from within R via:
-
-```{r view_vignettes, eval=TRUE}
-browseVignettes("scDiagnostics")
 ```
 
 
