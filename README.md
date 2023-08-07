@@ -185,7 +185,7 @@ qc_histogram <- p[[1]]
 qc_histogram
 ```
 
-<img src="man/figures/Distribution of library size and Annotation Score-1.png" width="100%" />
+<img src="man/figures/Distribution of percentage mito genes and Annotation Scores-1.png" width="100%" />
 
 ``` r
 
@@ -194,7 +194,7 @@ scores_histogram <- p[[2]]
 scores_histogram
 ```
 
-<img src="man/figures/Distribution of library size and Annotation Score-2.png" width="100%" />
+<img src="man/figures/Distribution of percentage mito genes and Annotation Scores-2.png" width="100%" />
 
 The example code provided demonstrates how to utilize the
 plotCellTypeDistribution function with the necessary data and packages.
@@ -470,20 +470,20 @@ summary <- performLinearRegression(query_data, "PC1", "labels")
 #> 
 #> Residuals:
 #>     Min      1Q  Median      3Q     Max 
-#> -8.4684 -2.4142 -0.7017  2.0922 15.5537 
+#> -7.3492 -2.4894 -0.6756  1.9033 14.0763 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -8.2479     0.2892  -28.52   <2e-16 ***
-#> IndependentCD4       4.7333     0.3441   13.76   <2e-16 ***
-#> IndependentCD8      13.8447     0.3351   41.32   <2e-16 ***
-#> IndependentMyeloid   9.4121     0.5908   15.93   <2e-16 ***
+#> (Intercept)         -7.9926     0.2783  -28.72   <2e-16 ***
+#> IndependentCD4       4.6816     0.3336   14.04   <2e-16 ***
+#> IndependentCD8      13.9496     0.3274   42.61   <2e-16 ***
+#> IndependentMyeloid   8.3010     0.6799   12.21   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.494 on 965 degrees of freedom
-#> Multiple R-squared:  0.7014, Adjusted R-squared:  0.7005 
-#> F-statistic: 755.7 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.509 on 965 degrees of freedom
+#> Multiple R-squared:  0.7082, Adjusted R-squared:  0.7073 
+#> F-statistic: 780.8 on 3 and 965 DF,  p-value: < 2.2e-16
 print(summary)
 #> 
 #> Call:
@@ -491,20 +491,20 @@ print(summary)
 #> 
 #> Residuals:
 #>     Min      1Q  Median      3Q     Max 
-#> -8.4684 -2.4142 -0.7017  2.0922 15.5537 
+#> -7.3492 -2.4894 -0.6756  1.9033 14.0763 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -8.2479     0.2892  -28.52   <2e-16 ***
-#> IndependentCD4       4.7333     0.3441   13.76   <2e-16 ***
-#> IndependentCD8      13.8447     0.3351   41.32   <2e-16 ***
-#> IndependentMyeloid   9.4121     0.5908   15.93   <2e-16 ***
+#> (Intercept)         -7.9926     0.2783  -28.72   <2e-16 ***
+#> IndependentCD4       4.6816     0.3336   14.04   <2e-16 ***
+#> IndependentCD8      13.9496     0.3274   42.61   <2e-16 ***
+#> IndependentMyeloid   8.3010     0.6799   12.21   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.494 on 965 degrees of freedom
-#> Multiple R-squared:  0.7014, Adjusted R-squared:  0.7005 
-#> F-statistic: 755.7 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.509 on 965 degrees of freedom
+#> Multiple R-squared:  0.7082, Adjusted R-squared:  0.7073 
+#> F-statistic: 780.8 on 3 and 965 DF,  p-value: < 2.2e-16
 ```
 
 By conducting linear regression, one can assess whether the PC values
