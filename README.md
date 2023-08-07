@@ -1,17 +1,49 @@
-scDiagnostics
+scDiagnostics: diagnostic functions to assess the quality of cell type
+assignments in single-cell RNA-seq
 ================
 Smriti Chawla
-2023-08-04
+2023-07-08
 
-<h2>
-scDiagnostics: diagnostic functions to assess the quality of cell type assignments in single-cell RNA-seq data
-</h2>
-<h3>
+<h1>
 Getting started
-</h3>
-<h2>
-Prerequisites
-</h2>
+</h1>
+
+# Installation
+
+<h4>
+Install a Bioconductor Package
+</h4>
+
+To install a package from Bioconductor use a following command:
+
+``` r
+BiocManager::install("scDiagnostics")
+```
+
+To build the package vignettes upon installation use:
+
+``` r
+BiocManager::install("ccb-hms/scDiagnostics",
+                     build_vignettes = TRUE,
+                     dependencies = TRUE)
+```
+
+Once you have the package installed, you can inspect the vignettes from
+within R via:
+
+``` r
+browseVignettes("scDiagnostics")
+#> No vignettes found by browseVignettes("scDiagnostics")
+```
+
+To install a package directly from a GitHub repository, you will need a
+remotes package and command is as follows:
+
+``` r
+remotes::install_github("ccb-hms/scDiagnostics")
+```
+
+# Prerequisites
 
 R version tested: 4.2.3 (2023-03-15)
 
@@ -29,7 +61,7 @@ installed:
 - corrplot
 - RColorBrewer
 
-## Usage
+# Usage
 
 To explore the capabilities of the scDiagnostics package, you can load
 your own data or use the provided example with publicly available data
@@ -59,7 +91,7 @@ library(corrplot)
 Let’s load the Marrow dataset for demonstration purposes. The dataset
 represents single-cell gene expression profiles of Marrow tissue. In
 this example, we will analyze the relationship between user-defined QC
-stats and SingleR scores for a specific cell type.
+stats and annotation scores for a specific cell type.
 
 To perform this analysis, we first divide the dataset into reference and
 query datasets. The reference dataset serves as a reference for cell
@@ -115,7 +147,7 @@ and interpretation of the cell type assignments in the dataset.
    p1 + xlab("percent.mito")
 ```
 
-<img src="man/figures/Scatter plot QC stats vs annotation scores-1.png" width="100%" />
+![](README_files/figure-gfm/Scatter%20plot%20QC%20stats%20vs%20annotation%20scores-1.png)<!-- -->
 
 Scatter plot for visualizing relationship between percentage of
 mitochondrial gene and cell annotation scores for the cell types.
@@ -125,26 +157,26 @@ mitochondrial gene and cell annotation scores for the cell types.
    p2 + xlab("percent.mito")
 ```
 
-<img src="man/figures/QC stats vs annotation scores all-1.png" width="100%" />
+![](README_files/figure-gfm/Scatter%20plot%20QC%20stats%20vs%20annotation%20scores%20all%20cell%20types-1.png)<!-- -->
 
-## Examining Distribution of library size and Annotation Scores
+## Examining Distribution of QC stats and Annotation Scores
 
 In addition to the scatter plot, we can gain further insights into the
-gene expression profiles by visualizing the distribution of library size
-and annotation scores for a specific cell type. This allows us to
-examine the variation and patterns in expression levels and scores
-across cells assigned to the cell type of interest.
+gene expression profiles by visualizing the distribution of user defined
+QC stats and annotation scores for all the cell types or specific cell
+types. This allows us to examine the variation and patterns in
+expression levels and scores across cells assigned to the cell type of
+interest.
 
 To accomplish this, we create two separate histograms. The first
 histogram displays the distribution of the annotation scores. The x-axis
 represents the scores, while the y-axis represents the frequency of
 cells with a given score.
 
-The second histogram visualizes the distribution of total
-log-transformed UMI counts per cell. This provides insights into the
-overall gene expression levels for the specific cell type. The x-axis
-represents the total logcounts, while the y-axis represents the
-frequency of cells within each count range.
+The second histogram visualizes the distribution of QC stats. This
+provides insights into the overall gene expression levels for the
+specific cell type. Here in this particular example we are investigating
+percentage of mitochondrial genes.
 
 By examining the histograms, we can observe the range, shape, and
 potential outliers in the distribution of both annotation scores and
@@ -154,11 +186,23 @@ the gene expression profiles for the specific cell type.
 
 ``` r
 # Generate histogram
-cell_type_scores <- pred$scores.CD4
-plotCellTypeDistribution(cell_type_scores, query_data, "labels", "CD4")
+p <- histQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
+
+# Access the histogram of QC stats (the first element in the list)
+qc_histogram <- p[[1]]
+qc_histogram
 ```
 
-<img src="man/figures/Distribution of library size and annotation Score-1.png" width="100%" />
+![](README_files/figure-gfm/Distribution%20of%20library%20size%20and%20Annotation%20Score-1.png)<!-- -->
+
+``` r
+
+# Access the histogram of annotation scores (the second element in the list)
+scores_histogram <- p[[2]]
+scores_histogram
+```
+
+![](README_files/figure-gfm/Distribution%20of%20library%20size%20and%20Annotation%20Score-2.png)<!-- -->
 
 The example code provided demonstrates how to utilize the
 plotCellTypeDistribution function with the necessary data and packages.
@@ -178,7 +222,7 @@ interest, both overall and within specific cell types.
 plotGeneExpressionDistribution(query_data, "labels", "B_and_plasma", "VPREB3")
 ```
 
-<img src="man/figures/histogram gene expression-1.png" width="100%" />
+![](README_files/figure-gfm/histogram%20gene%20expression-1.png)<!-- -->
 
 In the provided example, we are examining the distribution of expression
 values for the gene “VPREB3” in the dataset. The function generates a
@@ -211,7 +255,7 @@ gene “VPREB3,” ranging from low (lighter color) to high (darker color).
 plotGeneExpressionDimred(query_data, "PCA", c(1, 2), "VPREB3")
 ```
 
-<img src="man/figures/scatter plot gene expression-1.png" width="100%" />
+![](README_files/figure-gfm/scatter%20plot%20gene%20expression-1.png)<!-- -->
 
 The dimensional reduction plot allows us to observe how the gene
 expression of “VPREB3” is distributed across the cells and whether any
@@ -262,7 +306,7 @@ colData(query_data)$geneSetScores <- assay(cells_AUC)["geneSet1", ]
 plotGeneSetScores(query_data, method = "PCA", feature = "geneSetScores")
 ```
 
-<img src="man/figures/Visualize gene set or pathway scores on dimensional reduction scatter plot -1.png" width="100%" />
+![](README_files/figure-gfm/Visualize%20gene%20set%20or%20pathway%20scores%20on%20dimensional%20reduction%20scatter%20plot%20-1.png)<!-- -->
 
 In the provided example, we demonstrate the usage of the
 plotGeneSetScores function using the AUCell package to compute gene set
@@ -322,7 +366,7 @@ cell_type_colors <- color_mapping[cell_types]
 visualizeCellTypeMDS(query_data_subset, ref_data_subset, mdata, cell_type_colors, legend_order)
 ```
 
-<img src="man/figures/CMD scatter plot-1.png" width="100%" />
+![](README_files/figure-gfm/CMD%20scatter%20plot-1.png)<!-- -->
 
 Upon examining the MDS scatter plot, we observe that the “CD4” and “CD8”
 cell types overlap to some extent.By observing the proximity or overlap
@@ -358,7 +402,7 @@ cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data_subset, ref_data_
 corrplot(cor_matrix_avg, method = "number", tl.col = "black")
 ```
 
-<img src="man/figures/Cell Type-specific Pairwise Correlation Analysis and Visualization -1.png" width="100%" />
+![](README_files/figure-gfm/Cell%20Type-specific%20Pairwise%20Correlation%20Analysis%20and%20Visualization%20-1.png)<!-- -->
 
 This analysis allows us to examine the correlation patterns between
 different cell types in the single-cell gene expression dataset. By
@@ -393,7 +437,7 @@ distances are calculated using the “euclidean” distance metric.
 calculatePairwiseDistancesAndPlotDensity(query_data_subset, ref_data_subset, "labels", "reclustered.broad", "CD8", "euclidean")
 ```
 
-<img src="man/figures/Pairwise Distance Analysis and Density Visualization-1.png" width="100%" />
+![](README_files/figure-gfm/Pairwise%20Distance%20Analysis%20and%20Density%20Visualization-1.png)<!-- -->
 
 Further, user can also use correlation for calculation of pairwise
 distances between query and reference cells of a specific cell type.
@@ -406,7 +450,7 @@ use spearman or pearson correlation coefficient as a method of choice.
 calculatePairwiseDistancesAndPlotDensity(query_data_subset, ref_data_subset, "labels", "reclustered.broad", "CD8", "correlation" ,"spearman")
 ```
 
-<img src="man/figures/Pairwise Distance Analysis and Density Visualization correlation based-1.png" width="100%" />
+![](README_files/figure-gfm/Pairwise%20Distance%20Analysis%20and%20Density%20Visualization%20correlation%20based-1.png)<!-- -->
 
 By utilizing this function, users can explore the pairwise distances
 between query and reference cells of a specific cell type and gain
@@ -434,20 +478,20 @@ summary <- performLinearRegression(query_data, "PC1", "labels")
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -15.2062  -2.3150   0.8288   2.6483   7.8053 
+#> -14.8786  -2.2964   0.6205   2.5693   7.8438 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          7.7625     0.2838   27.36   <2e-16 ***
-#> IndependentCD4      -4.6590     0.3437  -13.56   <2e-16 ***
-#> IndependentCD8     -13.9545     0.3399  -41.05   <2e-16 ***
-#> IndependentMyeloid  -8.4053     0.6258  -13.43   <2e-16 ***
+#> (Intercept)          7.9964     0.2850   28.06   <2e-16 ***
+#> IndependentCD4      -4.8380     0.3472  -13.94   <2e-16 ***
+#> IndependentCD8     -13.8761     0.3383  -41.01   <2e-16 ***
+#> IndependentMyeloid  -8.6494     0.6255  -13.83   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.7 on 965 degrees of freedom
-#> Multiple R-squared:  0.6853, Adjusted R-squared:  0.6843 
-#> F-statistic: 700.3 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.694 on 965 degrees of freedom
+#> Multiple R-squared:  0.6832, Adjusted R-squared:  0.6823 
+#> F-statistic: 693.8 on 3 and 965 DF,  p-value: < 2.2e-16
 print(summary)
 #> 
 #> Call:
@@ -455,20 +499,20 @@ print(summary)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -15.2062  -2.3150   0.8288   2.6483   7.8053 
+#> -14.8786  -2.2964   0.6205   2.5693   7.8438 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          7.7625     0.2838   27.36   <2e-16 ***
-#> IndependentCD4      -4.6590     0.3437  -13.56   <2e-16 ***
-#> IndependentCD8     -13.9545     0.3399  -41.05   <2e-16 ***
-#> IndependentMyeloid  -8.4053     0.6258  -13.43   <2e-16 ***
+#> (Intercept)          7.9964     0.2850   28.06   <2e-16 ***
+#> IndependentCD4      -4.8380     0.3472  -13.94   <2e-16 ***
+#> IndependentCD8     -13.8761     0.3383  -41.01   <2e-16 ***
+#> IndependentMyeloid  -8.6494     0.6255  -13.83   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.7 on 965 degrees of freedom
-#> Multiple R-squared:  0.6853, Adjusted R-squared:  0.6843 
-#> F-statistic: 700.3 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.694 on 965 degrees of freedom
+#> Multiple R-squared:  0.6832, Adjusted R-squared:  0.6823 
+#> F-statistic: 693.8 on 3 and 965 DF,  p-value: < 2.2e-16
 ```
 
 By conducting linear regression, one can assess whether the PC values
@@ -480,7 +524,7 @@ technical factors driving cellular heterogeneity. It can help identify
 PC dimensions that capture variation specific to certain cell types or
 distinguish different cellular states.
 
-## Conclusion
+# Conclusion
 
 In this analysis, we have demonstrated the capabilities of the
 scDiagnostics package for assessing the appropriateness of cell
@@ -501,3 +545,104 @@ characteristics within the dataset. Additionally, the pairwise
 correlation and distance analyses provided a deeper understanding of the
 similarities and differences between cell types, highlighting potential
 relationships and patterns.
+
+------------------------------------------------------------------------
+
+## R.session Info
+
+    R version 4.3.1 (2023-06-16)
+    Platform: aarch64-apple-darwin20 (64-bit)
+    Running under: macOS Ventura 13.5
+
+    Matrix products: default
+    BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+    LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+    locale:
+    [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+    time zone: America/New_York
+    tzcode source: internal
+
+    attached base packages:
+    [1] stats4    stats     graphics  grDevices utils     datasets  methods  
+    [8] base     
+
+    other attached packages:
+     [1] corrplot_0.92               AUCell_1.22.0              
+     [3] SingleR_2.2.0               RColorBrewer_1.1-3         
+     [5] scRNAseq_2.14.0             scran_1.28.1               
+     [7] scater_1.29.2               ggplot2_3.4.2              
+     [9] scuttle_1.9.4               scDiagnostics_0.99.0       
+    [11] SingleCellExperiment_1.22.0 SummarizedExperiment_1.30.2
+    [13] Biobase_2.60.0              GenomicRanges_1.52.0       
+    [15] GenomeInfoDb_1.36.0         IRanges_2.34.0             
+    [17] S4Vectors_0.38.1            BiocGenerics_0.46.0        
+    [19] MatrixGenerics_1.12.0       matrixStats_1.0.0          
+
+    loaded via a namespace (and not attached):
+      [1] rstudioapi_0.15.0             magrittr_2.0.3               
+      [3] ggbeeswarm_0.7.2              GenomicFeatures_1.52.1       
+      [5] farver_2.1.1                  rmarkdown_2.22               
+      [7] BiocIO_1.10.0                 zlibbioc_1.46.0              
+      [9] vctrs_0.6.3                   Rsamtools_2.16.0             
+     [11] memoise_2.0.1                 DelayedMatrixStats_1.22.0    
+     [13] RCurl_1.98-1.12               htmltools_0.5.5              
+     [15] S4Arrays_1.0.4                progress_1.2.2               
+     [17] AnnotationHub_3.8.0           curl_5.0.1                   
+     [19] BiocNeighbors_1.18.0          cachem_1.0.8                 
+     [21] GenomicAlignments_1.36.0      igraph_1.5.0                 
+     [23] mime_0.12                     lifecycle_1.0.3              
+     [25] pkgconfig_2.0.3               rsvd_1.0.5                   
+     [27] Matrix_1.6-0                  R6_2.5.1                     
+     [29] fastmap_1.1.1                 GenomeInfoDbData_1.2.10      
+     [31] shiny_1.7.4                   digest_0.6.31                
+     [33] colorspace_2.1-0              AnnotationDbi_1.62.1         
+     [35] dqrng_0.3.0                   irlba_2.3.5.1                
+     [37] ExperimentHub_2.8.0           RSQLite_2.3.1                
+     [39] beachmat_2.16.0               labeling_0.4.2               
+     [41] filelock_1.0.2                fansi_1.0.4                  
+     [43] httr_1.4.6                    compiler_4.3.1               
+     [45] bit64_4.0.5                   withr_2.5.0                  
+     [47] BiocParallel_1.34.2           viridis_0.6.3                
+     [49] DBI_1.1.3                     highr_0.10                   
+     [51] R.utils_2.12.2                biomaRt_2.56.1               
+     [53] rappdirs_0.3.3                DelayedArray_0.26.3          
+     [55] rjson_0.2.21                  bluster_1.10.0               
+     [57] tools_4.3.1                   vipor_0.4.5                  
+     [59] beeswarm_0.4.0                interactiveDisplayBase_1.38.0
+     [61] httpuv_1.6.11                 R.oo_1.25.0                  
+     [63] glue_1.6.2                    restfulr_0.0.15              
+     [65] promises_1.2.0.1              grid_4.3.1                   
+     [67] cluster_2.1.4                 generics_0.1.3               
+     [69] gtable_0.3.3                  R.methodsS3_1.8.2            
+     [71] ensembldb_2.24.0              data.table_1.14.8            
+     [73] hms_1.1.3                     xml2_1.3.5                   
+     [75] BiocSingular_1.16.0           ScaledMatrix_1.8.1           
+     [77] metapod_1.8.0                 utf8_1.2.3                   
+     [79] XVector_0.40.0                ggrepel_0.9.3                
+     [81] BiocVersion_3.17.1            pillar_1.9.0                 
+     [83] stringr_1.5.0                 limma_3.56.2                 
+     [85] later_1.3.1                   dplyr_1.1.2                  
+     [87] BiocFileCache_2.8.0           lattice_0.21-8               
+     [89] rtracklayer_1.60.0            bit_4.0.5                    
+     [91] annotate_1.78.0               tidyselect_1.2.0             
+     [93] locfit_1.5-9.8                Biostrings_2.68.1            
+     [95] knitr_1.43                    gridExtra_2.3                
+     [97] ProtGenerics_1.32.0           edgeR_3.42.4                 
+     [99] xfun_0.39                     statmod_1.5.0                
+    [101] stringi_1.7.12                lazyeval_0.2.2               
+    [103] yaml_2.3.7                    evaluate_0.21                
+    [105] codetools_0.2-19              tibble_3.2.1                 
+    [107] graph_1.78.0                  BiocManager_1.30.21          
+    [109] cli_3.6.1                     xtable_1.8-4                 
+    [111] munsell_0.5.0                 Rcpp_1.0.10                  
+    [113] dbplyr_2.3.2                  png_0.1-8                    
+    [115] XML_3.99-0.14                 parallel_4.3.1               
+    [117] ellipsis_0.3.2                blob_1.2.4                   
+    [119] prettyunits_1.1.1             AnnotationFilter_1.24.0      
+    [121] sparseMatrixStats_1.12.0      bitops_1.0-7                 
+    [123] GSEABase_1.62.0               viridisLite_0.4.2            
+    [125] scales_1.2.1                  purrr_1.0.1                  
+    [127] crayon_1.5.2                  rlang_1.1.1                  
+    [129] cowplot_1.1.1                 KEGGREST_1.40.0              

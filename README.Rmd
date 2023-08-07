@@ -1,24 +1,52 @@
 ---
-title: "scDiagnostics"
+title: "scDiagnostics: diagnostic functions to assess the quality of cell type assignments in single-cell RNA-seq"
 author: "Smriti Chawla"
-date: "2023-08-04"
+date: "2023-07-08"
 output: github_document
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/",
-  out.width = "100%"
+  comment = "#>"
 )
 ```
 
-<h2> scDiagnostics: diagnostic functions to assess the quality of cell type assignments in single-cell RNA-seq data </h2>
+<h1> Getting started </h1>
 
-<h3> Getting started </h3>
+# Installation
 
-<h2> Prerequisites </h2>
+<h4> Install a Bioconductor Package </h4>
+
+To install a package from Bioconductor use a following command:
+
+```{r install_bioc_package, eval=FALSE}
+BiocManager::install("scDiagnostics")
+```
+
+To build the package vignettes upon installation use:
+
+```{r build_vignettes, eval=FALSE}
+BiocManager::install("ccb-hms/scDiagnostics",
+                     build_vignettes = TRUE,
+                     dependencies = TRUE)
+```
+
+Once you have the package installed, you can inspect the vignettes from within R via:
+
+```{r view_vignettes, eval=TRUE}
+browseVignettes("scDiagnostics")
+```
+
+
+To install a package directly from a GitHub repository, you will need a remotes package and command is as follows:
+
+```{r install_github_package, eval=FALSE}
+remotes::install_github("ccb-hms/scDiagnostics")
+```
+
+
+# Prerequisites
 
 R version tested: 4.2.3 (2023-03-15) 
 
@@ -36,7 +64,7 @@ To use the scDiagnostics package, you need the following R packages installed:
  * RColorBrewer
 
  
-## Usage
+# Usage
 
 To explore the capabilities of the scDiagnostics package, you can load your own data or use the provided example with publicly available data of Marrow tissue single cell gene expression profiles from He S et al. (2020). Single-cell transcriptome profiling of an adult human cell atlas of 15 major organs. Genome Biol 21, 1:294. This dataset is obtained from the scRNAseq R package and is used for analyzing and visualizing diagnostic plots to inspect query/test and reference datasets and check the appropriateness of cell type assignments. In the provided example, the dataset is divided into 70% reference and 30% query data.
 
@@ -54,7 +82,7 @@ library(corrplot)
 
 ## Scatter Plot: QC stats vs. Annotation Scores
 
-Let's load the Marrow dataset for demonstration purposes. The dataset represents single-cell gene expression profiles of Marrow tissue. In this example, we will analyze the relationship between user-defined QC stats and SingleR scores for a specific cell type.
+Let's load the Marrow dataset for demonstration purposes. The dataset represents single-cell gene expression profiles of Marrow tissue. In this example, we will analyze the relationship between user-defined QC stats and annotation scores for a specific cell type.
 
 To perform this analysis, we first divide the dataset into reference and query datasets. The reference dataset serves as a reference for cell type annotation, while the query dataset contains cells that we want to assign cell types to. We then log-transform the expression values in both datasets for further analysis.
 
@@ -99,29 +127,34 @@ It's important to note that the use of SingleR for cell type annotation is just 
    
 ```
 
-
 Scatter plot for visualizing relationship between percentage of mitochondrial gene and cell annotation scores for the cell types.
 
-```{r QC stats vs annotation scores all, warning=FALSE, message=FALSE}
+```{r Scatter plot QC stats vs annotation scores all cell types, warning=FALSE, message=FALSE}
    p2 <- plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
    p2 + xlab("percent.mito")
 ```
 
-## Examining Distribution of library size and Annotation Scores
+## Examining Distribution of QC stats and Annotation Scores
 
-In addition to the scatter plot, we can gain further insights into the gene expression profiles by visualizing the distribution of library size and annotation scores for a specific cell type. This allows us to examine the variation and patterns in expression levels and scores across cells assigned to the cell type of interest.
+In addition to the scatter plot, we can gain further insights into the gene expression profiles by visualizing the distribution of user defined QC stats and annotation scores for all the cell types or specific cell types. This allows us to examine the variation and patterns in expression levels and scores across cells assigned to the cell type of interest.
 
 To accomplish this, we create two separate histograms. The first histogram displays the distribution of the annotation scores. The x-axis represents the scores, while the y-axis represents the frequency of cells with a given score.
 
-The second histogram visualizes the distribution of total log-transformed UMI counts per cell. This provides insights into the overall gene expression levels for the specific cell type. The x-axis represents the total logcounts, while the y-axis represents the frequency of cells within each count range.
+The second histogram visualizes the distribution of QC stats. This provides insights into the overall gene expression levels for the specific cell type. Here in this particular example we are investigating percentage of mitochondrial genes.
 
 By examining the histograms, we can observe the range, shape, and potential outliers in the distribution of both annotation scores and library size. This allows us to assess the appropriateness of the cell type assignments and identify any potential discrepancies or patterns in the gene expression profiles for the specific cell type.
 
-
-```{r Distribution of library size and annotation Score, warning=FALSE, message=FALSE}
+```{r Distribution of library size and Annotation Score, warning=FALSE, message=FALSE}
 # Generate histogram
-cell_type_scores <- pred$scores.CD4
-plotCellTypeDistribution(cell_type_scores, query_data, "labels", "CD4")
+p <- histQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
+
+# Access the histogram of QC stats (the first element in the list)
+qc_histogram <- p[[1]]
+qc_histogram
+
+# Access the histogram of annotation scores (the second element in the list)
+scores_histogram <- p[[2]]
+scores_histogram
 ```
 
 The example code provided demonstrates how to utilize the plotCellTypeDistribution function with the necessary data and packages. Here we are visualizing the distribution of counts and scores for the "CD4" cell type.
@@ -279,8 +312,25 @@ print(summary)
 
 By conducting linear regression, one can assess whether the PC values are significantly associated with the cell types. This analysis helps uncover whether there is a systematic variation in PC values across different cell types. Understanding the relationship between PC values and cell types can provide valuable insights into the biological or technical factors driving cellular heterogeneity. It can help identify PC dimensions that capture variation specific to certain cell types or distinguish different cellular states. 
 
-## Conclusion
+# Conclusion
 
 In this analysis, we have demonstrated the capabilities of the scDiagnostics package for assessing the appropriateness of cell assignments in single-cell gene expression profiles. By utilizing various diagnostic functions and visualization techniques, we have explored different aspects of the data, including total UMI counts, annotation scores, gene expression distributions, dimensional reduction plots, gene set scores, pairwise correlations, pairwise distances, and linear regression analysis.
 
 Through the scatter plots, histograms, and dimensional reduction plots, we were able to gain insights into the relationships between gene expression patterns, cell types, and the distribution of cells in a reduced-dimensional space. The examination of gene expression distributions, gene sets, and pathways allowed us to explore the functional landscape and identify subpopulations with distinct characteristics within the dataset. Additionally, the pairwise correlation and distance analyses provided a deeper understanding of the similarities and differences between cell types, highlighting potential relationships and patterns.
+
+
+***
+
+## R.session Info
+
+```{r SessionInfo, echo=FALSE, message=FALSE, warning=FALSE, comment=NA}
+#options(width=900) #only works properly in conjunction with the style:overflow.x option at the start
+options(width=80) #reset to 'default' width
+
+sessionInfo() #record the R and package versions used
+#######################################################
+### END
+#######################################################
+
+```
+
