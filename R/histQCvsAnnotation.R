@@ -14,12 +14,15 @@
 #' 
 #' @export
 #' @import ggplot2
+#' @import gridExtra
+#' @importFrom gridExtra grid.arrange
 #' 
 #' @examples
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
 #' library(SingleR)
+#' library(gridExtra)
 #'
 #' # Load data
 #' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
@@ -78,6 +81,6 @@ histQCvsAnnotation <- function(query_data, qc_col, label_col, score_col, label =
     ylab("Frequency") +
     theme_bw()
   
-  # Return a grid.arrange object displaying histograms of QC stats and annotation scores
-  return(list(qc_histogram, scores_histogram))
+  # Return the list of plots
+  return(grid.arrange(qc_histogram, scores_histogram, ncol = 2))
 }
