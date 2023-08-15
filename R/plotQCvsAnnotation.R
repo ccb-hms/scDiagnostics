@@ -43,7 +43,7 @@
 #' colData(query_data)$cell_scores <- scores
 #'
 #' # Generate scatter plots
-#' plotQCvsMultipleCellTypes(query_data, "percent.mito", "labels", "cell_scores", c("CD4", "CD8"))
+#' plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", c("CD4", "CD8"))
 #' plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
 #'
 plotQCvsAnnotation <- function(query_data, qc_col, label_col, score_col, label = NULL) {
@@ -57,7 +57,6 @@ plotQCvsAnnotation <- function(query_data, qc_col, label_col, score_col, label =
   # Extract QC stats, scores, and labels
   qc_stats <- colData(query_data)[, qc_col]
   cell_type_scores <- colData(query_data)[, score_col]
-  cell_type_labels <- colData(query_data)[, label_col]
 
   # Combine QC stats, scores, and labels into a data frame
   data <- data.frame(QCStats = qc_stats, Scores = cell_type_scores)
