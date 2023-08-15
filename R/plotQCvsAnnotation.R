@@ -47,26 +47,27 @@
 #' plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
 #'
 plotQCvsAnnotation <- function(query_data, qc_col, label_col, score_col, label = NULL) {
-
+  
   # Filter cells based on label if specified
   if (!is.null(label)) {
     index <- which(colData(query_data)[[label_col]] %in% label)
     query_data <- query_data[, index]
   }
-
+  
   # Extract QC stats, scores, and labels
   qc_stats <- colData(query_data)[, qc_col]
   cell_type_scores <- colData(query_data)[, score_col]
-
+  cell_labels <- colData(query_data)[[label_col]]
+  
   # Combine QC stats, scores, and labels into a data frame
-  data <- data.frame(QCStats = qc_stats, Scores = cell_type_scores)
-
-  # Create a scatter plot
-  plot <- ggplot(data, aes(x = QCStats, y = Scores)) +
+  data <- data.frame(QCStats = qc_stats, Scores = cell_type_scores, CellType = cell_labels)
+  
+  # Create a scatter plot with color-coded points based on cell types or labels
+  plot <- ggplot(data, aes(x = QCStats, y = Scores, color = CellType)) +
     geom_point() +
     xlab("QC stats") +
     ylab("Annotation Scores") +
     theme_bw()
-
+  
   return(plot)
 }

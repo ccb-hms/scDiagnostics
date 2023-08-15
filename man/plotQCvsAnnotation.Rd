@@ -53,7 +53,7 @@ scores <- apply(pred[,1:4], 1, max)
 colData(query_data)$cell_scores <- scores
 
 # Generate scatter plots
-plotQCvsMultipleCellTypes(query_data, "percent.mito", "labels", "cell_scores", c("CD4", "CD8"))
+plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", c("CD4", "CD8"))
 plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
 
 }
