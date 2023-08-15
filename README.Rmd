@@ -227,11 +227,11 @@ common_genes <- intersect(ref_var, query_var)
 # Select desired cell types
 selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
 ref_data_subset <- ref_data[common_genes, ref_data$reclustered.broad %in% selected_cell_types]
-query_data_subset <- query_data[common_genes, query_data$reclustered.broad %in% selected_cell_types]
+query_data_subset <- query_data[common_genes, query_data$labels %in% selected_cell_types]
 
 # Extract cell types for visualization
 ref_labels <- ref_data_subset$reclustered.broad
-query_labels <- query_data_subset$reclustered.broad
+query_labels <- query_data_subset$labels
 
 # Combine the cell type labels from both datasets
 mdata <- c(paste("Query", query_labels), paste("Reference", ref_labels))
