@@ -17,8 +17,10 @@ Install a Bioconductor Package
 To install a package from Bioconductor use a following command:
 
 ``` r
-BiocManager::install("scDiagnostics")
+BiocManager::install("ccb-hms/scDiagnostics")
 ```
+
+NOTE: you will need the remotes package to install from github.
 
 To build the package vignettes upon installation use:
 
@@ -26,13 +28,6 @@ To build the package vignettes upon installation use:
 BiocManager::install("ccb-hms/scDiagnostics",
                      build_vignettes = TRUE,
                      dependencies = TRUE)
-```
-
-To install a package directly from a GitHub repository, you will need a
-remotes package and command is as follows:
-
-``` r
-remotes::install_github("ccb-hms/scDiagnostics")
 ```
 
 # Prerequisites
@@ -178,23 +173,10 @@ the gene expression profiles for the specific cell type.
 
 ``` r
 # Generate histogram
-p <- histQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
-
-# Access the histogram of QC stats (the first element in the list)
-qc_histogram <- p[[1]]
-qc_histogram
+histQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
 ```
 
 <img src="man/figures/Distribution of percentage mito genes and Annotation Scores-1.png" width="100%" />
-
-``` r
-
-# Access the histogram of annotation scores (the second element in the list)
-scores_histogram <- p[[2]]
-scores_histogram
-```
-
-<img src="man/figures/Distribution of percentage mito genes and Annotation Scores-2.png" width="100%" />
 
 The example code provided demonstrates how to utilize the
 plotCellTypeDistribution function with the necessary data and packages.
@@ -211,7 +193,7 @@ interest, both overall and within specific cell types.
 
 ``` r
 # Generate histogram
-plotGeneExpressionDistribution(query_data, "labels", "B_and_plasma", "VPREB3")
+plotMarkerExpression(ref_data, query_data, "reclustered.broad", "labels", "VPREB3", "B_and_plasma")
 ```
 
 <img src="man/figures/histogram gene expression-1.png" width="100%" />
@@ -340,7 +322,7 @@ query_data_subset <- query_data[common_genes, query_data$reclustered.broad %in% 
 
 # Extract cell types for visualization
 ref_labels <- ref_data_subset$reclustered.broad
-query_labels <- query_data_subset$reclustered.broad
+query_labels <- query_data_subset$labels
 
 # Combine the cell type labels from both datasets
 mdata <- c(paste("Query", query_labels), paste("Reference", ref_labels))
@@ -469,42 +451,42 @@ summary <- performLinearRegression(query_data, "PC1", "labels")
 #> lm(formula = Dependent ~ Independent, data = df)
 #> 
 #> Residuals:
-#>     Min      1Q  Median      3Q     Max 
-#> -8.1273 -2.4964 -0.5234  2.1741 12.3740 
+#>      Min       1Q   Median       3Q      Max 
+#> -14.7547  -2.1047   0.5718   2.5798   7.4194 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -8.4829     0.2849  -29.77   <2e-16 ***
-#> IndependentCD4       5.1853     0.3399   15.25   <2e-16 ***
-#> IndependentCD8      14.1423     0.3308   42.75   <2e-16 ***
-#> IndependentMyeloid   8.5445     0.6194   13.79   <2e-16 ***
+#> (Intercept)          8.1391     0.2807   28.99   <2e-16 ***
+#> IndependentCD4      -4.8247     0.3407  -14.16   <2e-16 ***
+#> IndependentCD8     -14.1305     0.3324  -42.51   <2e-16 ***
+#> IndependentMyeloid  -8.9475     0.5808  -15.41   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.478 on 965 degrees of freedom
-#> Multiple R-squared:  0.7077, Adjusted R-squared:  0.7067 
-#> F-statistic: 778.6 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.595 on 965 degrees of freedom
+#> Multiple R-squared:  0.7018, Adjusted R-squared:  0.7009 
+#> F-statistic:   757 on 3 and 965 DF,  p-value: < 2.2e-16
 print(summary)
 #> 
 #> Call:
 #> lm(formula = Dependent ~ Independent, data = df)
 #> 
 #> Residuals:
-#>     Min      1Q  Median      3Q     Max 
-#> -8.1273 -2.4964 -0.5234  2.1741 12.3740 
+#>      Min       1Q   Median       3Q      Max 
+#> -14.7547  -2.1047   0.5718   2.5798   7.4194 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -8.4829     0.2849  -29.77   <2e-16 ***
-#> IndependentCD4       5.1853     0.3399   15.25   <2e-16 ***
-#> IndependentCD8      14.1423     0.3308   42.75   <2e-16 ***
-#> IndependentMyeloid   8.5445     0.6194   13.79   <2e-16 ***
+#> (Intercept)          8.1391     0.2807   28.99   <2e-16 ***
+#> IndependentCD4      -4.8247     0.3407  -14.16   <2e-16 ***
+#> IndependentCD8     -14.1305     0.3324  -42.51   <2e-16 ***
+#> IndependentMyeloid  -8.9475     0.5808  -15.41   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.478 on 965 degrees of freedom
-#> Multiple R-squared:  0.7077, Adjusted R-squared:  0.7067 
-#> F-statistic: 778.6 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.595 on 965 degrees of freedom
+#> Multiple R-squared:  0.7018, Adjusted R-squared:  0.7009 
+#> F-statistic:   757 on 3 and 965 DF,  p-value: < 2.2e-16
 ```
 
 By conducting linear regression, one can assess whether the PC values

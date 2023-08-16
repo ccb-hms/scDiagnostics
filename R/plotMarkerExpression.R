@@ -16,7 +16,8 @@
 #' @importFrom gridExtra grid.arrange
 #' @import SingleCellExperiment
 #'
-#' @return A ggplot object displaying the histogram plots of gene expression distribution from the overall dataset and cell type-specific perspective.
+#' @return A object displaying density plots of gene expression distribution from both the 
+#'         overall dataset and a cell type-specific perspective.
 #'         
 #' @export
 #'
@@ -96,5 +97,5 @@ plotMarkerExpression <- function(reference_data, query_data, reference_cell_labe
     labs(title = paste("Cell Type-Specific Distribution -", gene_name), x = paste("Log gene Expression", gene_name), y = "Density") +
     theme_minimal()
   
-  return(list(overall = overall_plot, cell_type_specific = cell_type_specific_plot))
+  return(grid.arrange(overall_plot, cell_type_specific_plot, ncol = 2))
 }

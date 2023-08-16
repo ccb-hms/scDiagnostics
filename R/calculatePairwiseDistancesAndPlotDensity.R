@@ -60,8 +60,8 @@ calculatePairwiseDistancesAndPlotDensity <- function(query_data, ref_data, query
   ref_data_subset <- ref_data[, !is.na(ref_data[[ref_cell_type_col]]) & ref_data[[ref_cell_type_col]] == cell_type]
 
   # Convert to matrix
-  query_mat <- t(as.matrix(assay(query_data_subset)))
-  ref_mat <- t(as.matrix(assay(ref_data_subset)))
+  query_mat <- t(as.matrix(assay(query_data_subset, "logcounts")))
+  ref_mat <- t(as.matrix(assay(ref_data_subset, "logcounts")))
 
   # Combine query and reference matrices
   combined_mat <- rbind(query_mat, ref_mat)

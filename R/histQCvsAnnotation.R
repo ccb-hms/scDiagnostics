@@ -8,9 +8,8 @@
 #' @param score_col A character string specifying the column name in the colData(query_data) that contains the cell type scores.
 #' @param label A character vector of cell type labels to plot (e.g., c("T-cell", "B-cell")). If NULL, all cells will be included.
 #'
-#' @return A list of ggplot objects containing histograms of QC stats and annotation scores.
-#' The list contains two ggplot objects: the first one displays the histogram of QC stats,
-#' and the second one displays the histogram of annotation scores.
+#' @return A object containing two histograms displayed side by side. The first histogram represents the distribution of QC stats, and the second histogram 
+#'         represents the distribution of annotation scores.
 #' 
 #' @export
 #' @import ggplot2

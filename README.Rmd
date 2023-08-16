@@ -23,8 +23,10 @@ knitr::opts_chunk$set(
 To install a package from Bioconductor use a following command:
 
 ```{r install_bioc_package, eval=FALSE}
-BiocManager::install("scDiagnostics")
+BiocManager::install("ccb-hms/scDiagnostics")
 ```
+
+NOTE: you will need the remotes package to install from github.
 
 To build the package vignettes upon installation use:
 
@@ -32,13 +34,6 @@ To build the package vignettes upon installation use:
 BiocManager::install("ccb-hms/scDiagnostics",
                      build_vignettes = TRUE,
                      dependencies = TRUE)
-```
-
-
-To install a package directly from a GitHub repository, you will need a remotes package and command is as follows:
-
-```{r install_github_package, eval=FALSE}
-remotes::install_github("ccb-hms/scDiagnostics")
 ```
 
 
@@ -142,15 +137,7 @@ By examining the histograms, we can observe the range, shape, and potential outl
 
 ```{r Distribution of percentage mito genes and Annotation Scores, warning=FALSE, message=FALSE}
 # Generate histogram
-p <- histQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
-
-# Access the histogram of QC stats (the first element in the list)
-qc_histogram <- p[[1]]
-qc_histogram
-
-# Access the histogram of annotation scores (the second element in the list)
-scores_histogram <- p[[2]]
-scores_histogram
+histQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
 ```
 
 The example code provided demonstrates how to utilize the plotCellTypeDistribution function with the necessary data and packages. Here we are visualizing the distribution of counts and scores for the "CD4" cell type.
@@ -161,7 +148,7 @@ To gain insights into the gene expression values for a specific gene and its dis
 
 ```{r histogram gene expression, warning=FALSE, message=FALSE}
 # Generate histogram
-plotGeneExpressionDistribution(query_data, "labels", "B_and_plasma", "VPREB3")
+plotMarkerExpression(ref_data, query_data, "reclustered.broad", "labels", "VPREB3", "B_and_plasma")
 ```
 
 In the provided example, we are examining the distribution of expression values for the gene "VPREB3" in the dataset. The function generates a histogram to display the distribution of expression values across all cells, with the x-axis representing the expression values and the y-axis representing the frequency of cells within each expression range. Additionally, the expression values can be further stratified by specific cell types, providing insights into the gene expression patterns within different cell populations.
@@ -231,7 +218,7 @@ query_data_subset <- query_data[common_genes, query_data$reclustered.broad %in% 
 
 # Extract cell types for visualization
 ref_labels <- ref_data_subset$reclustered.broad
-query_labels <- query_data_subset$reclustered.broad
+query_labels <- query_data_subset$labels
 
 # Combine the cell type labels from both datasets
 mdata <- c(paste("Query", query_labels), paste("Reference", ref_labels))
