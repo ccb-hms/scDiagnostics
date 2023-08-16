@@ -27,8 +27,10 @@ knitr::opts_chunk$set(
 To install a package from Bioconductor use a following command:
 
 ```{r install_bioc_package, eval=FALSE}
-BiocManager::install("scDiagnostics")
+BiocManager::install("ccb-hms/scDiagnostics")
 ```
+
+NOTE: you will need the remotes package to install from github.
 
 To build the package vignettes upon installation use:
 
@@ -37,14 +39,6 @@ BiocManager::install("ccb-hms/scDiagnostics",
                      build_vignettes = TRUE,
                      dependencies = TRUE)
 ```
-
-
-To install a package directly from a GitHub repository, you will need a remotes package and command is as follows:
-
-```{r install_github_package, eval=FALSE}
-remotes::install_github("ccb-hms/scDiagnostics")
-```
-
 
 # Prerequisites
 
