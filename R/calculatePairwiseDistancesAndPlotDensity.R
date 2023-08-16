@@ -52,7 +52,7 @@
 #' query_data_subset <- query_data[common_genes, ]
 #'
 #' # Example usage of the function
-#' calculatePairwiseDistancesAndPlotDensity(query_data_subset, ref_data_subset, "labels", "reclustered.broad", "CD4", "euclidean")
+#' calculatePairwiseDistancesAndPlotDensity(query_data_subset, ref_data_subset, "labels", "reclustered.broad", "CD8", "euclidean")
 #'
 calculatePairwiseDistancesAndPlotDensity <- function(query_data, ref_data, query_cell_type_col, ref_cell_type_col, cell_type, distance_metric, correlation_method = "pearson") {
   # Subset query and reference data to the specified cell type
@@ -69,9 +69,9 @@ calculatePairwiseDistancesAndPlotDensity <- function(query_data, ref_data, query
   # Calculate pairwise distances or correlations for all comparisons
   if (distance_metric == "correlation") {
     if (correlation_method == "pearson") {
-      dist_matrix <- cor(combined_mat, method = "pearson")
+      dist_matrix <- cor(t(combined_mat), method = "pearson")
     } else if (correlation_method == "spearman") {
-      dist_matrix <- cor(combined_mat, method = "spearman")
+      dist_matrix <- cor(t(combined_mat), method = "spearman")
     } else {
       stop("Invalid correlation method. Available options: 'pearson', 'spearman'")
     }
