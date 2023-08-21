@@ -38,5 +38,4 @@
 # Editor-specific
 *.swp
 *.~lock.*
-/doc/
 /Meta/
