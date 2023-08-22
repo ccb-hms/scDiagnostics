@@ -69,7 +69,7 @@ plotMarkerExpression <- function(reference_data, query_data, reference_cell_labe
   # Create a stacked density plot using ggplot2 for overall dataset
   overall_plot <- ggplot(data, aes(x = GeneExpression, fill = Dataset)) +
     geom_density(alpha = 0.5) +
-    labs(title = paste("Overall Distribution -", gene_name), x = paste("Log gene Expression", gene_name), y = "Density") +
+    labs(title = paste("Overall Distribution"), x = paste("Log gene Expression", gene_name), y = "Density") +
     theme_minimal()
   
   # Create a subset of data for cell type-specific distribution
@@ -94,7 +94,7 @@ plotMarkerExpression <- function(reference_data, query_data, reference_cell_labe
   # Create a stacked density plot using ggplot2 for cell type-specific dataset
   cell_type_specific_plot <- ggplot(cell_type_specific_data, aes(x = GeneExpression, fill = Dataset)) +
     geom_density(alpha = 0.5) +
-    labs(title = paste("Cell Type-Specific Distribution -", gene_name), x = paste("Log gene Expression", gene_name), y = "Density") +
+    labs(title = paste("Cell Type-Specific Distribution"), x = paste("Log gene Expression", gene_name), y = "Density") +
     theme_minimal()
   
   return(grid.arrange(overall_plot, cell_type_specific_plot, ncol = 2))

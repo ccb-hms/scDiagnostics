@@ -474,21 +474,21 @@ summary
 #> lm(formula = Dependent ~ Independent, data = df)
 #> 
 #> Residuals:
-#>      Min       1Q   Median       3Q      Max 
-#> -14.3623  -2.1464   0.6894   2.6632   7.7044 
+#>     Min      1Q  Median      3Q     Max 
+#> -7.9808 -2.5465 -0.7433  2.0554 14.2475 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          8.0694     0.2909   27.74   <2e-16 ***
-#> IndependentCD4      -4.8825     0.3459  -14.11   <2e-16 ***
-#> IndependentCD8     -14.0070     0.3417  -41.00   <2e-16 ***
-#> IndependentMyeloid  -8.5434     0.6610  -12.93   <2e-16 ***
+#> (Intercept)         -7.8420     0.2816  -27.84   <2e-16 ***
+#> IndependentCD4       4.5703     0.3387   13.49   <2e-16 ***
+#> IndependentCD8      13.9052     0.3336   41.68   <2e-16 ***
+#> IndependentMyeloid   8.3323     0.6207   13.42   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.61 on 965 degrees of freedom
-#> Multiple R-squared:  0.691,  Adjusted R-squared:  0.6901 
-#> F-statistic: 719.4 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.585 on 965 degrees of freedom
+#> Multiple R-squared:  0.6978, Adjusted R-squared:  0.6969 
+#> F-statistic: 742.9 on 3 and 965 DF,  p-value: < 2.2e-16
 ```
 
 By conducting linear regression, one can assess whether the PC values
