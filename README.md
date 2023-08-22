@@ -146,7 +146,9 @@ and interpretation of the cell type assignments in the dataset.
    colData(query_data)$cell_scores <- scores
 
    # Generate scatter plots
-   p1 <- plotQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", label_col = "labels", score_col = "cell_scores", label = c("CD4", "CD8"))
+   p1 <- plotQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", 
+                            label_col = "labels", score_col = "cell_scores", 
+                            label = c("CD4", "CD8"))
    p1 + xlab("percent.mito")
 ```
 
@@ -156,7 +158,10 @@ Scatter plot for visualizing relationship between percentage of
 mitochondrial gene and cell annotation scores for the cell types.
 
 ``` r
-   p2 <- plotQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", label_col = "labels", score_col = "cell_scores", label = NULL)
+   p2 <- plotQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", 
+                            label_col = "labels", 
+                            score_col = "cell_scores", 
+                            label = NULL)
    p2 + xlab("percent.mito")
 ```
 
@@ -187,7 +192,10 @@ gene expression profiles for the specific cell type.
 
 ``` r
 # Generate histogram
-histQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", label_col = "labels", score_col = "cell_scores", label = NULL)
+histQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", 
+                   label_col = "labels", 
+                   score_col = "cell_scores", 
+                   label = NULL)
 ```
 
 <img src="man/figures/Distribution of percentage mito genes and Annotation Scores-1.png" width="100%" />
@@ -213,7 +221,12 @@ global level but also within specific cell types.
 
 ``` r
 # Generate histogram
-plotMarkerExpression(reference_data = ref_data, query_data = query_data, reference_cell_labels = "reclustered.broad", query_cell_labels = "labels", gene_name = "MS4A1", label = "B_and_plasma")
+plotMarkerExpression(reference_data = ref_data, 
+                     query_data = query_data, 
+                     reference_cell_labels = "reclustered.broad", 
+                     query_cell_labels = "labels", 
+                     gene_name = "MS4A1", 
+                     label = "B_and_plasma")
 ```
 
 <img src="man/figures/histogram gene expression-1.png" width="100%" />
@@ -244,7 +257,10 @@ gene “VPREB3,” ranging from low (lighter color) to high (darker color).
 
 ``` r
 # Generate dimension reduction plot color code by gene expression
-plotGeneExpressionDimred(se_object = query_data, method = "PCA", n_components = c(1, 2), feature = "VPREB3")
+plotGeneExpressionDimred(se_object = query_data, 
+                         method = "PCA", 
+                         n_components = c(1, 2), 
+                         feature = "VPREB3")
 ```
 
 <img src="man/figures/scatter plot gene expression-1.png" width="100%" />
@@ -292,7 +308,9 @@ cells_AUC <- AUCell_calcAUC(gene_sets, cells_rankings)
 colData(query_data)$geneSetScores <- assay(cells_AUC)["geneSet1", ]
 
 # Plot gene set scores on PCA
-plotGeneSetScores(se_object = query_data, method = "PCA", feature = "geneSetScores")
+plotGeneSetScores(se_object = query_data, 
+                  method = "PCA", 
+                  feature = "geneSetScores")
 ```
 
 <img src="man/figures/Visualize gene set or pathway scores on dimensional reduction scatter plot -1.png" width="100%" />
@@ -357,7 +375,11 @@ color_mapping <- setNames(color_palette, cell_types)
 cell_type_colors <- color_mapping[cell_types]
 
 ## Generate the MDS scatter plot with cell type coloring
-visualizeCellTypeMDS(query_data = query_data_subset, reference_data = ref_data_subset, mdata = mdata, colors = cell_type_colors, legend_order = legend_order)
+visualizeCellTypeMDS(query_data = query_data_subset, 
+                     reference_data = ref_data_subset, 
+                     mdata = mdata, 
+                     colors = cell_type_colors, 
+                     legend_order = legend_order)
 ```
 
 <img src="man/figures/CMD scatter plot-1.png" width="100%" />
@@ -391,7 +413,12 @@ correlation plot using the corrplot package.
 
 ``` r
 selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
-cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subset, reference_data = ref_data_subset, query_cell_type_col = "labels", ref_cell_type_col = "reclustered.broad", cell_types = selected_cell_types, correlation_method = "spearman")
+cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subset, 
+                                                    reference_data = ref_data_subset, 
+                                                    query_cell_type_col = "labels", 
+                                                    ref_cell_type_col = "reclustered.broad", 
+                                                    cell_types = selected_cell_types, 
+                                                    correlation_method = "spearman")
 
 # Plot the pairwise average correlations using corrplot
 corrplot(cor_matrix_avg, method = "number", tl.col = "black")
@@ -429,7 +456,13 @@ To illustrate, the function is applied to the cell type CD8 using the
 euclidean distance metric in the example below.
 
 ``` r
-calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, reference_data = ref_data_subset, query_cell_type_col = "labels", ref_cell_type_col = "reclustered.broad", cell_type_query = "CD8", cell_type_reference = "CD8", distance_metric = "euclidean")
+calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, 
+                                         reference_data = ref_data_subset, 
+                                         query_cell_type_col = "labels", 
+                                         ref_cell_type_col = "reclustered.broad", 
+                                         cell_type_query = "CD8", 
+                                         cell_type_reference = "CD8", 
+                                         distance_metric = "euclidean")
 ```
 
 <img src="man/figures/Pairwise Distance Analysis and Density Visualization-1.png" width="100%" />
@@ -443,7 +476,14 @@ the “pearson” or “spearman” correlation method, users can emphasize
 either linear or rank-based associations, respectively.
 
 ``` r
-calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, reference_data = ref_data_subset, query_cell_type_col = "labels", ref_cell_type_col = "reclustered.broad", cell_type_query = "CD8", cell_type_reference = "CD8", distance_metric = "correlation" ,correlation_method = "spearman")
+calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, 
+                                         reference_data = ref_data_subset, 
+                                         query_cell_type_col = "labels", 
+                                         ref_cell_type_col = "reclustered.broad", 
+                                         cell_type_query = "CD8", 
+                                         cell_type_reference = "CD8", 
+                                         distance_metric = "correlation",
+                                         correlation_method = "spearman")
 ```
 
 <img src="man/figures/Pairwise Distance Analysis and Density Visualization correlation based-1.png" width="100%" />
@@ -467,28 +507,30 @@ explore the associations between these variables within the single-cell
 gene expression dataset (reference and query).
 
 ``` r
-summary <- regressPC(se_object = query_data, dependent_var = "PC1", independent_var = "labels")
+summary <- regressPC(se_object = query_data, 
+                     dependent_var = "PC1", 
+                     independent_var = "labels")
 summary
 #> 
 #> Call:
 #> lm(formula = Dependent ~ Independent, data = df)
 #> 
 #> Residuals:
-#>     Min      1Q  Median      3Q     Max 
-#> -7.9808 -2.5465 -0.7433  2.0554 14.2475 
+#>      Min       1Q   Median       3Q      Max 
+#> -14.8951  -1.9769   0.6218   2.4922   8.2341 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -7.8420     0.2816  -27.84   <2e-16 ***
-#> IndependentCD4       4.5703     0.3387   13.49   <2e-16 ***
-#> IndependentCD8      13.9052     0.3336   41.68   <2e-16 ***
-#> IndependentMyeloid   8.3323     0.6207   13.42   <2e-16 ***
+#> (Intercept)          8.1259     0.2961   27.44   <2e-16 ***
+#> IndependentCD4      -4.8406     0.3532  -13.70   <2e-16 ***
+#> IndependentCD8     -13.9906     0.3471  -40.31   <2e-16 ***
+#> IndependentMyeloid  -8.7692     0.5865  -14.95   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.585 on 965 degrees of freedom
-#> Multiple R-squared:  0.6978, Adjusted R-squared:  0.6969 
-#> F-statistic: 742.9 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.65 on 965 degrees of freedom
+#> Multiple R-squared:  0.6845, Adjusted R-squared:  0.6835 
+#> F-statistic: 697.9 on 3 and 965 DF,  p-value: < 2.2e-16
 ```
 
 By conducting linear regression, one can assess whether the PC values
