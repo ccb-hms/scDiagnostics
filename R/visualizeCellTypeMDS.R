@@ -5,7 +5,7 @@
 #' based on a custom set of genes selected by the user.
 #'
 #' @param query_data An object of class "SingleCellExperiment" containing a numeric expression matrix.
-#' @param ref_data An object of class "SingleCellExperiment" containing a numeric expression matrix.
+#' @param reference_data An object of class "SingleCellExperiment" containing a numeric expression matrix.
 #' @param mdata A vector of cell types from the query and reference datasets to be visualized in low-dimensional space.
 #' @param colors A vector of custom colors to be used for the cell types.
 #' @param legend_order A vector specifying the desired order of the legend items.
@@ -63,13 +63,13 @@
 #' cell_type_colors <- color_mapping[cell_types]
 #'
 #' # Generate the MDS scatter plot with cell type coloring
-#' plot <- visualizeCellTypeMDS(query_data_subset, ref_data_subset, mdata, cell_type_colors, legend_order)
+#' plot <- visualizeCellTypeMDS(query_data = query_data_subset, reference_data = ref_data_subset, mdata = mdata, colors = cell_type_colors, legend_order = legend_order)
 #' print(plot)
 #'
-visualizeCellTypeMDS <- function(query_data, ref_data, mdata, colors, legend_order) {
+visualizeCellTypeMDS <- function(query_data, reference_data, mdata, colors, legend_order) {
 
   queryExp <- as.matrix(assay(query_data, "logcounts"))
-  refExp <- as.matrix(assay(ref_data, "logcounts"))
+  refExp <- as.matrix(assay(reference_data, "logcounts"))
 
   # Compute correlation and dissimilarity matrix
   df <- cbind(queryExp, refExp)

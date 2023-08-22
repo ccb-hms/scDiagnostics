@@ -39,12 +39,12 @@
 #' colData(query_data)$labels <- pred$labels
 #'
 #' # Perform linear regression on PC1 and a specific variable (e.g., "labels")
-#' performLinearRegression(query_data, "PC1", "labels")
+#' performLinearRegression(se_object = query_data, dependent_var = "PC1", independent_var = "labels")
 #'
 #' # Note: Instead of using SingleR, you can use any other method to obtain the scores for regression analysis.
 #' # Make sure to provide the appropriate dependent and independent variables to the performLinearRegression function.
 #'
-performLinearRegression <- function(se_object, dependent_var, independent_var) {
+regressPC <- function(se_object, dependent_var, independent_var) {
 
   # Get the dependent variable from the specified principal component
   dependent <- reducedDim(se_object, "PCA")[, dependent_var]
@@ -56,9 +56,8 @@ performLinearRegression <- function(se_object, dependent_var, independent_var) {
   # Perform linear regression
   lm_model <- lm(Dependent ~ Independent, data = df)
 
-  # Print and return the summary of the linear regression model
+  # Save the summary of the linear regression model
   regression_summary <- summary(lm_model)
-  print(regression_summary)
-
+  
   return(regression_summary)
 }

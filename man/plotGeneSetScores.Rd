@@ -45,7 +45,7 @@ query_data <- runPCA(query_data)
 colData(query_data)$geneSetScores <- # ... (assign the scores here)
 
 # Plot gene set scores on PCA
-plotGeneSetScores(query_data, method = "PCA", feature = "geneSetScores")
+plotGeneSetScores(se_object = query_data, method = "PCA", feature = "geneSetScores")
 
 # Note: Users can provide their own gene set scores in the colData of the 'se_object' object, using any method of their choice.
 # Ensure that the scores are assigned to the colData and specify the correct feature name for visualization.

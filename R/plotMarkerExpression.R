@@ -47,7 +47,7 @@
 #'
 #' 
 #' # Note: Users can use SingleR or any other method to obtain the cell type annotations.
-#' plotMarkerExpression(ref_data, query_data, "reclustered.broad", "labels", "VPREB3", "B_and_plasma")
+#' plotMarkerExpression(reference_data = ref_data, query_data = query_data, reference_cell_labels = "reclustered.broad", query_cell_labels = "labels", gene_name = "VPREB3", label = "B_and_plasma")
 #'
 plotMarkerExpression <- function(reference_data, query_data, reference_cell_labels, query_cell_labels, gene_name, label) {
   # Get expression of the specified gene for reference and query datasets

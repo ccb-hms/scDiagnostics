@@ -78,7 +78,23 @@ library(corrplot)
 Let’s load the Marrow dataset for demonstration purposes. The dataset
 represents single-cell gene expression profiles of Marrow tissue. In
 this example, we will analyze the relationship between user-defined QC
-stats and annotation scores for a specific cell type.
+stats (library size, mitochondrial gene content, or other quality
+metrics) and annotation scores for a specific cell type.
+
+In scRNA-seq studies, assessing the quality of cells is important for
+accurate downstream analyses. At the same time, assigning accurate cell
+type labels based on gene expression profiles is an integral aspect of
+scRNA-seq data interpretation. Generally, these two are performed
+independently of each other. The rationale behind this function is to
+inspect whether certain QC criteria impact the confidence level of cell
+type annotations.
+
+For instance, it is reasonable to hypothesize that higher library sizes
+could contribute to increased annotation confidence due to enhanced
+statistical power for identifying cell type-specific gene expression
+patterns. Conversely, other QC metrics, such as the proportion of
+mitochondrial genes, might introduce noise that could affect the
+reliability of cell type assignments.
 
 To perform this analysis, we first divide the dataset into reference and
 query datasets. The reference dataset serves as a reference for cell
@@ -130,7 +146,7 @@ and interpretation of the cell type assignments in the dataset.
    colData(query_data)$cell_scores <- scores
 
    # Generate scatter plots
-   p1 <- plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", c("CD4", "CD8"))
+   p1 <- plotQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", label_col = "labels", score_col = "cell_scores", label = c("CD4", "CD8"))
    p1 + xlab("percent.mito")
 ```
 
@@ -140,7 +156,7 @@ Scatter plot for visualizing relationship between percentage of
 mitochondrial gene and cell annotation scores for the cell types.
 
 ``` r
-   p2 <- plotQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
+   p2 <- plotQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", label_col = "labels", score_col = "cell_scores", label = NULL)
    p2 + xlab("percent.mito")
 ```
 
@@ -156,9 +172,7 @@ expression levels and scores across cells assigned to the cell type of
 interest.
 
 To accomplish this, we create two separate histograms. The first
-histogram displays the distribution of the annotation scores. The x-axis
-represents the scores, while the y-axis represents the frequency of
-cells with a given score.
+histogram displays the distribution of the annotation scores.
 
 The second histogram visualizes the distribution of QC stats. This
 provides insights into the overall gene expression levels for the
@@ -166,46 +180,50 @@ specific cell type. Here in this particular example we are investigating
 percentage of mitochondrial genes.
 
 By examining the histograms, we can observe the range, shape, and
-potential outliers in the distribution of both annotation scores and
-library size. This allows us to assess the appropriateness of the cell
-type assignments and identify any potential discrepancies or patterns in
-the gene expression profiles for the specific cell type.
+potential outliers in the distribution of both annotation scores and QC
+stats. This allows us to assess the appropriateness of the cell type
+assignments and identify any potential discrepancies or patterns in the
+gene expression profiles for the specific cell type.
 
 ``` r
 # Generate histogram
-histQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
+histQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", label_col = "labels", score_col = "cell_scores", label = NULL)
 ```
 
 <img src="man/figures/Distribution of percentage mito genes and Annotation Scores-1.png" width="100%" />
 
-The example code provided demonstrates how to utilize the
-plotCellTypeDistribution function with the necessary data and packages.
-Here we are visualizing the distribution of counts and scores for the
-“CD4” cell type.
+The left-skewed distribution for mitochondrial percentages and a
+right-skewed distribution for annotation scores in above histograms
+suggest that most cells have lower mitochondrial contamination and
+higher confidence in their assigned cell types.
 
 ## Exploring Gene Expression Distribution
 
-To gain insights into the gene expression values for a specific gene and
-its distribution across cells, we can use the
-plotGeneExpressionDistribution function. This function allows us to
-visualize the distribution of expression values for a particular gene of
-interest, both overall and within specific cell types.
+This function helps user to explore the distribution of gene expression
+values for a specific gene of interest across all the cells in both
+reference and query datasets and within specific cell types. This helps
+to evaluate whether the distributions are similar or aligned between the
+datasets. Discrepancies in distribution patterns may indicate potential
+incompatibilities or differences between the datasets.
+
+The function also allows users to narrow down their analysis to specific
+cell types of interest. This enables investigation of whether alignment
+between the query and reference datasets is consistent not only at a
+global level but also within specific cell types.
 
 ``` r
 # Generate histogram
-plotMarkerExpression(ref_data, query_data, "reclustered.broad", "labels", "VPREB3", "B_and_plasma")
+plotMarkerExpression(reference_data = ref_data, query_data = query_data, reference_cell_labels = "reclustered.broad", query_cell_labels = "labels", gene_name = "MS4A1", label = "B_and_plasma")
 ```
 
 <img src="man/figures/histogram gene expression-1.png" width="100%" />
 
-In the provided example, we are examining the distribution of expression
-values for the gene “VPREB3” in the dataset. The function generates a
-histogram to display the distribution of expression values across all
-cells, with the x-axis representing the expression values and the y-axis
-representing the frequency of cells within each expression range.
-Additionally, the expression values can be further stratified by
-specific cell types, providing insights into the gene expression
-patterns within different cell populations.
+In the provided example, we examined the distribution of expression
+values for the gene MS4A1, a marker for naive B cells, in both the query
+and reference datasets. Additionally, we also looked at the distribution
+of MS4A1 expression in the B_and_plasma cell type. We observed
+overlapping distributions in both cases, suggesting alignment between
+the reference and query datasets.
 
 ## Visualize Gene Expression on Dimensional Reduction Plot
 
@@ -226,17 +244,14 @@ gene “VPREB3,” ranging from low (lighter color) to high (darker color).
 
 ``` r
 # Generate dimension reduction plot color code by gene expression
-plotGeneExpressionDimred(query_data, "PCA", c(1, 2), "VPREB3")
+plotGeneExpressionDimred(se_object = query_data, method = "PCA", n_components = c(1, 2), feature = "VPREB3")
 ```
 
 <img src="man/figures/scatter plot gene expression-1.png" width="100%" />
 
 The dimensional reduction plot allows us to observe how the gene
-expression of “VPREB3” is distributed across the cells and whether any
-clusters or patterns emerge in the data. It provides a visual
-representation of the gene expression landscape and can help identify
-potential relationships or subpopulations based on the expression of the
-gene of interest.
+expression of VPREB3 is distributed across the cells and whether any
+clusters or patterns emerge in the data.
 
 ## Visualize Gene Sets or Pathway Scores on Dimensional Reduction Plot
 
@@ -277,7 +292,7 @@ cells_AUC <- AUCell_calcAUC(gene_sets, cells_rankings)
 colData(query_data)$geneSetScores <- assay(cells_AUC)["geneSet1", ]
 
 # Plot gene set scores on PCA
-plotGeneSetScores(query_data, method = "PCA", feature = "geneSetScores")
+plotGeneSetScores(se_object = query_data, method = "PCA", feature = "geneSetScores")
 ```
 
 <img src="man/figures/Visualize gene set or pathway scores on dimensional reduction scatter plot -1.png" width="100%" />
@@ -287,8 +302,8 @@ plotGeneSetScores function using the AUCell package to compute gene set
 or pathway scores. Custom gene sets are generated for demonstration
 purposes, but users can provide their own gene set scores using any
 method of their choice. It is important to ensure that the scores are
-assigned to the colData of the query_data object and specify the correct
-feature name for visualization.
+assigned to the colData of the reference or query object and specify the
+correct feature name for visualization.
 
 By visualizing gene set or pathway scores on a dimensional reduction
 plot, you can gain a comprehensive understanding of the functional
@@ -297,15 +312,20 @@ the relationships between gene set activities and cellular phenotypes.
 
 ## Visualizing Reference and Query Cell Types using Multidimensional Scaling (MDS)
 
-Here, we perform Multidimensional Scaling (MDS) analysis on the query
-and reference datasets to examine their similarity. The dissimilarity
-matrix is calculated based on the correlation between the datasets, and
-MDS is used to obtain low-dimensional coordinates for each cell.
-Subsequently, a scatter plot is generated, where each data point
-represents a cell, and the cell types are color-coded using custom
-colors provided by the user. This visualization enables the comparison
-of cell type distributions between the query and reference datasets in a
-reduced-dimensional space.
+This function performs Multidimensional Scaling (MDS) analysis on the
+query and reference datasets to examine their similarity. The
+dissimilarity matrix is calculated based on the correlation between the
+datasets, representing the distances between cells in terms of gene
+expression patterns. MDS is then applied to derive low-dimensional
+coordinates for each cell. Subsequently, a scatter plot is generated,
+where each data point represents a cell, and cell types are color-coded
+using custom colors provided by the user. This visualization enables the
+comparison of cell type distributions between the query and reference
+datasets in a reduced-dimensional space.
+
+The rationale behind this function is to visually assess the alignment
+and relationships between cell types in the query and reference
+datasets.
 
 ``` r
 ## Selcting highly variable genes
@@ -337,14 +357,14 @@ color_mapping <- setNames(color_palette, cell_types)
 cell_type_colors <- color_mapping[cell_types]
 
 ## Generate the MDS scatter plot with cell type coloring
-visualizeCellTypeMDS(query_data_subset, ref_data_subset, mdata, cell_type_colors, legend_order)
+visualizeCellTypeMDS(query_data = query_data_subset, reference_data = ref_data_subset, mdata = mdata, colors = cell_type_colors, legend_order = legend_order)
 ```
 
 <img src="man/figures/CMD scatter plot-1.png" width="100%" />
 
-Upon examining the MDS scatter plot, we observe that the “CD4” and “CD8”
+Upon examining the MDS scatter plot, we observe that the CD4 and CD8
 cell types overlap to some extent.By observing the proximity or overlap
-of different cell types, we can gain insights into their potential
+of different cell types, one can gain insights into their potential
 relationships or shared characteristics.
 
 The selection of custom genes and desired cell types depends on the
@@ -355,9 +375,10 @@ interest in the visualization.
 ## Cell Type-specific Pairwise Correlation Analysis and Visualization
 
 This analysis aims to explore the correlation patterns between different
-cell types in a single-cell gene expression dataset. It involves
-comparing the gene expression profiles of cells from a reference dataset
-and a query dataset.
+cell types in a single-cell gene expression dataset. The goal is to
+compare the gene expression profiles of cells from a reference dataset
+and a query dataset to understand the relationships and similarities
+between various cell types.
 
 To perform the analysis, we start by computing the pairwise correlations
 between the query and reference cells for selected cell types (“CD4”,
@@ -370,19 +391,13 @@ correlation plot using the corrplot package.
 
 ``` r
 selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
-cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data_subset, ref_data_subset, "labels", "reclustered.broad", selected_cell_types, "spearman")
+cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subset, reference_data = ref_data_subset, query_cell_type_col = "labels", ref_cell_type_col = "reclustered.broad", cell_types = selected_cell_types, correlation_method = "spearman")
 
 # Plot the pairwise average correlations using corrplot
 corrplot(cor_matrix_avg, method = "number", tl.col = "black")
 ```
 
 <img src="man/figures/Cell Type-specific Pairwise Correlation Analysis and Visualization -1.png" width="100%" />
-
-This analysis allows us to examine the correlation patterns between
-different cell types in the single-cell gene expression dataset. By
-visualizing the average pairwise correlations, we can gain insights into
-the relationships and similarities between cell types based on their
-gene expression profiles.
 
 In this case, users have the flexibility to extract the gene expression
 profiles of specific cell types from the reference and query datasets
@@ -397,31 +412,38 @@ interest to their research question.
 
 ## Pairwise Distance Analysis and Density Visualization
 
-his function allows for the calculation of pairwise distances between
-query and reference cells of a specific cell type in a single-cell gene
-expression dataset. The pairwise distances are calculated using a
-specified distance metric, such as “euclidean”, “manhattan”, etc.
-Subsequently, the function generates density plots to visualize the
-distribution of distances for different pairwise comparisons.
+This function serves to conduct a analysis of pairwise distances or
+correlations between cells of specific cell types within a single-cell
+gene expression dataset. By calculating these distances or correlations,
+users can gain insights into the relationships and differences in gene
+expression profiles between different cell types. The function
+facilitates this analysis by generating density plots, allowing users to
+visualize the distribution of distances or correlations for various
+pairwise comparisons.
 
-The analysis focuses on the specific cell type “CD8”, and the pairwise
-distances are calculated using the “euclidean” distance metric.
+The analysis offers the flexibility to select a particular cell type for
+examination, and users can choose between different distance metrics,
+such as “euclidean” or “manhattan,” to calculate pairwise distances.
+
+To illustrate, the function is applied to the cell type CD8 using the
+euclidean distance metric in the example below.
 
 ``` r
-calculatePairwiseDistancesAndPlotDensity(query_data_subset, ref_data_subset, "labels", "reclustered.broad", "CD8", "euclidean")
+calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, reference_data = ref_data_subset, query_cell_type_col = "labels", ref_cell_type_col = "reclustered.broad", cell_type_query = "CD8", cell_type_reference = "CD8", distance_metric = "euclidean")
 ```
 
 <img src="man/figures/Pairwise Distance Analysis and Density Visualization-1.png" width="100%" />
 
-Further, user can also use correlation for calculation of pairwise
-distances between query and reference cells of a specific cell type.
+Alternatively, users can opt for the “correlation” distance metric,
+which measures the similarity in gene expression profiles between cells.
 
-The analysis focuses on the specific cell type “CD8”, and the pairwise
-distances are calculated using the correlation distance metric. User can
-use spearman or pearson correlation coefficient as a method of choice.
+To illustrate, the function is applied to the cell type CD8 using the
+correlation distance metric in the example below. By selecting either
+the “pearson” or “spearman” correlation method, users can emphasize
+either linear or rank-based associations, respectively.
 
 ``` r
-calculatePairwiseDistancesAndPlotDensity(query_data_subset, ref_data_subset, "labels", "reclustered.broad", "CD8", "correlation" ,"spearman")
+calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, reference_data = ref_data_subset, query_cell_type_col = "labels", ref_cell_type_col = "reclustered.broad", cell_type_query = "CD8", cell_type_reference = "CD8", distance_metric = "correlation" ,correlation_method = "spearman")
 ```
 
 <img src="man/figures/Pairwise Distance Analysis and Density Visualization correlation based-1.png" width="100%" />
@@ -445,48 +467,28 @@ explore the associations between these variables within the single-cell
 gene expression dataset (reference and query).
 
 ``` r
-summary <- performLinearRegression(query_data, "PC1", "labels")
+summary <- regressPC(se_object = query_data, dependent_var = "PC1", independent_var = "labels")
+summary
 #> 
 #> Call:
 #> lm(formula = Dependent ~ Independent, data = df)
 #> 
 #> Residuals:
-#>     Min      1Q  Median      3Q     Max 
-#> -7.6041 -2.4800 -0.6981  2.0910 14.3756 
+#>      Min       1Q   Median       3Q      Max 
+#> -14.3623  -2.1464   0.6894   2.6632   7.7044 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -8.2030     0.2597  -31.59   <2e-16 ***
-#> IndependentCD4       4.9882     0.3213   15.53   <2e-16 ***
-#> IndependentCD8      14.2231     0.3104   45.82   <2e-16 ***
-#> IndependentMyeloid   9.3529     0.6346   14.74   <2e-16 ***
+#> (Intercept)          8.0694     0.2909   27.74   <2e-16 ***
+#> IndependentCD4      -4.8825     0.3459  -14.11   <2e-16 ***
+#> IndependentCD8     -14.0070     0.3417  -41.00   <2e-16 ***
+#> IndependentMyeloid  -8.5434     0.6610  -12.93   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.474 on 965 degrees of freedom
-#> Multiple R-squared:  0.7249, Adjusted R-squared:  0.724 
-#> F-statistic: 847.6 on 3 and 965 DF,  p-value: < 2.2e-16
-print(summary)
-#> 
-#> Call:
-#> lm(formula = Dependent ~ Independent, data = df)
-#> 
-#> Residuals:
-#>     Min      1Q  Median      3Q     Max 
-#> -7.6041 -2.4800 -0.6981  2.0910 14.3756 
-#> 
-#> Coefficients:
-#>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -8.2030     0.2597  -31.59   <2e-16 ***
-#> IndependentCD4       4.9882     0.3213   15.53   <2e-16 ***
-#> IndependentCD8      14.2231     0.3104   45.82   <2e-16 ***
-#> IndependentMyeloid   9.3529     0.6346   14.74   <2e-16 ***
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> 
-#> Residual standard error: 3.474 on 965 degrees of freedom
-#> Multiple R-squared:  0.7249, Adjusted R-squared:  0.724 
-#> F-statistic: 847.6 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.61 on 965 degrees of freedom
+#> Multiple R-squared:  0.691,  Adjusted R-squared:  0.6901 
+#> F-statistic: 719.4 on 3 and 965 DF,  p-value: < 2.2e-16
 ```
 
 By conducting linear regression, one can assess whether the PC values

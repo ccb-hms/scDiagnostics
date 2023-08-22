@@ -47,10 +47,10 @@
 #' colData(query_data)$cell_scores <- scores
 #'
 #' # Generate histograms
-#' histQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", c("CD4", "CD8"))
-#' histQCvsAnnotation(query_data, "percent.mito", "labels", "cell_scores", NULL)
+#' histQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", label_col = "labels", score_col = "cell_scores", label = c("CD4", "CD8"))
+#' histQCvsAnnotation(query_data = query_data, "percent.mito", label_col = "labels", score_col = "cell_scores", label = NULL)
 #'
-histQCvsAnnotation <- function(query_data, qc_col, label_col, score_col, label = NULL) {
+histQCvsAnnotation <- function(query_data, qc_col = qc_col, label_col, score_col, label = NULL) {
   
   # Filter cells based on label if specified
   if (!is.null(label)) {

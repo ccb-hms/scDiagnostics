@@ -35,9 +35,9 @@
 #' query_data <- runPCA(query_data)
 #'
 #' # Plot gene expression on PCA plot
-#' plotGeneExpressionDimred(query_data, method = "PCA", n_components = c(1, 2), feature = "VPREB3")
+#' plotGeneExpressionDimred(se_object = query_data, method = "PCA", n_components = c(1, 2), feature = "VPREB3")
 #'
-plotGeneExpressionDimred <- function(query_data, method, n_components = c(1, 2), feature) {
+plotGeneExpressionDimred <- function(se_object, method, n_components = c(1, 2), feature) {
 
   # Error handling and validation
   supported_methods <- c("tSNE", "UMAP", "PCA")

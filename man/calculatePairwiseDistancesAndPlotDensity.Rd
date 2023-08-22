@@ -6,10 +6,11 @@
 \usage{
 calculatePairwiseDistancesAndPlotDensity(
   query_data,
-  ref_data,
+  reference_data,
   query_cell_type_col,
   ref_cell_type_col,
-  cell_type,
+  cell_type_query,
+  cell_type_reference,
   distance_metric,
   correlation_method = "pearson"
 )
@@ -17,13 +18,15 @@ calculatePairwiseDistancesAndPlotDensity(
 \arguments{
 \item{query_data}{A SingleCellExperiment object containing numeric expression matrix for the query cells}
 
-\item{ref_data}{A SingleCellExperiment object containing numeric expression matrix for the reference cells}
+\item{reference_data}{A SingleCellExperiment object containing numeric expression matrix for the reference cells}
 
 \item{query_cell_type_col}{The column name in the query_data metadata specifying the cell types}
 
 \item{ref_cell_type_col}{The column name in the ref_data metadata specifying the cell types}
 
-\item{cell_type}{The cell type for which distances or correlations are calculated.}
+\item{cell_type_query}{The query cell type for which distances or correlations are calculated.}
+
+\item{cell_type_reference}{The reference cell type for which distances or correlations are calculated.}
 
 \item{distance_metric}{The distance metric to use for calculating pairwise distances, such as "euclidean" or "manhattan".
 Set it to "correlation" for calculating correlation coefficients.}
@@ -69,6 +72,6 @@ ref_data_subset <- ref_data[common_genes, ]
 query_data_subset <- query_data[common_genes, ]
 
 # Example usage of the function
-calculatePairwiseDistancesAndPlotDensity(query_data_subset, ref_data_subset, "labels", "reclustered.broad", "CD8", "euclidean")
+calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, reference_data = ref_data_subset, query_cell_type_col = "labels", ref_cell_type_col = "reclustered.broad", cell_type_query = "CD8", cell_type_reference = "CD8", distance_metric = "euclidean")
 
 }

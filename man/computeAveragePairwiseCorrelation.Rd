@@ -6,7 +6,7 @@
 \usage{
 computeAveragePairwiseCorrelation(
   query_data,
-  ref_data,
+  reference_data,
   query_cell_type_col,
   ref_cell_type_col,
   cell_types,
@@ -16,7 +16,7 @@ computeAveragePairwiseCorrelation(
 \arguments{
 \item{query_data}{An object of class "SingleCellExperiment" containing the query cell data.}
 
-\item{ref_data}{An object of class "SingleCellExperiment" containing the reference cell data.}
+\item{reference_data}{An object of class "SingleCellExperiment" containing the reference cell data.}
 
 \item{query_cell_type_col}{A character string specifying the column name for cell types in query_data.}
 
@@ -75,7 +75,7 @@ ref_data_subset <- ref_data[common_genes, ref_data$reclustered.broad \%in\% sele
 query_data_subset <- query_data[common_genes, query_data$reclustered.broad \%in\% selected_cell_types]
 
 # Compute pairwise correlations
-cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data_subset, ref_data_subset, "labels", "reclustered.broad", selected_cell_types, "spearman")
+cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subset, reference_data = ref_data_subset, query_cell_type_col = "labels", ref_cell_type_col = "reclustered.broad", cell_types = selected_cell_types, correlation_method = "spearman")
 
 # Visualize the results using any visualization method of choice
 

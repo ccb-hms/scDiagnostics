@@ -4,7 +4,7 @@
 #' It then calculates the average correlation for each pair of cell types.
 #'
 #' @param query_data An object of class "SingleCellExperiment" containing the query cell data.
-#' @param ref_data An object of class "SingleCellExperiment" containing the reference cell data.
+#' @param reference_data An object of class "SingleCellExperiment" containing the reference cell data.
 #' @param query_cell_type_col A character string specifying the column name for cell types in query_data.
 #' @param ref_cell_type_col A character string specifying the column name for cell types in ref_data.
 #' @param cell_types A character vector specifying the cell types to consider.
@@ -56,11 +56,11 @@
 #' query_data_subset <- query_data[common_genes, query_data$reclustered.broad %in% selected_cell_types]
 #'
 #' # Compute pairwise correlations
-#' cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data_subset, ref_data_subset, "labels", "reclustered.broad", selected_cell_types, "spearman")
+#' cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subset, reference_data = ref_data_subset, query_cell_type_col = "labels", ref_cell_type_col = "reclustered.broad", cell_types = selected_cell_types, correlation_method = "spearman")
 #'
 #' # Visualize the results using any visualization method of choice
 #'
-computeAveragePairwiseCorrelation <- function(query_data, ref_data, query_cell_type_col, ref_cell_type_col, cell_types, correlation_method) {
+computeAveragePairwiseCorrelation <- function(query_data, reference_data, query_cell_type_col, ref_cell_type_col, cell_types, correlation_method) {
 
   # Create an empty matrix to store the pairwise average correlations
   cor_matrix_avg <- matrix(0, nrow = length(cell_types), ncol = length(cell_types),
@@ -73,7 +73,7 @@ computeAveragePairwiseCorrelation <- function(query_data, ref_data, query_cell_t
       ref_cell_type <- cell_types[j]
 
       query_subset <- query_data[, query_data[[query_cell_type_col]] == query_cell_type]
-      ref_subset <- ref_data[, ref_data[[ref_cell_type_col]] == ref_cell_type]
+      ref_subset <- reference_data[, reference_data[[ref_cell_type_col]] == ref_cell_type]
 
       query_mat <- as.matrix(assay(query_subset, "logcounts"))
       ref_mat <- as.matrix(assay(ref_subset, "logcounts"))

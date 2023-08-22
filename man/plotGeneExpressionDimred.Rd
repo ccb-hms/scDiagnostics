@@ -4,17 +4,17 @@
 \alias{plotGeneExpressionDimred}
 \title{Visualize gene expression on a dimensional reduction plot}
 \usage{
-plotGeneExpressionDimred(query_data, method, n_components = c(1, 2), feature)
+plotGeneExpressionDimred(se_object, method, n_components = c(1, 2), feature)
 }
 \arguments{
+\item{se_object}{An object of class "SingleCellExperiment" containing log-transformed expression matrix and other metadata.
+It can be either a reference or query dataset.}
+
 \item{method}{The reduction method to use for visualization. It should be one of the supported methods: "tSNE", "UMAP", or "PCA".}
 
 \item{n_components}{A numeric vector of length 2 indicating the first two dimensions to be used for plotting.}
 
 \item{feature}{A character string representing the name of the gene or feature to be visualized.}
-
-\item{se_object}{An object of class "SingleCellExperiment" containing log-transformed expression matrix and other metadata.
-It can be either a reference or query dataset.}
 }
 \value{
 A ggplot object representing the dimensional reduction plot with gene expression.
@@ -42,6 +42,6 @@ query_data <- logNormCounts(query_data)
 query_data <- runPCA(query_data)
 
 # Plot gene expression on PCA plot
-plotGeneExpressionDimred(query_data, method = "PCA", n_components = c(1, 2), feature = "VPREB3")
+plotGeneExpressionDimred(se_object = query_data, method = "PCA", n_components = c(1, 2), feature = "VPREB3")
 
 }

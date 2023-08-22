@@ -4,12 +4,12 @@
 \alias{visualizeCellTypeMDS}
 \title{Visualizing Reference and Query Cell Types using MDS}
 \usage{
-visualizeCellTypeMDS(query_data, ref_data, mdata, colors, legend_order)
+visualizeCellTypeMDS(query_data, reference_data, mdata, colors, legend_order)
 }
 \arguments{
 \item{query_data}{An object of class "SingleCellExperiment" containing a numeric expression matrix.}
 
-\item{ref_data}{An object of class "SingleCellExperiment" containing a numeric expression matrix.}
+\item{reference_data}{An object of class "SingleCellExperiment" containing a numeric expression matrix.}
 
 \item{mdata}{A vector of cell types from the query and reference datasets to be visualized in low-dimensional space.}
 
@@ -72,7 +72,7 @@ color_mapping <- setNames(color_palette, cell_types)
 cell_type_colors <- color_mapping[cell_types]
 
 # Generate the MDS scatter plot with cell type coloring
-plot <- visualizeCellTypeMDS(query_data_subset, ref_data_subset, mdata, cell_type_colors, legend_order)
+plot <- visualizeCellTypeMDS(query_data = query_data_subset, reference_data = ref_data_subset, mdata = mdata, colors = cell_type_colors, legend_order = legend_order)
 print(plot)
 
 }
