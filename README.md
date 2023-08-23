@@ -240,7 +240,7 @@ the reference and query datasets.
 
 ## Visualize Gene Expression on Dimensional Reduction Plot
 
-o gain insights into the gene expression patterns and their
+To gain insights into the gene expression patterns and their
 representation in a dimensional reduction space, we can utilize the
 plotGeneExpressionDimred function. This function allows us to plot the
 gene expression values of a specific gene on a dimensional reduction
