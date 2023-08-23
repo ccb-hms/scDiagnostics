@@ -200,8 +200,8 @@ histQCvsAnnotation(query_data = query_data, qc_col = "percent.mito",
 
 <img src="man/figures/Distribution of percentage mito genes and Annotation Scores-1.png" width="100%" />
 
-The left-skewed distribution for mitochondrial percentages and a
-right-skewed distribution for annotation scores in above histograms
+The right-skewed distribution for mitochondrial percentages and a
+left-skewed distribution for annotation scores in above histograms
 suggest that most cells have lower mitochondrial contamination and
 higher confidence in their assigned cell types.
 
