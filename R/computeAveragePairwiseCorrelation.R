@@ -72,8 +72,8 @@ computeAveragePairwiseCorrelation <- function(query_data, reference_data, query_
       query_cell_type <- cell_types[i]
       ref_cell_type <- cell_types[j]
 
-      query_subset <- query_data[, query_data[[query_cell_type_col]] == query_cell_type]
-      ref_subset <- reference_data[, reference_data[[ref_cell_type_col]] == ref_cell_type]
+      query_subset <- query_data[, query_data[[query_cell_type_col]] %in% query_cell_type]
+      ref_subset <- reference_data[, reference_data[[ref_cell_type_col]] %in% ref_cell_type]
 
       query_mat <- as.matrix(assay(query_subset, "logcounts"))
       ref_mat <- as.matrix(assay(ref_subset, "logcounts"))
