@@ -1,5 +1,5 @@
 scDiagnostics: diagnostic functions to assess the quality of cell type
-assignments in single-cell RNA-seq
+assignments in single-cell RNA-seq data
 ================
 Smriti Chawla
 2023-07-08
@@ -10,17 +10,15 @@ Getting started
 
 # Installation
 
-<h4>
-Install a Bioconductor Package
-</h4>
+## Installation from GitHub 
 
-To install a package from Bioconductor use a following command:
+To install the package directly from GitHub use the following command:
 
 ``` r
 BiocManager::install("ccb-hms/scDiagnostics")
 ```
 
-NOTE: you will need the remotes package to install from github.
+NOTE: you will need the remotes package to install from GitHub.
 
 To build the package vignettes upon installation use:
 
