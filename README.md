@@ -18,7 +18,7 @@ To install the package directly from GitHub use the following command:
 BiocManager::install("ccb-hms/scDiagnostics")
 ```
 
-NOTE: you will need the remotes package to install from GitHub.
+NOTE: you will need the `remotes` package to install from GitHub.
 
 To build the package vignettes upon installation use:
 
