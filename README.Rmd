@@ -151,7 +151,7 @@ histQCvsAnnotation(query_data = query_data, qc_col = "percent.mito",
                    label = NULL)
 ```
 
-The left-skewed distribution for mitochondrial percentages and a right-skewed distribution for annotation scores in above histograms suggest that most cells have lower mitochondrial contamination and higher confidence in their assigned cell types. 
+The right-skewed distribution for mitochondrial percentages and a left-skewed distribution for annotation scores in above histograms suggest that most cells have lower mitochondrial contamination and higher confidence in their assigned cell types. 
 
 ## Exploring Gene Expression Distribution
 
@@ -173,7 +173,7 @@ In the provided example, we examined the distribution of expression values for t
 
 ## Visualize Gene Expression on Dimensional Reduction Plot
 
-o gain insights into the gene expression patterns and their representation in a dimensional reduction space, we can utilize the plotGeneExpressionDimred function. This function allows us to plot the gene expression values of a specific gene on a dimensional reduction plot generated using methods like t-SNE, UMAP, or PCA. Each single cell is color-coded based on its expression level of the gene of interest.
+To gain insights into the gene expression patterns and their representation in a dimensional reduction space, we can utilize the plotGeneExpressionDimred function. This function allows us to plot the gene expression values of a specific gene on a dimensional reduction plot generated using methods like t-SNE, UMAP, or PCA. Each single cell is color-coded based on its expression level of the gene of interest.
 
 In the provided example, we are visualizing the gene expression values of the gene "VPREB3" on a PCA plot. The PCA plot represents the cells in a lower-dimensional space, where the x-axis corresponds to the first principal component (Dimension 1) and the y-axis corresponds to the second principal component (Dimension 2). Each cell is represented as a point on the plot, and its color reflects the expression level of the gene "VPREB3," ranging from low (lighter color) to high (darker color).
 

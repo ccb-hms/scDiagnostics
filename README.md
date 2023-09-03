@@ -1,5 +1,5 @@
 scDiagnostics: diagnostic functions to assess the quality of cell type
-assignments in single-cell RNA-seq
+assignments in single-cell RNA-seq data
 ================
 Smriti Chawla
 2023-07-08
@@ -10,17 +10,15 @@ Getting started
 
 # Installation
 
-<h4>
-Install a Bioconductor Package
-</h4>
+## Installation from GitHub 
 
-To install a package from Bioconductor use a following command:
+To install the package directly from GitHub use the following command:
 
 ``` r
 BiocManager::install("ccb-hms/scDiagnostics")
 ```
 
-NOTE: you will need the remotes package to install from github.
+NOTE: you will need the `remotes` package to install from GitHub.
 
 To build the package vignettes upon installation use:
 
@@ -200,8 +198,8 @@ histQCvsAnnotation(query_data = query_data, qc_col = "percent.mito",
 
 <img src="man/figures/Distribution of percentage mito genes and Annotation Scores-1.png" width="100%" />
 
-The left-skewed distribution for mitochondrial percentages and a
-right-skewed distribution for annotation scores in above histograms
+The right-skewed distribution for mitochondrial percentages and a
+left-skewed distribution for annotation scores in above histograms
 suggest that most cells have lower mitochondrial contamination and
 higher confidence in their assigned cell types.
 
@@ -240,7 +238,7 @@ the reference and query datasets.
 
 ## Visualize Gene Expression on Dimensional Reduction Plot
 
-o gain insights into the gene expression patterns and their
+To gain insights into the gene expression patterns and their
 representation in a dimensional reduction space, we can utilize the
 plotGeneExpressionDimred function. This function allows us to plot the
 gene expression values of a specific gene on a dimensional reduction
