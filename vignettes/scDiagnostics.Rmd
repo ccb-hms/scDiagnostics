@@ -340,10 +340,16 @@ By utilizing this function, users can explore the pairwise distances between que
 Performing linear regression analysis on a SingleCellExperiment object enables users to examine the relationship between a principal component (PC) from the dimension reduction slot and an independent variable of interest. By specifying the desired dependent variable as one of the principal components (e.g., "PC1", "PC2", etc.) and providing the corresponding independent variable from the colData slot, users can explore the associations between these variables within the single-cell gene expression dataset (reference and query).
 
 ```{r linear regression ,warning=FALSE, message=FALSE}
-summary <- regressPC(se_object = query_data, 
-                     dependent_var = "PC1", 
-                     independent_var = "labels")
-summary
+ # Specify the dependent variables (principal components) and independent variable (e.g., "labels")
+dependent_vars <- c("PC1", "PC2", "PC3")
+independent_var <- "labels"
+
+# Perform linear regression on multiple principal components
+result <- regressPC(se_object = query_data, dependent_vars = dependent_vars, independent_var = independent_var)
+
+# Print the summaries of the linear regression models and R-squared values
+print(result$regression_summaries)
+print(result$rsquared_df)
 ```
 
 By conducting linear regression, one can assess whether the PC values are significantly associated with the cell types. This analysis helps uncover whether there is a systematic variation in PC values across different cell types. Understanding the relationship between PC values and cell types can provide valuable insights into the biological or technical factors driving cellular heterogeneity. It can help identify PC dimensions that capture variation specific to certain cell types or distinguish different cellular states. 

@@ -37,27 +37,50 @@
 #'
 #' # Add labels to query object
 #' colData(query_data)$labels <- pred$labels
-#'
-#' # Perform linear regression on PC1 and a specific variable (e.g., "labels")
-#' performLinearRegression(se_object = query_data, dependent_var = "PC1", independent_var = "labels")
-#'
+#' 
+#' # Specify the dependent variables (principal components) and independent variable (e.g., "labels")
+#' dependent_vars <- c("PC1", "PC2", "PC3")
+#' independent_var <- "labels"
+#' 
+#' # Perform linear regression on multiple principal components
+#' result <- regressPC(se_object = query_data, dependent_vars = dependent_vars, independent_var = independent_var)
+#' 
+#' # Print the summaries of the linear regression models and R-squared values
+#' print(result$regression_summaries)
+#' print(result$rsquared_df)
+#' 
 #' # Note: Instead of using SingleR, you can use any other method to obtain the scores for regression analysis.
 #' # Make sure to provide the appropriate dependent and independent variables to the performLinearRegression function.
 #'
-regressPC <- function(se_object, dependent_var, independent_var) {
-
-  # Get the dependent variable from the specified principal component
-  dependent <- reducedDim(se_object, "PCA")[, dependent_var]
-
-  # Create a data frame with the dependent and independent variables
-  df <- data.frame(Dependent = dependent,
-                   Independent = colData(se_object)[[independent_var]])
-
-  # Perform linear regression
-  lm_model <- lm(Dependent ~ Independent, data = df)
-
-  # Save the summary of the linear regression model
-  regression_summary <- summary(lm_model)
+regressPC <- function(se_object, dependent_vars, independent_var) {
+  # Get the dependent variables from the specified principal components
+  dependent_list <- lapply(dependent_vars, function(var) {
+    reducedDim(se_object, "PCA")[, var, drop = FALSE]
+  })
   
-  return(regression_summary)
+  # Create a data frame with the dependent and independent variables
+  df <- data.frame(Independent = colData(se_object)[[independent_var]])
+  for (i in seq_along(dependent_list)) {
+    df[[paste0("PC", i)]] <- dependent_list[[i]]
+  }
+  
+  # Perform linear regression for each principal component
+  regression_summaries <- list()
+  for (i in seq_along(dependent_list)) {
+    lm_model <- lm(paste0("PC", i, " ~ Independent"), data = df)
+    regression_summary <- summary(lm_model)
+    regression_summaries[[paste0("PC", i)]] <- regression_summary
+  }
+  
+  # Calculate R-squared values
+  rsquared <- sapply(regression_summaries, function(summary) {
+    rsq <- summary$r.squared
+    return(rsq)
+  })
+  
+  rsquared_df <- data.frame(PC = names(regression_summaries), R2 = rsquared)
+  
+  # Return both the summaries of the linear regression models and R-squared values
+  return(list(regression_summaries = regression_summaries, rsquared_df = rsquared_df))
 }
+

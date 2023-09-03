@@ -507,30 +507,87 @@ explore the associations between these variables within the single-cell
 gene expression dataset (reference and query).
 
 ``` r
-summary <- regressPC(se_object = query_data, 
-                     dependent_var = "PC1", 
-                     independent_var = "labels")
-summary
+# Specify the dependent variables (principal components) and independent variable (e.g., "labels")
+dependent_vars <- c("PC1", "PC2", "PC3")
+independent_var <- "labels"
+
+# Perform linear regression on multiple principal components
+result <- regressPC(se_object = query_data, dependent_vars = dependent_vars, independent_var = independent_var)
+
+# Print the summaries of the linear regression models and R-squared values
+print(result$regression_summaries)
+#> $PC1
 #> 
 #> Call:
-#> lm(formula = Dependent ~ Independent, data = df)
+#> lm(formula = paste0("PC", i, " ~ Independent"), data = df)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -14.8951  -1.9769   0.6218   2.4922   8.2341 
+#> -12.3125  -2.0709   0.5883   2.4064   7.5541 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          8.1259     0.2961   27.44   <2e-16 ***
-#> IndependentCD4      -4.8406     0.3532  -13.70   <2e-16 ***
-#> IndependentCD8     -13.9906     0.3471  -40.31   <2e-16 ***
-#> IndependentMyeloid  -8.7692     0.5865  -14.95   <2e-16 ***
+#> (Intercept)          8.3201     0.2614   31.83   <2e-16 ***
+#> IndependentCD4      -5.2037     0.3197  -16.28   <2e-16 ***
+#> IndependentCD8     -14.2012     0.3095  -45.88   <2e-16 ***
+#> IndependentMyeloid  -8.2284     0.5738  -14.34   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.65 on 965 degrees of freedom
-#> Multiple R-squared:  0.6845, Adjusted R-squared:  0.6835 
-#> F-statistic: 697.9 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.388 on 965 degrees of freedom
+#> Multiple R-squared:  0.7262, Adjusted R-squared:  0.7253 
+#> F-statistic:   853 on 3 and 965 DF,  p-value: < 2.2e-16
+#> 
+#> 
+#> $PC2
+#> 
+#> Call:
+#> lm(formula = paste0("PC", i, " ~ Independent"), data = df)
+#> 
+#> Residuals:
+#>      Min       1Q   Median       3Q      Max 
+#> -19.0801  -0.7913   0.6117   1.6353   6.7693 
+#> 
+#> Coefficients:
+#>                    Estimate Std. Error t value Pr(>|t|)    
+#> (Intercept)         -5.0573     0.2142  -23.61   <2e-16 ***
+#> IndependentCD4       8.2120     0.2619   31.35   <2e-16 ***
+#> IndependentCD8       5.5756     0.2536   21.99   <2e-16 ***
+#> IndependentMyeloid  -4.8619     0.4701  -10.34   <2e-16 ***
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> 
+#> Residual standard error: 2.776 on 965 degrees of freedom
+#> Multiple R-squared:  0.6196, Adjusted R-squared:  0.6184 
+#> F-statistic: 523.9 on 3 and 965 DF,  p-value: < 2.2e-16
+#> 
+#> 
+#> $PC3
+#> 
+#> Call:
+#> lm(formula = paste0("PC", i, " ~ Independent"), data = df)
+#> 
+#> Residuals:
+#>     Min      1Q  Median      3Q     Max 
+#> -7.6960 -1.3833 -0.0724  1.4779  6.8935 
+#> 
+#> Coefficients:
+#>                    Estimate Std. Error t value Pr(>|t|)    
+#> (Intercept)          2.2362     0.1818  12.298  < 2e-16 ***
+#> IndependentCD4      -4.2361     0.2224 -19.050  < 2e-16 ***
+#> IndependentCD8      -0.8639     0.2153  -4.013 6.47e-05 ***
+#> IndependentMyeloid  -8.4022     0.3991 -21.052  < 2e-16 ***
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> 
+#> Residual standard error: 2.357 on 965 degrees of freedom
+#> Multiple R-squared:  0.4649, Adjusted R-squared:  0.4632 
+#> F-statistic: 279.4 on 3 and 965 DF,  p-value: < 2.2e-16
+print(result$rsquared_df)
+#>      PC        R2
+#> PC1 PC1 0.7261581
+#> PC2 PC2 0.6196034
+#> PC3 PC3 0.4648522
 ```
 
 By conducting linear regression, one can assess whether the PC values
@@ -590,7 +647,7 @@ relationships and patterns.
      [1] corrplot_0.92               AUCell_1.22.0              
      [3] SingleR_2.2.0               RColorBrewer_1.1-3         
      [5] scRNAseq_2.14.0             scran_1.28.1               
-     [7] scater_1.29.2               ggplot2_3.4.2              
+     [7] scater_1.29.2               ggplot2_3.4.3              
      [9] scuttle_1.9.4               scDiagnostics_0.99.0       
     [11] SingleCellExperiment_1.22.0 SummarizedExperiment_1.30.2
     [13] Biobase_2.60.0              GenomicRanges_1.52.0       
