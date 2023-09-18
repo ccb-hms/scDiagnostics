@@ -14,7 +14,7 @@
 #' @param plot if TRUE, plot a histogram of the entropies
 #' @returns A vector of entropy values for each column in X.
 #' @details The function checks if X is already on the probability scale.
-#'   Otherwise, it divides out the sum columnwise.
+#'   Otherwise, it applies softmax columnwise.
 #'
 #'   You can think about entropies on a scale from 0 to a maximum that depends
 #'   on the number of categories. This is the function for entropy (minus input
@@ -23,57 +23,34 @@
 #'   be a high as possible.
 #' @export
 #' @examples
-#' # Prepare the type assigment matrix X using SingleR like in the readme. Skip to the bottom two commands if you already have your type assignment matrix.
-#' library(scRNAseq)
-#' library(scuttle)
-#' library(SingleR)
-#' library(scater)
+#' # Simulate 500 cells with scores on 4 possible cell types
+#' X <- rnorm(500 * 4) |> matrix(nrow = 4)
+#' X[1, 1:250] <- X[1, 1:250] + 5 # Make the first category highly scored in the first 250 cells
 #'
-#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-#'
-#' # Divide the data into reference and query datasets
-#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-#' ref_data <- sce[, indices]
-#' query_data <- sce[, -indices]
-#'
-#' # Log-transform datasets
-#' ref_data <- logNormCounts(ref_data)
-#' query_data <- logNormCounts(query_data)
-#'
-#' # Run PCA
-#' ref_data <- runPCA(ref_data)
-#' query_data <- runPCA(query_data)
-#'
-#' # Get cell type scores using SingleR
-#' pred <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-#' pred <- as.data.frame(pred)
-#'
-#' X <- pred[, grepl("scores", names(pred))] |>
-#'     as.matrix() |>
-#'     t()
+#' # The function will issue a message about softmaxing the scores, and the entropy histogram will be bimodal since we made half of the cells clearly category 1 while the other half are roughly even.
 #' entropy_scores <- calculateCategorizationEntropy(X)
 calculateCategorizationEntropy <- function(X, plot = TRUE, verbose = TRUE) {
-    if (any(X < 0)) {
-        stop("All entries in X must be >= 0.")
-    }
-
     colSumsX <- colSums(X)
 
     X_is_probabilities <- all(X >= 0 & X <= 1) &
         all((colSumsX - 1) <= 1e-8)
 
     if (!X_is_probabilities) {
-        if (verbose) message("X doesn't seem to be on the probability scale, dividing out the colSums.")
-        X <- sweep(X, MARGIN = 2, STATS = colSumsX, FUN = "/")
+        if (verbose) message("X doesn't seem to be on the probability scale, applying column-wise softmax.")
+        expX <- exp(X)
+
+        X <- sweep(expX, MARGIN = 2, STATS = colSums(expX), FUN = "/")
     }
 
+    ncat <- nrow(X)
+
+    max_ent <- calculate_entropy(rep(1 / ncat, ncat))
+
     if (verbose) {
-        ncat <- nrow(X)
-        
         message(
             "Max possible entropy given ", ncat, " categories: ",
-            round(calculate_entropy(rep(1 / ncat, ncat)),
-                  digits = 2
+            round(max_ent,
+                digits = 2
             )
         )
     }
@@ -83,8 +60,11 @@ calculateCategorizationEntropy <- function(X, plot = TRUE, verbose = TRUE) {
     if (plot) {
         p <- data.frame(entropies = entropies) |>
             ggplot(aes(entropies)) +
-            geom_histogram(color = "black", fill = "white",
-                           bins = 30) +
+            geom_histogram(
+                color = "black", fill = "white",
+                bins = 30,
+                boundary = 0
+            ) +
             theme_bw()
         print(p)
     }
