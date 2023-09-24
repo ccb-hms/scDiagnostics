@@ -160,7 +160,7 @@ This function helps user to explore the distribution of gene expression values f
 The function also allows users to narrow down their analysis to specific cell types of interest. This enables investigation of whether alignment between the query and reference datasets is consistent not only at a global level but also within specific cell types.
 
 ```{r histogram gene expression, warning=FALSE, message=FALSE}
-# Generate histogram
+# Generate density plots
 plotMarkerExpression(reference_data = ref_data, 
                      query_data = query_data, 
                      reference_cell_labels = "reclustered.broad", 
