@@ -218,7 +218,7 @@ between the query and reference datasets is consistent not only at a
 global level but also within specific cell types.
 
 ``` r
-# Generate histogram
+# Generate density plots
 plotMarkerExpression(reference_data = ref_data, 
                      query_data = query_data, 
                      reference_cell_labels = "reclustered.broad", 
