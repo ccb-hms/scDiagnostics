@@ -16,7 +16,9 @@
 #'
 #' @import ggplot2
 #' @importFrom ggplot2 ggplot
+#' @importFrom stats cor dist
 #' @import SingleCellExperiment
+#' @importFrom SummarizedExperiment assay
 #' @export
 #'
 #' @examples
@@ -53,9 +55,23 @@
 #' query_data_subset <- query_data[common_genes, ]
 #'
 #' # Example usage of the function
-#' calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, reference_data = ref_data_subset, query_cell_type_col = "labels", ref_cell_type_col = "reclustered.broad", cell_type_query = "CD8", cell_type_reference = "CD8", distance_metric = "euclidean")
+#' calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, 
+#'                                          reference_data = ref_data_subset, 
+#'                                          query_cell_type_col = "labels", 
+#'                                          ref_cell_type_col = "reclustered.broad", 
+#'                                          cell_type_query = "CD8", 
+#'                                          cell_type_reference = "CD8", 
+#'                                          distance_metric = "euclidean")
 #'
-calculatePairwiseDistancesAndPlotDensity <- function(query_data, reference_data, query_cell_type_col, ref_cell_type_col, cell_type_query, cell_type_reference, distance_metric, correlation_method = "pearson") {
+calculatePairwiseDistancesAndPlotDensity <- function(query_data, 
+                                                     reference_data, 
+                                                     query_cell_type_col, 
+                                                     ref_cell_type_col, 
+                                                     cell_type_query, 
+                                                     cell_type_reference, 
+                                                     distance_metric, 
+                                                     correlation_method = "pearson") {
+  
   # Subset query and reference data to the specified cell type
   query_data_subset <- query_data[, !is.na(query_data[[query_cell_type_col]]) & query_data[[query_cell_type_col]] == cell_type_query]
   ref_data_subset <- reference_data[, !is.na(reference_data[[ref_cell_type_col]]) & reference_data[[ref_cell_type_col]] == cell_type_reference]

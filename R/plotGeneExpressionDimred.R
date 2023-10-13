@@ -10,6 +10,7 @@
 #'
 #' @import ggplot2
 #' @importFrom ggplot2 ggplot
+#' @importFrom SummarizedExperiment assay
 #' @import SingleCellExperiment
 #'
 #' @return A ggplot object representing the dimensional reduction plot with gene expression.
@@ -35,9 +36,15 @@
 #' query_data <- runPCA(query_data)
 #'
 #' # Plot gene expression on PCA plot
-#' plotGeneExpressionDimred(se_object = query_data, method = "PCA", n_components = c(1, 2), feature = "VPREB3")
+#' plotGeneExpressionDimred(se_object = query_data, 
+#'                          method = "PCA", 
+#'                          n_components = c(1, 2), 
+#'                          feature = "VPREB3")
 #'
-plotGeneExpressionDimred <- function(se_object, method, n_components = c(1, 2), feature) {
+plotGeneExpressionDimred <- function(se_object, 
+                                     method, 
+                                     n_components = c(1, 2), 
+                                     feature) {
 
   # Error handling and validation
   supported_methods <- c("tSNE", "UMAP", "PCA")

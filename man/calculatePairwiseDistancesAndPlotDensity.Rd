@@ -72,6 +72,12 @@ ref_data_subset <- ref_data[common_genes, ]
 query_data_subset <- query_data[common_genes, ]
 
 # Example usage of the function
-calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, reference_data = ref_data_subset, query_cell_type_col = "labels", ref_cell_type_col = "reclustered.broad", cell_type_query = "CD8", cell_type_reference = "CD8", distance_metric = "euclidean")
+calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, 
+                                         reference_data = ref_data_subset, 
+                                         query_cell_type_col = "labels", 
+                                         ref_cell_type_col = "reclustered.broad", 
+                                         cell_type_query = "CD8", 
+                                         cell_type_reference = "CD8", 
+                                         distance_metric = "euclidean")
 
 }

@@ -42,6 +42,9 @@ query_data <- logNormCounts(query_data)
 query_data <- runPCA(query_data)
 
 # Plot gene expression on PCA plot
-plotGeneExpressionDimred(se_object = query_data, method = "PCA", n_components = c(1, 2), feature = "VPREB3")
+plotGeneExpressionDimred(se_object = query_data, 
+                         method = "PCA", 
+                         n_components = c(1, 2), 
+                         feature = "VPREB3")
 
 }

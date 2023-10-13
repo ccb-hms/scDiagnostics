@@ -1,5 +1,5 @@
 scDiagnostics: diagnostic functions to assess the quality of cell type
-assignments in single-cell RNA-seq data
+assignments in single-cell RNA-seq
 ================
 Smriti Chawla
 2023-07-08
@@ -10,15 +10,17 @@ Getting started
 
 # Installation
 
-## Installation from GitHub 
+<h4>
+Install a Bioconductor Package
+</h4>
 
-To install the package directly from GitHub use the following command:
+To install a package from Bioconductor use a following command:
 
 ``` r
 BiocManager::install("ccb-hms/scDiagnostics")
 ```
 
-NOTE: you will need the `remotes` package to install from GitHub.
+NOTE: you will need the remotes package to install from github.
 
 To build the package vignettes upon installation use:
 
@@ -150,7 +152,7 @@ and interpretation of the cell type assignments in the dataset.
    p1 + xlab("percent.mito")
 ```
 
-<img src="man/figures/Scatter plot QC stats vs annotation scores-1.png" width="100%" />
+<img src="man/figures/Scatter-Plot-QC-Stats-Vs-Annotation-Scores-1.png" width="100%" />
 
 Scatter plot for visualizing relationship between percentage of
 mitochondrial gene and cell annotation scores for the cell types.
@@ -163,7 +165,7 @@ mitochondrial gene and cell annotation scores for the cell types.
    p2 + xlab("percent.mito")
 ```
 
-<img src="man/figures/Scatter plot QC stats vs annotation scores all cell types-1.png" width="100%" />
+<img src="man/figures/QC-Annotation-Scatter-AllCellTypes-1.png" width="100%" />
 
 ## Examining Distribution of QC stats and Annotation Scores
 
@@ -196,7 +198,7 @@ histQCvsAnnotation(query_data = query_data, qc_col = "percent.mito",
                    label = NULL)
 ```
 
-<img src="man/figures/Distribution of percentage mito genes and Annotation Scores-1.png" width="100%" />
+<img src="man/figures/Mito-Genes-Vs-Annotation-1.png" width="100%" />
 
 The right-skewed distribution for mitochondrial percentages and a
 left-skewed distribution for annotation scores in above histograms
@@ -227,7 +229,7 @@ plotMarkerExpression(reference_data = ref_data,
                      label = "B_and_plasma")
 ```
 
-<img src="man/figures/histogram gene expression-1.png" width="100%" />
+<img src="man/figures/Gene-Expression-Histogram-1.png" width="100%" />
 
 In the provided example, we examined the distribution of expression
 values for the gene MS4A1, a marker for naive B cells, in both the query
@@ -261,7 +263,7 @@ plotGeneExpressionDimred(se_object = query_data,
                          feature = "VPREB3")
 ```
 
-<img src="man/figures/scatter plot gene expression-1.png" width="100%" />
+<img src="man/figures/Gene-Expression-Scatter-1.png" width="100%" />
 
 The dimensional reduction plot allows us to observe how the gene
 expression of VPREB3 is distributed across the cells and whether any
@@ -311,7 +313,7 @@ plotGeneSetScores(se_object = query_data,
                   feature = "geneSetScores")
 ```
 
-<img src="man/figures/Visualize gene set or pathway scores on dimensional reduction scatter plot -1.png" width="100%" />
+<img src="man/figures/Pathway-Scores-on-Dimensional-Reduction-Scatter-1.png" width="100%" />
 
 In the provided example, we demonstrate the usage of the
 plotGeneSetScores function using the AUCell package to compute gene set
@@ -380,7 +382,7 @@ visualizeCellTypeMDS(query_data = query_data_subset,
                      legend_order = legend_order)
 ```
 
-<img src="man/figures/CMD scatter plot-1.png" width="100%" />
+<img src="man/figures/CMD-Scatter-Plot-1.png" width="100%" />
 
 Upon examining the MDS scatter plot, we observe that the CD4 and CD8
 cell types overlap to some extent.By observing the proximity or overlap
@@ -422,7 +424,7 @@ cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subs
 corrplot(cor_matrix_avg, method = "number", tl.col = "black")
 ```
 
-<img src="man/figures/Cell Type-specific Pairwise Correlation Analysis and Visualization -1.png" width="100%" />
+<img src="man/figures/Cell-Type-Correlation-Analysis-Visualization-1.png" width="100%" />
 
 In this case, users have the flexibility to extract the gene expression
 profiles of specific cell types from the reference and query datasets
@@ -463,7 +465,7 @@ calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset,
                                          distance_metric = "euclidean")
 ```
 
-<img src="man/figures/Pairwise Distance Analysis and Density Visualization-1.png" width="100%" />
+<img src="man/figures/Pairwise-Distance-Analysis-Density-Visualization-1.png" width="100%" />
 
 Alternatively, users can opt for the “correlation” distance metric,
 which measures the similarity in gene expression profiles between cells.
@@ -484,7 +486,7 @@ calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset,
                                          correlation_method = "spearman")
 ```
 
-<img src="man/figures/Pairwise Distance Analysis and Density Visualization correlation based-1.png" width="100%" />
+<img src="man/figures/Pairwise-Distance-Correlation-Based-Density-Visualization-1.png" width="100%" />
 
 By utilizing this function, users can explore the pairwise distances
 between query and reference cells of a specific cell type and gain
@@ -521,20 +523,20 @@ print(result$regression_summaries)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -12.3125  -2.0709   0.5883   2.4064   7.5541 
+#> -12.7544  -2.1267   0.5441   2.2872   8.1720 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          8.3201     0.2614   31.83   <2e-16 ***
-#> IndependentCD4      -5.2037     0.3197  -16.28   <2e-16 ***
-#> IndependentCD8     -14.2012     0.3095  -45.88   <2e-16 ***
-#> IndependentMyeloid  -8.2284     0.5738  -14.34   <2e-16 ***
+#> (Intercept)          8.5512     0.2568   33.30   <2e-16 ***
+#> IndependentCD4      -6.0846     0.3130  -19.44   <2e-16 ***
+#> IndependentCD8     -14.7426     0.3095  -47.64   <2e-16 ***
+#> IndependentMyeloid  -8.2974     0.6175  -13.44   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.388 on 965 degrees of freedom
-#> Multiple R-squared:  0.7262, Adjusted R-squared:  0.7253 
-#> F-statistic:   853 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.416 on 965 degrees of freedom
+#> Multiple R-squared:  0.7281, Adjusted R-squared:  0.7272 
+#> F-statistic: 861.2 on 3 and 965 DF,  p-value: < 2.2e-16
 #> 
 #> 
 #> $PC2
@@ -544,20 +546,20 @@ print(result$regression_summaries)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -19.0801  -0.7913   0.6117   1.6353   6.7693 
+#> -18.3701  -0.7837   0.5767   1.7048   5.0181 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -5.0573     0.2142  -23.61   <2e-16 ***
-#> IndependentCD4       8.2120     0.2619   31.35   <2e-16 ***
-#> IndependentCD8       5.5756     0.2536   21.99   <2e-16 ***
-#> IndependentMyeloid  -4.8619     0.4701  -10.34   <2e-16 ***
+#> (Intercept)         -4.9839     0.2109  -23.63   <2e-16 ***
+#> IndependentCD4       8.3028     0.2571   32.29   <2e-16 ***
+#> IndependentCD8       5.0923     0.2542   20.03   <2e-16 ***
+#> IndependentMyeloid  -4.9704     0.5072   -9.80   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 2.776 on 965 degrees of freedom
-#> Multiple R-squared:  0.6196, Adjusted R-squared:  0.6184 
-#> F-statistic: 523.9 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 2.806 on 965 degrees of freedom
+#> Multiple R-squared:  0.6139, Adjusted R-squared:  0.6127 
+#> F-statistic: 511.4 on 3 and 965 DF,  p-value: < 2.2e-16
 #> 
 #> 
 #> $PC3
@@ -566,26 +568,26 @@ print(result$regression_summaries)
 #> lm(formula = paste0("PC", i, " ~ Independent"), data = df)
 #> 
 #> Residuals:
-#>     Min      1Q  Median      3Q     Max 
-#> -7.6960 -1.3833 -0.0724  1.4779  6.8935 
+#>      Min       1Q   Median       3Q      Max 
+#> -13.4808  -1.1660   0.1822   1.4833   5.4621 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          2.2362     0.1818  12.298  < 2e-16 ***
-#> IndependentCD4      -4.2361     0.2224 -19.050  < 2e-16 ***
-#> IndependentCD8      -0.8639     0.2153  -4.013 6.47e-05 ***
-#> IndependentMyeloid  -8.4022     0.3991 -21.052  < 2e-16 ***
+#> (Intercept)          2.5478     0.1766  14.424  < 2e-16 ***
+#> IndependentCD4      -4.9161     0.2153 -22.829  < 2e-16 ***
+#> IndependentCD8      -1.0601     0.2129  -4.979 7.55e-07 ***
+#> IndependentMyeloid  -7.1576     0.4248 -16.849  < 2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 2.357 on 965 degrees of freedom
-#> Multiple R-squared:  0.4649, Adjusted R-squared:  0.4632 
-#> F-statistic: 279.4 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 2.35 on 965 degrees of freedom
+#> Multiple R-squared:  0.4761, Adjusted R-squared:  0.4744 
+#> F-statistic: 292.3 on 3 and 965 DF,  p-value: < 2.2e-16
 print(result$rsquared_df)
 #>      PC        R2
-#> PC1 PC1 0.7261581
-#> PC2 PC2 0.6196034
-#> PC3 PC3 0.4648522
+#> PC1 PC1 0.7280625
+#> PC2 PC2 0.6138693
+#> PC3 PC3 0.4760634
 ```
 
 By conducting linear regression, one can assess whether the PC values
@@ -625,7 +627,7 @@ relationships and patterns.
 
     R version 4.3.1 (2023-06-16)
     Platform: aarch64-apple-darwin20 (64-bit)
-    Running under: macOS Ventura 13.5
+    Running under: macOS Ventura 13.5.2
 
     Matrix products: default
     BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
@@ -645,13 +647,14 @@ relationships and patterns.
      [1] corrplot_0.92               AUCell_1.22.0              
      [3] SingleR_2.2.0               RColorBrewer_1.1-3         
      [5] scRNAseq_2.14.0             scran_1.28.1               
-     [7] scater_1.29.2               ggplot2_3.4.3              
-     [9] scuttle_1.9.4               scDiagnostics_0.99.0       
-    [11] SingleCellExperiment_1.22.0 SummarizedExperiment_1.30.2
-    [13] Biobase_2.60.0              GenomicRanges_1.52.0       
-    [15] GenomeInfoDb_1.36.0         IRanges_2.34.0             
-    [17] S4Vectors_0.38.1            BiocGenerics_0.46.0        
-    [19] MatrixGenerics_1.12.0       matrixStats_1.0.0          
+     [7] scDiagnostics_0.99.0        gridExtra_2.3              
+     [9] scater_1.29.2               ggplot2_3.4.3              
+    [11] scuttle_1.9.4               SingleCellExperiment_1.22.0
+    [13] SummarizedExperiment_1.30.2 Biobase_2.60.0             
+    [15] GenomicRanges_1.52.0        GenomeInfoDb_1.36.0        
+    [17] IRanges_2.34.0              S4Vectors_0.38.1           
+    [19] BiocGenerics_0.46.0         MatrixGenerics_1.12.0      
+    [21] matrixStats_1.0.0          
 
     loaded via a namespace (and not attached):
       [1] rstudioapi_0.15.0             magrittr_2.0.3               
@@ -672,7 +675,7 @@ relationships and patterns.
      [31] shiny_1.7.4                   digest_0.6.31                
      [33] colorspace_2.1-0              AnnotationDbi_1.62.1         
      [35] dqrng_0.3.0                   irlba_2.3.5.1                
-     [37] ExperimentHub_2.8.0           RSQLite_2.3.1                
+     [37] ExperimentHub_2.8.1           RSQLite_2.3.1                
      [39] beachmat_2.16.0               labeling_0.4.2               
      [41] filelock_1.0.2                fansi_1.0.4                  
      [43] httr_1.4.6                    compiler_4.3.1               
@@ -690,9 +693,9 @@ relationships and patterns.
      [67] cluster_2.1.4                 generics_0.1.3               
      [69] gtable_0.3.3                  R.methodsS3_1.8.2            
      [71] ensembldb_2.24.0              data.table_1.14.8            
-     [73] hms_1.1.3                     xml2_1.3.5                   
-     [75] BiocSingular_1.16.0           ScaledMatrix_1.8.1           
-     [77] metapod_1.8.0                 utf8_1.2.3                   
+     [73] hms_1.1.3                     BiocSingular_1.16.0          
+     [75] ScaledMatrix_1.8.1            metapod_1.8.0                
+     [77] xml2_1.3.5                    utf8_1.2.3                   
      [79] XVector_0.40.0                ggrepel_0.9.3                
      [81] BiocVersion_3.17.1            pillar_1.9.0                 
      [83] stringr_1.5.0                 limma_3.56.2                 
@@ -701,21 +704,21 @@ relationships and patterns.
      [89] rtracklayer_1.60.0            bit_4.0.5                    
      [91] annotate_1.78.0               tidyselect_1.2.0             
      [93] locfit_1.5-9.8                Biostrings_2.68.1            
-     [95] knitr_1.43                    gridExtra_2.3                
-     [97] ProtGenerics_1.32.0           edgeR_3.42.4                 
-     [99] xfun_0.39                     statmod_1.5.0                
-    [101] stringi_1.7.12                lazyeval_0.2.2               
-    [103] yaml_2.3.7                    evaluate_0.21                
-    [105] codetools_0.2-19              tibble_3.2.1                 
-    [107] graph_1.78.0                  BiocManager_1.30.21          
-    [109] cli_3.6.1                     xtable_1.8-4                 
-    [111] munsell_0.5.0                 Rcpp_1.0.10                  
-    [113] dbplyr_2.3.2                  png_0.1-8                    
-    [115] XML_3.99-0.14                 parallel_4.3.1               
-    [117] ellipsis_0.3.2                blob_1.2.4                   
-    [119] prettyunits_1.1.1             AnnotationFilter_1.24.0      
-    [121] sparseMatrixStats_1.12.0      bitops_1.0-7                 
-    [123] GSEABase_1.62.0               viridisLite_0.4.2            
-    [125] scales_1.2.1                  purrr_1.0.1                  
-    [127] crayon_1.5.2                  rlang_1.1.1                  
-    [129] cowplot_1.1.1                 KEGGREST_1.40.0              
+     [95] knitr_1.43                    ProtGenerics_1.32.0          
+     [97] edgeR_3.42.4                  xfun_0.39                    
+     [99] statmod_1.5.0                 stringi_1.7.12               
+    [101] lazyeval_0.2.2                yaml_2.3.7                   
+    [103] evaluate_0.21                 codetools_0.2-19             
+    [105] tibble_3.2.1                  graph_1.78.0                 
+    [107] BiocManager_1.30.21           cli_3.6.1                    
+    [109] xtable_1.8-4                  munsell_0.5.0                
+    [111] Rcpp_1.0.10                   dbplyr_2.3.2                 
+    [113] png_0.1-8                     XML_3.99-0.14                
+    [115] parallel_4.3.1                ellipsis_0.3.2               
+    [117] blob_1.2.4                    prettyunits_1.1.1            
+    [119] AnnotationFilter_1.24.0       sparseMatrixStats_1.12.0     
+    [121] bitops_1.0-7                  GSEABase_1.62.0              
+    [123] viridisLite_0.4.2             scales_1.2.1                 
+    [125] purrr_1.0.1                   crayon_1.5.2                 
+    [127] rlang_1.1.1                   cowplot_1.1.1                
+    [129] KEGGREST_1.40.0              

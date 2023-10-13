@@ -14,6 +14,7 @@
 #' @import ggplot2
 #' @importFrom ggplot2 ggplot
 #' @importFrom gridExtra grid.arrange
+#' @importFrom SummarizedExperiment assay
 #' @import SingleCellExperiment
 #'
 #' @return A object displaying density plots of gene expression distribution from both the 
@@ -45,11 +46,21 @@
 #' # Add labels to query object
 #' colData(query_data)$labels <- pred$labels
 #'
-#' 
 #' # Note: Users can use SingleR or any other method to obtain the cell type annotations.
-#' plotMarkerExpression(reference_data = ref_data, query_data = query_data, reference_cell_labels = "reclustered.broad", query_cell_labels = "labels", gene_name = "VPREB3", label = "B_and_plasma")
+#' plotMarkerExpression(reference_data = ref_data, 
+#'                      query_data = query_data, 
+#'                      reference_cell_labels = "reclustered.broad", 
+#'                      query_cell_labels = "labels", 
+#'                      gene_name = "VPREB3", 
+#'                      label = "B_and_plasma")
 #'
-plotMarkerExpression <- function(reference_data, query_data, reference_cell_labels, query_cell_labels, gene_name, label) {
+plotMarkerExpression <- function(reference_data, 
+                                 query_data, 
+                                 reference_cell_labels, 
+                                 query_cell_labels, 
+                                 gene_name, 
+                                 label) {
+  
   # Get expression of the specified gene for reference and query datasets
   reference_gene_expression <- assay(reference_data, "logcounts")[gene_name, ]
   query_gene_expression <- assay(query_data, "logcounts")[gene_name, ]

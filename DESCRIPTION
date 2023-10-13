@@ -16,7 +16,7 @@ BugReports: https://github.com/ccb-hms/scDiagnostics/issues
 RoxygenNote: 7.2.3
 Depends:
  R (>= 4.2.0),
- SingleCellExperiment
+ SingleCellExperiment,
 Suggests:
     scRNAseq,
     knitr,
@@ -27,6 +27,8 @@ Suggests:
     RColorBrewer,
     corrplot,
     scran,
+    SummarizedExperiment,
     scater,
-    gridExtra
+    gridExtra,
+    ggplot2
 VignetteBuilder: knitr

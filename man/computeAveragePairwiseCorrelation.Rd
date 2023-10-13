@@ -58,9 +58,11 @@ scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
 colData(query_data)$labels <- scores$labels
 
 # Compute Pairwise Correlations
-## Note: The selection of highly variable genes and desired cell types may vary based on user preference.
-## Note: The cell type annotation method used in this example is SingleR. You can use any other method for cell type annotation and provide the corresponding labels in the metadata.
-## Here, we are demonstrating the usage with arbitrary choices.
+# Note: The selection of highly variable genes and desired cell types may vary 
+# based on user preference. 
+# The cell type annotation method used in this example is SingleR. 
+# User can use any other method for cell type annotation and provide 
+# the corresponding labels in the metadata.
 
 # Selecting highly variable genes
 ref_var <- getTopHVGs(ref_data, n = 2000)
@@ -75,7 +77,12 @@ ref_data_subset <- ref_data[common_genes, ref_data$reclustered.broad \%in\% sele
 query_data_subset <- query_data[common_genes, query_data$reclustered.broad \%in\% selected_cell_types]
 
 # Compute pairwise correlations
-cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subset, reference_data = ref_data_subset, query_cell_type_col = "labels", ref_cell_type_col = "reclustered.broad", cell_types = selected_cell_types, correlation_method = "spearman")
+cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subset, 
+                                                    reference_data = ref_data_subset, 
+                                                    query_cell_type_col = "labels", 
+                                                    ref_cell_type_col = "reclustered.broad", 
+                                                    cell_types = selected_cell_types, 
+                                                    correlation_method = "spearman")
 
 # Visualize the results using any visualization method of choice
 

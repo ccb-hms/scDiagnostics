@@ -12,6 +12,7 @@
 #'
 #' @importFrom stats cmdscale cor
 #' @importFrom ggplot2 ggplot
+#' @importFrom SummarizedExperiment assay
 #'
 #' @return A ggplot object representing the MDS scatter plot with cell type coloring.
 #' @export
@@ -54,7 +55,13 @@
 #' mdata <- c(paste("Query", query_labels), paste("Reference", ref_labels))
 #'
 #' # Define the cell types and legend order
-#' cell_types <- c("Query CD8", "Reference CD8", "Query CD4", "Reference CD4", "Query B_and_plasma", "Reference B_and_plasma")
+#' cell_types <- c("Query CD8", 
+#'                 "Reference CD8", 
+#'                  "Query CD4", 
+#'                  "Reference CD4", 
+#'                  "Query B_and_plasma", 
+#'                  "Reference B_and_plasma")
+#'                  
 #' legend_order <- cell_types
 #'
 #' # Define the colors for cell types
@@ -63,10 +70,18 @@
 #' cell_type_colors <- color_mapping[cell_types]
 #'
 #' # Generate the MDS scatter plot with cell type coloring
-#' plot <- visualizeCellTypeMDS(query_data = query_data_subset, reference_data = ref_data_subset, mdata = mdata, colors = cell_type_colors, legend_order = legend_order)
+#' plot <- visualizeCellTypeMDS(query_data = query_data_subset, 
+#'                             reference_data = ref_data_subset, 
+#'                             mdata = mdata, 
+#'                             colors = cell_type_colors, 
+#'                             legend_order = legend_order)
 #' print(plot)
 #'
-visualizeCellTypeMDS <- function(query_data, reference_data, mdata, colors, legend_order) {
+visualizeCellTypeMDS <- function(query_data, 
+                                 reference_data, 
+                                 mdata, 
+                                 colors, 
+                                 legend_order) {
 
   queryExp <- as.matrix(assay(query_data, "logcounts"))
   refExp <- as.matrix(assay(reference_data, "logcounts"))

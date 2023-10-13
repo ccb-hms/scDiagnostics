@@ -88,7 +88,7 @@ Next, we use the SingleR package to obtain cell type scores for the query datase
 
 It's important to note that the use of SingleR for cell type annotation is just one example. Users can use any other cell type annotation method to obtain cell type scores. The scatter plot provides a visual representation of this relationship, allowing for further examination and interpretation of the cell type assignments in the dataset.
 
-```{r Scatter plot QC stats vs annotation scores, warning=FALSE, message=FALSE}
+```{r Scatter-Plot-QC-Stats-Vs-Annotation-Scores, warning=FALSE, message=FALSE}
 
    # Load data
    sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
@@ -129,7 +129,7 @@ It's important to note that the use of SingleR for cell type annotation is just 
 
 Scatter plot for visualizing relationship between percentage of mitochondrial gene and cell annotation scores for the cell types.
 
-```{r Scatter plot QC stats vs annotation scores all cell types, warning=FALSE, message=FALSE}
+```{r QC-Annotation-Scatter-AllCellTypes, warning=FALSE, message=FALSE}
    p2 <- plotQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", 
                             label_col = "labels", 
                             score_col = "cell_scores", 
@@ -147,7 +147,7 @@ The second histogram visualizes the distribution of QC stats. This provides insi
 
 By examining the histograms, we can observe the range, shape, and potential outliers in the distribution of both annotation scores and QC stats. This allows us to assess the appropriateness of the cell type assignments and identify any potential discrepancies or patterns in the gene expression profiles for the specific cell type.
 
-```{r Distribution of percentage mito genes and Annotation Scores, warning=FALSE, message=FALSE}
+```{r Mito-Genes-Vs-Annotation, warning=FALSE, message=FALSE}
 # Generate histogram
 histQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", 
                    label_col = "labels", 
@@ -163,7 +163,7 @@ This function helps user to explore the distribution of gene expression values f
 
 The function also allows users to narrow down their analysis to specific cell types of interest. This enables investigation of whether alignment between the query and reference datasets is consistent not only at a global level but also within specific cell types.
 
-```{r histogram gene expression, warning=FALSE, message=FALSE}
+```{r Gene-Expression-Histogram, warning=FALSE, message=FALSE}
 # Generate density plots
 plotMarkerExpression(reference_data = ref_data, 
                      query_data = query_data, 
@@ -181,7 +181,7 @@ To gain insights into the gene expression patterns and their representation in a
 
 In the provided example, we are visualizing the gene expression values of the gene "VPREB3" on a PCA plot. The PCA plot represents the cells in a lower-dimensional space, where the x-axis corresponds to the first principal component (Dimension 1) and the y-axis corresponds to the second principal component (Dimension 2). Each cell is represented as a point on the plot, and its color reflects the expression level of the gene "VPREB3," ranging from low (lighter color) to high (darker color).
 
-```{r scatter plot gene expression, warning=FALSE, message=FALSE}
+```{r Gene-Expression-Scatter, warning=FALSE, message=FALSE}
 # Generate dimension reduction plot color code by gene expression
 plotGeneExpressionDimred(se_object = query_data, 
                          method = "PCA", 
@@ -197,7 +197,7 @@ In addition to examining individual gene expression patterns, it is often useful
 
 The plotGeneSetScores function allows you to plot gene set or pathway scores on a dimensional reduction plot generated using methods such as PCA, t-SNE, or UMAP. Each single cell is color-coded based on its scores for specific gene sets or pathways. This visualization helps identify the heterogeneity and patterns of gene set or pathway activity within the dataset, potentially revealing subpopulations with distinct functional characteristics.
 
-```{r Visualize gene set or pathway scores on dimensional reduction scatter plot , warning=FALSE, message=FALSE}
+```{r Pathway-Scores-on-Dimensional-Reduction-Scatter, warning=FALSE, message=FALSE}
 
 # Compute scores using AUCell
 expression_matrix <- assay(query_data, "logcounts")
@@ -232,7 +232,7 @@ This function performs Multidimensional Scaling (MDS) analysis on the query and 
 
 The rationale behind this function is to visually assess the alignment and relationships between cell types in the query and reference datasets.
 
-```{r CMD scatter plot, warning=FALSE, message=FALSE}
+```{r CMD-Scatter-Plot, warning=FALSE, message=FALSE}
 ## Selcting highly variable genes
 ref_var <- getTopHVGs(ref_data, n=2000)
 query_var <- getTopHVGs(query_data, n=2000)
@@ -283,7 +283,7 @@ This will return average correlation matrix which can be visulaized by user's me
 the results are visualized as a correlation plot using the corrplot package.
 
 
-```{r Cell Type-specific Pairwise Correlation Analysis and Visualization , warning=FALSE, message=FALSE}
+```{r Cell-Type-Correlation-Analysis-Visualization, warning=FALSE, message=FALSE}
 selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
 cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subset, 
                                                     reference_data = ref_data_subset, 
@@ -308,7 +308,7 @@ The analysis offers the flexibility to select a particular cell type for examina
 
 To illustrate, the function is applied to the cell type CD8 using the euclidean distance metric in the example below.
 
-```{r Pairwise Distance Analysis and Density Visualization, warning=FALSE, message=FALSE, fig.width=8}
+```{r Pairwise-Distance-Analysis-Density-Visualization, warning=FALSE, message=FALSE, fig.width=8}
 calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, 
                                          reference_data = ref_data_subset, 
                                          query_cell_type_col = "labels", 
@@ -322,7 +322,7 @@ Alternatively, users can opt for the "correlation" distance metric, which measur
 
 To illustrate, the function is applied to the cell type CD8 using the correlation distance metric in the example below. By selecting either the "pearson" or "spearman" correlation method, users can emphasize either linear or rank-based associations, respectively.
 
-```{r Pairwise Distance Analysis and Density Visualization correlation based, warning=FALSE, message=FALSE, fig.width=8}
+```{r Pairwise-Distance-Correlation-Based-Density-Visualization, warning=FALSE, message=FALSE, fig.width=8}
 calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, 
                                          reference_data = ref_data_subset, 
                                          query_cell_type_col = "labels", 
@@ -339,7 +339,7 @@ By utilizing this function, users can explore the pairwise distances between que
 
 Performing linear regression analysis on a SingleCellExperiment object enables users to examine the relationship between a principal component (PC) from the dimension reduction slot and an independent variable of interest. By specifying the desired dependent variable as one of the principal components (e.g., "PC1", "PC2", etc.) and providing the corresponding independent variable from the colData slot, users can explore the associations between these variables within the single-cell gene expression dataset (reference and query).
 
-```{r linear regression ,warning=FALSE, message=FALSE}
+```{r Regression, warning=FALSE, message=FALSE}
  # Specify the dependent variables (principal components) and independent variable (e.g., "labels")
 dependent_vars <- c("PC1", "PC2", "PC3")
 independent_var <- "labels"

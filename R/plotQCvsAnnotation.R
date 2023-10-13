@@ -43,10 +43,23 @@
 #' colData(query_data)$cell_scores <- scores
 #'
 #' # Generate scatter plots
-#' plotQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", label_col = "labels", score_col = "cell_scores", label = c("CD4", "CD8"))
-#' plotQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", label_col = "labels", score_col = "cell_scores", label = NULL)
+#' plotQCvsAnnotation(query_data = query_data, 
+#'                    qc_col = "percent.mito", 
+#'                    label_col = "labels", 
+#'                    score_col = "cell_scores", 
+#'                    label = c("CD4", "CD8"))
+#'                    
+#' plotQCvsAnnotation(query_data = query_data, 
+#'                   qc_col = "percent.mito", 
+#'                   label_col = "labels", 
+#'                   score_col = "cell_scores", 
+#'                   label = NULL)
 #'
-plotQCvsAnnotation <- function(query_data, qc_col, label_col, score_col, label = NULL) {
+plotQCvsAnnotation <- function(query_data, 
+                               qc_col, 
+                               label_col, 
+                               score_col, 
+                               label = NULL) {
   
   # Filter cells based on label if specified
   if (!is.null(label)) {

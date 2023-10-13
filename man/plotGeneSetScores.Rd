@@ -41,14 +41,26 @@ query_data <- logNormCounts(query_data)
 # Run PCA on the query data
 query_data <- runPCA(query_data)
 
+# Compute scores using AUCell
+expression_matrix <- assay(query_data, "logcounts")
+cells_rankings <- AUCell_buildRankings(expression_matrix, plotStats = FALSE)
+# Generate gene sets
+gene_set1 <- sample(rownames(expression_matrix), 10)
+gene_set2 <- sample(rownames(expression_matrix), 20)
+gene_sets <- list(geneSet1 = gene_set1, geneSet2 = gene_set2)
+
+# Calculate AUC scores for gene sets
+cells_AUC <- AUCell_calcAUC(gene_sets, cells_rankings)
+
 # Assign scores to colData (users should ensure that the scores are present in the colData)
-colData(query_data)$geneSetScores <- # ... (assign the scores here)
+colData(query_data)$geneSetScores <- assay(cells_AUC)["geneSet1", ] 
 
 # Plot gene set scores on PCA
-plotGeneSetScores(se_object = query_data, method = "PCA", feature = "geneSetScores")
+plotGeneSetScores(se_object = query_data, 
+                  method = "PCA", 
+                  feature = "geneSetScores")
 
-# Note: Users can provide their own gene set scores in the colData of the 'se_object' object, using any method of their choice.
-# Ensure that the scores are assigned to the colData and specify the correct feature name for visualization.
-The example code shows the assignment of gene set scores to the colData of the query object for demonstration purposes.
+# Note: Users can provide their own gene set scores in the colData of the 'se_object' object, 
+# using any method of their choice.
 
 }
