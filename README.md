@@ -522,21 +522,21 @@ print(result$regression_summaries)
 #> lm(formula = paste0("PC", i, " ~ Independent"), data = df)
 #> 
 #> Residuals:
-#>     Min      1Q  Median      3Q     Max 
-#> -8.1726 -2.6356 -0.6058  2.3152 14.2431 
+#>      Min       1Q   Median       3Q      Max 
+#> -14.4328  -2.0221   0.7045   2.3745   7.4755 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -8.2097     0.2991  -27.45   <2e-16 ***
-#> IndependentCD4       4.6672     0.3589   13.01   <2e-16 ***
-#> IndependentCD8      14.2159     0.3503   40.58   <2e-16 ***
-#> IndependentMyeloid   8.5543     0.5996   14.27   <2e-16 ***
+#> (Intercept)          8.3053     0.2767   30.02   <2e-16 ***
+#> IndependentCD4      -4.8109     0.3342  -14.39   <2e-16 ***
+#> IndependentCD8     -14.2431     0.3245  -43.89   <2e-16 ***
+#> IndependentMyeloid  -8.7429     0.6110  -14.31   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.711 on 965 degrees of freedom
-#> Multiple R-squared:  0.6909, Adjusted R-squared:  0.6899 
-#> F-statistic:   719 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.488 on 965 degrees of freedom
+#> Multiple R-squared:  0.7194, Adjusted R-squared:  0.7186 
+#> F-statistic: 824.9 on 3 and 965 DF,  p-value: < 2.2e-16
 #> 
 #> 
 #> $PC2
@@ -546,20 +546,20 @@ print(result$regression_summaries)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -23.8710  -0.6946   0.7902   1.8131   7.5202 
+#> -17.8905  -0.7848   0.5229   1.5148   7.0486 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -5.3541     0.2574  -20.80   <2e-16 ***
-#> IndependentCD4       7.9710     0.3089   25.80   <2e-16 ***
-#> IndependentCD8       6.4364     0.3015   21.34   <2e-16 ***
-#> IndependentMyeloid  -5.2234     0.5161  -10.12   <2e-16 ***
+#> (Intercept)         -5.4645     0.2102  -26.00   <2e-16 ***
+#> IndependentCD4       8.3900     0.2539   33.04   <2e-16 ***
+#> IndependentCD8       6.1523     0.2465   24.95   <2e-16 ***
+#> IndependentMyeloid  -5.1282     0.4642  -11.05   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.195 on 965 degrees of freedom
-#> Multiple R-squared:  0.569,  Adjusted R-squared:  0.5677 
-#> F-statistic: 424.7 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 2.65 on 965 degrees of freedom
+#> Multiple R-squared:  0.6486, Adjusted R-squared:  0.6475 
+#> F-statistic: 593.7 on 3 and 965 DF,  p-value: < 2.2e-16
 #> 
 #> 
 #> $PC3
@@ -568,26 +568,26 @@ print(result$regression_summaries)
 #> lm(formula = paste0("PC", i, " ~ Independent"), data = df)
 #> 
 #> Residuals:
-#>     Min      1Q  Median      3Q     Max 
-#> -8.2633 -1.5250  0.0469  1.5186  7.0386 
+#>    Min     1Q Median     3Q    Max 
+#> -6.885 -1.322  0.023  1.479  7.760 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -2.8567     0.1841 -15.519  < 2e-16 ***
-#> IndependentCD4       4.3557     0.2209  19.718  < 2e-16 ***
-#> IndependentCD8       1.6676     0.2156   7.734 2.61e-14 ***
-#> IndependentMyeloid  10.8481     0.3691  29.393  < 2e-16 ***
+#> (Intercept)         -2.5207     0.1810 -13.928  < 2e-16 ***
+#> IndependentCD4       4.5438     0.2186  20.782  < 2e-16 ***
+#> IndependentCD8       1.2377     0.2123   5.831 7.53e-09 ***
+#> IndependentMyeloid   8.4590     0.3997  21.163  < 2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 2.284 on 965 degrees of freedom
-#> Multiple R-squared:  0.5389, Adjusted R-squared:  0.5375 
-#> F-statistic: 375.9 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 2.282 on 965 degrees of freedom
+#> Multiple R-squared:  0.4762, Adjusted R-squared:  0.4746 
+#> F-statistic: 292.4 on 3 and 965 DF,  p-value: < 2.2e-16
 print(result$rsquared_df)
 #>      PC        R2
-#> PC1 PC1 0.6909065
-#> PC2 PC2 0.5690009
-#> PC3 PC3 0.5389015
+#> PC1 PC1 0.7194413
+#> PC2 PC2 0.6485881
+#> PC3 PC3 0.4761965
 ```
 
 By conducting linear regression, one can assess whether the PC values
@@ -647,14 +647,13 @@ relationships and patterns.
      [1] corrplot_0.92               AUCell_1.22.0              
      [3] SingleR_2.2.0               RColorBrewer_1.1-3         
      [5] scRNAseq_2.14.0             scran_1.28.1               
-     [7] scDiagnostics_0.99.0        gridExtra_2.3              
-     [9] scater_1.29.2               ggplot2_3.4.3              
-    [11] scuttle_1.9.4               SingleCellExperiment_1.22.0
-    [13] SummarizedExperiment_1.30.2 Biobase_2.60.0             
-    [15] GenomicRanges_1.52.0        GenomeInfoDb_1.36.0        
-    [17] IRanges_2.34.0              S4Vectors_0.38.1           
-    [19] BiocGenerics_0.46.0         MatrixGenerics_1.12.0      
-    [21] matrixStats_1.0.0          
+     [7] scater_1.29.2               ggplot2_3.4.3              
+     [9] scuttle_1.9.4               scDiagnostics_0.99.0       
+    [11] SingleCellExperiment_1.22.0 SummarizedExperiment_1.30.2
+    [13] Biobase_2.60.0              GenomicRanges_1.52.0       
+    [15] GenomeInfoDb_1.36.0         IRanges_2.34.0             
+    [17] S4Vectors_0.38.1            BiocGenerics_0.46.0        
+    [19] MatrixGenerics_1.12.0       matrixStats_1.0.0          
 
     loaded via a namespace (and not attached):
       [1] rstudioapi_0.15.0             magrittr_2.0.3               
@@ -693,9 +692,9 @@ relationships and patterns.
      [67] cluster_2.1.4                 generics_0.1.3               
      [69] gtable_0.3.3                  R.methodsS3_1.8.2            
      [71] ensembldb_2.24.0              data.table_1.14.8            
-     [73] hms_1.1.3                     BiocSingular_1.16.0          
-     [75] ScaledMatrix_1.8.1            metapod_1.8.0                
-     [77] xml2_1.3.5                    utf8_1.2.3                   
+     [73] hms_1.1.3                     xml2_1.3.5                   
+     [75] BiocSingular_1.16.0           ScaledMatrix_1.8.1           
+     [77] metapod_1.8.0                 utf8_1.2.3                   
      [79] XVector_0.40.0                ggrepel_0.9.3                
      [81] BiocVersion_3.17.1            pillar_1.9.0                 
      [83] stringr_1.5.0                 limma_3.56.2                 
@@ -704,21 +703,21 @@ relationships and patterns.
      [89] rtracklayer_1.60.0            bit_4.0.5                    
      [91] annotate_1.78.0               tidyselect_1.2.0             
      [93] locfit_1.5-9.8                Biostrings_2.68.1            
-     [95] knitr_1.43                    ProtGenerics_1.32.0          
-     [97] edgeR_3.42.4                  xfun_0.39                    
-     [99] statmod_1.5.0                 stringi_1.7.12               
-    [101] lazyeval_0.2.2                yaml_2.3.7                   
-    [103] evaluate_0.21                 codetools_0.2-19             
-    [105] tibble_3.2.1                  graph_1.78.0                 
-    [107] BiocManager_1.30.21           cli_3.6.1                    
-    [109] xtable_1.8-4                  munsell_0.5.0                
-    [111] Rcpp_1.0.10                   dbplyr_2.3.2                 
-    [113] png_0.1-8                     XML_3.99-0.14                
-    [115] parallel_4.3.1                ellipsis_0.3.2               
-    [117] blob_1.2.4                    prettyunits_1.1.1            
-    [119] AnnotationFilter_1.24.0       sparseMatrixStats_1.12.0     
-    [121] bitops_1.0-7                  GSEABase_1.62.0              
-    [123] viridisLite_0.4.2             scales_1.2.1                 
-    [125] purrr_1.0.1                   crayon_1.5.2                 
-    [127] rlang_1.1.1                   cowplot_1.1.1                
-    [129] KEGGREST_1.40.0              
+     [95] knitr_1.43                    gridExtra_2.3                
+     [97] ProtGenerics_1.32.0           edgeR_3.42.4                 
+     [99] xfun_0.39                     statmod_1.5.0                
+    [101] stringi_1.7.12                lazyeval_0.2.2               
+    [103] yaml_2.3.7                    evaluate_0.21                
+    [105] codetools_0.2-19              tibble_3.2.1                 
+    [107] graph_1.78.0                  BiocManager_1.30.21          
+    [109] cli_3.6.1                     xtable_1.8-4                 
+    [111] munsell_0.5.0                 Rcpp_1.0.10                  
+    [113] dbplyr_2.3.2                  png_0.1-8                    
+    [115] XML_3.99-0.14                 parallel_4.3.1               
+    [117] ellipsis_0.3.2                blob_1.2.4                   
+    [119] prettyunits_1.1.1             AnnotationFilter_1.24.0      
+    [121] sparseMatrixStats_1.12.0      bitops_1.0-7                 
+    [123] GSEABase_1.62.0               viridisLite_0.4.2            
+    [125] scales_1.2.1                  purrr_1.0.1                  
+    [127] crayon_1.5.2                  rlang_1.1.1                  
+    [129] cowplot_1.1.1                 KEGGREST_1.40.0              
