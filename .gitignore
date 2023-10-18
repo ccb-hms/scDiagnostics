@@ -27,13 +27,12 @@
 *.tar.gz
 *.Rcheck/
 
-# RStudio-specific
+# RStudio files
 .Rproj.user/
-*.Rproj.user
+.Rproj
 
 # Mac-specific
 .DS_Store
-
 
 # Editor-specific
 *.swp

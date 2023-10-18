@@ -523,20 +523,20 @@ print(result$regression_summaries)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -14.4328  -2.0221   0.7045   2.3745   7.4755 
+#> -11.6511  -1.9773   0.3985   2.4778   7.1606 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          8.3053     0.2767   30.02   <2e-16 ***
-#> IndependentCD4      -4.8109     0.3342  -14.39   <2e-16 ***
-#> IndependentCD8     -14.2431     0.3245  -43.89   <2e-16 ***
-#> IndependentMyeloid  -8.7429     0.6110  -14.31   <2e-16 ***
+#> (Intercept)          8.8486     0.2879   30.73   <2e-16 ***
+#> IndependentCD4      -5.4524     0.3396  -16.06   <2e-16 ***
+#> IndependentCD8     -14.6270     0.3320  -44.06   <2e-16 ***
+#> IndependentMyeloid  -8.8228     0.5790  -15.24   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.488 on 965 degrees of freedom
-#> Multiple R-squared:  0.7194, Adjusted R-squared:  0.7186 
-#> F-statistic: 824.9 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.407 on 965 degrees of freedom
+#> Multiple R-squared:  0.7233, Adjusted R-squared:  0.7225 
+#> F-statistic:   841 on 3 and 965 DF,  p-value: < 2.2e-16
 #> 
 #> 
 #> $PC2
@@ -546,20 +546,20 @@ print(result$regression_summaries)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -17.8905  -0.7848   0.5229   1.5148   7.0486 
+#> -17.6856  -0.7072   0.6570   1.7191   5.9068 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -5.4645     0.2102  -26.00   <2e-16 ***
-#> IndependentCD4       8.3900     0.2539   33.04   <2e-16 ***
-#> IndependentCD8       6.1523     0.2465   24.95   <2e-16 ***
-#> IndependentMyeloid  -5.1282     0.4642  -11.05   <2e-16 ***
+#> (Intercept)         -4.7828     0.2480  -19.29   <2e-16 ***
+#> IndependentCD4       7.3668     0.2925   25.19   <2e-16 ***
+#> IndependentCD8       5.4785     0.2859   19.16   <2e-16 ***
+#> IndependentMyeloid  -7.1985     0.4987  -14.44   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 2.65 on 965 degrees of freedom
-#> Multiple R-squared:  0.6486, Adjusted R-squared:  0.6475 
-#> F-statistic: 593.7 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 2.934 on 965 degrees of freedom
+#> Multiple R-squared:  0.5988, Adjusted R-squared:  0.5976 
+#> F-statistic: 480.1 on 3 and 965 DF,  p-value: < 2.2e-16
 #> 
 #> 
 #> $PC3
@@ -568,26 +568,26 @@ print(result$regression_summaries)
 #> lm(formula = paste0("PC", i, " ~ Independent"), data = df)
 #> 
 #> Residuals:
-#>    Min     1Q Median     3Q    Max 
-#> -6.885 -1.322  0.023  1.479  7.760 
+#>     Min      1Q  Median      3Q     Max 
+#> -6.6567 -1.6045 -0.0109  1.3458  8.1514 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -2.5207     0.1810 -13.928  < 2e-16 ***
-#> IndependentCD4       4.5438     0.2186  20.782  < 2e-16 ***
-#> IndependentCD8       1.2377     0.2123   5.831 7.53e-09 ***
-#> IndependentMyeloid   8.4590     0.3997  21.163  < 2e-16 ***
+#> (Intercept)         -3.2874     0.1983 -16.581  < 2e-16 ***
+#> IndependentCD4       5.6563     0.2338  24.189  < 2e-16 ***
+#> IndependentCD8       1.9028     0.2286   8.324 2.89e-16 ***
+#> IndependentMyeloid   7.6482     0.3987  19.184  < 2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 2.282 on 965 degrees of freedom
-#> Multiple R-squared:  0.4762, Adjusted R-squared:  0.4746 
-#> F-statistic: 292.4 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 2.346 on 965 degrees of freedom
+#> Multiple R-squared:  0.4953, Adjusted R-squared:  0.4937 
+#> F-statistic: 315.7 on 3 and 965 DF,  p-value: < 2.2e-16
 print(result$rsquared_df)
 #>      PC        R2
-#> PC1 PC1 0.7194413
-#> PC2 PC2 0.6485881
-#> PC3 PC3 0.4761965
+#> PC1 PC1 0.7233405
+#> PC2 PC2 0.5988062
+#> PC3 PC3 0.4952885
 ```
 
 By conducting linear regression, one can assess whether the PC values
