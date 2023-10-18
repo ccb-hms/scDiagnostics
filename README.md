@@ -238,6 +238,37 @@ of MS4A1 expression in the B_and_plasma cell type. We observed
 overlapping distributions in both cases, suggesting alignment between
 the reference and query datasets.
 
+## Evaluating Alignment Between Reference and Query Datasets in Terms of Highly Variable Genes,
+
+We are assessing the similarity or alignment between two datasets, the
+reference dataset, and the query dataset, in terms of highly variable
+genes (HVGs). We calculate the overlap coefficient between the sets of
+highly variable genes in the reference and query datasets. The overlap
+coefficient quantifies the degree of overlap or similarity between these
+two sets of genes. A value closer to 1 indicates a higher degree of
+overlap, while a value closer to 0 suggests less overlap. The computed
+overlap coefficient is printed, providing a numerical measure of how
+well the highly variable genes in the reference and query datasets
+align. In this case, the overlap coefficient is 0.63, indicating a
+moderate level of overlap.
+
+``` r
+
+# Selecting highly variable genes
+ref_var <- getTopHVGs(ref_data, n=2000)
+query_var <- getTopHVGs(query_data, n=2000)
+
+# Compute the overlap coefficient
+overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var, 
+                                           query_genes = query_var)
+print(overlap_coefficient)
+#> [1] 0.62
+```
+
+This analysis helps us assess the extent to which the reference and
+query datasets share highly variable genes, which can provide insights
+into the comparability and alignment of these datasets.
+
 ## Visualize Gene Expression on Dimensional Reduction Plot
 
 To gain insights into the gene expression patterns and their
@@ -346,9 +377,6 @@ and relationships between cell types in the query and reference
 datasets.
 
 ``` r
-## Selcting highly variable genes
-ref_var <- getTopHVGs(ref_data, n=2000)
-query_var <- getTopHVGs(query_data, n=2000)
 
 # Intersect the gene symbols to obtain common genes
 common_genes <- intersect(ref_var, query_var)
@@ -522,21 +550,21 @@ print(result$regression_summaries)
 #> lm(formula = paste0("PC", i, " ~ Independent"), data = df)
 #> 
 #> Residuals:
-#>      Min       1Q   Median       3Q      Max 
-#> -14.7050  -2.0366   0.7718   2.5611   7.5110 
+#>     Min      1Q  Median      3Q     Max 
+#> -7.5393 -2.4390 -0.7465  2.1053 14.5168 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          7.9093     0.2808   28.17   <2e-16 ***
-#> IndependentCD4      -4.6036     0.3399  -13.55   <2e-16 ***
-#> IndependentCD8     -13.7952     0.3317  -41.59   <2e-16 ***
-#> IndependentMyeloid  -8.3015     0.5564  -14.92   <2e-16 ***
+#> (Intercept)         -8.4032     0.2792  -30.10   <2e-16 ***
+#> IndependentCD4       5.5730     0.3386   16.46   <2e-16 ***
+#> IndependentCD8      14.6146     0.3343   43.71   <2e-16 ***
+#> IndependentMyeloid   8.9213     0.6710   13.29   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.562 on 965 degrees of freedom
-#> Multiple R-squared:  0.6954, Adjusted R-squared:  0.6945 
-#> F-statistic: 734.4 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.661 on 965 degrees of freedom
+#> Multiple R-squared:  0.7012, Adjusted R-squared:  0.7003 
+#> F-statistic: 754.9 on 3 and 965 DF,  p-value: < 2.2e-16
 #> 
 #> 
 #> $PC2
@@ -546,20 +574,20 @@ print(result$regression_summaries)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -20.9134  -0.6316   0.6840   1.6470   5.5299 
+#> -31.1465  -0.5710   0.9455   1.9122   4.8479 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -5.5767     0.2514 -22.186   <2e-16 ***
-#> IndependentCD4       8.4431     0.3043  27.748   <2e-16 ***
-#> IndependentCD8       6.6807     0.2969  22.498   <2e-16 ***
-#> IndependentMyeloid  -4.3001     0.4981  -8.632   <2e-16 ***
+#> (Intercept)         -5.3820     0.2877 -18.710  < 2e-16 ***
+#> IndependentCD4       8.0387     0.3489  23.040  < 2e-16 ***
+#> IndependentCD8       6.1088     0.3445  17.732  < 2e-16 ***
+#> IndependentMyeloid  -3.8347     0.6914  -5.546 3.77e-08 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.189 on 965 degrees of freedom
-#> Multiple R-squared:  0.5828, Adjusted R-squared:  0.5815 
-#> F-statistic: 449.3 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.773 on 965 degrees of freedom
+#> Multiple R-squared:  0.4408, Adjusted R-squared:  0.4391 
+#> F-statistic: 253.6 on 3 and 965 DF,  p-value: < 2.2e-16
 #> 
 #> 
 #> $PC3
@@ -569,38 +597,38 @@ print(result$regression_summaries)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -27.2078  -1.0503   0.3012   1.4667   6.0985 
+#> -17.3695  -0.8200   0.1795   1.3405   4.8842 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)        -0.05900    0.22063  -0.267  0.78921    
-#> IndependentCD4     -0.99370    0.26707  -3.721  0.00021 ***
-#> IndependentCD8     -0.08997    0.26064  -0.345  0.73002    
-#> IndependentMyeloid  7.95652    0.43722  18.198  < 2e-16 ***
+#> (Intercept)          3.0492     0.1948  15.654  < 2e-16 ***
+#> IndependentCD4      -5.9094     0.2363 -25.011  < 2e-16 ***
+#> IndependentCD8      -1.8449     0.2333  -7.908 7.13e-15 ***
+#> IndependentMyeloid  -1.8666     0.4682  -3.987 7.21e-05 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 2.799 on 965 degrees of freedom
-#> Multiple R-squared:  0.3358, Adjusted R-squared:  0.3337 
-#> F-statistic: 162.6 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 2.555 on 965 degrees of freedom
+#> Multiple R-squared:  0.4527, Adjusted R-squared:  0.451 
+#> F-statistic: 266.1 on 3 and 965 DF,  p-value: < 2.2e-16
 
 # R-squared values
 print(result$rsquared_df)
 #>            R2
-#> PC1 0.6954101
-#> PC2 0.5827705
-#> PC3 0.3357998
+#> PC1 0.7012003
+#> PC2 0.4407931
+#> PC3 0.4527299
 
 # Variance contributions for each principal component
 print(result$var_contributions_df)
 #>     Variance_Contribution
-#> PC1              7.890163
-#> PC2              3.869045
-#> PC3              1.078906
+#> PC1              8.005250
+#> PC2              2.854720
+#> PC3              1.373879
 
 # Total variance explained
 print(result$total_variance_explained)
-#> [1] 12.83811
+#> [1] 12.23385
 ```
 
 By conducting linear regression, one can assess whether the PC values

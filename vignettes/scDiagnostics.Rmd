@@ -94,6 +94,7 @@ It's important to note that the use of SingleR for cell type annotation is just 
    sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
    # Divide the data into reference and query datasets
+   set.seed(100)
    indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
    ref_data <- sce[, indices]
    query_data <- sce[, -indices]
@@ -173,6 +174,20 @@ plotMarkerExpression(reference_data = ref_data,
                      label = "B_and_plasma")
 ```
 
+We are assessing the similarity or alignment between two datasets, the reference dataset, and the query dataset, in terms of highly variable genes (HVGs). We calculate the overlap coefficient between the sets of highly variable genes in the reference and query datasets. The overlap coefficient quantifies the degree of overlap or similarity between these two sets of genes. A value closer to 1 indicates a higher degree of overlap, while a value closer to 0 suggests less overlap. The computed overlap coefficient is printed, providing a numerical measure of how well the highly variable genes in the reference and query datasets align. In this case, the overlap coefficient is 0.62, indicating a moderate level of overlap.
+
+```{r HVG overlap, warning=FALSE, message=FALSE}
+
+# Selecting highly variable genes
+ref_var <- getTopHVGs(ref_data, n=2000)
+query_var <- getTopHVGs(query_data, n=2000)
+
+# Compute the overlap coefficient
+overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var, 
+                                           query_genes = query_var)
+print(overlap_coefficient)
+```
+
 In the provided example, we examined the distribution of expression values for the gene MS4A1, a marker for naive B cells, in both the query and reference datasets. Additionally, we also looked at the distribution of MS4A1 expression in the B_and_plasma cell type. We observed overlapping distributions in both cases, suggesting alignment between the reference and query datasets.
 
 ## Visualize Gene Expression on Dimensional Reduction Plot
@@ -233,9 +248,6 @@ This function performs Multidimensional Scaling (MDS) analysis on the query and 
 The rationale behind this function is to visually assess the alignment and relationships between cell types in the query and reference datasets.
 
 ```{r CMD-Scatter-Plot, warning=FALSE, message=FALSE}
-## Selcting highly variable genes
-ref_var <- getTopHVGs(ref_data, n=2000)
-query_var <- getTopHVGs(query_data, n=2000)
 
 # Intersect the gene symbols to obtain common genes
 common_genes <- intersect(ref_var, query_var)

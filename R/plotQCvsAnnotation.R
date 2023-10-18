@@ -23,6 +23,7 @@
 #' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 #'
 #' # Divide the data into reference and query datasets
+#' set.seed(100)
 #' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
 #' ref_data <- sce[, indices]
 #' query_data <- sce[, -indices]
