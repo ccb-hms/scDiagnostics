@@ -30,6 +30,7 @@
 # RStudio-specific
 .Rproj.user/
 *.Rproj.user
+scDiagnostics.Rproj
 
 # Mac-specific
 .DS_Store
