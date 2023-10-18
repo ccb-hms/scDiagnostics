@@ -14,7 +14,7 @@ regressPC(se_object, dependent_vars, independent_var)
 \item{independent_var}{A character string specifying the column name for the independent variable in the SingleCellExperiment object}
 }
 \value{
-The summary of the linear regression model
+A list containing summaries of the linear regression models for each specified principal component, a data frame with the corresponding R-squared (R2) values, a data frame with variance contributions for each principal component, and the total variance explained.
 }
 \description{
 This function performs linear regression on a SingleCellExperiment object, where the dependent variable is specified by the user as one of the principal components (PC1, PC2, etc.) from the dimension reduction slot, and the independent variable is provided as a column name in the SingleCellExperiment object.

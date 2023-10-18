@@ -10,7 +10,7 @@
 #' @import SingleCellExperiment
 #' @export
 #'
-#' @return The summary of the linear regression model
+#' @return A list containing summaries of the linear regression models for each specified principal component, a data frame with the corresponding R-squared (R2) values, a data frame with variance contributions for each principal component, and the total variance explained.
 #'
 #' @examples
 #' library(scater)
@@ -84,9 +84,20 @@ regressPC <- function(se_object,
     return(rsq)
   })
   
-  rsquared_df <- data.frame(PC = names(regression_summaries), R2 = rsquared)
+  # Calculate variance contributions by principal component
+  var_contributions <- sapply(seq_along(dependent_list), function(i) {
+    pca_var_explained <- attr(reducedDim(se_object, "PCA"), "percentVar")[i]
+    rsq <- rsquared[i]
+    return(pca_var_explained * rsq)
+  })
   
-  # Return both the summaries of the linear regression models and R-squared values
-  return(list(regression_summaries = regression_summaries, rsquared_df = rsquared_df))
+  var_contributions_df <- data.frame(Variance_Contribution = var_contributions)
+  
+  # Calculate total variance explained by summing the variance contributions
+  total_variance_explained <- sum(var_contributions)
+  
+  rsquared_df <- data.frame(R2 = rsquared)
+  
+  # Return both the summaries of the linear regression models, R-squared values, and variance contributions
+  return(list(regression_summaries = regression_summaries, rsquared_df = rsquared_df, var_contributions_df = var_contributions_df, total_variance_explained = total_variance_explained))
 }
-
