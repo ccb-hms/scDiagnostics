@@ -348,8 +348,18 @@ independent_var <- "labels"
 result <- regressPC(se_object = query_data, dependent_vars = dependent_vars, independent_var = independent_var)
 
 # Print the summaries of the linear regression models and R-squared values
+
+# Summaries of the linear regression models
 print(result$regression_summaries)
+
+# R-squared values
 print(result$rsquared_df)
+
+# Variance contributions for each principal component
+print(result$var_contributions_df)
+
+# Total variance explained
+print(result$total_variance_explained)
 ```
 
 By conducting linear regression, one can assess whether the PC values are significantly associated with the cell types. This analysis helps uncover whether there is a systematic variation in PC values across different cell types. Understanding the relationship between PC values and cell types can provide valuable insights into the biological or technical factors driving cellular heterogeneity. It can help identify PC dimensions that capture variation specific to certain cell types or distinguish different cellular states. 

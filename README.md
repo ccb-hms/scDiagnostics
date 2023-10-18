@@ -514,7 +514,7 @@ independent_var <- "labels"
 # Perform linear regression on multiple principal components
 result <- regressPC(se_object = query_data, dependent_vars = dependent_vars, independent_var = independent_var)
 
-# Print the summaries of the linear regression models and R-squared values
+# Summaries of the linear regression models
 print(result$regression_summaries)
 #> $PC1
 #> 
@@ -523,20 +523,20 @@ print(result$regression_summaries)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -14.0040  -2.2249   0.6361   2.4142   7.5033 
+#> -14.7050  -2.0366   0.7718   2.5611   7.5110 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          8.2048     0.2825   29.04   <2e-16 ***
-#> IndependentCD4      -4.8069     0.3372  -14.25   <2e-16 ***
-#> IndependentCD8     -13.9913     0.3295  -42.46   <2e-16 ***
-#> IndependentMyeloid  -8.6645     0.5650  -15.34   <2e-16 ***
+#> (Intercept)          7.9093     0.2808   28.17   <2e-16 ***
+#> IndependentCD4      -4.6036     0.3399  -13.55   <2e-16 ***
+#> IndependentCD8     -13.7952     0.3317  -41.59   <2e-16 ***
+#> IndependentMyeloid  -8.3015     0.5564  -14.92   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.46 on 965 degrees of freedom
-#> Multiple R-squared:  0.7088, Adjusted R-squared:  0.7079 
-#> F-statistic: 782.8 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.562 on 965 degrees of freedom
+#> Multiple R-squared:  0.6954, Adjusted R-squared:  0.6945 
+#> F-statistic: 734.4 on 3 and 965 DF,  p-value: < 2.2e-16
 #> 
 #> 
 #> $PC2
@@ -545,21 +545,21 @@ print(result$regression_summaries)
 #> lm(formula = paste0("PC", i, " ~ Independent"), data = df)
 #> 
 #> Residuals:
-#>     Min      1Q  Median      3Q     Max 
-#> -5.4667 -1.7210 -0.7216  0.5806 21.5761 
+#>      Min       1Q   Median       3Q      Max 
+#> -20.9134  -0.6316   0.6840   1.6470   5.5299 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          4.7968     0.2595   18.48   <2e-16 ***
-#> IndependentCD4      -7.2955     0.3098  -23.55   <2e-16 ***
-#> IndependentCD8      -5.7521     0.3027  -19.00   <2e-16 ***
-#> IndependentMyeloid   6.4013     0.5191   12.33   <2e-16 ***
+#> (Intercept)         -5.5767     0.2514 -22.186   <2e-16 ***
+#> IndependentCD4       8.4431     0.3043  27.748   <2e-16 ***
+#> IndependentCD8       6.6807     0.2969  22.498   <2e-16 ***
+#> IndependentMyeloid  -4.3001     0.4981  -8.632   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.179 on 965 degrees of freedom
-#> Multiple R-squared:  0.5579, Adjusted R-squared:  0.5565 
-#> F-statistic: 405.9 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.189 on 965 degrees of freedom
+#> Multiple R-squared:  0.5828, Adjusted R-squared:  0.5815 
+#> F-statistic: 449.3 on 3 and 965 DF,  p-value: < 2.2e-16
 #> 
 #> 
 #> $PC3
@@ -568,26 +568,39 @@ print(result$regression_summaries)
 #> lm(formula = paste0("PC", i, " ~ Independent"), data = df)
 #> 
 #> Residuals:
-#>     Min      1Q  Median      3Q     Max 
-#> -6.8847 -1.4541 -0.0194  1.3840  7.8388 
+#>      Min       1Q   Median       3Q      Max 
+#> -27.2078  -1.0503   0.3012   1.4667   6.0985 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -3.3135     0.1845 -17.956   <2e-16 ***
-#> IndependentCD4       5.7681     0.2203  26.186   <2e-16 ***
-#> IndependentCD8       1.9111     0.2152   8.879   <2e-16 ***
-#> IndependentMyeloid   7.5937     0.3691  20.575   <2e-16 ***
+#> (Intercept)        -0.05900    0.22063  -0.267  0.78921    
+#> IndependentCD4     -0.99370    0.26707  -3.721  0.00021 ***
+#> IndependentCD8     -0.08997    0.26064  -0.345  0.73002    
+#> IndependentMyeloid  7.95652    0.43722  18.198  < 2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 2.26 on 965 degrees of freedom
-#> Multiple R-squared:  0.5277, Adjusted R-squared:  0.5263 
-#> F-statistic: 359.4 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 2.799 on 965 degrees of freedom
+#> Multiple R-squared:  0.3358, Adjusted R-squared:  0.3337 
+#> F-statistic: 162.6 on 3 and 965 DF,  p-value: < 2.2e-16
+
+# R-squared values
 print(result$rsquared_df)
-#>      PC        R2
-#> PC1 PC1 0.7087584
-#> PC2 PC2 0.5578996
-#> PC3 PC3 0.5277304
+#>            R2
+#> PC1 0.6954101
+#> PC2 0.5827705
+#> PC3 0.3357998
+
+# Variance contributions for each principal component
+print(result$var_contributions_df)
+#>     Variance_Contribution
+#> PC1              7.890163
+#> PC2              3.869045
+#> PC3              1.078906
+
+# Total variance explained
+print(result$total_variance_explained)
+#> [1] 12.83811
 ```
 
 By conducting linear regression, one can assess whether the PC values
