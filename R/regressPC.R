@@ -1,6 +1,7 @@
 #' Perform Linear Regression Analysis on Single-Cell Data
 #'
-#' This function performs linear regression on a SingleCellExperiment object, where the dependent variable is specified by the user as one of the principal components (PC1, PC2, etc.) from the dimension reduction slot, and the independent variable is provided as a column name in the SingleCellExperiment object.
+#' This function performs linear regression on a SingleCellExperiment object, where the dependent variable is specified by the user as one of the principal 
+#' components (PC1, PC2, etc.) from the dimension reduction slot, and the independent variable is provided as a column name in the SingleCellExperiment object.
 #'
 #' @param se_object A SingleCellExperiment object containing the data for regression analysis
 #' @param dependent_vars A character string specifying the dependent variable principal component (e.g., "PC1", "PC2", etc.)
@@ -10,7 +11,10 @@
 #' @import SingleCellExperiment
 #' @export
 #'
-#' @return A list containing summaries of the linear regression models for each specified principal component, a data frame with the corresponding R-squared (R2) values, a data frame with variance contributions for each principal component, and the total variance explained.
+#' @return A list containing summaries of the linear regression models for each specified principal component, 
+#'         a data frame with the corresponding R-squared (R2) values, 
+#'         a data frame with variance contributions for each principal component, 
+#'         and the total variance explained.
 #'
 #' @examples
 #' library(scater)
