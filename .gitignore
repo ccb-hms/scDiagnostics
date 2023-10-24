@@ -18,7 +18,6 @@
 *.docx
 
 # Build artifacts
-/man/*
 /NAMESPACE
 /R/R
 /src/*.so
