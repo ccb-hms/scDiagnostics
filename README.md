@@ -238,6 +238,37 @@ of MS4A1 expression in the B_and_plasma cell type. We observed
 overlapping distributions in both cases, suggesting alignment between
 the reference and query datasets.
 
+## Evaluating Alignment Between Reference and Query Datasets in Terms of Highly Variable Genes,
+
+We are assessing the similarity or alignment between two datasets, the
+reference dataset, and the query dataset, in terms of highly variable
+genes (HVGs). We calculate the overlap coefficient between the sets of
+highly variable genes in the reference and query datasets. The overlap
+coefficient quantifies the degree of overlap or similarity between these
+two sets of genes. A value closer to 1 indicates a higher degree of
+overlap, while a value closer to 0 suggests less overlap. The computed
+overlap coefficient is printed, providing a numerical measure of how
+well the highly variable genes in the reference and query datasets
+align. In this case, the overlap coefficient is 0.63, indicating a
+moderate level of overlap.
+
+``` r
+
+# Selecting highly variable genes
+ref_var <- getTopHVGs(ref_data, n=2000)
+query_var <- getTopHVGs(query_data, n=2000)
+
+# Compute the overlap coefficient
+overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var, 
+                                           query_genes = query_var)
+print(overlap_coefficient)
+#> [1] 0.62
+```
+
+This analysis helps us assess the extent to which the reference and
+query datasets share highly variable genes, which can provide insights
+into the comparability and alignment of these datasets.
+
 ## Visualize Gene Expression on Dimensional Reduction Plot
 
 To gain insights into the gene expression patterns and their
@@ -346,9 +377,6 @@ and relationships between cell types in the query and reference
 datasets.
 
 ``` r
-## Selcting highly variable genes
-ref_var <- getTopHVGs(ref_data, n=2000)
-query_var <- getTopHVGs(query_data, n=2000)
 
 # Intersect the gene symbols to obtain common genes
 common_genes <- intersect(ref_var, query_var)
@@ -514,7 +542,7 @@ independent_var <- "labels"
 # Perform linear regression on multiple principal components
 result <- regressPC(se_object = query_data, dependent_vars = dependent_vars, independent_var = independent_var)
 
-# Print the summaries of the linear regression models and R-squared values
+# Summaries of the linear regression models
 print(result$regression_summaries)
 #> $PC1
 #> 
@@ -522,21 +550,21 @@ print(result$regression_summaries)
 #> lm(formula = paste0("PC", i, " ~ Independent"), data = df)
 #> 
 #> Residuals:
-#>      Min       1Q   Median       3Q      Max 
-#> -12.7544  -2.1267   0.5441   2.2872   8.1720 
+#>     Min      1Q  Median      3Q     Max 
+#> -7.5393 -2.4390 -0.7465  2.1053 14.5168 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          8.5512     0.2568   33.30   <2e-16 ***
-#> IndependentCD4      -6.0846     0.3130  -19.44   <2e-16 ***
-#> IndependentCD8     -14.7426     0.3095  -47.64   <2e-16 ***
-#> IndependentMyeloid  -8.2974     0.6175  -13.44   <2e-16 ***
+#> (Intercept)         -8.4032     0.2792  -30.10   <2e-16 ***
+#> IndependentCD4       5.5730     0.3386   16.46   <2e-16 ***
+#> IndependentCD8      14.6146     0.3343   43.71   <2e-16 ***
+#> IndependentMyeloid   8.9213     0.6710   13.29   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 3.416 on 965 degrees of freedom
-#> Multiple R-squared:  0.7281, Adjusted R-squared:  0.7272 
-#> F-statistic: 861.2 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.661 on 965 degrees of freedom
+#> Multiple R-squared:  0.7012, Adjusted R-squared:  0.7003 
+#> F-statistic: 754.9 on 3 and 965 DF,  p-value: < 2.2e-16
 #> 
 #> 
 #> $PC2
@@ -546,20 +574,20 @@ print(result$regression_summaries)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -18.3701  -0.7837   0.5767   1.7048   5.0181 
+#> -31.1465  -0.5710   0.9455   1.9122   4.8479 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -4.9839     0.2109  -23.63   <2e-16 ***
-#> IndependentCD4       8.3028     0.2571   32.29   <2e-16 ***
-#> IndependentCD8       5.0923     0.2542   20.03   <2e-16 ***
-#> IndependentMyeloid  -4.9704     0.5072   -9.80   <2e-16 ***
+#> (Intercept)         -5.3820     0.2877 -18.710  < 2e-16 ***
+#> IndependentCD4       8.0387     0.3489  23.040  < 2e-16 ***
+#> IndependentCD8       6.1088     0.3445  17.732  < 2e-16 ***
+#> IndependentMyeloid  -3.8347     0.6914  -5.546 3.77e-08 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 2.806 on 965 degrees of freedom
-#> Multiple R-squared:  0.6139, Adjusted R-squared:  0.6127 
-#> F-statistic: 511.4 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 3.773 on 965 degrees of freedom
+#> Multiple R-squared:  0.4408, Adjusted R-squared:  0.4391 
+#> F-statistic: 253.6 on 3 and 965 DF,  p-value: < 2.2e-16
 #> 
 #> 
 #> $PC3
@@ -569,25 +597,38 @@ print(result$regression_summaries)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -13.4808  -1.1660   0.1822   1.4833   5.4621 
+#> -17.3695  -0.8200   0.1795   1.3405   4.8842 
 #> 
 #> Coefficients:
 #>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          2.5478     0.1766  14.424  < 2e-16 ***
-#> IndependentCD4      -4.9161     0.2153 -22.829  < 2e-16 ***
-#> IndependentCD8      -1.0601     0.2129  -4.979 7.55e-07 ***
-#> IndependentMyeloid  -7.1576     0.4248 -16.849  < 2e-16 ***
+#> (Intercept)          3.0492     0.1948  15.654  < 2e-16 ***
+#> IndependentCD4      -5.9094     0.2363 -25.011  < 2e-16 ***
+#> IndependentCD8      -1.8449     0.2333  -7.908 7.13e-15 ***
+#> IndependentMyeloid  -1.8666     0.4682  -3.987 7.21e-05 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 2.35 on 965 degrees of freedom
-#> Multiple R-squared:  0.4761, Adjusted R-squared:  0.4744 
-#> F-statistic: 292.3 on 3 and 965 DF,  p-value: < 2.2e-16
+#> Residual standard error: 2.555 on 965 degrees of freedom
+#> Multiple R-squared:  0.4527, Adjusted R-squared:  0.451 
+#> F-statistic: 266.1 on 3 and 965 DF,  p-value: < 2.2e-16
+
+# R-squared values
 print(result$rsquared_df)
-#>      PC        R2
-#> PC1 PC1 0.7280625
-#> PC2 PC2 0.6138693
-#> PC3 PC3 0.4760634
+#>            R2
+#> PC1 0.7012003
+#> PC2 0.4407931
+#> PC3 0.4527299
+
+# Variance contributions for each principal component
+print(result$var_contributions_df)
+#>     Variance_Contribution
+#> PC1              8.005250
+#> PC2              2.854720
+#> PC3              1.373879
+
+# Total variance explained
+print(result$total_variance_explained)
+#> [1] 12.23385
 ```
 
 By conducting linear regression, one can assess whether the PC values
@@ -627,7 +668,7 @@ relationships and patterns.
 
     R version 4.3.1 (2023-06-16)
     Platform: aarch64-apple-darwin20 (64-bit)
-    Running under: macOS Ventura 13.5.2
+    Running under: macOS Ventura 13.6
 
     Matrix products: default
     BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
@@ -647,14 +688,13 @@ relationships and patterns.
      [1] corrplot_0.92               AUCell_1.22.0              
      [3] SingleR_2.2.0               RColorBrewer_1.1-3         
      [5] scRNAseq_2.14.0             scran_1.28.1               
-     [7] scDiagnostics_0.99.0        gridExtra_2.3              
-     [9] scater_1.29.2               ggplot2_3.4.3              
-    [11] scuttle_1.9.4               SingleCellExperiment_1.22.0
-    [13] SummarizedExperiment_1.30.2 Biobase_2.60.0             
-    [15] GenomicRanges_1.52.0        GenomeInfoDb_1.36.0        
-    [17] IRanges_2.34.0              S4Vectors_0.38.1           
-    [19] BiocGenerics_0.46.0         MatrixGenerics_1.12.0      
-    [21] matrixStats_1.0.0          
+     [7] scater_1.29.2               ggplot2_3.4.3              
+     [9] scuttle_1.9.4               scDiagnostics_0.99.0       
+    [11] SingleCellExperiment_1.22.0 SummarizedExperiment_1.30.2
+    [13] Biobase_2.60.0              GenomicRanges_1.52.0       
+    [15] GenomeInfoDb_1.36.0         IRanges_2.34.0             
+    [17] S4Vectors_0.38.1            BiocGenerics_0.46.0        
+    [19] MatrixGenerics_1.12.0       matrixStats_1.0.0          
 
     loaded via a namespace (and not attached):
       [1] rstudioapi_0.15.0             magrittr_2.0.3               
@@ -693,9 +733,9 @@ relationships and patterns.
      [67] cluster_2.1.4                 generics_0.1.3               
      [69] gtable_0.3.3                  R.methodsS3_1.8.2            
      [71] ensembldb_2.24.0              data.table_1.14.8            
-     [73] hms_1.1.3                     BiocSingular_1.16.0          
-     [75] ScaledMatrix_1.8.1            metapod_1.8.0                
-     [77] xml2_1.3.5                    utf8_1.2.3                   
+     [73] hms_1.1.3                     xml2_1.3.5                   
+     [75] BiocSingular_1.16.0           ScaledMatrix_1.8.1           
+     [77] metapod_1.8.0                 utf8_1.2.3                   
      [79] XVector_0.40.0                ggrepel_0.9.3                
      [81] BiocVersion_3.17.1            pillar_1.9.0                 
      [83] stringr_1.5.0                 limma_3.56.2                 
@@ -704,21 +744,21 @@ relationships and patterns.
      [89] rtracklayer_1.60.0            bit_4.0.5                    
      [91] annotate_1.78.0               tidyselect_1.2.0             
      [93] locfit_1.5-9.8                Biostrings_2.68.1            
-     [95] knitr_1.43                    ProtGenerics_1.32.0          
-     [97] edgeR_3.42.4                  xfun_0.39                    
-     [99] statmod_1.5.0                 stringi_1.7.12               
-    [101] lazyeval_0.2.2                yaml_2.3.7                   
-    [103] evaluate_0.21                 codetools_0.2-19             
-    [105] tibble_3.2.1                  graph_1.78.0                 
-    [107] BiocManager_1.30.21           cli_3.6.1                    
-    [109] xtable_1.8-4                  munsell_0.5.0                
-    [111] Rcpp_1.0.10                   dbplyr_2.3.2                 
-    [113] png_0.1-8                     XML_3.99-0.14                
-    [115] parallel_4.3.1                ellipsis_0.3.2               
-    [117] blob_1.2.4                    prettyunits_1.1.1            
-    [119] AnnotationFilter_1.24.0       sparseMatrixStats_1.12.0     
-    [121] bitops_1.0-7                  GSEABase_1.62.0              
-    [123] viridisLite_0.4.2             scales_1.2.1                 
-    [125] purrr_1.0.1                   crayon_1.5.2                 
-    [127] rlang_1.1.1                   cowplot_1.1.1                
-    [129] KEGGREST_1.40.0              
+     [95] knitr_1.43                    gridExtra_2.3                
+     [97] ProtGenerics_1.32.0           edgeR_3.42.4                 
+     [99] xfun_0.39                     statmod_1.5.0                
+    [101] stringi_1.7.12                lazyeval_0.2.2               
+    [103] yaml_2.3.7                    evaluate_0.21                
+    [105] codetools_0.2-19              tibble_3.2.1                 
+    [107] graph_1.78.0                  BiocManager_1.30.21          
+    [109] cli_3.6.1                     xtable_1.8-4                 
+    [111] munsell_0.5.0                 Rcpp_1.0.10                  
+    [113] dbplyr_2.3.2                  png_0.1-8                    
+    [115] XML_3.99-0.14                 parallel_4.3.1               
+    [117] ellipsis_0.3.2                blob_1.2.4                   
+    [119] prettyunits_1.1.1             AnnotationFilter_1.24.0      
+    [121] sparseMatrixStats_1.12.0      bitops_1.0-7                 
+    [123] GSEABase_1.62.0               viridisLite_0.4.2            
+    [125] scales_1.2.1                  purrr_1.0.1                  
+    [127] crayon_1.5.2                  rlang_1.1.1                  
+    [129] cowplot_1.1.1                 KEGGREST_1.40.0              

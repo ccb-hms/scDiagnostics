@@ -27,8 +27,8 @@ Suggests:
     RColorBrewer,
     corrplot,
     scran,
-    SummarizedExperiment,
     scater,
     gridExtra,
-    ggplot2
+    ggplot2,
+    SummarizedExperiment
 VignetteBuilder: knitr

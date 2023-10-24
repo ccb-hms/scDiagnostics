@@ -1,6 +1,7 @@
 #' Perform Linear Regression Analysis on Single-Cell Data
 #'
-#' This function performs linear regression on a SingleCellExperiment object, where the dependent variable is specified by the user as one of the principal components (PC1, PC2, etc.) from the dimension reduction slot, and the independent variable is provided as a column name in the SingleCellExperiment object.
+#' This function performs linear regression on a SingleCellExperiment object, where the dependent variable is specified by the user as one of the principal 
+#' components (PC1, PC2, etc.) from the dimension reduction slot, and the independent variable is provided as a column name in the SingleCellExperiment object.
 #'
 #' @param se_object A SingleCellExperiment object containing the data for regression analysis
 #' @param dependent_vars A character string specifying the dependent variable principal component (e.g., "PC1", "PC2", etc.)
@@ -10,7 +11,10 @@
 #' @import SingleCellExperiment
 #' @export
 #'
-#' @return The summary of the linear regression model
+#' @return A list containing summaries of the linear regression models for each specified principal component, 
+#'         a data frame with the corresponding R-squared (R2) values, 
+#'         a data frame with variance contributions for each principal component, 
+#'         and the total variance explained.
 #'
 #' @examples
 #' library(scater)
@@ -22,6 +26,7 @@
 #' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 #'
 #' # Divide the data into reference and query datasets
+#' set.seed(100)
 #' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
 #' ref_data <- sce[, indices]
 #' query_data <- sce[, -indices]
@@ -84,9 +89,20 @@ regressPC <- function(se_object,
     return(rsq)
   })
   
-  rsquared_df <- data.frame(PC = names(regression_summaries), R2 = rsquared)
+  # Calculate variance contributions by principal component
+  var_contributions <- sapply(seq_along(dependent_list), function(i) {
+    pca_var_explained <- attr(reducedDim(se_object, "PCA"), "percentVar")[i]
+    rsq <- rsquared[i]
+    return(pca_var_explained * rsq)
+  })
   
-  # Return both the summaries of the linear regression models and R-squared values
-  return(list(regression_summaries = regression_summaries, rsquared_df = rsquared_df))
+  var_contributions_df <- data.frame(Variance_Contribution = var_contributions)
+  
+  # Calculate total variance explained by summing the variance contributions
+  total_variance_explained <- sum(var_contributions)
+  
+  rsquared_df <- data.frame(R2 = rsquared)
+  
+  # Return both the summaries of the linear regression models, R-squared values, and variance contributions
+  return(list(regression_summaries = regression_summaries, rsquared_df = rsquared_df, var_contributions_df = var_contributions_df, total_variance_explained = total_variance_explained))
 }
-
