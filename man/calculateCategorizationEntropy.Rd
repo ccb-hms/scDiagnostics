@@ -4,10 +4,17 @@
 \alias{calculateCategorizationEntropy}
 \title{Calculate Categorization Entropy}
 \usage{
-calculateCategorizationEntropy(X, plot = TRUE, verbose = TRUE)
+calculateCategorizationEntropy(
+  X,
+  inverse_normal_transform = FALSE,
+  plot = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{X}{a matrix of category scores}
+
+\item{inverse_normal_transform}{if TRUE, apply}
 
 \item{plot}{if TRUE, plot a histogram of the entropies}
 
@@ -44,7 +51,7 @@ The function checks if X is already on the probability scale.
 X <- rnorm(500 * 4) |> matrix(nrow = 4)
 X[1, 1:250] <- X[1, 1:250] + 5 # Make the first category highly scored in the first 250 cells
 
-# The function will issue a message about softmaxing the scores, and the entropy histogram will be 
+# The function will issue a message about softmaxing the scores, and the entropy histogram will be
 # bimodal since we made half of the cells clearly category 1 while the other half are roughly even.
 # entropy_scores <- calculateCategorizationEntropy(X)
 }

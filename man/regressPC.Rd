@@ -14,10 +14,14 @@ regressPC(se_object, dependent_vars, independent_var)
 \item{independent_var}{A character string specifying the column name for the independent variable in the SingleCellExperiment object}
 }
 \value{
-A list containing summaries of the linear regression models for each specified principal component, a data frame with the corresponding R-squared (R2) values, a data frame with variance contributions for each principal component, and the total variance explained.
+A list containing summaries of the linear regression models for each specified principal component, 
+        a data frame with the corresponding R-squared (R2) values, 
+        a data frame with variance contributions for each principal component, 
+        and the total variance explained.
 }
 \description{
-This function performs linear regression on a SingleCellExperiment object, where the dependent variable is specified by the user as one of the principal components (PC1, PC2, etc.) from the dimension reduction slot, and the independent variable is provided as a column name in the SingleCellExperiment object.
+This function performs linear regression on a SingleCellExperiment object, where the dependent variable is specified by the user as one of the principal 
+components (PC1, PC2, etc.) from the dimension reduction slot, and the independent variable is provided as a column name in the SingleCellExperiment object.
 }
 \examples{
 library(scater)
@@ -29,6 +33,7 @@ library(SingleR)
 sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
 # Divide the data into reference and query datasets
+set.seed(100)
 indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
 ref_data <- sce[, indices]
 query_data <- sce[, -indices]
