@@ -8,6 +8,7 @@ calculateOutlierScore(
   sce,
   dimred = NULL,
   use_pcs = FALSE,
+  plot = TRUE,
   prediction_thresh = 0.5,
   ...
 )
@@ -21,13 +22,17 @@ calculateOutlierScore(
 \item{use_pcs}{if TRUE, run the outlier detection in principal component
 space}
 
+\item{plot}{if TRUE and a dimred is specified, plot the isoscore against the
+specified dimred}
+
 \item{prediction_thresh}{threshold to use for outlier calling}
 
 \item{...}{arguments to pass to \link[isotree]{isolation.forest}}
 }
 \value{
 the SingleCellExperiment object with \code{outlier_score} and
-  \code{is_outlier} added to the colData.
+  \code{is_outlier} added to the colData. Also, the resulting isotree model is
+  attached to the object's metadata.
 }
 \description{
 This function calculates outlier scores for each cell using

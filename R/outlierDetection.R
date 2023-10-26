@@ -17,6 +17,8 @@
 #' @param use_pcs if TRUE, run the outlier detection in principal component
 #'   space
 #' @param prediction_thresh threshold to use for outlier calling
+#' @param plot if TRUE and a dimred is specified, plot the isoscore against the
+#'   specified dimred
 #' @param ... arguments to pass to \link[isotree]{isolation.forest}
 #' @details If \code{use_pcs} is turned on, it will use all available PCs in the
 #'   PCA reduced dimension slot if it exists, and run \link[scater]{runPCA} with
@@ -25,12 +27,14 @@
 #'   \code{prediction_thresh} is the threshold to use on the isoforest score
 #'   predictions
 #' @returns the SingleCellExperiment object with \code{outlier_score} and
-#'   \code{is_outlier} added to the colData.
+#'   \code{is_outlier} added to the colData. Also, the resulting isotree model is
+#'   attached to the object's metadata.
 #'
 #' @export
 calculateOutlierScore <- function(sce,
     dimred = NULL,
     use_pcs = FALSE,
+    plot = TRUE,
     prediction_thresh = 0.5,
     ...) {
     if (use_pcs) {
@@ -39,32 +43,30 @@ calculateOutlierScore <- function(sce,
         }
 
         X <- sce |>
-            reducedDim("PCA")
-
-        isotree_res <- X |>
-            isotree::isolation.forest(
-                output_score = TRUE,
-                ...
-            )
+            SingleCellExperiment::reducedDim("PCA")
     } else {
         X <- sce |>
-            logcounts() |>
+            SingleCellExperiment::logcounts() |>
             t()
-
-        isotree_res <- X |>
-            isotree::isolation.forest(
-                output_score = TRUE,
-                ...
-            )
     }
+
+    isotree_res <- X |>
+        isotree::isolation.forest(
+            output_score = TRUE,
+            ...
+        )
 
     # V These scores are the same as running predict(isotree_res$model, X)
-    colData(sce)$outlier_score <- isotree_res$scores
-    colData(sce)$is_outlier <- isotree_res$scores >= prediction_thresh
+    sce$outlier_score <- isotree_res$scores
+    sce$is_outlier <- isotree_res$scores >= prediction_thresh
 
-    if (!is.null(dimred)) {
+    if (!is.null(dimred) && plot) {
+        # TODO make this plot work when scater is only in the Suggests, or re-do
+        # it manually with ggplot.
         scater::plotReducedDim(sce, dimred, color_by = "outlier_score")
     }
+
+    S4Vectors::metadata(sce)$isotree_model <- isotree_res$model
 
     return(sce)
 }
