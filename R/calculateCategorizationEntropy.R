@@ -11,6 +11,7 @@
 #'   comparatively confident different sets of assignments are (given that the
 #'   number of categories is the same).
 #' @param X a matrix of category scores
+#' @param inverse_normal_transform if TRUE, apply
 #' @param verbose if TRUE, display messages about the calculations
 #' @param plot if TRUE, plot a histogram of the entropies
 #' @returns A vector of entropy values for each column in X.
@@ -28,10 +29,32 @@
 #' X <- rnorm(500 * 4) |> matrix(nrow = 4)
 #' X[1, 1:250] <- X[1, 1:250] + 5 # Make the first category highly scored in the first 250 cells
 #'
-#' # The function will issue a message about softmaxing the scores, and the entropy histogram will be 
+#' # The function will issue a message about softmaxing the scores, and the entropy histogram will be
 #' # bimodal since we made half of the cells clearly category 1 while the other half are roughly even.
 #' # entropy_scores <- calculateCategorizationEntropy(X)
-calculateCategorizationEntropy <- function(X, plot = TRUE, verbose = TRUE) {
+calculateCategorizationEntropy <- function(X,
+    inverse_normal_transform = FALSE,
+    plot = TRUE,
+    verbose = TRUE) {
+    if (inverse_normal_transform) {
+        # https://cran.r-project.org/web/packages/RNOmni/vignettes/RNOmni.html#inverse-normal-transformation
+        if (verbose) message("Applying global inverse normal transformation.")
+        # You can't do the INT column-wise (by cell) because it will set a
+        # constant "range" to the probabilities, eliminating the differences in
+        # confidence across methods we're trying to quantify.
+
+        # You can't do the INT row-wise (by cell-type) because even though
+        # different cell types exhibit different marginal distributions of
+        # scores (in SingleR at least), doing the transformation row-wise would
+        # eliminate any differences in which cell types are "hard to predict".
+        # You don't want a score of .5 for cytotoxic T cells (hard to predict
+        # type) to overwhelm a score of .62 from erythroid type 2 (easy to
+        # predict), even though the first would be extraordinary within its cell
+        # type and the latter unexceptional within its cell type.
+
+        X <- inverse_normal_trans(X)
+    }
+
     colSumsX <- colSums(X)
 
     X_is_probabilities <- all(X >= 0 & X <= 1) &
@@ -80,4 +103,20 @@ calculate_entropy <- function(p) {
     nonzeros <- p != 0
 
     -sum(p[nonzeros] * log(p[nonzeros]))
+}
+
+n_elements <- function(X) ifelse(is.matrix(X), prod(dim(X)), length(X))
+
+inverse_normal_trans <- function(X, constant = 3 / 8) {
+    n <- n_elements(X)
+
+    rankX <- rank(X)
+
+    intX <- qnorm((rankX - constant) / (n - 2 * constant + 1))
+
+    if (is.matrix(X)) {
+        intX <- matrix(intX, nrow = nrow(X))
+    }
+
+    return(intX)
 }

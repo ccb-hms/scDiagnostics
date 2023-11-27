@@ -172,7 +172,7 @@ plotMarkerExpression(reference_data = ref_data,
 
 In the provided example, we examined the distribution of expression values for the gene MS4A1, a marker for naive B cells, in both the query and reference datasets. Additionally, we also looked at the distribution of MS4A1 expression in the B_and_plasma cell type. We observed overlapping distributions in both cases, suggesting alignment between the reference and query datasets.
 
-## Evaluating Alignment Between Reference and Query Datasets in Terms of Highly Variable Genes,
+## Evaluating Alignment Between Reference and Query Datasets in Terms of Highly Variable Genes
 
 We are assessing the similarity or alignment between two datasets, the reference dataset, and the query dataset, in terms of highly variable genes (HVGs). We calculate the overlap coefficient between the sets of highly variable genes in the reference and query datasets. The overlap coefficient quantifies the degree of overlap or similarity between these two sets of genes. A value closer to 1 indicates a higher degree of overlap, while a value closer to 0 suggests less overlap. The computed overlap coefficient is printed, providing a numerical measure of how well the highly variable genes in the reference and query datasets align. In this case, the overlap coefficient is 0.63, indicating a moderate level of overlap.
 

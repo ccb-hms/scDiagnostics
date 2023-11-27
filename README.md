@@ -238,7 +238,7 @@ of MS4A1 expression in the B_and_plasma cell type. We observed
 overlapping distributions in both cases, suggesting alignment between
 the reference and query datasets.
 
-## Evaluating Alignment Between Reference and Query Datasets in Terms of Highly Variable Genes,
+## Evaluating Alignment Between Reference and Query Datasets in Terms of Highly Variable Genes
 
 We are assessing the similarity or alignment between two datasets, the
 reference dataset, and the query dataset, in terms of highly variable
