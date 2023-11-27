@@ -2,8 +2,11 @@ Package: scDiagnostics
 Type: Package
 Title: Cell type annotation diagnostics 
 Version: 0.99.0
-Authors@R: c(person("Smriti", "Chawla", email = "smriti_chawla@g.harvard.edu", role = c("aut", "cre")),
-            person("Ludwig", "Geistlinger", role = c("aut", "ctb")))
+Authors@R: c(
+  person("Smriti", "Chawla", email = "smriti_chawla@g.harvard.edu", role = c("aut", "cre")),
+  person("Ludwig", "Geistlinger", role = c("aut", "ctb")),
+  person("Andrew", "Ghazi", role = "aut"),
+  person("Robert", "Gentleman", role = "aut"))
 Description: The scDiagnostics package provides diagnostic plots to assess the quality of cell type assignments 
              from single cell gene expression profiles. The implemented functionality allows to assess the reliability of
              cell type annotations, investigate gene expression patterns, and explore relationships between different cell types
