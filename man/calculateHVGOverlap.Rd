@@ -20,10 +20,13 @@ Calculates the overlap coefficient between the sets of highly variable genes
 from a reference dataset and a query dataset.
 }
 \details{
-The overlap coefficient measures the degree of overlap or similarity between two sets of genes, 
-indicating how well reference and query datasets are aligned. It is computed as:
+The overlap coefficient measures the similarity between two gene sets, indicating how well-aligned 
+reference and query datasets are in terms of their highly variable genes. This metric is 
+useful in single-cell genomics to understand the correspondence between different datasets.
 
-\deqn{Coefficient(X,Y) = \frac{|X \cap Y|}{min(|X|, |Y|)}}
+The coefficient is calculated using the formula:
+
+\deqn{Coefficient(X, Y) = \frac{|X \cap Y|}{min(|X|, |Y|)}}
 
 where X and Y are the sets of highly variable genes from the reference and query datasets, respectively,
 |X ∩ Y| is the number of genes common to both X and Y, and min(|X|, |Y|) is the size of the smaller set among X and Y.
