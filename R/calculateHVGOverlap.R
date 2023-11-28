@@ -1,19 +1,26 @@
 #' Calculate the Overlap Coefficient for Highly Variable Genes
+#' 
+#' @description Calculates the overlap coefficient between the sets of highly variable genes 
+#' from a reference dataset and a query dataset.
 #'
-#' @description This function calculates the overlap coefficient between the sets of highly variable genes 
-#' from a reference dataset and a query dataset. The overlap coefficient measures the 
-#' degree of overlap or similarity between these two sets of genes, pointing towards how well reference
-#' and query datasets are aligned.
+#' @details The overlap coefficient measures the degree of overlap or similarity between two sets of genes, 
+#' indicating how well reference and query datasets are aligned. It is computed as:
+#'
+#' \deqn{Coefficient(X,Y) = \frac{|X \cap Y|}{min(|X|, |Y|)}}
+#' 
+#' where X and Y are the sets of highly variable genes from the reference and query datasets, respectively,
+#' |X ∩ Y| is the number of genes common to both X and Y, and min(|X|, |Y|) is the size of the smaller set among X and Y.
 #'
 #' @param reference_genes A vector of highly variable genes from the reference dataset.
 #' @param query_genes A vector of highly variable genes from the query dataset.
 #'
-#' 
 #' @return Overlap coefficient, a value between 0 and 1, where 0 indicates no overlap 
 #'         and 1 indicates complete overlap of highly variable genes between datasets.
 #' 
-#' @examples
+#' @references Luecken et al. Benchmarking atlas-level data integration in
+#' single-cell genomics. Nature Methods, 19:41-50, 2022.
 #' 
+#' @examples
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
