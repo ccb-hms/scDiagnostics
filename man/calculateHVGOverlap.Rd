@@ -48,5 +48,4 @@ query_var <- getTopHVGs(query_data, n=2000)
 
 overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var, 
                                           query_genes = query_var)
-                                          
 }
