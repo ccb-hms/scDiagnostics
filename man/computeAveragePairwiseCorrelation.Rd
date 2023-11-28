@@ -14,24 +14,34 @@ computeAveragePairwiseCorrelation(
 )
 }
 \arguments{
-\item{query_data}{An object of class "SingleCellExperiment" containing the query cell data.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
-\item{reference_data}{An object of class "SingleCellExperiment" containing the reference cell data.}
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
 \item{query_cell_type_col}{A character string specifying the column name for cell types in query_data.}
 
-\item{ref_cell_type_col}{A character string specifying the column name for cell types in ref_data.}
+\item{ref_cell_type_col}{A character string specifying the column name for cell types in reference_data.}
 
 \item{cell_types}{A character vector specifying the cell types to consider.}
 
 \item{correlation_method}{The correlation method to use for calculating pairwise correlations.}
 }
 \value{
-The average pairwise correlation matrix.
+A matrix containing the average pairwise correlation values. 
+        Rows and columns are labeled with the cell types. Each element 
+        in the matrix represents the average correlation between a pair 
+        of cell types.
 }
 \description{
-This function computes the pairwise correlations between query and reference cells based on the provided correlation method.
-It then calculates the average correlation for each pair of cell types.
+Computes the average pairwise correlations between specified cell types 
+in single-cell gene expression data.
+}
+\details{
+This function operates on \code{\linkS4class{SingleCellExperiment}} objects, 
+ideal for single-cell analysis workflows. It calculates pairwise correlations between query and 
+reference cells using a specified correlation method, then averages these correlations for each 
+cell type pair. This function aids in assessing the similarity between cells in reference and query datasets, 
+providing insights into the reliability of cell type annotations in single-cell gene expression data.
 }
 \examples{
 library(scater)
