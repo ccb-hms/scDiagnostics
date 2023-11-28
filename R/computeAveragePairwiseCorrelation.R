@@ -1,21 +1,27 @@
 #' Compute Average Pairwise Correlation between Cell Types
 #'
-#' This function computes the pairwise correlations between query and reference cells based on the provided correlation method.
-#' It then calculates the average correlation for each pair of cell types.
+#' @description Computes the average pairwise correlations between specified cell types 
+#' in single-cell gene expression data.
+#' 
+#' @details This function operates on \code{\linkS4class{SingleCellExperiment}} objects, 
+#' ideal for single-cell analysis workflows. It calculates pairwise correlations between query and 
+#' reference cells using a specified correlation method, then averages these correlations for each 
+#' cell type pair. This function aids in assessing the similarity between cells in reference and query datasets, 
+#' providing insights into the reliability of cell type annotations in single-cell gene expression data.
 #'
-#' @param query_data An object of class "SingleCellExperiment" containing the query cell data.
-#' @param reference_data An object of class "SingleCellExperiment" containing the reference cell data.
+#'
+#' @param query_data  A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param query_cell_type_col A character string specifying the column name for cell types in query_data.
-#' @param ref_cell_type_col A character string specifying the column name for cell types in ref_data.
+#' @param ref_cell_type_col A character string specifying the column name for cell types in reference_data.
 #' @param cell_types A character vector specifying the cell types to consider.
 #' @param correlation_method The correlation method to use for calculating pairwise correlations.
 #'
-#' @import SingleCellExperiment
-#' @importFrom SummarizedExperiment assay
-#' @importFrom stats cor
-#' @return The average pairwise correlation matrix.
-#' @export
-#'
+#' @return A matrix containing the average pairwise correlation values. 
+#'         Rows and columns are labeled with the cell types. Each element 
+#'         in the matrix represents the average correlation between a pair 
+#'         of cell types.
+#' 
 #' @examples
 #' library(scater)
 #' library(scran)
@@ -70,33 +76,40 @@
 #'
 #' # Visualize the results using any visualization method of choice
 #'
+#' @import SingleCellExperiment
+#' @importFrom SummarizedExperiment assay
+#' @importFrom stats cor
+#' @export
 computeAveragePairwiseCorrelation <- function(query_data, 
                                               reference_data, 
                                               query_cell_type_col, 
                                               ref_cell_type_col, 
                                               cell_types, correlation_method) {
-
-  # Create an empty matrix to store the pairwise average correlations
-  cor_matrix_avg <- matrix(0, nrow = length(cell_types), ncol = length(cell_types),
-                           dimnames = list(cell_types, cell_types))
-
-  # Compute pairwise average correlations
-  for (i in 1:length(cell_types)) {
-    for (j in 1:length(cell_types)) {
-      query_cell_type <- cell_types[i]
-      ref_cell_type <- cell_types[j]
-
-      query_subset <- query_data[, query_data[[query_cell_type_col]] %in% query_cell_type]
-      ref_subset <- reference_data[, reference_data[[ref_cell_type_col]] %in% ref_cell_type]
-
-      query_mat <- as.matrix(assay(query_subset, "logcounts"))
-      ref_mat <- as.matrix(assay(ref_subset, "logcounts"))
-
-      cor_matrix <- cor(query_mat, ref_mat, method = correlation_method)
-      cor_avg <- mean(cor_matrix)
-
-      cor_matrix_avg[i, j] <- cor_avg
-    }
+  # Sanity checks
+  stopifnot(is(query_data, "SingleCellExperiment"))
+  stopifnot(is(reference_data, "SingleCellExperiment"))
+  stopifnot(query_cell_type_col %in% colnames(colData(query_data)))
+  stopifnot(ref_cell_type_col %in% colnames(colData(reference_data)))
+  stopifnot(all(cell_types %in% unique(query_data[[query_cell_type_col]])))
+  stopifnot(all(cell_types %in% unique(reference_data[[ref_cell_type_col]])))
+  
+  # Function to compute correlation between two cell types
+  .computeCorrelation <- function(type1, type2) {
+    query_subset <- query_data[ ,query_data[[query_cell_type_col]] == type1, drop = FALSE]
+    ref_subset <- reference_data[ ,reference_data[[ref_cell_type_col]] == type2, drop = FALSE]
+    
+    query_mat <- as.matrix(assay(query_subset, "logcounts"))
+    ref_mat <- as.matrix(assay(ref_subset, "logcounts"))
+    
+    cor_matrix <- cor(query_mat, ref_mat, method = correlation_method)
+    mean(cor_matrix)
   }
+  
+  # Use outer to compute pairwise correlations
+  cor_matrix_avg <- outer(cell_types, cell_types, Vectorize(.computeCorrelation))
+  
+  # Assign cell type names to rows and columns
+  dimnames(cor_matrix_avg) <- list(cell_types, cell_types)
+  
   return(cor_matrix_avg)
 }
