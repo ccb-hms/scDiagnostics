@@ -1,6 +1,6 @@
 #' Calculate the Overlap Coefficient for Highly Variable Genes
 #'
-#' This function calculates the overlap coefficient between the sets of highly variable genes 
+#' @description This function calculates the overlap coefficient between the sets of highly variable genes 
 #' from a reference dataset and a query dataset. The overlap coefficient measures the 
 #' degree of overlap or similarity between these two sets of genes, pointing towards how well reference
 #' and query datasets are aligned.
@@ -8,7 +8,6 @@
 #' @param reference_genes A vector of highly variable genes from the reference dataset.
 #' @param query_genes A vector of highly variable genes from the query dataset.
 #'
-#' @export
 #' 
 #' @return Overlap coefficient, a value between 0 and 1, where 0 indicates no overlap 
 #'         and 1 indicates complete overlap of highly variable genes between datasets.
@@ -40,8 +39,20 @@
 #' 
 #' overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var, 
 #'                                           query_genes = query_var)
-#'                                           
+#' @export                                       
 calculateHVGOverlap <- function(reference_genes, query_genes) {
+  
+  # Sanity checks
+  if (!is.vector(reference_genes) || !is.character(reference_genes)) {
+    stop("reference_genes must be a character vector.")
+  }
+  if (!is.vector(query_genes) || !is.character(query_genes)) {
+    stop("query_genes must be a character vector.")
+  }
+  if (length(reference_genes) == 0 || length(query_genes) == 0) {
+    stop("Input vectors must not be empty.")
+  }
+  
   # Calculate the intersection of highly variable genes
   common_genes <- intersect(reference_genes, query_genes)
   
