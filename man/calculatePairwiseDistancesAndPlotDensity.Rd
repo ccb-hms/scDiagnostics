@@ -16,19 +16,23 @@ calculatePairwiseDistancesAndPlotDensity(
 )
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
+expression data and metadata.}
 
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells}
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
+expression data and metadata.}
 
-\item{query_cell_type_col}{The column name in the query_data metadata specifying the cell types}
+\item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data} 
+that identifies the cell types.}
 
-\item{ref_cell_type_col}{The column name in the reference_data metadata specifying the cell types}
+\item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data} 
+that identifies the cell types.}
 
 \item{cell_type_query}{The query cell type for which distances or correlations are calculated.}
 
 \item{cell_type_reference}{The reference cell type for which distances or correlations are calculated.}
 
-\item{distance_metric}{The distance metric to use for calculating pairwise distances, such as "euclidean" or "manhattan".
+\item{distance_metric}{The distance metric to use for calculating pairwise distances, such as euclidean, manhattan etc.
 Set it to "correlation" for calculating correlation coefficients.}
 
 \item{correlation_method}{The correlation method to use when distance_metric is "correlation".
@@ -46,7 +50,7 @@ of a specific cell type.
 The function works with \code{\linkS4class{SingleCellExperiment}} objects, ensuring 
 compatibility with common single-cell analysis workflows. It subsets the data for specified cell types, 
 computes pairwise distances or correlations, and visualizes these measurements using density plots. By comparing the distances and correlations, 
-one can evaluate the consistency and reliablity of annotated cell types within single-cell datasets.
+one can evaluate the consistency and reliability of annotated cell types within single-cell datasets.
 }
 \examples{
 library(scran)
@@ -90,5 +94,4 @@ calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset,
                                          cell_type_query = "CD8", 
                                          cell_type_reference = "CD8", 
                                          distance_metric = "euclidean")
-
 }
