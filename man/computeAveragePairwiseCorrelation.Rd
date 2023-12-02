@@ -14,15 +14,19 @@ computeAveragePairwiseCorrelation(
 )
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
+expression data and metadata.}
 
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
+expression data and metadata.}
 
-\item{query_cell_type_col}{A character string specifying the column name for cell types in query_data.}
+\item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data} 
+that identifies the cell types.}
 
-\item{ref_cell_type_col}{A character string specifying the column name for cell types in reference_data.}
+\item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data} 
+that identifies the cell types.}
 
-\item{cell_types}{A character vector specifying the cell types to consider.}
+\item{cell_types}{A character vector specifying the cell types to be analysed consider.}
 
 \item{correlation_method}{The correlation method to use for calculating pairwise correlations.}
 }
