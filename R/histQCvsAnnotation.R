@@ -1,20 +1,26 @@
 #' Histograms: QC Stats and Annotation Scores Visualization
 #'
-#' Creates histograms to visualize the distribution of QC stats and scores obtained from cell type annotation methods for one or more cell types.
-#'
-#' @param query_data An object of class "SingleCellExperiment" containing the single-cell expression data and metadata.
-#' @param qc_col A character string specifying the column name in the colData(query_data) that contains the QC stats of interest.
-#' @param label_col A character string specifying the column name in the colData(query_data) that contains the cell type labels.
-#' @param score_col A character string specifying the column name in the colData(query_data) that contains the cell type scores.
-#' @param label A character vector of cell type labels to plot (e.g., c("T-cell", "B-cell")). If NULL, all cells will be included.
-#'
-#' @return A object containing two histograms displayed side by side. The first histogram represents the distribution of QC stats, and the second histogram 
-#'         represents the distribution of annotation scores.
+#' This function generates histograms for visualizing the distribution of quality control (QC) statistics and 
+#' annotation scores associated with cell types in single-cell genomic data. 
 #' 
-#' @export
-#' @import ggplot2
-#' @import gridExtra
-#' @importFrom gridExtra grid.arrange
+#' @details The particularly useful in the analysis of data from single-cell experiments, 
+#' where understanding the distribution of these metrics is crucial for quality assessment and 
+#' interpretation of cell type annotations.
+#'
+#' @param query_data  A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
+#' expression data and metadata.
+#' @param qc_col character. A column name in the \code{colData} of \code{query_data} that 
+#' contains the QC stats of interest.
+#' @param label_col character. The column name in the \code{colData} of \code{query_data} 
+#' that contains the cell type labels.
+#' @param score_col numeric. The column name in the \code{colData} of \code{query_data} that 
+#' contains the cell type scores.
+#' @param label character. A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).  
+#' Defaults to \code{NULL}, which will include all the cells.
+#'
+#' @return A object containing two histograms displayed side by side. 
+#' The first histogram represents the distribution of QC stats, 
+#' and the second histogram represents the distribution of annotation scores.
 #' 
 #' @examples
 #' library(scater)
@@ -60,11 +66,36 @@
 #'                    score_col = "cell_scores", 
 #'                    label = NULL)
 #'
+#' @import ggplot2
+#' @import gridExtra
+#' @importFrom gridExtra grid.arrange
+#' @export
 histQCvsAnnotation <- function(query_data, 
                                qc_col = qc_col, 
                                label_col, 
                                score_col, 
                                label = NULL) {
+  # Sanity checks
+  
+  # Check if query_data is a SingleCellExperiment object
+  if (!is(query_data, "SingleCellExperiment")) {
+    stop("query_data must be a SingleCellExperiment object.")
+  }
+  
+  # Check if qc_col is a valid column name in query_data
+  if (!qc_col %in% colnames(colData(query_data))) {
+    stop("qc_col: '", qc_col, "' is not a valid column name in query_data.")
+  }
+  
+  # Check if label_col is a valid column name in query_data
+  if (!label_col %in% colnames(colData(query_data))) {
+    stop("label_col: '", label_col, "' is not a valid column name in query_data.")
+  }
+  
+  # Check if score_col is a valid column name in query_data
+  if (!score_col %in% colnames(colData(query_data))) {
+    stop("score_col: '", score_col, "' is not a valid column name in query_data.")
+  }
   
   # Filter cells based on label if specified
   if (!is.null(label)) {
@@ -94,5 +125,5 @@ histQCvsAnnotation <- function(query_data,
     theme_bw()
   
   # Return the list of plots
-  return(grid.arrange(qc_histogram, scores_histogram, ncol = 2))
+  return(gridExtra::grid.arrange(qc_histogram, scores_histogram, ncol = 2))
 }
