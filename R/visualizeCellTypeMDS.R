@@ -1,21 +1,28 @@
 #' Visualizing Reference and Query Cell Types using MDS
 #'
-#' This function performs Multidimensional Scaling (MDS) on the query and reference datasets and generates a scatter plot
-#' with cell types color-coded using custom colors provided by the user. The distance matrix used for MDS is computed
-#' based on a custom set of genes selected by the user.
-#'
-#' @param query_data An object of class "SingleCellExperiment" containing a numeric expression matrix.
-#' @param reference_data An object of class "SingleCellExperiment" containing a numeric expression matrix.
-#' @param mdata A vector of cell types from the query and reference datasets to be visualized in low-dimensional space.
-#' @param colors A vector of custom colors to be used for the cell types.
-#' @param legend_order A vector specifying the desired order of the legend items.
-#'
-#' @importFrom stats cmdscale cor
-#' @importFrom ggplot2 ggplot
-#' @importFrom SummarizedExperiment assay
+#' This function facilitates the assessment of similarity between reference and query datasets 
+#' through Multidimensional Scaling (MDS) scatter plots. It allows the visualization of cell types, 
+#' color-coded with user-defined custom colors, based on a dissimilarity matrix computed from a 
+#' user-selected gene set.
+#' 
+#' @details To evaluate dataset similarity, the function selects specific subsets of cells from 
+#' both reference and query datasets. It then calculates Spearman correlations between gene expression profiles, 
+#' deriving a dissimilarity matrix. This matrix undergoes Classical Multidimensional Scaling (MDS) for 
+#' visualization, presenting cell types in a scatter plot, distinguished by colors defined by the user.
+#' 
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
+#' expression data and metadata.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
+#' expression data and metadata.
+#' @param mdata A character vector representing cell types from both the query and reference datasets. 
+#' These cell types are labels used for visualization in the Multidimensional Scaling (MDS) plot. 
+#' The vector should include names of cell types as they appear in both datasets, 
+#' prefixed appropriately to distinguish between query and reference (e.g., "Query CD4", "Reference CD8").
+#' @param cell_type_colors A named vector of colors corresponding to the cell types specified in mdata. 
+#' Each color is used to uniquely identify a cell type in the MDS plot. 
+#' @param legend_order A character vector specifying the order of cell types in the plot legend.
 #'
 #' @return A ggplot object representing the MDS scatter plot with cell type coloring.
-#' @export
 #'
 #' @examples
 #' library(scater)
@@ -74,16 +81,34 @@
 #' plot <- visualizeCellTypeMDS(query_data = query_data_subset, 
 #'                             reference_data = ref_data_subset, 
 #'                             mdata = mdata, 
-#'                             colors = cell_type_colors, 
+#'                             cell_type_colors = cell_type_colors, 
 #'                             legend_order = legend_order)
 #' print(plot)
 #'
+#' @importFrom stats cmdscale cor
+#' @importFrom ggplot2 ggplot
+#' @importFrom SummarizedExperiment assay
+#' @export
+#' 
 visualizeCellTypeMDS <- function(query_data, 
                                  reference_data, 
                                  mdata, 
-                                 colors, 
+                                 cell_type_colors, 
                                  legend_order) {
 
+  # Sanity checks
+  
+  # Check if query_data is a SingleCellExperiment object
+  if (!is(query_data, "SingleCellExperiment")) {
+    stop("query_data must be a SingleCellExperiment object.")
+  }
+  
+  # Check if reference_data is a SingleCellExperiment object
+  if (!is(reference_data, "SingleCellExperiment")) {
+    stop("reference_data must be a SingleCellExperiment object.")
+  }
+  
+  # Extract logcounts
   queryExp <- as.matrix(assay(query_data, "logcounts"))
   refExp <- as.matrix(assay(reference_data, "logcounts"))
 
@@ -98,7 +123,7 @@ visualizeCellTypeMDS <- function(query_data,
 
   plot <- ggplot(matx, aes(x = Dim1, y = Dim2, color = Type)) +
     geom_point(alpha = 0.5, size = 1) +
-    scale_color_manual(values = colors) +
+    scale_color_manual(values = cell_type_colors) +
     theme_bw() +
     guides(color = guide_legend(title = "Cell Types"))
 
