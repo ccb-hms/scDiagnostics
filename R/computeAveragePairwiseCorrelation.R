@@ -1,6 +1,6 @@
 #' Compute Average Pairwise Correlation between Cell Types
 #'
-#' @description Computes the average pairwise correlations between specified cell types 
+#' Computes the average pairwise correlations between specified cell types 
 #' in single-cell gene expression data.
 #' 
 #' @details This function operates on \code{\linkS4class{SingleCellExperiment}} objects, 
@@ -9,12 +9,15 @@
 #' cell type pair. This function aids in assessing the similarity between cells in reference and query datasets, 
 #' providing insights into the reliability of cell type annotations in single-cell gene expression data.
 #'
-#'
-#' @param query_data  A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
-#' @param query_cell_type_col A character string specifying the column name for cell types in query_data.
-#' @param ref_cell_type_col A character string specifying the column name for cell types in reference_data.
-#' @param cell_types A character vector specifying the cell types to consider.
+#' @param query_data  A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
+#' expression data and metadata.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
+#' expression data and metadata.
+#' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data} 
+#' that identifies the cell types.
+#' @param ref_cell_type_col character. The column name in the \code{colData} of \code{reference_data} 
+#' that identifies the cell types.
+#' @param cell_types A character vector specifying the cell types to be analysed consider.
 #' @param correlation_method The correlation method to use for calculating pairwise correlations.
 #'
 #' @return A matrix containing the average pairwise correlation values. 
@@ -86,12 +89,36 @@ computeAveragePairwiseCorrelation <- function(query_data,
                                               ref_cell_type_col, 
                                               cell_types, correlation_method) {
   # Sanity checks
-  stopifnot(is(query_data, "SingleCellExperiment"))
-  stopifnot(is(reference_data, "SingleCellExperiment"))
-  stopifnot(query_cell_type_col %in% colnames(colData(query_data)))
-  stopifnot(ref_cell_type_col %in% colnames(colData(reference_data)))
-  stopifnot(all(cell_types %in% unique(query_data[[query_cell_type_col]])))
-  stopifnot(all(cell_types %in% unique(reference_data[[ref_cell_type_col]])))
+  
+  # Check if query_data is a SingleCellExperiment object
+  if (!is(query_data, "SingleCellExperiment")) {
+    stop("query_data must be a SingleCellExperiment object.")
+  }
+  
+  # Check if reference_data is a SingleCellExperiment object
+  if (!is(reference_data, "SingleCellExperiment")) {
+    stop("reference_data must be a SingleCellExperiment object.")
+  }
+  
+  # Check if query_cell_type_col is a valid column name in query_data
+  if (!query_cell_type_col %in% colnames(colData(query_data))) {
+    stop("query_cell_type_col: '", query_cell_type_col, "' is not a valid column name in query_data.")
+  }
+  
+  # Check if ref_cell_type_col is a valid column name in reference_data
+  if (!ref_cell_type_col %in% colnames(colData(reference_data))) {
+    stop("ref_cell_type_col: '", ref_cell_type_col, "' is not a valid column name in reference_data.")
+  }
+  
+  # Check if all cell_types are present in query_data
+  if (!all(cell_types %in% unique(query_data[[query_cell_type_col]]))) {
+    stop("One or more cell_types specified are not present in query_data.")
+  }
+  
+  # Check if all cell_types are present in reference_data
+  if (!all(cell_types %in% unique(reference_data[[ref_cell_type_col]]))) {
+    stop("One or more cell_types specified are not present in reference_data.")
+  }
   
   # Function to compute correlation between two cell types
   .computeCorrelation <- function(type1, type2) {
