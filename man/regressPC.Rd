@@ -2,26 +2,53 @@
 % Please edit documentation in R/regressPC.R
 \name{regressPC}
 \alias{regressPC}
-\title{Perform Linear Regression Analysis on Single-Cell Data}
+\title{Principal component regression}
 \usage{
-regressPC(se_object, dependent_vars, independent_var)
+regressPC(sce, dep.vars = NULL, indep.var)
 }
 \arguments{
-\item{se_object}{A SingleCellExperiment object containing the data for regression analysis}
+\item{sce}{An object of class \code{\linkS4class{SingleCellExperiment}}
+containing the data for regression analysis.}
 
-\item{dependent_vars}{A character string specifying the dependent variable principal component (e.g., "PC1", "PC2", etc.)}
+\item{dep.vars}{character. Dependent variable(s). Determines which principal
+component(s) (e.g., "PC1", "PC2", etc.) are used as explanatory variables.
+Principal components are expected to be stored in a PC matrix named \code{"PCA"}
+in the \code{reducedDims} of \code{sce}. Defaults to \code{NULL} which will
+then regress on each principal component present in the PC matrix.}
 
-\item{independent_var}{A character string specifying the column name for the independent variable in the SingleCellExperiment object}
+\item{indep.var}{character. Independent variable. A column name in the
+\code{colData} of \code{sce} specifying the response variable.}
 }
 \value{
-A list containing summaries of the linear regression models for each specified principal component, 
-        a data frame with the corresponding R-squared (R2) values, 
-        a data frame with variance contributions for each principal component, 
-        and the total variance explained.
+A \code{list} containing \itemize{
+\item summaries of the linear regression models for each specified principal
+component,
+\item the corresponding R-squared (R2) values,
+\item the variance contributions for each principal component, and
+\item the total variance explained.}
 }
 \description{
-This function performs linear regression on a SingleCellExperiment object, where the dependent variable is specified by the user as one of the principal 
-components (PC1, PC2, etc.) from the dimension reduction slot, and the independent variable is provided as a column name in the SingleCellExperiment object.
+This function performs linear regression of a covariate of interest onto one
+or more principal components, based on the data in a SingleCellExperiment object.
+}
+\details{
+Principal component regression, derived from PCA, can be used to
+quantify the variance explained by a covariate interest. Applications for
+single-cell analysis include quantification of batch removal, assessing clustering
+homogeneity, and evaluation of alignment of query and reference datasets in
+cell type annotation settings. 
+Briefly, the R^2 is calculated from a linear regression of the covariate B of
+interest onto each principal component. The variance contribution of the
+covariate effect per principal component is then calculated as the product of
+the variance explained by the ith principal component (PC) and the corresponding
+R2(PCi|B).
+The sum across all variance contributions by the covariate effects in all principal
+components gives the total variance explained by the covariate as follows:
+
+Var(C|B) = sum_{i=1}^G Var(C|PC_i) * R^2 (PC_i | B) 
+
+where Var(C|PCi) is the variance of the data matrix C explained by the ith
+principal component. See references.
 }
 \examples{
 library(scater)
@@ -34,37 +61,42 @@ sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
 # Divide the data into reference and query datasets
 set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
+indices <- sample(ncol(sce), 
+                  size = floor(0.7 * ncol(sce)),
+                  replace = FALSE)
+ref <- sce[, indices]
+query <- sce[, -indices]
 
 # log transform datasets
-ref_data <- logNormCounts(ref_data)
-query_data <- logNormCounts(query_data)
+ref <- logNormCounts(ref)
+query <- logNormCounts(query)
 
 # Run PCA
-query_data <- runPCA(query_data)
+query <- runPCA(query)
 
-# Get cell type scoresx using SingleR or any other method
-scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
+# Get cell type scores using SingleR 
+# Note: replace when using cell type annotation scores from other methods 
+scores <- SingleR(query, ref, labels = ref$reclustered.broad)
 
 # Add labels to query object
-colData(query_data)$labels <- scores$labels
+query$labels <- scores$labels
 
-# Specify the dependent variables (principal components) and independent variable (e.g., "labels")
-dependent_vars <- c("PC1", "PC2", "PC3")
-independent_var <- "labels"
+# Specify the dependent variables (principal components) and 
+# independent variable (e.g., "labels")
+dep.vars <- paste0("PC", 1:3)
+indep.var <- "labels"
 
 # Perform linear regression on multiple principal components
-result <- regressPC(se_object = query_data, 
-                    dependent_vars = dependent_vars, 
-                    independent_var = independent_var)
+res <- regressPC(sce = query,
+                 dep.vars = dep.vars,
+                 indep.var = indep.var)
 
-# Print the summaries of the linear regression models and R-squared values
-print(result$regression_summaries)
-print(result$rsquared_df)
+# Obtain linear regression summaries and R-squared values
+res$regression.summaries
+res$rsquared
 
-# Note: Instead of using SingleR, you can use any other method 
-# to obtain the scores for regression analysis.
-
+}
+\references{
+Luecken et al. Benchmarking atlas-level data integration in
+single-cell genomics. Nature Methods, 19:41-50, 2022.
 }
