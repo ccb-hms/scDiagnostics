@@ -7,9 +7,9 @@
 calculateHVGOverlap(reference_genes, query_genes)
 }
 \arguments{
-\item{reference_genes}{A vector of highly variable genes from the reference dataset.}
+\item{reference_genes}{character. A vector of highly variable genes from the reference dataset.}
 
-\item{query_genes}{A vector of highly variable genes from the query dataset.}
+\item{query_genes}{character. A vector of highly variable genes from the query dataset.}
 }
 \value{
 Overlap coefficient, a value between 0 and 1, where 0 indicates no overlap 
