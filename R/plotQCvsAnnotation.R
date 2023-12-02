@@ -1,17 +1,27 @@
-#' Scatter plot: QC stats and Cell Type Scores
+#' Scatter plot: QC stats vs Cell Type Annotation Scores
 #'
-#' Creates a scatter plot to visualize the relationship between QC stats (e.g., library size) and cell type scores for one or more cell types.
+#' Creates a scatter plot to visualize the relationship between QC stats (e.g., library size) 
+#' and cell type annotation scores for one or more cell types.
 #'
-#' @param query_data An object of class "SingleCellExperiment" containing the single-cell expression data and metadata.
-#' @param qc_col A character string specifying the column name in the colData(query_data) that contains the QC stats of interest.
-#' @param label_col A character string specifying the column name in the colData(query_data) that contains the cell type labels.
-#' @param score_col A character string specifying the column name in the colData(query_data) that contains the cell type scores.
-#' @param label A character vector of cell type labels to plot (e.g., c("T-cell", "B-cell")). If NULL, all cells will be included.
+#' @details This function generates a scatter plot to explore the relationship between various quality 
+#' control (QC) statistics, such as library size and mitochondrial percentage, and cell type 
+#' annotation scores. By examining these relationships, users can assess whether specific QC 
+#' metrics, systematically influence the confidence in cell type annotations, 
+#' which is essential for ensuring reliable cell type annotation.
+#' 
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
+#' expression data and metadata.
+#' @param qc_col character. A column name in the \code{colData} of \code{query_data} that 
+#' contains the QC stats of interest.
+#' @param label_col character. The column name in the \code{colData} of \code{query_data} 
+#' that contains the cell type labels.
+#' @param score_col character. The column name in the \code{colData} of \code{query_data} that 
+#' contains the cell type annotation scores.
+#' @param label character. A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).  
+#' Defaults to \code{NULL}, which will include all the cells.
 #'
-#' @return A ggplot object displaying the scatter plot of total UMIs and annotation scores.
-#' @export
-#'
-#' @import ggplot2
+#' @return A ggplot object displaying a scatter plot of QC stats vs annotation scores, 
+#'         where each point represents a cell, color-coded by its cell type.
 #'
 #' @examples
 #' library(scater)
@@ -43,6 +53,12 @@
 #' # Assign scores to query data
 #' colData(query_data)$cell_scores <- scores
 #'
+#'plotQCvsAnnotation(query_data = query_data, 
+#'                   qc_col = "percent.mito", 
+#'                   label_col = "labels", 
+#'                   score_col = "cell_scores", 
+#'                   label = NULL)
+#'                   
 #' # Generate scatter plots
 #' plotQCvsAnnotation(query_data = query_data, 
 #'                    qc_col = "percent.mito", 
@@ -50,17 +66,36 @@
 #'                    score_col = "cell_scores", 
 #'                    label = c("CD4", "CD8"))
 #'                    
-#' plotQCvsAnnotation(query_data = query_data, 
-#'                   qc_col = "percent.mito", 
-#'                   label_col = "labels", 
-#'                   score_col = "cell_scores", 
-#'                   label = NULL)
+#' @import ggplot2
+#' @export
 #'
 plotQCvsAnnotation <- function(query_data, 
                                qc_col, 
                                label_col, 
                                score_col, 
                                label = NULL) {
+  
+  # Sanity checks
+  
+  # Check if query_data is a SingleCellExperiment object
+  if (!is(query_data, "SingleCellExperiment")) {
+    stop("query_data must be a SingleCellExperiment object.")
+  }
+  
+  # Check if qc_col is a valid column name in query_data
+  if (!qc_col %in% colnames(colData(query_data))) {
+    stop("qc_col: '", qc_col, "' is not a valid column name in query_data.")
+  }
+  
+  # Check if label_col is a valid column name in query_data
+  if (!label_col %in% colnames(colData(query_data))) {
+    stop("label_col: '", label_col, "' is not a valid column name in query_data.")
+  }
+  
+  # Check if score_col is a valid column name in query_data
+  if (!score_col %in% colnames(colData(query_data))) {
+    stop("score_col: '", score_col, "' is not a valid column name in query_data.")
+  }
   
   # Filter cells based on label if specified
   if (!is.null(label)) {
@@ -74,10 +109,14 @@ plotQCvsAnnotation <- function(query_data,
   cell_labels <- colData(query_data)[[label_col]]
   
   # Combine QC stats, scores, and labels into a data frame
-  data <- data.frame(QCStats = qc_stats, Scores = cell_type_scores, CellType = cell_labels)
+  data <- data.frame(QCStats = qc_stats, 
+                     Scores = cell_type_scores, 
+                     CellType = cell_labels)
   
   # Create a scatter plot with color-coded points based on cell types or labels
-  plot <- ggplot(data, aes(x = QCStats, y = Scores, color = CellType)) +
+  plot <- ggplot(data, aes(x = QCStats, 
+                           y = Scores, 
+                           color = CellType)) +
     geom_point() +
     xlab("QC stats") +
     ylab("Annotation Scores") +
