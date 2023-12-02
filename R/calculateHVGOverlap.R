@@ -1,6 +1,6 @@
 #' Calculate the Overlap Coefficient for Highly Variable Genes
 #' 
-#' @description Calculates the overlap coefficient between the sets of highly variable genes 
+#' Calculates the overlap coefficient between the sets of highly variable genes 
 #' from a reference dataset and a query dataset.
 #'
 #' @details The overlap coefficient measures the similarity between two gene sets, indicating how well-aligned 
@@ -14,8 +14,8 @@
 #' where X and Y are the sets of highly variable genes from the reference and query datasets, respectively,
 #' |X ∩ Y| is the number of genes common to both X and Y, and min(|X|, |Y|) is the size of the smaller set among X and Y.
 #'
-#' @param reference_genes A vector of highly variable genes from the reference dataset.
-#' @param query_genes A vector of highly variable genes from the query dataset.
+#' @param reference_genes character. A vector of highly variable genes from the reference dataset.
+#' @param query_genes character. A vector of highly variable genes from the query dataset.
 #'
 #' @return Overlap coefficient, a value between 0 and 1, where 0 indicates no overlap 
 #'         and 1 indicates complete overlap of highly variable genes between datasets.
