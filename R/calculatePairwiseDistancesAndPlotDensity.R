@@ -1,21 +1,24 @@
 #' Pairwise Distance Analysis and Density Visualization
 #'
-#' @description Calculates pairwise distances or correlations between query and reference cells 
+#' Calculates pairwise distances or correlations between query and reference cells 
 #' of a specific cell type.
 #' 
 #' @details  The function works with \code{\linkS4class{SingleCellExperiment}} objects, ensuring 
 #' compatibility with common single-cell analysis workflows. It subsets the data for specified cell types, 
 #' computes pairwise distances or correlations, and visualizes these measurements using density plots. By comparing the distances and correlations, 
-#' one can evaluate the consistency and reliablity of annotated cell types within single-cell datasets.
+#' one can evaluate the consistency and reliability of annotated cell types within single-cell datasets.
 #' 
-#'
-#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells
-#' @param query_cell_type_col The column name in the query_data metadata specifying the cell types
-#' @param ref_cell_type_col The column name in the reference_data metadata specifying the cell types
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
+#' expression data and metadata.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
+#' expression data and metadata.
+#' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data} 
+#' that identifies the cell types.
+#' @param ref_cell_type_col character. The column name in the \code{colData} of \code{reference_data} 
+#' that identifies the cell types.
 #' @param cell_type_query The query cell type for which distances or correlations are calculated.
 #' @param cell_type_reference The reference cell type for which distances or correlations are calculated.
-#' @param distance_metric The distance metric to use for calculating pairwise distances, such as "euclidean" or "manhattan".
+#' @param distance_metric The distance metric to use for calculating pairwise distances, such as euclidean, manhattan etc.
 #'                        Set it to "correlation" for calculating correlation coefficients.
 #' @param correlation_method The correlation method to use when distance_metric is "correlation".
 #'                           Possible values: "pearson", "spearman".
@@ -65,7 +68,6 @@
 #'                                          cell_type_query = "CD8", 
 #'                                          cell_type_reference = "CD8", 
 #'                                          distance_metric = "euclidean")
-#' 
 #' @import ggplot2
 #' @importFrom ggplot2 ggplot
 #' @importFrom stats cor dist
@@ -82,8 +84,16 @@ calculatePairwiseDistancesAndPlotDensity <- function(query_data,
                                                      correlation_method = "pearson") {
   
   # Sanity checks
-  stopifnot(is(query_data, "SingleCellExperiment"))
-  stopifnot(is(reference_data, "SingleCellExperiment"))
+  
+  # Check if query_data is a SingleCellExperiment object
+  if (!is(query_data, "SingleCellExperiment")) {
+    stop("query_data must be a SingleCellExperiment object.")
+  }
+
+  # Check if reference_data is a SingleCellExperiment object
+  if (!is(reference_data, "SingleCellExperiment")) {
+    stop("reference_data must be a SingleCellExperiment object.")
+  }
   
   # Subset query and reference data to the specified cell type
   query_data_subset <- query_data[, !is.na(query_data[[query_cell_type_col]]) & query_data[[query_cell_type_col]] == cell_type_query]
