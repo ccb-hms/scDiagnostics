@@ -51,15 +51,11 @@ installed:
 # Usage
 
 To explore the capabilities of the scDiagnostics package, you can load
-your own data or use the provided example with publicly available data
-of Marrow tissue single cell gene expression profiles from He S et
-al. (2020). Single-cell transcriptome profiling of an adult human cell
-atlas of 15 major organs. Genome Biol 21, 1:294. This dataset is
-obtained from the scRNAseq R package and is used for analyzing and
-visualizing diagnostic plots to inspect query/test and reference
-datasets and check the appropriateness of cell type assignments. In the
-provided example, the dataset is divided into 70% reference and 30%
-query data.
+your own data or utilize publicly available datasets obtained from the
+scRNAseq R package. In this guide, we will demonstrate how to use
+scDiagnostics with such datasets, which serve as valuable resources for
+exploring the package and assessing the appropriateness of cell type
+assignments.
 
 ``` r
 ## Loading libraries
@@ -75,97 +71,131 @@ library(corrplot)
 
 ## Scatter Plot: QC stats vs. Annotation Scores
 
-Let’s load the Marrow dataset for demonstration purposes. The dataset
-represents single-cell gene expression profiles of Marrow tissue. In
-this example, we will analyze the relationship between user-defined QC
-stats (library size, mitochondrial gene content, or other quality
-metrics) and annotation scores for a specific cell type.
+Here, we will consider the Human Primary Cell Atlas (Mabbott et
+al. 2013) as a reference dataset and our query dataset consists of
+Haematopoietic stem and progenitor cells from (Bunis DG et al. 2021).
 
 In scRNA-seq studies, assessing the quality of cells is important for
 accurate downstream analyses. At the same time, assigning accurate cell
 type labels based on gene expression profiles is an integral aspect of
 scRNA-seq data interpretation. Generally, these two are performed
 independently of each other. The rationale behind this function is to
-inspect whether certain QC criteria impact the confidence level of cell
-type annotations.
+inspect whether certain QC (Quality Control) criteria impact the
+confidence level of cell type annotations.
 
 For instance, it is reasonable to hypothesize that higher library sizes
 could contribute to increased annotation confidence due to enhanced
 statistical power for identifying cell type-specific gene expression
-patterns. Conversely, other QC metrics, such as the proportion of
-mitochondrial genes, might introduce noise that could affect the
-reliability of cell type assignments.
-
-To perform this analysis, we first divide the dataset into reference and
-query datasets. The reference dataset serves as a reference for cell
-type annotation, while the query dataset contains cells that we want to
-assign cell types to. We then log-transform the expression values in
-both datasets for further analysis.
-
-Next, we use the SingleR package to obtain cell type scores for the
-query dataset. The scatter plot is generated to examine the relationship
-between the percentage of mitochondrial genes and SingleR scores. It
-allow users to visulaize relation of QC stats for all cell types or cell
-types of interest.
-
-It’s important to note that the use of SingleR for cell type annotation
-is just one example. Users can use any other cell type annotation method
-to obtain cell type scores. The scatter plot provides a visual
-representation of this relationship, allowing for further examination
-and interpretation of the cell type assignments in the dataset.
+patterns, as evident in the scatter plot below.
 
 ``` r
 
-   # Load data
-   sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+# load reference dataset
+ref_data <- HumanPrimaryCellAtlasData()
 
-   # Divide the data into reference and query datasets
-   indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-   ref_data <- sce[, indices]
-   query_data <- sce[, -indices]
+# Load query dataset (Bunis haematopoietic stem and progenitor cell data) from 
+# Bunis DG et al. (2021). Single-Cell Mapping of Progressive Fetal-to-Adult 
+# Transition in Human Naive T Cells Cell Rep. 34(1): 108573
+query_data <- BunisHSPCData()
+rownames(query_data) <- rowData(query_data)$Symbol
 
-   # Log-transform datasets
-   ref_data <- logNormCounts(ref_data)
-   query_data <- logNormCounts(query_data)
+# Add QC metrics to query data
+query_data <- addPerCellQCMetrics(query_data)
 
-   # Run PCA
-   ref_data <- runPCA(ref_data)
-   query_data <- runPCA(query_data)
+# Log transform query dataset
+query_data <- logNormCounts(query_data)
 
-   # Get cell type scores using SingleR
-   pred <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-   pred <- as.data.frame(pred)
-   
-   # Assign labels to query data
-   colData(query_data)$labels <- pred$labels
-   
-   # get scores
-   scores <- apply(pred[,1:4], 1, max)
+# Run SingleR to predict cell types
+pred <- SingleR(query_data, ref_data, labels = ref_data$label.main)
+pred <- as.data.frame(pred)
 
-   # Assign scores to query data
-   colData(query_data)$cell_scores <- scores
+# Assign predicted labels to query data
+colData(query_data)$pred.labels <- pred$labels
 
-   # Generate scatter plots
-   p1 <- plotQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", 
-                            label_col = "labels", score_col = "cell_scores", 
-                            label = c("CD4", "CD8"))
-   p1 + xlab("percent.mito")
+# Calculate cell scores
+scores <- apply(pred[, 1:36], 1, max)
+
+# Assign scores to query data
+colData(query_data)$cell_scores <- scores
+
+# Create a scatter plot between library size and annotation scores
+p1 <- plotQCvsAnnotation(
+    query_data = query_data,
+    qc_col = "total",
+    label_col = "pred.labels",
+    score_col = "cell_scores",
+    label = NULL
+)
+p1 + xlab("Library Size")
 ```
 
-<img src="man/figures/Scatter-Plot-QC-Stats-Vs-Annotation-Scores-1.png" width="100%" />
+<img src="man/figures/Scatter-Plot-LibrarySize-Vs-Annotation-Scores-1.png" width="100%" />
 
-Scatter plot for visualizing relationship between percentage of
-mitochondrial gene and cell annotation scores for the cell types.
+However, certain QC metrics, such as the proportion of mitochondrial
+genes, may require careful consideration as they can sometimes be
+associated with cellular states or functions rather than noise. The
+interpretation of mitochondrial content should be context-specific and
+informed by biological knowledge.
+
+In next analysis, we investigated the relationship between mitochondrial
+percentage and cell type annotation scores using liver tissue data from
+He S et al. 2020. Notably, we observed high annotation scores for
+macrophages and monocytes. These findings align with the established
+biological characteristic of high mitochondrial activity in macrophages
+and monocytes, adding biological context to our results.
 
 ``` r
-   p2 <- plotQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", 
-                            label_col = "labels", 
-                            score_col = "cell_scores", 
-                            label = NULL)
-   p2 + xlab("percent.mito")
+# load query dataset
+query_data <- HeOrganAtlasData(
+    tissue = c("Liver"),
+    ensembl = FALSE,
+    location = TRUE
+)
+
+# Add QC metrics to query data
+mito_genes <- rownames(query_data)[grep("^MT-", rownames(query_data))]
+query_data <- unfiltered <- addPerCellQC(query_data,subsets = list(mt = mito_genes))
+qc <- quickPerCellQC(colData(query_data),sub.fields="subsets_mt_percent")
+query_data <- query_data[,!qc$discard]
+
+# Log transform query dataset
+query_data <- logNormCounts(query_data)
+
+# Run SingleR to predict cell types
+pred <- SingleR(query_data, ref_data, labels = ref_data$label.main)
+pred <- as.data.frame(pred)
+
+# Assign predicted labels to query data
+colData(query_data)$pred.labels <- pred$labels
+
+# Calculate cell scores
+scores <- apply(pred[, 1:25], 1, max)
+
+# Assign scores to query data
+colData(query_data)$cell_scores <- scores
+
+# Create a new column for the labels so it is easy to distinguish between Macrophoges, Monocytes and other cells
+query_data$label_category <- ifelse(query_data$pred.labels %in% c("Macrophage", "Monocyte"),
+                                     query_data$pred.labels,
+                                     "Other cells")
+
+
+# Define custom colors for cell type labels
+cols <- c("Other cells" = "grey", "Macrophage" = "green", "Monocyte" = "red")
+
+# Generate scatter plot for all cell types
+p1 <- plotQCvsAnnotation(
+    query_data = query_data,
+    qc_col = "subsets_mt_percent",
+    label_col = "label_category",
+    score_col = "cell_scores",
+    label = NULL) + 
+    scale_color_manual(values = cols) +
+    xlab("subsets_mt_percent")
+p1
 ```
 
-<img src="man/figures/QC-Annotation-Scatter-AllCellTypes-1.png" width="100%" />
+<img src="man/figures/QC-Annotation-Scatter-Mito-1.png" width="100%" />
 
 ## Examining Distribution of QC stats and Annotation Scores
 
@@ -192,8 +222,8 @@ gene expression profiles for the specific cell type.
 
 ``` r
 # Generate histogram
-histQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", 
-                   label_col = "labels", 
+histQCvsAnnotation(query_data = query_data, qc_col = "subsets_mt_percent", 
+                   label_col = "pred.labels", 
                    score_col = "cell_scores", 
                    label = NULL)
 ```
@@ -220,6 +250,31 @@ between the query and reference datasets is consistent not only at a
 global level but also within specific cell types.
 
 ``` r
+
+# Load data
+sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+
+# Divide the data into reference and query datasets
+set.seed(100)
+indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
+ref_data <- sce[, indices]
+query_data <- sce[, -indices]
+
+# Log-transform datasets
+ref_data <- logNormCounts(ref_data)
+query_data <- logNormCounts(query_data)
+
+# Run PCA
+ref_data <- runPCA(ref_data)
+query_data <- runPCA(query_data)
+
+# Get cell type scores using SingleR
+pred <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
+pred <- as.data.frame(pred)
+   
+# Assign labels to query data
+colData(query_data)$labels <- pred$labels
+   
 # Generate density plots
 plotMarkerExpression(reference_data = ref_data, 
                      query_data = query_data, 
@@ -262,7 +317,7 @@ query_var <- getTopHVGs(query_data, n=2000)
 overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var, 
                                            query_genes = query_var)
 print(overlap_coefficient)
-#> [1] 0.62
+#> [1] 0.63
 ```
 
 This analysis helps us assess the extent to which the reference and
@@ -406,7 +461,7 @@ cell_type_colors <- color_mapping[cell_types]
 visualizeCellTypeMDS(query_data = query_data_subset, 
                      reference_data = ref_data_subset, 
                      mdata = mdata, 
-                     colors = cell_type_colors, 
+                     cell_type_colors = cell_type_colors, 
                      legend_order = legend_order)
 ```
 
@@ -536,99 +591,27 @@ gene expression dataset (reference and query).
 
 ``` r
 # Specify the dependent variables (principal components) and independent variable (e.g., "labels")
-dependent_vars <- c("PC1", "PC2", "PC3")
-independent_var <- "labels"
+dep.vars <- c("PC1", "PC2", "PC3")
+indep.var <- "labels"
 
 # Perform linear regression on multiple principal components
-result <- regressPC(se_object = query_data, dependent_vars = dependent_vars, independent_var = independent_var)
+result <- regressPC(sce = query_data, dep.vars = dep.vars, indep.var = indep.var)
 
 # Summaries of the linear regression models
 print(result$regression_summaries)
-#> $PC1
-#> 
-#> Call:
-#> lm(formula = paste0("PC", i, " ~ Independent"), data = df)
-#> 
-#> Residuals:
-#>     Min      1Q  Median      3Q     Max 
-#> -7.5393 -2.4390 -0.7465  2.1053 14.5168 
-#> 
-#> Coefficients:
-#>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -8.4032     0.2792  -30.10   <2e-16 ***
-#> IndependentCD4       5.5730     0.3386   16.46   <2e-16 ***
-#> IndependentCD8      14.6146     0.3343   43.71   <2e-16 ***
-#> IndependentMyeloid   8.9213     0.6710   13.29   <2e-16 ***
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> 
-#> Residual standard error: 3.661 on 965 degrees of freedom
-#> Multiple R-squared:  0.7012, Adjusted R-squared:  0.7003 
-#> F-statistic: 754.9 on 3 and 965 DF,  p-value: < 2.2e-16
-#> 
-#> 
-#> $PC2
-#> 
-#> Call:
-#> lm(formula = paste0("PC", i, " ~ Independent"), data = df)
-#> 
-#> Residuals:
-#>      Min       1Q   Median       3Q      Max 
-#> -31.1465  -0.5710   0.9455   1.9122   4.8479 
-#> 
-#> Coefficients:
-#>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)         -5.3820     0.2877 -18.710  < 2e-16 ***
-#> IndependentCD4       8.0387     0.3489  23.040  < 2e-16 ***
-#> IndependentCD8       6.1088     0.3445  17.732  < 2e-16 ***
-#> IndependentMyeloid  -3.8347     0.6914  -5.546 3.77e-08 ***
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> 
-#> Residual standard error: 3.773 on 965 degrees of freedom
-#> Multiple R-squared:  0.4408, Adjusted R-squared:  0.4391 
-#> F-statistic: 253.6 on 3 and 965 DF,  p-value: < 2.2e-16
-#> 
-#> 
-#> $PC3
-#> 
-#> Call:
-#> lm(formula = paste0("PC", i, " ~ Independent"), data = df)
-#> 
-#> Residuals:
-#>      Min       1Q   Median       3Q      Max 
-#> -17.3695  -0.8200   0.1795   1.3405   4.8842 
-#> 
-#> Coefficients:
-#>                    Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)          3.0492     0.1948  15.654  < 2e-16 ***
-#> IndependentCD4      -5.9094     0.2363 -25.011  < 2e-16 ***
-#> IndependentCD8      -1.8449     0.2333  -7.908 7.13e-15 ***
-#> IndependentMyeloid  -1.8666     0.4682  -3.987 7.21e-05 ***
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> 
-#> Residual standard error: 2.555 on 965 degrees of freedom
-#> Multiple R-squared:  0.4527, Adjusted R-squared:  0.451 
-#> F-statistic: 266.1 on 3 and 965 DF,  p-value: < 2.2e-16
+#> NULL
 
 # R-squared values
 print(result$rsquared_df)
-#>            R2
-#> PC1 0.7012003
-#> PC2 0.4407931
-#> PC3 0.4527299
+#> NULL
 
 # Variance contributions for each principal component
 print(result$var_contributions_df)
-#>     Variance_Contribution
-#> PC1              8.005250
-#> PC2              2.854720
-#> PC3              1.373879
+#> NULL
 
 # Total variance explained
 print(result$total_variance_explained)
-#> [1] 12.23385
+#> NULL
 ```
 
 By conducting linear regression, one can assess whether the PC values
@@ -668,7 +651,7 @@ relationships and patterns.
 
     R version 4.3.1 (2023-06-16)
     Platform: aarch64-apple-darwin20 (64-bit)
-    Running under: macOS Ventura 13.6
+    Running under: macOS Sonoma 14.2
 
     Matrix products: default
     BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
@@ -685,80 +668,81 @@ relationships and patterns.
     [8] base     
 
     other attached packages:
-     [1] corrplot_0.92               AUCell_1.22.0              
-     [3] SingleR_2.2.0               RColorBrewer_1.1-3         
-     [5] scRNAseq_2.14.0             scran_1.28.1               
-     [7] scater_1.29.2               ggplot2_3.4.3              
-     [9] scuttle_1.9.4               scDiagnostics_0.99.0       
-    [11] SingleCellExperiment_1.22.0 SummarizedExperiment_1.30.2
-    [13] Biobase_2.60.0              GenomicRanges_1.52.0       
-    [15] GenomeInfoDb_1.36.0         IRanges_2.34.0             
-    [17] S4Vectors_0.38.1            BiocGenerics_0.46.0        
-    [19] MatrixGenerics_1.12.0       matrixStats_1.0.0          
+     [1] celldex_1.10.1              corrplot_0.92              
+     [3] AUCell_1.22.0               SingleR_2.2.0              
+     [5] RColorBrewer_1.1-3          scRNAseq_2.14.0            
+     [7] scran_1.28.2                scater_1.29.2              
+     [9] ggplot2_3.4.4               scuttle_1.10.3             
+    [11] scDiagnostics_0.99.0        SingleCellExperiment_1.22.0
+    [13] SummarizedExperiment_1.30.2 Biobase_2.60.0             
+    [15] GenomicRanges_1.52.1        GenomeInfoDb_1.36.4        
+    [17] IRanges_2.34.1              S4Vectors_0.38.2           
+    [19] BiocGenerics_0.46.0         MatrixGenerics_1.12.3      
+    [21] matrixStats_1.0.0          
 
     loaded via a namespace (and not attached):
       [1] rstudioapi_0.15.0             magrittr_2.0.3               
-      [3] ggbeeswarm_0.7.2              GenomicFeatures_1.52.1       
-      [5] farver_2.1.1                  rmarkdown_2.22               
+      [3] ggbeeswarm_0.7.2              GenomicFeatures_1.52.2       
+      [5] farver_2.1.1                  rmarkdown_2.25               
       [7] BiocIO_1.10.0                 zlibbioc_1.46.0              
-      [9] vctrs_0.6.3                   Rsamtools_2.16.0             
-     [11] memoise_2.0.1                 DelayedMatrixStats_1.22.0    
-     [13] RCurl_1.98-1.12               htmltools_0.5.5              
-     [15] S4Arrays_1.0.4                progress_1.2.2               
-     [17] AnnotationHub_3.8.0           curl_5.0.1                   
+      [9] vctrs_0.6.4                   Rsamtools_2.16.0             
+     [11] memoise_2.0.1                 DelayedMatrixStats_1.22.6    
+     [13] RCurl_1.98-1.12               htmltools_0.5.6.1            
+     [15] S4Arrays_1.0.6                progress_1.2.2               
+     [17] AnnotationHub_3.8.0           curl_5.1.0                   
      [19] BiocNeighbors_1.18.0          cachem_1.0.8                 
-     [21] GenomicAlignments_1.36.0      igraph_1.5.0                 
+     [21] GenomicAlignments_1.36.0      igraph_1.5.1                 
      [23] mime_0.12                     lifecycle_1.0.3              
      [25] pkgconfig_2.0.3               rsvd_1.0.5                   
-     [27] Matrix_1.6-0                  R6_2.5.1                     
+     [27] Matrix_1.6-1.1                R6_2.5.1                     
      [29] fastmap_1.1.1                 GenomeInfoDbData_1.2.10      
-     [31] shiny_1.7.4                   digest_0.6.31                
-     [33] colorspace_2.1-0              AnnotationDbi_1.62.1         
-     [35] dqrng_0.3.0                   irlba_2.3.5.1                
+     [31] shiny_1.7.5.1                 digest_0.6.33                
+     [33] colorspace_2.1-0              AnnotationDbi_1.62.2         
+     [35] dqrng_0.3.1                   irlba_2.3.5.1                
      [37] ExperimentHub_2.8.1           RSQLite_2.3.1                
-     [39] beachmat_2.16.0               labeling_0.4.2               
-     [41] filelock_1.0.2                fansi_1.0.4                  
-     [43] httr_1.4.6                    compiler_4.3.1               
-     [45] bit64_4.0.5                   withr_2.5.0                  
-     [47] BiocParallel_1.34.2           viridis_0.6.3                
-     [49] DBI_1.1.3                     highr_0.10                   
+     [39] beachmat_2.16.0               labeling_0.4.3               
+     [41] filelock_1.0.2                fansi_1.0.5                  
+     [43] httr_1.4.7                    abind_1.4-5                  
+     [45] compiler_4.3.1                bit64_4.0.5                  
+     [47] withr_2.5.1                   BiocParallel_1.34.2          
+     [49] viridis_0.6.4                 DBI_1.1.3                    
      [51] R.utils_2.12.2                biomaRt_2.56.1               
-     [53] rappdirs_0.3.3                DelayedArray_0.26.3          
+     [53] rappdirs_0.3.3                DelayedArray_0.26.7          
      [55] rjson_0.2.21                  bluster_1.10.0               
      [57] tools_4.3.1                   vipor_0.4.5                  
      [59] beeswarm_0.4.0                interactiveDisplayBase_1.38.0
-     [61] httpuv_1.6.11                 R.oo_1.25.0                  
+     [61] httpuv_1.6.12                 R.oo_1.25.0                  
      [63] glue_1.6.2                    restfulr_0.0.15              
-     [65] promises_1.2.0.1              grid_4.3.1                   
+     [65] promises_1.2.1                grid_4.3.1                   
      [67] cluster_2.1.4                 generics_0.1.3               
-     [69] gtable_0.3.3                  R.methodsS3_1.8.2            
-     [71] ensembldb_2.24.0              data.table_1.14.8            
+     [69] gtable_0.3.4                  R.methodsS3_1.8.2            
+     [71] ensembldb_2.24.1              data.table_1.14.8            
      [73] hms_1.1.3                     xml2_1.3.5                   
      [75] BiocSingular_1.16.0           ScaledMatrix_1.8.1           
-     [77] metapod_1.8.0                 utf8_1.2.3                   
-     [79] XVector_0.40.0                ggrepel_0.9.3                
+     [77] metapod_1.8.0                 utf8_1.2.4                   
+     [79] XVector_0.40.0                ggrepel_0.9.4                
      [81] BiocVersion_3.17.1            pillar_1.9.0                 
      [83] stringr_1.5.0                 limma_3.56.2                 
-     [85] later_1.3.1                   dplyr_1.1.2                  
-     [87] BiocFileCache_2.8.0           lattice_0.21-8               
-     [89] rtracklayer_1.60.0            bit_4.0.5                    
+     [85] later_1.3.1                   dplyr_1.1.3                  
+     [87] BiocFileCache_2.8.0           lattice_0.22-5               
+     [89] rtracklayer_1.60.1            bit_4.0.5                    
      [91] annotate_1.78.0               tidyselect_1.2.0             
      [93] locfit_1.5-9.8                Biostrings_2.68.1            
-     [95] knitr_1.43                    gridExtra_2.3                
+     [95] knitr_1.44                    gridExtra_2.3                
      [97] ProtGenerics_1.32.0           edgeR_3.42.4                 
-     [99] xfun_0.39                     statmod_1.5.0                
+     [99] xfun_0.40                     statmod_1.5.0                
     [101] stringi_1.7.12                lazyeval_0.2.2               
-    [103] yaml_2.3.7                    evaluate_0.21                
+    [103] yaml_2.3.7                    evaluate_0.22                
     [105] codetools_0.2-19              tibble_3.2.1                 
-    [107] graph_1.78.0                  BiocManager_1.30.21          
+    [107] graph_1.78.0                  BiocManager_1.30.22          
     [109] cli_3.6.1                     xtable_1.8-4                 
-    [111] munsell_0.5.0                 Rcpp_1.0.10                  
-    [113] dbplyr_2.3.2                  png_0.1-8                    
+    [111] munsell_0.5.0                 Rcpp_1.0.11                  
+    [113] dbplyr_2.3.4                  png_0.1-8                    
     [115] XML_3.99-0.14                 parallel_4.3.1               
     [117] ellipsis_0.3.2                blob_1.2.4                   
-    [119] prettyunits_1.1.1             AnnotationFilter_1.24.0      
-    [121] sparseMatrixStats_1.12.0      bitops_1.0-7                 
+    [119] prettyunits_1.2.0             AnnotationFilter_1.24.0      
+    [121] sparseMatrixStats_1.12.2      bitops_1.0-7                 
     [123] GSEABase_1.62.0               viridisLite_0.4.2            
-    [125] scales_1.2.1                  purrr_1.0.1                  
+    [125] scales_1.2.1                  purrr_1.0.2                  
     [127] crayon_1.5.2                  rlang_1.1.1                  
-    [129] cowplot_1.1.1                 KEGGREST_1.40.0              
+    [129] cowplot_1.1.1                 KEGGREST_1.40.1              
