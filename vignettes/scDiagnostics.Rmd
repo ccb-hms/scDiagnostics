@@ -60,7 +60,7 @@ To use the scDiagnostics package, you need the following R packages installed:
  
 # Usage
 
-To explore the capabilities of the scDiagnostics package, you can load your own data or use the provided example with publicly available data of Marrow tissue single cell gene expression profiles from He S et al. (2020). Single-cell transcriptome profiling of an adult human cell atlas of 15 major organs. Genome Biol 21, 1:294. This dataset is obtained from the scRNAseq R package and is used for analyzing and visualizing diagnostic plots to inspect query/test and reference datasets and check the appropriateness of cell type assignments. In the provided example, the dataset is divided into 70% reference and 30% query data.
+To explore the capabilities of the scDiagnostics package, you can load your own data or utilize publicly available datasets obtained from the scRNAseq R package. In this guide, we will demonstrate how to use scDiagnostics with such datasets, which serve as valuable resources for exploring the package and assessing the appropriateness of cell type assignments.
 
 ```{r Libraries, warning=FALSE,message=FALSE}
 ## Loading libraries
@@ -76,66 +76,106 @@ library(corrplot)
 
 ## Scatter Plot: QC stats vs. Annotation Scores
 
-Let's load the Marrow dataset for demonstration purposes. The dataset represents single-cell gene expression profiles of Marrow tissue. In this example, we will analyze the relationship between user-defined QC stats (library size, mitochondrial gene content, or other quality metrics) and annotation scores for a specific cell type.
+Here, we will consider the Human Primary Cell Atlas (Mabbott et al. 2013) as a reference dataset and our query dataset consists of Haematopoietic stem and progenitor cells from (Bunis DG et al. 2021).
 
-In scRNA-seq studies, assessing the quality of cells is important for accurate downstream analyses. At the same time, assigning accurate cell type labels based on gene expression profiles is an integral aspect of scRNA-seq data interpretation. Generally, these two are performed independently of each other. The rationale behind this function is to inspect whether certain QC criteria impact the confidence level of cell type annotations. 
+In scRNA-seq studies, assessing the quality of cells is important for accurate downstream analyses. At the same time, assigning accurate cell type labels based on gene expression profiles is an integral aspect of scRNA-seq data interpretation. Generally, these two are performed independently of each other. The rationale behind this function is to inspect whether certain QC (Quality Control) criteria impact the confidence level of cell type annotations. 
 
-For instance, it is reasonable to hypothesize that higher library sizes could contribute to increased annotation confidence due to enhanced statistical power for identifying cell type-specific gene expression patterns. Conversely, other QC metrics, such as the proportion of mitochondrial genes, might introduce noise that could affect the reliability of cell type assignments.
+For instance, it is reasonable to hypothesize that higher library sizes could contribute to increased annotation confidence due to enhanced statistical power for identifying cell type-specific gene expression patterns, as evident in the scatter plot below.
 
-To perform this analysis, we first divide the dataset into reference and query datasets. The reference dataset serves as a reference for cell type annotation, while the query dataset contains cells that we want to assign cell types to. We then log-transform the expression values in both datasets for further analysis.
+```{r Scatter-Plot-LibrarySize-Vs-Annotation-Scores, warning=FALSE, message=FALSE}
 
-Next, we use the SingleR package to obtain cell type scores for the query dataset. The scatter plot is generated to examine the relationship between the percentage of mitochondrial genes and SingleR scores. It allow users to visulaize relation of QC stats for all cell types or cell types of interest.
+# load reference dataset
+ref_data <- HumanPrimaryCellAtlasData()
 
-It's important to note that the use of SingleR for cell type annotation is just one example. Users can use any other cell type annotation method to obtain cell type scores. The scatter plot provides a visual representation of this relationship, allowing for further examination and interpretation of the cell type assignments in the dataset.
+# Load query dataset (Bunis haematopoietic stem and progenitor cell data) from 
+# Bunis DG et al. (2021). Single-Cell Mapping of Progressive Fetal-to-Adult 
+# Transition in Human Naive T Cells Cell Rep. 34(1): 108573
+query_data <- BunisHSPCData()
+rownames(query_data) <- rowData(query_data)$Symbol
 
-```{r Scatter-Plot-QC-Stats-Vs-Annotation-Scores, warning=FALSE, message=FALSE}
+# Add QC metrics to query data
+query_data <- addPerCellQCMetrics(query_data)
 
-   # Load data
-   sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+# Log transform query dataset
+query_data <- logNormCounts(query_data)
 
-   # Divide the data into reference and query datasets
-   set.seed(100)
-   indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-   ref_data <- sce[, indices]
-   query_data <- sce[, -indices]
+# Run SingleR to predict cell types
+pred <- SingleR(query_data, ref_data, labels = ref_data$label.main)
+pred <- as.data.frame(pred)
 
-   # Log-transform datasets
-   ref_data <- logNormCounts(ref_data)
-   query_data <- logNormCounts(query_data)
+# Assign predicted labels to query data
+colData(query_data)$pred.labels <- pred$labels
 
-   # Run PCA
-   ref_data <- runPCA(ref_data)
-   query_data <- runPCA(query_data)
+# Calculate cell scores
+scores <- apply(pred[, 1:36], 1, max)
 
-   # Get cell type scores using SingleR
-   pred <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-   pred <- as.data.frame(pred)
-   
-   # Assign labels to query data
-   colData(query_data)$labels <- pred$labels
-   
-   # get scores
-   scores <- apply(pred[,1:4], 1, max)
+# Assign scores to query data
+colData(query_data)$cell_scores <- scores
 
-   # Assign scores to query data
-   colData(query_data)$cell_scores <- scores
-
-   # Generate scatter plots
-   p1 <- plotQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", 
-                            label_col = "labels", score_col = "cell_scores", 
-                            label = c("CD4", "CD8"))
-   p1 + xlab("percent.mito")
-   
+# Create a scatter plot between library size and annotation scores
+p1 <- plotQCvsAnnotation(
+    query_data = query_data,
+    qc_col = "total",
+    label_col = "pred.labels",
+    score_col = "cell_scores",
+    label = NULL
+)
+p1 + xlab("Library Size")
 ```
 
-Scatter plot for visualizing relationship between percentage of mitochondrial gene and cell annotation scores for the cell types.
+However, certain QC metrics, such as the proportion of mitochondrial genes, may require careful consideration as they can sometimes be associated with cellular states or functions rather than noise. The interpretation of mitochondrial content should be context-specific and informed by biological knowledge.
 
-```{r QC-Annotation-Scatter-AllCellTypes, warning=FALSE, message=FALSE}
-   p2 <- plotQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", 
-                            label_col = "labels", 
-                            score_col = "cell_scores", 
-                            label = NULL)
-   p2 + xlab("percent.mito")
+In next analysis, we investigated the relationship between mitochondrial percentage and cell type annotation scores using liver tissue data from He S et al. 2020. Notably, we observed high annotation scores for macrophages and monocytes. These findings align with the established biological characteristic of high mitochondrial activity in macrophages and monocytes, adding biological context to our results.
+
+```{r QC-Annotation-Scatter-Mito, warning=FALSE, message=FALSE}
+# load query dataset
+query_data <- HeOrganAtlasData(
+    tissue = c("Liver"),
+    ensembl = FALSE,
+    location = TRUE
+)
+
+# Add QC metrics to query data
+mito_genes <- rownames(query_data)[grep("^MT-", rownames(query_data))]
+query_data <- unfiltered <- addPerCellQC(query_data,subsets = list(mt = mito_genes))
+qc <- quickPerCellQC(colData(query_data),sub.fields="subsets_mt_percent")
+query_data <- query_data[,!qc$discard]
+
+# Log transform query dataset
+query_data <- logNormCounts(query_data)
+
+# Run SingleR to predict cell types
+pred <- SingleR(query_data, ref_data, labels = ref_data$label.main)
+pred <- as.data.frame(pred)
+
+# Assign predicted labels to query data
+colData(query_data)$pred.labels <- pred$labels
+
+# Calculate cell scores
+scores <- apply(pred[, 1:25], 1, max)
+
+# Assign scores to query data
+colData(query_data)$cell_scores <- scores
+
+# Create a new column for the labels so it is easy to distinguish between Macrophoges, Monocytes and other cells
+query_data$label_category <- ifelse(query_data$pred.labels %in% c("Macrophage", "Monocyte"),
+                                     query_data$pred.labels,
+                                     "Other cells")
+
+
+# Define custom colors for cell type labels
+cols <- c("Other cells" = "grey", "Macrophage" = "green", "Monocyte" = "red")
+
+# Generate scatter plot for all cell types
+p1 <- plotQCvsAnnotation(
+    query_data = query_data,
+    qc_col = "subsets_mt_percent",
+    label_col = "label_category",
+    score_col = "cell_scores",
+    label = NULL) + 
+    scale_color_manual(values = cols) +
+    xlab("subsets_mt_percent")
+p1
 ```
 
 ## Examining Distribution of QC stats and Annotation Scores
@@ -150,8 +190,8 @@ By examining the histograms, we can observe the range, shape, and potential outl
 
 ```{r Mito-Genes-Vs-Annotation, warning=FALSE, message=FALSE}
 # Generate histogram
-histQCvsAnnotation(query_data = query_data, qc_col = "percent.mito", 
-                   label_col = "labels", 
+histQCvsAnnotation(query_data = query_data, qc_col = "subsets_mt_percent", 
+                   label_col = "pred.labels", 
                    score_col = "cell_scores", 
                    label = NULL)
 ```
@@ -165,6 +205,31 @@ This function helps user to explore the distribution of gene expression values f
 The function also allows users to narrow down their analysis to specific cell types of interest. This enables investigation of whether alignment between the query and reference datasets is consistent not only at a global level but also within specific cell types.
 
 ```{r Gene-Expression-Histogram, warning=FALSE, message=FALSE}
+
+# Load data
+sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+
+# Divide the data into reference and query datasets
+set.seed(100)
+indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
+ref_data <- sce[, indices]
+query_data <- sce[, -indices]
+
+# Log-transform datasets
+ref_data <- logNormCounts(ref_data)
+query_data <- logNormCounts(query_data)
+
+# Run PCA
+ref_data <- runPCA(ref_data)
+query_data <- runPCA(query_data)
+
+# Get cell type scores using SingleR
+pred <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
+pred <- as.data.frame(pred)
+   
+# Assign labels to query data
+colData(query_data)$labels <- pred$labels
+   
 # Generate density plots
 plotMarkerExpression(reference_data = ref_data, 
                      query_data = query_data, 
@@ -173,6 +238,7 @@ plotMarkerExpression(reference_data = ref_data,
                      gene_name = "MS4A1", 
                      label = "B_and_plasma")
 ```
+
 In the provided example, we examined the distribution of expression values for the gene MS4A1, a marker for naive B cells, in both the query and reference datasets. Additionally, we also looked at the distribution of MS4A1 expression in the B_and_plasma cell type. We observed overlapping distributions in both cases, suggesting alignment between the reference and query datasets.
 
 ## Evaluating Alignment Between Reference and Query Datasets in Terms of Highly Variable Genes
@@ -280,7 +346,7 @@ cell_type_colors <- color_mapping[cell_types]
 visualizeCellTypeMDS(query_data = query_data_subset, 
                      reference_data = ref_data_subset, 
                      mdata = mdata, 
-                     colors = cell_type_colors, 
+                     cell_type_colors = cell_type_colors, 
                      legend_order = legend_order)
 ```
 
@@ -356,11 +422,11 @@ Performing linear regression analysis on a SingleCellExperiment object enables u
 
 ```{r Regression, warning=FALSE, message=FALSE}
  # Specify the dependent variables (principal components) and independent variable (e.g., "labels")
-dependent_vars <- c("PC1", "PC2", "PC3")
-independent_var <- "labels"
+dep.vars <- c("PC1", "PC2", "PC3")
+indep.var <- "labels"
 
 # Perform linear regression on multiple principal components
-result <- regressPC(se_object = query_data, dependent_vars = dependent_vars, independent_var = independent_var)
+result <- regressPC(sce = query_data, dep.vars = dep.vars, indep.var = indep.var)
 
 # Print the summaries of the linear regression models and R-squared values
 
