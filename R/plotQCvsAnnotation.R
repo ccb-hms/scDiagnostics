@@ -29,42 +29,44 @@
 #' library(scRNAseq)
 #' library(SingleR)
 #'
-#' # Load data
-#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-#'
-#' # Divide the data into reference and query datasets
-#' set.seed(100)
-#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-#' ref_data <- sce[, indices]
-#' query_data <- sce[, -indices]
-#'
-#' # Log-transform datasets
-#' ref_data <- logNormCounts(ref_data)
+#' # load reference dataset
+#' ref_data <- HumanPrimaryCellAtlasData()
+#' 
+#' # Load query dataset (Bunis haematopoietic stem and progenitor cell data) from 
+#' # Bunis DG et al. (2021). Single-Cell Mapping of Progressive Fetal-to-Adult 
+#' # Transition in Human Naive T Cells Cell Rep. 34(1): 108573
+#' query_data <- BunisHSPCData()
+#' rownames(query_data) <- rowData(query_data)$Symbol
+#' 
+#' # Add QC metrics to query data
+#' query_data <- addPerCellQCMetrics(query_data)
+#' 
+#' # Log transform query dataset
 #' query_data <- logNormCounts(query_data)
-#'
-#' # Get cell type scores using SingleR
-#' pred <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
+#' 
+#' # Run SingleR to predict cell types
+#' 
+#' pred <- SingleR(query_data, ref_data, labels = ref_data$label.main)
 #' pred <- as.data.frame(pred)
-#'
-#' # Assign labels to query data
-#' colData(query_data)$labels <- pred$labels
-#' scores <- apply(pred[,1:4], 1, max)
-#'
+#' 
+#' # Assign predicted labels to query data
+#' colData(query_data)$pred.labels <- pred$labels
+#' 
+#' # Calculate cell scores
+#' scores <- apply(pred[, 1:36], 1, max)
+#' 
 #' # Assign scores to query data
 #' colData(query_data)$cell_scores <- scores
-#'
-#'plotQCvsAnnotation(query_data = query_data, 
-#'                   qc_col = "percent.mito", 
-#'                   label_col = "labels", 
-#'                   score_col = "cell_scores", 
-#'                   label = NULL)
-#'                   
-#' # Generate scatter plots
-#' plotQCvsAnnotation(query_data = query_data, 
-#'                    qc_col = "percent.mito", 
-#'                    label_col = "labels", 
-#'                    score_col = "cell_scores", 
-#'                    label = c("CD4", "CD8"))
+#' 
+#' # Create a scatter plot between library size and annotation scores
+#' 
+#' p1 <- plotQCvsAnnotation(
+#'       query_data = query_data,
+#'       qc_col = "total",
+#'       label_col = "pred.labels",
+#'       score_col = "cell_scores",
+#'       label = NULL)
+#' p1 + xlab("Library Size")
 #'                    
 #' @import ggplot2
 #' @export
