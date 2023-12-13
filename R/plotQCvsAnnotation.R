@@ -47,13 +47,12 @@
 #' # Run SingleR to predict cell types
 #' 
 #' pred <- SingleR(query_data, ref_data, labels = ref_data$label.main)
-#' pred <- as.data.frame(pred)
 #' 
 #' # Assign predicted labels to query data
 #' colData(query_data)$pred.labels <- pred$labels
 #' 
-#' # Calculate cell scores
-#' scores <- apply(pred[, 1:36], 1, max)
+#' # Get annotation scores
+#' scores <- apply(pred$scores, 1, max)
 #' 
 #' # Assign scores to query data
 #' colData(query_data)$cell_scores <- scores
