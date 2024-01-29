@@ -30,6 +30,12 @@
 #' then regress on each principal component present in the PC matrix. 
 #' @param indep.var character. Independent variable. A column name in the
 #' \code{colData} of \code{sce} specifying the response variable.
+#' @param plot logical indicating whether to print two diagnostic plots: one 
+#' showing the embedding of the two PCs with the highest R2, colored by the 
+#' independent variable and a second showing the PC ~ independent variable R2 
+#' values.
+#' @param ... other arguments to pass to \link[scater]{plotPCA} for the second
+#' diagnostic plot.
 #'
 #' @return A \code{list} containing \itemize{
 #' \item summaries of the linear regression models for each specified principal
@@ -90,8 +96,10 @@
 #' @import SingleCellExperiment
 #' @export
 regressPC <- function(sce,
-                       dep.vars = NULL,
-                       indep.var) 
+                      dep.vars = NULL,
+                      indep.var,
+                      plot = TRUE,
+                      ...) 
 {
   # sanity checks
   stopifnot(is(sce, "SingleCellExperiment"))
@@ -135,5 +143,34 @@ regressPC <- function(sce,
               rsquared = rsq,
               var.contributions = var.contr,
               total.variance.explained = total.var.expl)
+  
+  if (plot) {
+    message("Printing two diagnostic plots.")
+    
+    p1 = scater::plotPCA(sce,
+                         color_by = indep.var,
+                         ncomponents = base::rev(tail(order(rsq), 2)),
+                         ...)
+    
+    p2_input = data.frame(x = dep.vars,
+                          i = seq_along(dep.vars),
+                          r2 = rsq)
+    
+    p2 = p2_input |> 
+      ggplot2::ggplot(aes(i, r2)) + 
+      ggplot2::geom_point() + 
+      ggplot2::geom_line() + 
+      ggplot2::theme_bw() + 
+      ggplot2::ylim(c(0,1)) + 
+      ggplot2::labs(y = bquote(R^2~ of ~"PC ~ "~.(indep.var))) + 
+      ggplot2::scale_x_continuous(breaks = p2_input$i,
+                                  labels = p2_input$x) + 
+      ggplot2::theme(axis.title.x = ggplot2::element_blank(),
+                     panel.grid.minor = ggplot2::element_blank())
+    
+    print(p1)
+    print(p2)
+  }
+  
   return(res)
 }

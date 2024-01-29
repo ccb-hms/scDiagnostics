@@ -4,7 +4,7 @@
 \alias{regressPC}
 \title{Principal component regression}
 \usage{
-regressPC(sce, dep.vars = NULL, indep.var)
+regressPC(sce, dep.vars = NULL, indep.var, plot = TRUE, ...)
 }
 \arguments{
 \item{sce}{An object of class \code{\linkS4class{SingleCellExperiment}}
@@ -18,6 +18,14 @@ then regress on each principal component present in the PC matrix.}
 
 \item{indep.var}{character. Independent variable. A column name in the
 \code{colData} of \code{sce} specifying the response variable.}
+
+\item{plot}{logical indicating whether to print two diagnostic plots: one 
+showing the embedding of the two PCs with the highest R2, colored by the 
+independent variable and a second showing the PC ~ independent variable R2 
+values.}
+
+\item{...}{other arguments to pass to \link[scater]{plotPCA} for the second
+diagnostic plot.}
 }
 \value{
 A \code{list} containing \itemize{
