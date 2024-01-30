@@ -5,6 +5,8 @@ author:
 package: scDiagnostics
 output: 
   BiocStyle::html_document:
+    toc: true
+    toc_float: true
 vignette: >
   %\VignetteIndexEntry{scDiagnostics}
   %\VignetteEngine{knitr::rmarkdown}
@@ -72,6 +74,7 @@ library(RColorBrewer)
 library(SingleR)
 library(AUCell)
 library(corrplot)
+library(data.table)
 ```
 
 ## Scatter Plot: QC stats vs. Annotation Scores
@@ -414,34 +417,78 @@ calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset,
 
 By utilizing this function, users can explore the pairwise distances between query and reference cells of a specific cell type and gain insights into the distribution of distances through density plots. This analysis aids in understanding the similarities and differences in gene expression profiles for the selected cell type within the query and reference datasets.
 
-## Linear regression analysis
+## PC regression analysis
 
-Performing linear regression analysis on a SingleCellExperiment object enables users to examine the relationship between a principal component (PC) from the dimension reduction slot and an independent variable of interest. By specifying the desired dependent variable as one of the principal components (e.g., "PC1", "PC2", etc.) and providing the corresponding independent variable from the colData slot, users can explore the associations between these variables within the single-cell gene expression dataset (reference and query).
+Performing PC regression analysis on a SingleCellExperiment object enables users to examine the relationship between a principal component (PC) from the dimension reduction slot and an independent variable of interest. By specifying the desired dependent variable as one of the principal components (e.g., "PC1", "PC2", etc.) and providing the corresponding independent variable from the colData slot (e.g. "cell_type"), users can explore the associations between linear structure in the single-cell gene expression dataset (reference and query) and an independent variable of interest (e.g. cell type or batch).
+
+The function prints two diagnostic plots by default:
+
+* a plot of the two PCs with the highest R^2^ with the specified independent variable
+* a dot plot showing the R^2^ of each consecutive PC ~ indep.var regression
+  * Generally you should expect this plot to die off to near 0 before ~PC10
+  * Interpretation example: If the R^2^ values are high (>=50%) anywhere in PCs 1-5 and your independent variable is "batch", you have batch effects!
 
 ```{r Regression, warning=FALSE, message=FALSE}
  # Specify the dependent variables (principal components) and independent variable (e.g., "labels")
-dep.vars <- c("PC1", "PC2", "PC3")
+dep.vars <- paste0("PC", 1:12)
 indep.var <- "labels"
 
 # Perform linear regression on multiple principal components
-result <- regressPC(sce = query_data, dep.vars = dep.vars, indep.var = indep.var)
+result <- regressPC(sce = query_data,
+                    dep.vars = dep.vars, 
+                    indep.var = indep.var)
 
 # Print the summaries of the linear regression models and R-squared values
 
 # Summaries of the linear regression models
-print(result$regression_summaries)
+result$regression.summaries[[1]]
 
 # R-squared values
-print(result$rsquared_df)
+result$rsquared
 
 # Variance contributions for each principal component
-print(result$var_contributions_df)
+result$var.contributions
 
 # Total variance explained
-print(result$total_variance_explained)
+result$total.variance.explained
 ```
 
-By conducting linear regression, one can assess whether the PC values are significantly associated with the cell types. This analysis helps uncover whether there is a systematic variation in PC values across different cell types. Understanding the relationship between PC values and cell types can provide valuable insights into the biological or technical factors driving cellular heterogeneity. It can help identify PC dimensions that capture variation specific to certain cell types or distinguish different cellular states. 
+This analysis helps uncover whether there is a systematic variation in PC values across different cell types. In the example above, we can see that the four cell types are spread out across both PC1 and PC2. Digging into the genes with high loadins on these PCs can help explain the biological or technical factors driving cellular heterogeneity. It can help identify PC dimensions that capture variation specific to certain cell types or distinguish different cellular states. 
+
+Let's look at the genes driving PC1 by ordering the rotation matrix by the absolute gene loadings for PC1:
+
+```{r}
+pc_df = attr(reducedDims(query_data)$PCA, "rotation")[,1:5] |> 
+  as.data.table("gene")
+
+pc_df[order(abs(PC1))] |> 
+  tail()
+```
+
+PC1 is mostly driven by NKG7 - Natural Killer Cell Granule Protein 7. This gene is important in CD8+ T cells, so that makes sense that it's distinguishing the cell types shown.
+
+> Exercise: What genes are driving PC2? Do they make sense?
+
+```{r echo = FALSE, eval = FALSE}
+pc_df[order(abs(PC2))] |> 
+  tail()
+
+# It's IL32 mostly.
+```
+
+> Exercise: Try to use the command below to examine the spike on PC5. What's going on there?
+
+`scater::plotPCA(query_data, ncomponents = c(1,5), color_by = "labels")`
+
+```{r eval=FALSE, echo=FALSE}
+scater::plotPCA(query_data, ncomponents = c(1,5), color_by = "labels")
+# The myeloid cells are shifted off from the other types.
+
+pc_df[order(abs(PC5))] |> 
+  tail()
+# It's mostly driven by low GNLY expression in the myeloid cells.
+```
+
 
 # Conclusion
 
