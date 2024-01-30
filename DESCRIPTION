@@ -36,4 +36,5 @@ Suggests:
     SummarizedExperiment
 VignetteBuilder: knitr
 Imports: 
+    data.table,
     isotree
