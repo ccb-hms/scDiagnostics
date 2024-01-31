@@ -43,15 +43,16 @@
 #' query_data <- logNormCounts(query_data)
 #'
 #' query_data <- runPCA(query_data)
-#' 
+#'
 #' query_data <- calculateOutlierScore(query_data, plot = TRUE, dimred = "PCA", use_pcs = TRUE)
 #' @export
-calculateOutlierScore <- function(sce,
-    dimred = NULL,
-    use_pcs = FALSE,
-    plot = TRUE,
-    prediction_thresh = 0.5,
-    ...) {
+calculateOutlierScore <- function(
+        sce,
+        dimred = NULL,
+        use_pcs = FALSE,
+        plot = TRUE,
+        prediction_thresh = 0.5,
+        ...) {
     if (use_pcs) {
         if (!("PCA" %in% SingleCellExperiment::reducedDimNames(sce))) {
             sce <- scater::runPCA(sce)
@@ -78,9 +79,10 @@ calculateOutlierScore <- function(sce,
     if (!is.null(dimred) && plot) {
         # TODO make this plot work when scater is only in the Suggests, or re-do
         # it manually with ggplot.
-        p = scater::plotReducedDim(sce, dimred, 
-                                   color_by = "outlier_score",
-                                   shape_by = "is_outlier")
+        p <- scater::plotReducedDim(sce, dimred,
+            color_by = "outlier_score",
+            shape_by = "is_outlier"
+        )
         print(p)
     }
 
