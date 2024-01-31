@@ -35,6 +35,5 @@ Suggests:
     ggplot2,
     SummarizedExperiment
 VignetteBuilder: knitr
-Imports: 
-    data.table,
+Imports:
     isotree

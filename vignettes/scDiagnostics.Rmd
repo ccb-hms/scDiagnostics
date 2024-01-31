@@ -74,7 +74,6 @@ library(RColorBrewer)
 library(SingleR)
 library(AUCell)
 library(corrplot)
-library(data.table)
 ```
 
 ## Scatter Plot: QC stats vs. Annotation Scores
@@ -459,9 +458,9 @@ Let's look at the genes driving PC1 by ordering the rotation matrix by the absol
 
 ```{r}
 pc_df = attr(reducedDims(query_data)$PCA, "rotation")[,1:5] |> 
-  as.data.table("gene")
+  as.data.frame()
 
-pc_df[order(abs(PC1))] |> 
+pc_df[order(abs(pc_df$PC1)),] |> 
   tail()
 ```
 
@@ -470,7 +469,7 @@ PC1 is mostly driven by NKG7 - Natural Killer Cell Granule Protein 7. This gene 
 > Exercise: What genes are driving PC2? Do they make sense?
 
 ```{r echo = FALSE, eval = FALSE}
-pc_df[order(abs(PC2))] |> 
+pc_df[order(abs(pc_df$PC2)),] |> 
   tail()
 
 # It's IL32 mostly.
@@ -478,13 +477,13 @@ pc_df[order(abs(PC2))] |>
 
 > Exercise: Try to use the command below to examine the spike on PC5. What's going on there?
 
-`scater::plotPCA(query_data, ncomponents = c(1,5), color_by = "labels")`
+`plotPCA(query_data, ncomponents = c(1,5), color_by = "labels")`
 
 ```{r eval=FALSE, echo=FALSE}
-scater::plotPCA(query_data, ncomponents = c(1,5), color_by = "labels")
+plotPCA(query_data, ncomponents = c(1,5), color_by = "labels")
 # The myeloid cells are shifted off from the other types.
 
-pc_df[order(abs(PC5))] |> 
+pc_df[order(abs(pc_df$PC5))] |> 
   tail()
 # It's mostly driven by low GNLY expression in the myeloid cells.
 ```
