@@ -15,8 +15,8 @@
 #' @param dimred if specified, plot the specified reduced dimension with
 #'   \link[scater]{plotReducedDim}, colored by outlier score
 #' @param use_pcs if TRUE, run the outlier detection in principal component
-#'   space
-#' @param prediction_thresh threshold to use for outlier calling
+#'   space. Otherwise, use logcounts.
+#' @param prediction_thresh threshold to use for binary outlier calling
 #' @param plot if TRUE and a dimred is specified, plot the isoscore against the
 #'   specified dimred
 #' @param ... arguments to pass to \link[isotree]{isolation.forest}
@@ -30,13 +30,29 @@
 #'   \code{is_outlier} added to the colData. Also, the resulting isotree model is
 #'   attached to the object's metadata.
 #'
+#' @examples
+#' library(scater)
+#' library(scran)
+#' library(scRNAseq)
+#'
+#' # Load data
+#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+#'
+#' # Divide the data into reference and query datasets
+#' set.seed(100)
+#' query_data <- logNormCounts(query_data)
+#'
+#' query_data <- runPCA(query_data)
+#'
+#' query_data <- calculateOutlierScore(query_data, plot = TRUE, dimred = "PCA", use_pcs = TRUE)
 #' @export
-calculateOutlierScore <- function(sce,
-    dimred = NULL,
-    use_pcs = FALSE,
-    plot = TRUE,
-    prediction_thresh = 0.5,
-    ...) {
+calculateOutlierScore <- function(
+        sce,
+        dimred = NULL,
+        use_pcs = FALSE,
+        plot = TRUE,
+        prediction_thresh = 0.5,
+        ...) {
     if (use_pcs) {
         if (!("PCA" %in% SingleCellExperiment::reducedDimNames(sce))) {
             sce <- scater::runPCA(sce)
@@ -47,7 +63,7 @@ calculateOutlierScore <- function(sce,
     } else {
         X <- sce |>
             SingleCellExperiment::logcounts() |>
-            t()
+            BiocGenerics::t()
     }
 
     isotree_res <- X |>
@@ -63,7 +79,11 @@ calculateOutlierScore <- function(sce,
     if (!is.null(dimred) && plot) {
         # TODO make this plot work when scater is only in the Suggests, or re-do
         # it manually with ggplot.
-        scater::plotReducedDim(sce, dimred, color_by = "outlier_score")
+        p <- scater::plotReducedDim(sce, dimred,
+            color_by = "outlier_score",
+            shape_by = "is_outlier"
+        )
+        print(p)
     }
 
     S4Vectors::metadata(sce)$isotree_model <- isotree_res$model

@@ -5,6 +5,8 @@ author:
 package: scDiagnostics
 output: 
   BiocStyle::html_document:
+    toc: true
+    toc_float: true
 vignette: >
   %\VignetteIndexEntry{scDiagnostics}
   %\VignetteEngine{knitr::rmarkdown}
@@ -414,34 +416,111 @@ calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset,
 
 By utilizing this function, users can explore the pairwise distances between query and reference cells of a specific cell type and gain insights into the distribution of distances through density plots. This analysis aids in understanding the similarities and differences in gene expression profiles for the selected cell type within the query and reference datasets.
 
-## Linear regression analysis
+## PC regression analysis
 
-Performing linear regression analysis on a SingleCellExperiment object enables users to examine the relationship between a principal component (PC) from the dimension reduction slot and an independent variable of interest. By specifying the desired dependent variable as one of the principal components (e.g., "PC1", "PC2", etc.) and providing the corresponding independent variable from the colData slot, users can explore the associations between these variables within the single-cell gene expression dataset (reference and query).
+Performing PC regression analysis on a SingleCellExperiment object enables users to examine the relationship between a principal component (PC) from the dimension reduction slot and an independent variable of interest. By specifying the desired dependent variable as one of the principal components (e.g., "PC1", "PC2", etc.) and providing the corresponding independent variable from the colData slot (e.g. "cell_type"), users can explore the associations between linear structure in the single-cell gene expression dataset (reference and query) and an independent variable of interest (e.g. cell type or batch).
+
+The function prints two diagnostic plots by default:
+
+* a plot of the two PCs with the highest R^2^ with the specified independent variable
+* a dot plot showing the R^2^ of each consecutive PC ~ indep.var regression
+  * Generally you should expect this plot to die off to near 0 before ~PC10
+  * Interpretation example: If the R^2^ values are high (>=50%) anywhere in PCs 1-5 and your independent variable is "batch", you have batch effects!
 
 ```{r Regression, warning=FALSE, message=FALSE}
  # Specify the dependent variables (principal components) and independent variable (e.g., "labels")
-dep.vars <- c("PC1", "PC2", "PC3")
+dep.vars <- paste0("PC", 1:12)
 indep.var <- "labels"
 
 # Perform linear regression on multiple principal components
-result <- regressPC(sce = query_data, dep.vars = dep.vars, indep.var = indep.var)
+result <- regressPC(sce = query_data,
+                    dep.vars = dep.vars, 
+                    indep.var = indep.var)
 
 # Print the summaries of the linear regression models and R-squared values
 
 # Summaries of the linear regression models
-print(result$regression_summaries)
+result$regression.summaries[[1]]
 
 # R-squared values
-print(result$rsquared_df)
+result$rsquared
 
 # Variance contributions for each principal component
-print(result$var_contributions_df)
+result$var.contributions
 
 # Total variance explained
-print(result$total_variance_explained)
+result$total.variance.explained
 ```
 
-By conducting linear regression, one can assess whether the PC values are significantly associated with the cell types. This analysis helps uncover whether there is a systematic variation in PC values across different cell types. Understanding the relationship between PC values and cell types can provide valuable insights into the biological or technical factors driving cellular heterogeneity. It can help identify PC dimensions that capture variation specific to certain cell types or distinguish different cellular states. 
+This analysis helps uncover whether there is a systematic variation in PC values across different cell types. In the example above, we can see that the four cell types are spread out across both PC1 and PC2. Digging into the genes with high loadins on these PCs can help explain the biological or technical factors driving cellular heterogeneity. It can help identify PC dimensions that capture variation specific to certain cell types or distinguish different cellular states. 
+
+Let's look at the genes driving PC1 by ordering the rotation matrix by the absolute gene loadings for PC1:
+
+```{r}
+pc_df <-  attr(reducedDims(query_data)$PCA, "rotation")[,1:5] |> 
+  as.data.frame()
+
+pc_df[order(abs(pc_df$PC1)),] |> 
+  tail()
+```
+
+PC1 is mostly driven by NKG7 - Natural Killer Cell Granule Protein 7. This gene is important in CD8+ T cells, so that makes sense that it's distinguishing the cell types shown.
+
+> Exercise: What genes are driving PC2? Do they make sense?
+
+```{r echo = FALSE, eval = FALSE}
+pc_df[order(abs(pc_df$PC2)),] |> 
+  tail()
+
+# It's IL32 mostly.
+```
+
+> Exercise: Try to use the command below to examine the spike on PC5. What's going on there?
+
+`plotPCA(query_data, ncomponents = c(1,5), color_by = "labels")`
+
+```{r eval=FALSE, echo=FALSE}
+plotPCA(query_data, ncomponents = c(1,5), color_by = "labels")
+# The myeloid cells are shifted off from the other types.
+
+pc_df[order(abs(pc_df$PC5))] |> 
+  tail()
+# It's mostly driven by low GNLY expression in the myeloid cells.
+```
+
+## Outlier detection
+
+Isolation forests are a fast and effective method for detecting outliers in high-dimensional data without relying on density estimation. `calculateOutlierScore()` is a wrapper around the main function of the [isotree package](https://cran.r-project.org/web/packages/isotree/index.html). Here we run it on the PC embeddings but, it can also be informative to run it on the raw counts. Here we can see some outliers in PC1/2 space flagged by the default `score > 0.5` threshold due to their clear isolation (as well as a few that are isolated on the non-visualized PCs).
+
+```{r}
+query_data <- calculateOutlierScore(query_data, 
+                                    use_pcs = TRUE, 
+                                    plot = TRUE,
+                                    dimred = "PCA")
+```
+
+Columns `outlier_score` and `is_outlier` are added to the colData of the output. The isotree model object itself is added to the metadata.
+
+One can pass different `dimred` names to change the plot, but running an isolation in forest in e.g. tSNE or UMAP space does not make sense due to the non-linearity of these approaches. Hence this is not allowed - when `use_pcs = FALSE`, the logcounts are used instead.
+
+## Annotation entropy
+
+In order to assess the confidence of cell type predictions, we can use the function `calculateCategorizationEntropy()`. This function calculates the information entropy of assignment probabilities across a set of cell types for each cell. If a set of class probabilities are confident, the entropies will be low. 
+
+This can be used to compare two sets of cell type assignments (e.g. from different type assignment methods) to compare their relative confidence. **Please note that this has nothing to do with their accuracy!** Computational methods can sometimes be confidently incorrect.
+
+The cell type probabilities should be passed as a matrix with cell types as rows and cells as columns. If the columns of the matrix are not valid probability distributions (i.e. don't sum to 1 as in the below example), the function will perform a column-wise softmax to convert them to a probability scale. This may or may not work well depending on the distribution of the inputs, so if at all possible try to pass probabilities instead of arbitrary scores.
+
+In this example, we create 500 random cells with random normal cell type "scores" across 4 cell types. For demonstration we make the score of the first class much higher in the first 250 cells. After the softmax, this will equate to a very high probability of cell type 1. The remaining 250 will have assignments that are roughly even across the four cell types (i.e. high entropy).
+
+```{r}
+X <- rnorm(500 * 4) |> matrix(nrow = 4)
+X[1, 1:250] <- X[1, 1:250] + 5 
+
+entropy_scores <- calculateCategorizationEntropy(X)
+```
+
+From the plot we can see that half of the cells (the first half we shifted to class 1) have low entropy, and half have high entropy.
 
 # Conclusion
 

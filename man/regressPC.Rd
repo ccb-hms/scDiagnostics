@@ -4,7 +4,7 @@
 \alias{regressPC}
 \title{Principal component regression}
 \usage{
-regressPC(sce, dep.vars = NULL, indep.var)
+regressPC(sce, dep.vars = NULL, indep.var, plot = TRUE, ...)
 }
 \arguments{
 \item{sce}{An object of class \code{\linkS4class{SingleCellExperiment}}
@@ -18,6 +18,14 @@ then regress on each principal component present in the PC matrix.}
 
 \item{indep.var}{character. Independent variable. A column name in the
 \code{colData} of \code{sce} specifying the response variable.}
+
+\item{plot}{logical indicating whether to print two diagnostic plots: one
+showing the embedding of the two PCs with the highest R2, colored by the
+independent variable and a second showing the PC ~ independent variable R2
+values.}
+
+\item{...}{other arguments to pass to \link[scater]{plotPCA} for the second
+diagnostic plot.}
 }
 \value{
 A \code{list} containing \itemize{
@@ -36,7 +44,7 @@ Principal component regression, derived from PCA, can be used to
 quantify the variance explained by a covariate interest. Applications for
 single-cell analysis include quantification of batch removal, assessing clustering
 homogeneity, and evaluation of alignment of query and reference datasets in
-cell type annotation settings. 
+cell type annotation settings.
 Briefly, the R^2 is calculated from a linear regression of the covariate B of
 interest onto each principal component. The variance contribution of the
 covariate effect per principal component is then calculated as the product of
@@ -45,7 +53,7 @@ R2(PCi|B).
 The sum across all variance contributions by the covariate effects in all principal
 components gives the total variance explained by the covariate as follows:
 
-Var(C|B) = sum_{i=1}^G Var(C|PC_i) * R^2 (PC_i | B) 
+Var(C|B) = sum_{i=1}^G Var(C|PC_i) * R^2 (PC_i | B)
 
 where Var(C|PCi) is the variance of the data matrix C explained by the ith
 principal component. See references.
@@ -61,9 +69,10 @@ sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
 # Divide the data into reference and query datasets
 set.seed(100)
-indices <- sample(ncol(sce), 
-                  size = floor(0.7 * ncol(sce)),
-                  replace = FALSE)
+indices <- sample(ncol(sce),
+    size = floor(0.7 * ncol(sce)),
+    replace = FALSE
+)
 ref <- sce[, indices]
 query <- sce[, -indices]
 
@@ -74,22 +83,24 @@ query <- logNormCounts(query)
 # Run PCA
 query <- runPCA(query)
 
-# Get cell type scores using SingleR 
-# Note: replace when using cell type annotation scores from other methods 
+# Get cell type scores using SingleR
+# Note: replace when using cell type annotation scores from other methods
 scores <- SingleR(query, ref, labels = ref$reclustered.broad)
 
 # Add labels to query object
 query$labels <- scores$labels
 
-# Specify the dependent variables (principal components) and 
+# Specify the dependent variables (principal components) and
 # independent variable (e.g., "labels")
 dep.vars <- paste0("PC", 1:3)
 indep.var <- "labels"
 
 # Perform linear regression on multiple principal components
-res <- regressPC(sce = query,
-                 dep.vars = dep.vars,
-                 indep.var = indep.var)
+res <- regressPC(
+    sce = query,
+    dep.vars = dep.vars,
+    indep.var = indep.var
+)
 
 # Obtain linear regression summaries and R-squared values
 res$regression.summaries
