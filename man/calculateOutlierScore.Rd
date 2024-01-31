@@ -20,7 +20,7 @@ calculateOutlierScore(
 \link[scater]{plotReducedDim}, colored by outlier score}
 
 \item{use_pcs}{if TRUE, run the outlier detection in principal component
-space}
+space. Otherwise, use logcounts.}
 
 \item{plot}{if TRUE and a dimred is specified, plot the isoscore against the
 specified dimred}
@@ -69,5 +69,5 @@ query_data <- logNormCounts(query_data)
 
 query_data <- runPCA(query_data)
 
-calculateOutlierScore(query_data)
+query_data <- calculateOutlierScore(query_data, plot = TRUE, dimred = "PCA", use_pcs = TRUE)
 }

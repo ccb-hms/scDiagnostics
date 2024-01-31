@@ -15,7 +15,7 @@
 #' @param dimred if specified, plot the specified reduced dimension with
 #'   \link[scater]{plotReducedDim}, colored by outlier score
 #' @param use_pcs if TRUE, run the outlier detection in principal component
-#'   space
+#'   space. Otherwise, use logcounts.
 #' @param prediction_thresh threshold to use for binary outlier calling
 #' @param plot if TRUE and a dimred is specified, plot the isoscore against the
 #'   specified dimred
@@ -44,7 +44,7 @@
 #'
 #' query_data <- runPCA(query_data)
 #' 
-#' query_data <- calculateOutlierScore(query_data)
+#' query_data <- calculateOutlierScore(query_data, plot = TRUE, dimred = "PCA", use_pcs = TRUE)
 #' @export
 calculateOutlierScore <- function(sce,
     dimred = NULL,
@@ -78,7 +78,9 @@ calculateOutlierScore <- function(sce,
     if (!is.null(dimred) && plot) {
         # TODO make this plot work when scater is only in the Suggests, or re-do
         # it manually with ggplot.
-        p = scater::plotReducedDim(sce, dimred, color_by = "outlier_score")
+        p = scater::plotReducedDim(sce, dimred, 
+                                   color_by = "outlier_score",
+                                   shape_by = "is_outlier")
         print(p)
     }
 
