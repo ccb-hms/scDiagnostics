@@ -503,6 +503,25 @@ Columns `outlier_score` and `is_outlier` are added to the colData of the output.
 
 One can pass different `dimred` names to change the plot, but running an isolation in forest in e.g. tSNE or UMAP space does not make sense due to the non-linearity of these approaches. Hence this is not allowed - when `use_pcs = FALSE`, the logcounts are used instead.
 
+## Annotation entropy
+
+In order to assess the confidence of cell type predictions, we can use the function `calculateCategorizationEntropy()`. This function calculates the information entropy of assignment probabilities across a set of cell types for each cell. If a set of class probabilities are confident, the entropies will be low. 
+
+This can be used to compare two sets of cell type assignments (e.g. from different type assignment methods) to compare their relative confidence. **Please note that this has nothing to do with their accuracy!** Computational methods can sometimes be confidently incorrect.
+
+The cell type probabilities should be passed as a matrix with cell types as rows and cells as columns. If the columns of the matrix are not valid probability distributions (i.e. don't sum to 1 as in the below example), the function will perform a column-wise softmax to convert them to a probability scale. This may or may not work well depending on the distribution of the inputs, so if at all possible try to pass probabilities instead of arbitrary scores.
+
+In this example, we create 500 random cells with random normal cell type "scores" across 4 cell types. For demonstration we make the score of the first class much higher in the first 250 cells. After the softmax, this will equate to a very high probability of cell type 1. The remaining 250 will have assignments that are roughly even across the four cell types (i.e. high entropy).
+
+```{r}
+X <- rnorm(500 * 4) |> matrix(nrow = 4)
+X[1, 1:250] <- X[1, 1:250] + 5 
+
+entropy_scores <- calculateCategorizationEntropy(X)
+```
+
+From the plot we can see that half of the cells (the first half we shifted to class 1) have low entropy, and half have high entropy.
+
 # Conclusion
 
 In this analysis, we have demonstrated the capabilities of the scDiagnostics package for assessing the appropriateness of cell assignments in single-cell gene expression profiles. By utilizing various diagnostic functions and visualization techniques, we have explored different aspects of the data, including total UMI counts, annotation scores, gene expression distributions, dimensional reduction plots, gene set scores, pairwise correlations, pairwise distances, and linear regression analysis.
