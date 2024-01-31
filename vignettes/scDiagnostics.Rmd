@@ -457,7 +457,7 @@ This analysis helps uncover whether there is a systematic variation in PC values
 Let's look at the genes driving PC1 by ordering the rotation matrix by the absolute gene loadings for PC1:
 
 ```{r}
-pc_df = attr(reducedDims(query_data)$PCA, "rotation")[,1:5] |> 
+pc_df <-  attr(reducedDims(query_data)$PCA, "rotation")[,1:5] |> 
   as.data.frame()
 
 pc_df[order(abs(pc_df$PC1)),] |> 
@@ -488,6 +488,20 @@ pc_df[order(abs(pc_df$PC5))] |>
 # It's mostly driven by low GNLY expression in the myeloid cells.
 ```
 
+## Outlier detection
+
+Isolation forests are a fast and effective method for detecting outliers in high-dimensional data without relying on density estimation. `calculateOutlierScore()` is a wrapper around the main function of the [isotree package](https://cran.r-project.org/web/packages/isotree/index.html). Here we run it on the PC embeddings but, it can also be informative to run it on the raw counts. Here we can see some outliers in PC1/2 space flagged by the default `score > 0.5` threshold due to their clear isolation (as well as a few that are isolated on the non-visualized PCs).
+
+```{r}
+query_data <- calculateOutlierScore(query_data, 
+                                    use_pcs = TRUE, 
+                                    plot = TRUE,
+                                    dimred = "PCA")
+```
+
+Columns `outlier_score` and `is_outlier` are added to the colData of the output. The isotree model object itself is added to the metadata.
+
+One can pass different `dimred` names to change the plot, but running an isolation in forest in e.g. tSNE or UMAP space does not make sense due to the non-linearity of these approaches. Hence this is not allowed - when `use_pcs = FALSE`, the logcounts are used instead.
 
 # Conclusion
 
