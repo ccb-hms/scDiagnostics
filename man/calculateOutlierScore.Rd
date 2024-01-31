@@ -25,7 +25,7 @@ space}
 \item{plot}{if TRUE and a dimred is specified, plot the isoscore against the
 specified dimred}
 
-\item{prediction_thresh}{threshold to use for outlier calling}
+\item{prediction_thresh}{threshold to use for binary outlier calling}
 
 \item{...}{arguments to pass to \link[isotree]{isolation.forest}}
 }
@@ -54,4 +54,20 @@ If \code{use_pcs} is turned on, it will use all available PCs in the
 
   \code{prediction_thresh} is the threshold to use on the isoforest score
   predictions
+}
+\examples{
+library(scater)
+library(scran)
+library(scRNAseq)
+
+# Load data
+sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+
+# Divide the data into reference and query datasets
+set.seed(100)
+query_data <- logNormCounts(query_data)
+
+query_data <- runPCA(query_data)
+
+calculateOutlierScore(query_data)
 }
