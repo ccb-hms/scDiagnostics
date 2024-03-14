@@ -64,11 +64,12 @@ query_data <- logNormCounts(query_data)
 
 # Get cell type scores using SingleR
 pred <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-pred <- as.data.frame(pred)
 
 # Assign labels to query data
 colData(query_data)$labels <- pred$labels
-scores <- apply(pred[,1:4], 1, max)
+
+# Get annotation scores
+scores <- apply(pred$scores, 1, max)
 
 # Assign scores to query data
 colData(query_data)$cell_scores <- scores

@@ -16,7 +16,7 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/ccb-hms/scDiagnostics
 BugReports: https://github.com/ccb-hms/scDiagnostics/issues
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Depends:
  R (>= 4.2.0),
  SingleCellExperiment,
@@ -33,7 +33,8 @@ Suggests:
     scater,
     gridExtra,
     ggplot2,
-    SummarizedExperiment
+    SummarizedExperiment,
+    BiocStyle
 VignetteBuilder: knitr
 Imports:
     isotree
