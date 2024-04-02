@@ -30,11 +30,11 @@ Suggests:
     RColorBrewer,
     corrplot,
     scran,
+    BiocStyle
+VignetteBuilder: knitr
+Imports:
     scater,
     gridExtra,
     ggplot2,
     SummarizedExperiment,
-    BiocStyle
-VignetteBuilder: knitr
-Imports:
     isotree
