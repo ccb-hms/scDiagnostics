@@ -1,20 +1,10 @@
 scDiagnostics: diagnostic functions to assess the quality of cell type
 assignments in single-cell RNA-seq
 ================
-Smriti Chawla
-2023-07-08
-
-<h1>
-Getting started
-</h1>
 
 # Installation
 
-<h4>
-Install a Bioconductor Package
-</h4>
-
-To install a package from Bioconductor use a following command:
+To install the development version of the package from GitHub use the following command:
 
 ``` r
 BiocManager::install("ccb-hms/scDiagnostics")
@@ -29,24 +19,6 @@ BiocManager::install("ccb-hms/scDiagnostics",
                      build_vignettes = TRUE,
                      dependencies = TRUE)
 ```
-
-# Prerequisites
-
-R version tested: 4.2.3 (2023-03-15)
-
-To use the scDiagnostics package, you need the following R packages
-installed:
-
-- SingleCellExperiment
-- scRNAseq
-- scater
-- scran
-- ggplot2
-- AUCell
-- SingleR
-- Matrix
-- corrplot
-- RColorBrewer
 
 # Usage
 
@@ -69,7 +41,7 @@ library(AUCell)
 library(corrplot)
 ```
 
-## Scatter Plot: QC stats vs. Annotation Scores
+## Exploratory Analysis: QC Stats vs. Annotation Scores
 
 Here, we will consider the Human Primary Cell Atlas (Mabbott et
 al. 2013) as a reference dataset and our query dataset consists of
