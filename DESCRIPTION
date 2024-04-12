@@ -1,40 +1,47 @@
-Package: scDiagnostics
 Type: Package
-Title: Cell type annotation diagnostics 
+Package: scDiagnostics
+Title: Cell type annotation diagnostics
 Version: 0.99.0
 Authors@R: c(
-  person("Smriti", "Chawla", email = "smriti_chawla@g.harvard.edu", role = c("aut", "cre")),
-  person("Andrew", "Ghazi", role = "aut"),
-  person("Ludwig", "Geistlinger", role = c("aut", "ctb")),
-  person("Robert", "Gentleman", role = "aut"))
-Description: The scDiagnostics package provides diagnostic plots to assess the quality of cell type assignments 
-             from single cell gene expression profiles. The implemented functionality allows to assess the reliability of
-             cell type annotations, investigate gene expression patterns, and explore relationships between different cell types
-             in query and reference datasets allowing users to detect potential misalignments between reference and query datasets. 
+    person("Smriti", "Chawla", , "smriti_chawla@g.harvard.edu", role = c("aut", "cre")),
+    person("Andrew", "Ghazi", role = "aut"),
+    person("Ludwig", "Geistlinger", role = c("aut", "ctb")),
+    person("Robert", "Gentleman", role = "aut")
+  )
+Description: The scDiagnostics package provides diagnostic plots to
+    assess the quality of cell type assignments from single cell gene
+    expression profiles. The implemented functionality allows to
+    assess the reliability of cell type annotations, investigate gene
+    expression patterns, and explore relationships between different
+    cell types in query and reference datasets allowing users to
+    detect potential misalignments between reference and query
+    datasets.
 License: Artistic-2.0
-Encoding: UTF-8
-LazyData: true
 URL: https://github.com/ccb-hms/scDiagnostics
 BugReports: https://github.com/ccb-hms/scDiagnostics/issues
-RoxygenNote: 7.3.1
 Depends:
- R (>= 4.2.0),
- SingleCellExperiment,
+    R (>= 4.2.0),
+    SingleCellExperiment
+Imports:
+    isotree,
+    ggplot2,
+    gridExtra,
+    scater
 Suggests:
-    scRNAseq,
+    AUCell,
+    BiocStyle,
+    corrplot,
     knitr,
     Matrix,
-    rmarkdown,
-    AUCell,
-    SingleR,
     RColorBrewer,
-    corrplot,
+    rmarkdown,
     scran,
-    scater,
-    gridExtra,
-    ggplot2,
+    scRNAseq,
+    SingleR,
     SummarizedExperiment,
-    BiocStyle
-VignetteBuilder: knitr
-Imports:
-    isotree
+    celldex
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.1
