@@ -535,7 +535,7 @@ Through the scatter plots, histograms, and dimensional reduction plots, we were 
 
 ```{r SessionInfo, echo=FALSE, message=FALSE, warning=FALSE, comment=NA}
 #options(width=900) #only works properly in conjunction with the style:overflow.x option at the start
-options(width=80) #reset to 'default' width
+options(width = 80) #reset to 'default' width
 
 sessionInfo() #record the R and package versions used
 #######################################################

@@ -28,7 +28,9 @@ Imports:
     gridExtra,
     scater,
     SummarizedExperiment,
-    AUCell
+    AUCell,
+    BiocGenerics,
+    S4Vectors
 Suggests:
     BiocStyle,
     corrplot,
