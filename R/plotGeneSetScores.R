@@ -1,17 +1,21 @@
-#' Visualization of gene sets or pathway scores on dimensional reduction plot
+#' Visualization of gene sets or pathway scores on dimensional
+#' reduction plot
 #'
-#' Plot gene sets or pathway scores on PCA, TSNE, or UMAP. Single cells are color-coded by scores of gene sets or pathways.
+#' Plot gene sets or pathway scores on PCA, TSNE, or UMAP. Single
+#' cells are color-coded by scores of gene sets or pathways.
 #'
-#' @param se_object An object of class "SingleCellExperiment" containing numeric expression matrix and other metadata.
-#'        It can be either a reference or query dataset.
-#' @param method A character string indicating the method for visualization ("PCA", "TSNE", or "UMAP").
-#' @param feature A character string representing the name of the feature (score) in the colData(query_data) to plot.
+#' @param se_object An object of class "SingleCellExperiment"
+#'     containing numeric expression matrix and other metadata.  It
+#'     can be either a reference or query dataset.
 #'
-#' @import scater
-#' @importFrom scater plotPCA plotTSNE plotUMAP
+#' @param method A character string indicating the method for
+#'     visualization ("PCA", "TSNE", or "UMAP").
 #'
-#' @return A plot object with the scores plotted on the selected dimensional reduction plot.
-#' @export
+#' @param feature A character string representing the name of the
+#'     feature (score) in the colData(query_data) to plot.
+#' 
+#' @return A plot object with the scores plotted on the selected
+#'     dimensional reduction plot.
 #'
 #' @examples
 #' library(scater)
@@ -24,7 +28,11 @@
 #'
 #' # Divide the data into reference and query datasets
 #' set.seed(100)
-#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
+#' indices <- sample(
+#'     ncol(assay(sce)),
+#'     size = floor(0.7 * ncol(assay(sce))),
+#'     replace = FALSE
+#' )
 #' ref_data <- sce[, indices]
 #' query_data <- sce[, -indices]
 #'
@@ -38,6 +46,7 @@
 #' # Compute scores using AUCell
 #' expression_matrix <- assay(query_data, "logcounts")
 #' cells_rankings <- AUCell_buildRankings(expression_matrix, plotStats = FALSE)
+#'
 #' # Generate gene sets
 #' gene_set1 <- sample(rownames(expression_matrix), 10)
 #' gene_set2 <- sample(rownames(expression_matrix), 20)
@@ -46,7 +55,8 @@
 #' # Calculate AUC scores for gene sets
 #' cells_AUC <- AUCell_calcAUC(gene_sets, cells_rankings)
 #' 
-#' # Assign scores to colData (users should ensure that the scores are present in the colData)
+#' # Assign scores to colData (users should ensure that the scores are
+#' # present in the colData)
 #' colData(query_data)$geneSetScores <- assay(cells_AUC)["geneSet1", ] 
 #'
 #' # Plot gene set scores on PCA
@@ -54,27 +64,32 @@
 #'                   method = "PCA", 
 #'                   feature = "geneSetScores")
 #'
-#' # Note: Users can provide their own gene set scores in the colData of the 'se_object' object, 
-#' # using any method of their choice.
+#' # Note: Users can provide their own gene set scores in the colData
+#' # of the 'se_object' object, using any method of their choice.
 #'
+#' @importFrom scater plotPCA plotTSNE plotUMAP
+#'
+#' @export
+#' 
 plotGeneSetScores <- function(se_object, 
                               method, 
                               feature) {
 
-  # Check if the specified method is valid
-  valid_methods <- c("PCA", "TSNE", "UMAP")
-  if (!(method %in% valid_methods)) {
-    stop("Invalid method. Please choose one of: ", paste(valid_methods, collapse = ", "))
-  }
+    ## Check if the specified method is valid
+    valid_methods <- c("PCA", "TSNE", "UMAP")
+    if (!(method %in% valid_methods)) {
+        stop("Invalid method. Please choose one of: ",
+             paste(valid_methods, collapse = ", "))
+    }
 
-  # Create the plot object
-  if (method == "PCA") {
-    plot_obj <- scater::plotPCA(query_data, colour_by = feature)
-  } else if (method == "TSNE") {
-    plot_obj <- scater::plotTSNE(query_data, colour_by = feature)
-  } else if (method == "UMAP") {
-    plot_obj <- scater::plotUMAP(query_data, colour_by = feature)
-  }
-
-  return(plot_obj)
+    ## Create the plot object
+    if (method == "PCA") {
+        plot_obj <- scater::plotPCA(query_data, colour_by = feature)
+    } else if (method == "TSNE") {
+        plot_obj <- scater::plotTSNE(query_data, colour_by = feature)
+    } else if (method == "UMAP") {
+        plot_obj <- scater::plotUMAP(query_data, colour_by = feature)
+    }
+    
+    plot_obj
 }

@@ -7,35 +7,41 @@
 plotQCvsAnnotation(query_data, qc_col, label_col, score_col, label = NULL)
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
-expression data and metadata.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}}
+containing the single-cell expression data and metadata.}
 
-\item{qc_col}{character. A column name in the \code{colData} of \code{query_data} that 
-contains the QC stats of interest.}
+\item{qc_col}{character. A column name in the \code{colData} of
+\code{query_data} that contains the QC stats of interest.}
 
-\item{label_col}{character. The column name in the \code{colData} of \code{query_data} 
-that contains the cell type labels.}
+\item{label_col}{character. The column name in the \code{colData}
+of \code{query_data} that contains the cell type labels.}
 
-\item{score_col}{character. The column name in the \code{colData} of \code{query_data} that 
-contains the cell type annotation scores.}
+\item{score_col}{character. The column name in the \code{colData}
+of \code{query_data} that contains the cell type annotation
+scores.}
 
-\item{label}{character. A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).
-Defaults to \code{NULL}, which will include all the cells.}
+\item{label}{character. A vector of cell type labels to plot (e.g.,
+c("T-cell", "B-cell")).  Defaults to \code{NULL}, which will
+include all the cells.}
 }
 \value{
-A ggplot object displaying a scatter plot of QC stats vs annotation scores, 
-        where each point represents a cell, color-coded by its cell type.
+A ggplot object displaying a scatter plot of QC stats vs
+    annotation scores, where each point represents a cell,
+    color-coded by its cell type.
 }
 \description{
-Creates a scatter plot to visualize the relationship between QC stats (e.g., library size) 
-and cell type annotation scores for one or more cell types.
+Creates a scatter plot to visualize the relationship between QC
+stats (e.g., library size) and cell type annotation scores for one
+or more cell types.
 }
 \details{
-This function generates a scatter plot to explore the relationship between various quality 
-control (QC) statistics, such as library size and mitochondrial percentage, and cell type 
-annotation scores. By examining these relationships, users can assess whether specific QC 
-metrics, systematically influence the confidence in cell type annotations, 
-which is essential for ensuring reliable cell type annotation.
+This function generates a scatter plot to explore the
+    relationship between various quality control (QC) statistics,
+    such as library size and mitochondrial percentage, and cell
+    type annotation scores. By examining these relationships, users
+    can assess whether specific QC metrics, systematically
+    influence the confidence in cell type annotations, which is
+    essential for ensuring reliable cell type annotation.
 }
 \examples{
 library(scater)
