@@ -80,7 +80,9 @@
 #'                    label = NULL)
 #'
 #' @importFrom ggplot2 ggplot
+#' @importFrom rlang .data
 #' @importFrom gridExtra grid.arrange
+#' @importFrom SummarizedExperiment colData
 #' 
 #' @export
 #' 
@@ -128,14 +130,14 @@ histQCvsAnnotation <- function(query_data,
     data <- data.frame(QCStats = qc_stats, Scores = cell_type_scores)
     
     ## Create histogram for QC stats
-    qc_histogram <- ggplot(data, aes(x = QCStats)) +
+    qc_histogram <- ggplot(data, aes(x = .data$QCStats)) +
         geom_histogram(color = "black", fill = "white") +
         xlab(paste(qc_col)) +
         ylab("Frequency") +
         theme_bw()
   
     ## Create histogram for scores
-    scores_histogram <- ggplot(data, aes(x = Scores)) +
+    scores_histogram <- ggplot(data, aes(x = .data$Scores)) +
         geom_histogram(color = "black", fill = "white") +
         xlab("Annotation Scores") +
         ylab("Frequency") +

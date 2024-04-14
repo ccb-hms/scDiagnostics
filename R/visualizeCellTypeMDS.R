@@ -100,7 +100,8 @@
 #' print(plot)
 #'
 #' @importFrom stats cmdscale cor
-#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 ggplot scale_color_manual guides guide_legend
+#' @importFrom rlang .data
 #' @importFrom SummarizedExperiment assay
 #'
 #' @export
@@ -140,7 +141,9 @@ visualizeCellTypeMDS <- function(query_data,
         Type = factor(mdata, levels = legend_order)
     )
     
-    plot <- ggplot(matx, aes(x = Dim1, y = Dim2, color = Type)) +
+    plot <- ggplot(matx, aes(x = .data$Dim1,
+                             y = .data$Dim2,
+                             color = .data$Type)) +
         geom_point(alpha = 0.5, size = 1) +
         scale_color_manual(values = cell_type_colors) +
         theme_bw() +

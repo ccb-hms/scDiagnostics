@@ -125,20 +125,28 @@ calculateCategorizationEntropy <-
 }
 
 
+#' @noRd
+#' @keywords internal
 calculate_entropy <- function(p) {
     # p is one column of X, a vector of probabilities summing to 1.
-
     nonzeros <- p != 0
     
     -sum(p[nonzeros] * log(p[nonzeros]))
 }
 
+
+#' @noRd
+#' @keywords internal
 n_elements <- function(X) {
     ifelse(is.matrix(X),
            prod(dim(X)),
            length(X))
 }
 
+
+#' @noRd
+#' @keywords internal
+#' @importFrom stats qnorm
 inverse_normal_trans <- function(X, constant = 3 / 8) {
     n <- n_elements(X)
 

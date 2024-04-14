@@ -43,7 +43,10 @@
 #' 
 #' # Divide the data into reference and query datasets
 #' set.seed(100)
-#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
+#'
+#' indices <- sample(ncol(assay(sce)), size = floor(0.7 *
+#'                   ncol(assay(sce))), replace = FALSE)
+#'
 #' ref_data <- sce[, indices]
 #' query_data <- sce[, -indices]
 #' 
@@ -56,8 +59,10 @@
 #' ref_var <- getTopHVGs(ref_data, n=2000)
 #' query_var <- getTopHVGs(query_data, n=2000)
 #' 
-#' overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var, 
-#'                                           query_genes = query_var)
+#' overlap_coefficient <- calculateHVGOverlap(
+#'     reference_genes = ref_var, 
+#'     query_genes = query_var
+#' )
 #' 
 #' @export                                       
 calculateHVGOverlap <- function(reference_genes, query_genes) {

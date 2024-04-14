@@ -20,18 +20,20 @@ License: Artistic-2.0
 URL: https://github.com/ccb-hms/scDiagnostics
 BugReports: https://github.com/ccb-hms/scDiagnostics/issues
 Depends:
-    R (>= 4.2.0),
-    SingleCellExperiment
+    R (>= 4.2.0)
 Imports:
+    SingleCellExperiment,
     isotree,
+    methods,
+    rlang,
     ggplot2,
     gridExtra,
     scater,
     SummarizedExperiment,
-    AUCell,
     BiocGenerics,
     S4Vectors
 Suggests:
+    AUCell,
     BiocStyle,
     corrplot,
     knitr,

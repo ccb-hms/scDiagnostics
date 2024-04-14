@@ -45,7 +45,10 @@
 #' 
 #' # Compute scores using AUCell
 #' expression_matrix <- assay(query_data, "logcounts")
-#' cells_rankings <- AUCell_buildRankings(expression_matrix, plotStats = FALSE)
+#' cells_rankings <- AUCell_buildRankings(
+#'     expression_matrix,
+#'     plotStats = FALSE
+#' )
 #'
 #' # Generate gene sets
 #' gene_set1 <- sample(rownames(expression_matrix), 10)
@@ -84,11 +87,11 @@ plotGeneSetScores <- function(se_object,
 
     ## Create the plot object
     if (method == "PCA") {
-        plot_obj <- scater::plotPCA(query_data, colour_by = feature)
+        plot_obj <- scater::plotPCA(se_object, colour_by = feature)
     } else if (method == "TSNE") {
-        plot_obj <- scater::plotTSNE(query_data, colour_by = feature)
+        plot_obj <- scater::plotTSNE(se_object, colour_by = feature)
     } else if (method == "UMAP") {
-        plot_obj <- scater::plotUMAP(query_data, colour_by = feature)
+        plot_obj <- scater::plotUMAP(se_object, colour_by = feature)
     }
     
     plot_obj

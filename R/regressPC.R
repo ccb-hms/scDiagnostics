@@ -109,6 +109,8 @@
 #' @importFrom stats lm
 #' @importFrom ggplot2 ggplot geom_point geom_line theme_bw ylim labs
 #'     scale_x_continuous theme element_blank
+#' @importFrom utils tail
+#' @importFrom rlang .data
 #' @importFrom scater plotPCA
 #' @import SingleCellExperiment
 #' @export
@@ -184,7 +186,7 @@ regressPC <- function(sce,
             r2 = rsq
         )
 
-        p2 <- ggplot(p2_input, aes(i, r2)) +
+        p2 <- ggplot(p2_input, aes(.data$i, .data$r2)) +
             geom_point() +
             geom_line() +
             theme_bw() +

@@ -54,7 +54,10 @@ query_data <- runPCA(query_data)
 
 # Compute scores using AUCell
 expression_matrix <- assay(query_data, "logcounts")
-cells_rankings <- AUCell_buildRankings(expression_matrix, plotStats = FALSE)
+cells_rankings <- AUCell_buildRankings(
+    expression_matrix,
+    plotStats = FALSE
+)
 
 # Generate gene sets
 gene_set1 <- sample(rownames(expression_matrix), 10)

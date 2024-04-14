@@ -48,13 +48,15 @@ library(scater)
 library(scran)
 library(scRNAseq)
 library(SingleR)
+library(celldex)
 
 # load reference dataset
-ref_data <- HumanPrimaryCellAtlasData()
+ref_data <- celldex::HumanPrimaryCellAtlasData()
 
-# Load query dataset (Bunis haematopoietic stem and progenitor cell data) from 
-# Bunis DG et al. (2021). Single-Cell Mapping of Progressive Fetal-to-Adult 
-# Transition in Human Naive T Cells Cell Rep. 34(1): 108573
+# Load query dataset (Bunis haematopoietic stem and progenitor cell
+# data) from Bunis DG et al. (2021). Single-Cell Mapping of
+# Progressive Fetal-to-Adult Transition in Human Naive T Cells Cell
+# Rep. 34(1): 108573
 query_data <- BunisHSPCData()
 rownames(query_data) <- rowData(query_data)$Symbol
 
@@ -86,5 +88,5 @@ p1 <- plotQCvsAnnotation(
       score_col = "cell_scores",
       label = NULL)
 p1 + xlab("Library Size")
-                   
+
 }

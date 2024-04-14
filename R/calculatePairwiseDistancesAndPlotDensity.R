@@ -94,9 +94,11 @@
 #'                                          distance_metric = "euclidean")
 #' 
 #' @importFrom ggplot2 ggplot
+#' @importFrom rlang .data
 #' @importFrom stats cor dist
 #' @importFrom SingleCellExperiment SingleCellExperiment
-#' @importFrom SummarizedExperiment assay                                       
+#' @importFrom SummarizedExperiment assay      
+#' @importFrom methods is
 #'
 #' @export
 calculatePairwiseDistancesAndPlotDensity <-
@@ -114,7 +116,7 @@ calculatePairwiseDistancesAndPlotDensity <-
     if (!is(query_data, "SingleCellExperiment")) {
         stop("query_data must be a SingleCellExperiment object.")
     }
-
+        
     ## Check if reference_data is a SingleCellExperiment object
     if (!is(reference_data, "SingleCellExperiment")) {
         stop("reference_data must be a SingleCellExperiment object.")
@@ -169,7 +171,7 @@ calculatePairwiseDistancesAndPlotDensity <-
     )
     
     ## Plot density plots
-    ggplot(dist_df, aes(x = Distance, color = Comparison)) +
+    ggplot(dist_df, aes(x = .data$Distance, color = .data$Comparison)) +
         geom_density() +
         labs(x = ifelse(distance_metric == "correlation", 
                         paste(correlation_method, "correlation"), 
