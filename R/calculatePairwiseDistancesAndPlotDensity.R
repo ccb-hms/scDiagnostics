@@ -157,6 +157,7 @@ calculatePairwiseDistancesAndPlotDensity <-
     ## comparisons
     num_query_cells <- nrow(query_mat)
     num_ref_cells <- nrow(ref_mat)
+<<<<<<< HEAD
     dist_query_query <-
         dist_matrix[seq_len(num_query_cells), seq_len(num_query_cells)]
     dist_ref_ref <-
@@ -165,6 +166,13 @@ calculatePairwiseDistancesAndPlotDensity <-
     dist_query_ref <-
         dist_matrix[seq_len(num_query_cells),
                     (num_query_cells + 1):(num_query_cells + num_ref_cells)]
+=======
+    dist_query_query <- dist_matrix[seq_len(num_query_cells), seq_len(num_query_cells)]
+    dist_ref_ref <- dist_matrix[(num_query_cells + 1):(num_query_cells + num_ref_cells), 
+                              (num_query_cells + 1):(num_query_cells + num_ref_cells)]
+    dist_query_ref <- dist_matrix[seq_len(num_query_cells),
+                                  (num_query_cells + 1):(num_query_cells + num_ref_cells)]
+>>>>>>> 716f604 (Modify DESCRIPTION and fix couple of BiocCheck issues)
 
     ## Create data frame for plotting
     dist_df <- data.frame(
