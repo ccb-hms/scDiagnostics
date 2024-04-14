@@ -60,11 +60,12 @@
 #'
 #' @export
 #'
-plotGeneExpressionDimred <- function(se_object,
-                                     method,
-                                     n_components = c(1, 2),
-                                     feature) {
-
+plotGeneExpressionDimred <- 
+    function(se_object,
+             method,
+             n_components = c(1, 2),
+             feature) 
+{
     ## Error handling and validation
     supported_methods <- c("tSNE", "UMAP", "PCA")
     if (!(method %in% supported_methods)) {

@@ -49,7 +49,11 @@
 #'
 #' # Divide the data into reference and query datasets
 #' set.seed(100)
-#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
+#' indices <- sample(
+#'     ncol(assay(sce)), 
+#'     size = floor(0.7 * ncol(assay(sce))), 
+#'     replace = FALSE
+#' )
 #' ref_data <- sce[, indices]
 #' query_data <- sce[, -indices]
 #'
@@ -105,11 +109,13 @@
 #'
 #' @export
 #' 
-visualizeCellTypeMDS <- function(query_data, 
-                                 reference_data, 
-                                 mdata, 
-                                 cell_type_colors, 
-                                 legend_order) {
+visualizeCellTypeMDS <- 
+    function(query_data, 
+             reference_data, 
+             mdata, 
+             cell_type_colors, 
+             legend_order) 
+{
 
     ## Sanity checks
   

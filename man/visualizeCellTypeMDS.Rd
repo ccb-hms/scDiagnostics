@@ -65,7 +65,11 @@ sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
 # Divide the data into reference and query datasets
 set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
+indices <- sample(
+    ncol(assay(sce)), 
+    size = floor(0.7 * ncol(assay(sce))), 
+    replace = FALSE
+)
 ref_data <- sce[, indices]
 query_data <- sce[, -indices]
 
@@ -113,6 +117,5 @@ plot <- visualizeCellTypeMDS(query_data = query_data_subset,
                             mdata = mdata, 
                             cell_type_colors = cell_type_colors, 
                             legend_order = legend_order)
-print(plot)
 
 }

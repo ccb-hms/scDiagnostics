@@ -115,11 +115,13 @@
 #' @import SingleCellExperiment
 #' @export
 #' 
-regressPC <- function(sce,
-                      dep.vars = NULL,
-                      indep.var,
-                      plot = TRUE,
-                      ...) {
+regressPC <- 
+    function(sce,
+             dep.vars = NULL,
+             indep.var,
+             plot = TRUE,
+             ...) 
+{
     ## sanity checks
     stopifnot(is(sce, "SingleCellExperiment"))
     stopifnot("PCA" %in% reducedDimNames(sce))

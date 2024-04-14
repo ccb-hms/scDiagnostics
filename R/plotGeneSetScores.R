@@ -74,9 +74,11 @@
 #'
 #' @export
 #' 
-plotGeneSetScores <- function(se_object, 
-                              method, 
-                              feature) {
+plotGeneSetScores <- 
+    function(se_object, 
+             method, 
+             feature) 
+{
 
     ## Check if the specified method is valid
     valid_methods <- c("PCA", "TSNE", "UMAP")

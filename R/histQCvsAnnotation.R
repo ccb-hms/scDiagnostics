@@ -86,11 +86,13 @@
 #' 
 #' @export
 #' 
-histQCvsAnnotation <- function(query_data, 
-                               qc_col = qc_col, 
-                               label_col, 
-                               score_col, 
-                               label = NULL) {
+histQCvsAnnotation <- 
+    function(query_data, 
+             qc_col = qc_col, 
+             label_col, 
+             score_col, 
+             label = NULL) 
+{
     ## Sanity checks
   
     ## Check if query_data is a SingleCellExperiment object

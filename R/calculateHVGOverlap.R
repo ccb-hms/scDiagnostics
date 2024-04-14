@@ -65,10 +65,11 @@
 #' )
 #' 
 #' @export                                       
-calculateHVGOverlap <- function(reference_genes, query_genes) {
-  
+calculateHVGOverlap <- 
+    function(reference_genes, query_genes) 
+{
     ## Sanity checks
-    ## FIXME: Use BiocUtils
+    ## FIXME: Use BiocBaseUtils
     if (!is.vector(reference_genes) || !is.character(reference_genes)) {
         stop("reference_genes must be a character vector.")
     }

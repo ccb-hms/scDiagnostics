@@ -86,12 +86,14 @@
 #' 
 #' @export
 #' 
-plotMarkerExpression <- function(reference_data, 
-                                 query_data, 
-                                 reference_cell_labels, 
-                                 query_cell_labels, 
-                                 gene_name, 
-                                 label) {
+plotMarkerExpression <- 
+    function(reference_data, 
+             query_data, 
+             reference_cell_labels, 
+             query_cell_labels, 
+             gene_name, 
+             label) 
+{
     ## Sanity checks
     
     ## Check if query_data is a SingleCellExperiment object

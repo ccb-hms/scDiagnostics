@@ -72,13 +72,14 @@
 #' @importFrom isotree isolation.forest
 #' 
 #' @export
-calculateOutlierScore <- function(sce,
-                                  dimred = NULL,
-                                  use_pcs = FALSE,
-                                  plot = TRUE,
-                                  prediction_thresh = 0.5,
-                                  ...) {
-
+calculateOutlierScore <- 
+    function(sce,
+             dimred = NULL,
+             use_pcs = FALSE,
+             plot = TRUE,
+             prediction_thresh = 0.5,
+             ...) 
+{
     if (use_pcs) {
 
         if (!("PCA" %in% SingleCellExperiment::reducedDimNames(sce))) {

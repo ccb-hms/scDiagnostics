@@ -54,7 +54,7 @@ The function checks if X is already on the probability
 X <- rnorm(500 * 4) |> matrix(nrow = 4)
 
 # Make the first category highly scored in the first 250 cells
-X[1, 1:250] <- X[1, 1:250] + 5 
+X[1, 1:250] <- X[1, 1:250] + 5
 
 # The function will issue a message about softmaxing the scores,
 # and the entropy histogram will be bimodal since we made half of

@@ -101,18 +101,21 @@ common_genes <- intersect(ref_var, query_var)
 
 # Select desired cell types
 selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
-ref_data_subset <- ref_data[common_genes, ref_data$reclustered.broad \%in\% selected_cell_types]
-query_data_subset <- query_data[common_genes, query_data$reclustered.broad \%in\% selected_cell_types]
+ref_data_subset <-
+    ref_data[common_genes,
+             ref_data$reclustered.broad \%in\% selected_cell_types]
+query_data_subset <-
+    query_data[common_genes,
+               query_data$reclustered.broad \%in\% selected_cell_types]
 
 # Compute pairwise correlations
-cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subset, 
-                                                    reference_data = ref_data_subset, 
-                                                    query_cell_type_col = "labels", 
-                                                    ref_cell_type_col = "reclustered.broad", 
-                                                    cell_types = selected_cell_types, 
-                                                    correlation_method = "spearman")
-
-# Visualize the results using any visualization method of choice
-## FIXME: There needs to be some code here??
+cor_matrix_avg <- computeAveragePairwiseCorrelation(
+    query_data = query_data_subset,
+    reference_data = ref_data_subset,
+    query_cell_type_col = "labels",
+    ref_cell_type_col = "reclustered.broad",
+    cell_types = selected_cell_types,
+    correlation_method = "spearman"
+)
 
 }
