@@ -13,7 +13,6 @@
 .Rcheck/
 *.log
 *.pdf
-*.html
 *.tex
 *.docx
 

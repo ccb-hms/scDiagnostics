@@ -38,13 +38,15 @@
 #' library(scran)
 #' library(scRNAseq)
 #' library(SingleR)
+#' library(celldex)
 #'
 #' # load reference dataset
-#' ref_data <- HumanPrimaryCellAtlasData()
+#' ref_data <- celldex::HumanPrimaryCellAtlasData()
 #' 
-#' # Load query dataset (Bunis haematopoietic stem and progenitor cell data) from 
-#' # Bunis DG et al. (2021). Single-Cell Mapping of Progressive Fetal-to-Adult 
-#' # Transition in Human Naive T Cells Cell Rep. 34(1): 108573
+#' # Load query dataset (Bunis haematopoietic stem and progenitor cell
+#' # data) from Bunis DG et al. (2021). Single-Cell Mapping of
+#' # Progressive Fetal-to-Adult Transition in Human Naive T Cells Cell
+#' # Rep. 34(1): 108573
 #' query_data <- BunisHSPCData()
 #' rownames(query_data) <- rowData(query_data)$Symbol
 #' 
@@ -76,15 +78,17 @@
 #'       score_col = "cell_scores",
 #'       label = NULL)
 #' p1 + xlab("Library Size")
-#'                    
+#'
+#' @importFrom rlang .data
 #' @export
 #'
-plotQCvsAnnotation <- function(query_data, 
-                               qc_col, 
-                               label_col, 
-                               score_col, 
-                               label = NULL) {
-  
+plotQCvsAnnotation <- 
+    function(query_data, 
+             qc_col, 
+             label_col, 
+             score_col, 
+             label = NULL) 
+{
     ## Sanity checks
     
     ## Check if query_data is a SingleCellExperiment object
@@ -127,9 +131,9 @@ plotQCvsAnnotation <- function(query_data,
                        CellType = cell_labels)
   
     ## Create a scatter plot with color-coded points based on cell types or labels
-    plot <- ggplot(data, aes(x = QCStats, 
-                           y = Scores, 
-                           color = CellType)) +
+    plot <- ggplot(data, aes(x = .data$QCStats, 
+                             y = .data$Scores, 
+                             color = .data$CellType)) +
         geom_point() +
         xlab("QC stats") +
         ylab("Annotation Scores") +

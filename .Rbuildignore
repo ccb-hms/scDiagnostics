@@ -3,3 +3,5 @@
 ^doc$
 ^Meta$
 ^\.github$
+^docs$
+^pkgdown$
