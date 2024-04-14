@@ -26,9 +26,12 @@ Imports:
     isotree,
     ggplot2,
     gridExtra,
-    scater
-Suggests:
+    scater,
+    SummarizedExperiment,
     AUCell,
+    BiocGenerics,
+    S4Vectors
+Suggests:
     BiocStyle,
     corrplot,
     knitr,
@@ -38,7 +41,6 @@ Suggests:
     scran,
     scRNAseq,
     SingleR,
-    SummarizedExperiment,
     celldex
 VignetteBuilder: 
     knitr

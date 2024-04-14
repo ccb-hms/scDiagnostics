@@ -14,38 +14,46 @@ computeAveragePairwiseCorrelation(
 )
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
-expression data and metadata.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}}
+containing the single-cell expression data and metadata.}
 
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
-expression data and metadata.}
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}}
+object containing the single-cell expression data and metadata.}
 
-\item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data} 
-that identifies the cell types.}
+\item{query_cell_type_col}{character. The column name in the
+\code{colData} of \code{query_data} that identifies the cell
+types.}
 
-\item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data} 
-that identifies the cell types.}
+\item{ref_cell_type_col}{character. The column name in the
+\code{colData} of \code{reference_data} that identifies the
+cell types.}
 
-\item{cell_types}{A character vector specifying the cell types to be analysed consider.}
+\item{cell_types}{A character vector specifying the cell types to
+be analysed consider.}
 
-\item{correlation_method}{The correlation method to use for calculating pairwise correlations.}
+\item{correlation_method}{The correlation method to use for
+calculating pairwise correlations.}
 }
 \value{
-A matrix containing the average pairwise correlation values. 
-        Rows and columns are labeled with the cell types. Each element 
-        in the matrix represents the average correlation between a pair 
-        of cell types.
+A matrix containing the average pairwise correlation
+    values.  Rows and columns are labeled with the cell types. Each
+    element in the matrix represents the average correlation
+    between a pair of cell types.
 }
 \description{
-Computes the average pairwise correlations between specified cell types 
-in single-cell gene expression data.
+Computes the average pairwise correlations between specified cell
+types in single-cell gene expression data.
 }
 \details{
-This function operates on \code{\linkS4class{SingleCellExperiment}} objects, 
-ideal for single-cell analysis workflows. It calculates pairwise correlations between query and 
-reference cells using a specified correlation method, then averages these correlations for each 
-cell type pair. This function aids in assessing the similarity between cells in reference and query datasets, 
-providing insights into the reliability of cell type annotations in single-cell gene expression data.
+This function operates on
+    \code{\linkS4class{SingleCellExperiment}} objects, ideal for
+    single-cell analysis workflows. It calculates pairwise
+    correlations between query and reference cells using a
+    specified correlation method, then averages these correlations
+    for each cell type pair. This function aids in assessing the
+    similarity between cells in reference and query datasets,
+    providing insights into the reliability of cell type
+    annotations in single-cell gene expression data.
 }
 \examples{
 library(scater)
@@ -58,7 +66,12 @@ sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
 # Divide the data into reference and query datasets
 set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
+
+indices <- sample(
+    ncol(assay(sce)),
+    size = floor(0.7 * ncol(assay(sce))),
+    replace = FALSE
+)
 ref_data <- sce[, indices]
 query_data <- sce[, -indices]
 
@@ -73,11 +86,11 @@ scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
 colData(query_data)$labels <- scores$labels
 
 # Compute Pairwise Correlations
-# Note: The selection of highly variable genes and desired cell types may vary 
-# based on user preference. 
-# The cell type annotation method used in this example is SingleR. 
-# User can use any other method for cell type annotation and provide 
-# the corresponding labels in the metadata.
+# Note: The selection of highly variable genes and desired cell
+# types may vary based on user preference.  The cell type
+# annotation method used in this example is SingleR.  User can use
+# any other method for cell type annotation and provide the
+# corresponding labels in the metadata.
 
 # Selecting highly variable genes
 ref_var <- getTopHVGs(ref_data, n = 2000)
@@ -100,5 +113,6 @@ cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subs
                                                     correlation_method = "spearman")
 
 # Visualize the results using any visualization method of choice
+## FIXME: There needs to be some code here??
 
 }

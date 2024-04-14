@@ -2,7 +2,8 @@
 % Please edit documentation in R/plotMarkerExpression.R
 \name{plotMarkerExpression}
 \alias{plotMarkerExpression}
-\title{Plot gene expression distribution from overall and cell type-specific perspective}
+\title{Plot gene expression distribution from overall and cell
+type-specific perspective}
 \usage{
 plotMarkerExpression(
   reference_data,
@@ -14,17 +15,27 @@ plotMarkerExpression(
 )
 }
 \arguments{
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}}
+object containing numeric expression matrix for the reference
+cells.}
 
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}}
+object containing numeric expression matrix for the query
+cells.}
 
-\item{gene_name}{character. A string representing the gene name for which the distribution is to be visualized.}
+\item{gene_name}{character. A string representing the gene name for
+which the distribution is to be visualized.}
 
-\item{label}{character. A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).}
+\item{label}{character. A vector of cell type labels to plot (e.g.,
+c("T-cell", "B-cell")).}
 
-\item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+\item{query_cell_type_col}{character. The column name in the
+\code{colData} of \code{query_data} that identifies the cell
+types.}
 
-\item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+\item{ref_cell_type_col}{character. The column name in the
+\code{colData} of \code{reference_data} that identifies the
+cell types.}
 }
 \value{
 A gtable object containing two arranged density plots as grobs. 
@@ -33,14 +44,18 @@ A gtable object containing two arranged density plots as grobs.
         distribution.
 }
 \description{
-This function generates density plots to visualize the distribution of gene expression values 
-for a specific gene across the overall dataset and within a specified cell type.
+This function generates density plots to visualize the distribution
+of gene expression values for a specific gene across the overall
+dataset and within a specified cell type.
 }
 \details{
-This function generates density plots to compare the distribution of a specific marker 
-gene between reference and query datasets. The aim is to inspect the alignment of gene expression 
-levels as a surrogate for dataset similarity. Similar distributions suggest a good alignment, 
-while differences may indicate discrepancies or incompatibilities between the datasets.
+This function generates density plots to compare the
+    distribution of a specific marker gene between reference and
+    query datasets. The aim is to inspect the alignment of gene
+    expression levels as a surrogate for dataset
+    similarity. Similar distributions suggest a good alignment,
+    while differences may indicate discrepancies or
+    incompatibilities between the datasets.
 }
 \examples{
 library(scater)
