@@ -15,7 +15,8 @@ Description: The scDiagnostics package provides diagnostic plots to
     expression patterns, and explore relationships between different
     cell types in query and reference datasets allowing users to
     detect potential misalignments between reference and query
-    datasets.
+    datasets. The package also provides visualization capabilities for
+    diagnositics purposes.    
 License: Artistic-2.0
 URL: https://github.com/ccb-hms/scDiagnostics
 BugReports: https://github.com/ccb-hms/scDiagnostics/issues
@@ -46,6 +47,7 @@ Suggests:
     celldex
 VignetteBuilder: 
     knitr
+biocView: SingleCell, Software
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1
