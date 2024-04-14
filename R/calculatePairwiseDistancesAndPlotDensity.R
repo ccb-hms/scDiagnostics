@@ -154,10 +154,10 @@ calculatePairwiseDistancesAndPlotDensity <-
     ## Extract the distances or correlations for the different pairwise comparisons
     num_query_cells <- nrow(query_mat)
     num_ref_cells <- nrow(ref_mat)
-    dist_query_query <- dist_matrix[1:num_query_cells, 1:num_query_cells]
+    dist_query_query <- dist_matrix[seq_len(num_query_cells), seq_len(num_query_cells)]
     dist_ref_ref <- dist_matrix[(num_query_cells + 1):(num_query_cells + num_ref_cells), 
                               (num_query_cells + 1):(num_query_cells + num_ref_cells)]
-    dist_query_ref <- dist_matrix[1:num_query_cells,
+    dist_query_ref <- dist_matrix[seq_len(num_query_cells),
                                   (num_query_cells + 1):(num_query_cells + num_ref_cells)]
 
     ## Create data frame for plotting

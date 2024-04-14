@@ -97,7 +97,6 @@
 #'                             mdata = mdata, 
 #'                             cell_type_colors = cell_type_colors, 
 #'                             legend_order = legend_order)
-#' print(plot)
 #'
 #' @importFrom stats cmdscale cor
 #' @importFrom ggplot2 ggplot scale_color_manual guides guide_legend

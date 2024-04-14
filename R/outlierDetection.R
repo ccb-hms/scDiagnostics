@@ -116,5 +116,5 @@ calculateOutlierScore <- function(sce,
 
     S4Vectors::metadata(sce)$isotree_model <- isotree_res$model
 
-    return(sce)
+    sce
 }
