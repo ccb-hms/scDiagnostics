@@ -70,7 +70,7 @@ sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
 # Divide the data into reference and query datasets
 set.seed(100)
-query_data <- logNormCounts(query_data)
+query_data <- logNormCounts(sce)
 
 query_data <- runPCA(query_data)
 

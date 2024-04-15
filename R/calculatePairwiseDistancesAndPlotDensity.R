@@ -68,7 +68,8 @@
 #' ref_data <- logNormCounts(ref_data)
 #' query_data <- logNormCounts(query_data)
 #'
-#' # Get cell type scores using SingleR (or any other cell type annotation method)
+#' # Get cell type scores using SingleR (or any other cell type
+#' # annotation method)
 #' scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
 #'
 #' # Add labels to query object
@@ -84,19 +85,24 @@
 #' ref_data_subset <- ref_data[common_genes, ]
 #' query_data_subset <- query_data[common_genes, ]
 #'
-#' # Example usage of the function
-#' calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, 
-#'                                          reference_data = ref_data_subset, 
-#'                                          query_cell_type_col = "labels", 
-#'                                          ref_cell_type_col = "reclustered.broad", 
-#'                                          cell_type_query = "CD8", 
-#'                                          cell_type_reference = "CD8", 
-#'                                          distance_metric = "euclidean")
+#' ## Example usage of the function
+#'
+#' calculatePairwiseDistancesAndPlotDensity(
+#'     query_data = query_data_subset, 
+#'     reference_data = ref_data_subset,
+#'     query_cell_type_col = "labels", 
+#'     ref_cell_type_col = "reclustered.broad", 
+#'     cell_type_query = "CD8", 
+#'     cell_type_reference = "CD8", 
+#'     distance_metric = "euclidean"
+#' )
 #' 
 #' @importFrom ggplot2 ggplot
+#' @importFrom rlang .data
 #' @importFrom stats cor dist
 #' @importFrom SingleCellExperiment SingleCellExperiment
-#' @importFrom SummarizedExperiment assay                                       
+#' @importFrom SummarizedExperiment assay      
+#' @importFrom methods is
 #'
 #' @export
 calculatePairwiseDistancesAndPlotDensity <-
@@ -107,24 +113,27 @@ calculatePairwiseDistancesAndPlotDensity <-
              cell_type_query, 
              cell_type_reference, 
              distance_metric, 
-             correlation_method = "pearson") {
+             correlation_method = c("pearson", "spearman"))
+{
     ## Sanity checks
   
     ## Check if query_data is a SingleCellExperiment object
     if (!is(query_data, "SingleCellExperiment")) {
         stop("query_data must be a SingleCellExperiment object.")
     }
-
+        
     ## Check if reference_data is a SingleCellExperiment object
     if (!is(reference_data, "SingleCellExperiment")) {
         stop("reference_data must be a SingleCellExperiment object.")
     }
   
     ## Subset query and reference data to the specified cell type
-    query_data_subset <- query_data[, !is.na(query_data[[query_cell_type_col]]) & 
-                                      query_data[[query_cell_type_col]] == cell_type_query]
-    ref_data_subset <- reference_data[, !is.na(reference_data[[ref_cell_type_col]]) & 
-                                        reference_data[[ref_cell_type_col]] == cell_type_reference]
+    query_data_subset <-
+        query_data[, !is.na(query_data[[query_cell_type_col]]) & 
+                     query_data[[query_cell_type_col]] == cell_type_query]
+    ref_data_subset <-
+        reference_data[, !is.na(reference_data[[ref_cell_type_col]]) & 
+                         reference_data[[ref_cell_type_col]] == cell_type_reference]
 
     ## Convert to matrix
     query_mat <- t(as.matrix(assay(query_data_subset, "logcounts")))
@@ -134,14 +143,9 @@ calculatePairwiseDistancesAndPlotDensity <-
     combined_mat <- rbind(query_mat, ref_mat)
 
     ## Calculate pairwise distances or correlations for all comparisons
+    correlation_method <- match.arg(correlation_method)
     if (distance_metric == "correlation") {
-        if (correlation_method == "pearson") {
-            dist_matrix <- cor(t(combined_mat), method = "pearson")
-        } else if (correlation_method == "spearman") {
-            dist_matrix <- cor(t(combined_mat), method = "spearman")
-        } else {
-            stop("Invalid correlation method. Available options: 'pearson', 'spearman'")
-        }
+        dist_matrix <- cor(t(combined_mat), method = correlation_method)
     } else {
         dist_matrix <- dist(combined_mat, method = distance_metric)
     }
@@ -149,14 +153,18 @@ calculatePairwiseDistancesAndPlotDensity <-
     ## Convert dist_matrix to a square matrix
     dist_matrix <- as.matrix(dist_matrix)
 
-    ## Extract the distances or correlations for the different pairwise comparisons
+    ## Extract the distances or correlations for the different pairwise
+    ## comparisons
     num_query_cells <- nrow(query_mat)
     num_ref_cells <- nrow(ref_mat)
-    dist_query_query <- dist_matrix[1:num_query_cells, 1:num_query_cells]
-    dist_ref_ref <- dist_matrix[(num_query_cells + 1):(num_query_cells + num_ref_cells), 
-                              (num_query_cells + 1):(num_query_cells + num_ref_cells)]
-    dist_query_ref <- dist_matrix[1:num_query_cells,
-                                  (num_query_cells + 1):(num_query_cells + num_ref_cells)]
+    dist_query_query <-
+        dist_matrix[seq_len(num_query_cells), seq_len(num_query_cells)]
+    dist_ref_ref <-
+        dist_matrix[(num_query_cells + 1):(num_query_cells + num_ref_cells), 
+                    (num_query_cells + 1):(num_query_cells + num_ref_cells)]
+    dist_query_ref <-
+        dist_matrix[seq_len(num_query_cells),
+                    (num_query_cells + 1):(num_query_cells + num_ref_cells)]
 
     ## Create data frame for plotting
     dist_df <- data.frame(
@@ -169,7 +177,7 @@ calculatePairwiseDistancesAndPlotDensity <-
     )
     
     ## Plot density plots
-    ggplot(dist_df, aes(x = Distance, color = Comparison)) +
+    ggplot(dist_df, aes(x = .data$Distance, color = .data$Comparison)) +
         geom_density() +
         labs(x = ifelse(distance_metric == "correlation", 
                         paste(correlation_method, "correlation"), 

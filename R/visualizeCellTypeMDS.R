@@ -49,7 +49,11 @@
 #'
 #' # Divide the data into reference and query datasets
 #' set.seed(100)
-#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
+#' indices <- sample(
+#'     ncol(assay(sce)), 
+#'     size = floor(0.7 * ncol(assay(sce))), 
+#'     replace = FALSE
+#' )
 #' ref_data <- sce[, indices]
 #' query_data <- sce[, -indices]
 #'
@@ -97,19 +101,21 @@
 #'                             mdata = mdata, 
 #'                             cell_type_colors = cell_type_colors, 
 #'                             legend_order = legend_order)
-#' print(plot)
 #'
 #' @importFrom stats cmdscale cor
-#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 ggplot scale_color_manual guides guide_legend
+#' @importFrom rlang .data
 #' @importFrom SummarizedExperiment assay
 #'
 #' @export
 #' 
-visualizeCellTypeMDS <- function(query_data, 
-                                 reference_data, 
-                                 mdata, 
-                                 cell_type_colors, 
-                                 legend_order) {
+visualizeCellTypeMDS <- 
+    function(query_data, 
+             reference_data, 
+             mdata, 
+             cell_type_colors, 
+             legend_order) 
+{
 
     ## Sanity checks
   
@@ -140,7 +146,9 @@ visualizeCellTypeMDS <- function(query_data,
         Type = factor(mdata, levels = legend_order)
     )
     
-    plot <- ggplot(matx, aes(x = Dim1, y = Dim2, color = Type)) +
+    plot <- ggplot(matx, aes(x = .data$Dim1,
+                             y = .data$Dim2,
+                             color = .data$Type)) +
         geom_point(alpha = 0.5, size = 1) +
         scale_color_manual(values = cell_type_colors) +
         theme_bw() +

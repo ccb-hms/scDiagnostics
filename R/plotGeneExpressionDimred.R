@@ -53,17 +53,19 @@
 #'                          feature = "VPREB3")
 #'
 #'
-#' @importFrom ggplot2 ggplot
-#' @importFrom SummarizedExperiment assay 
+#' @importFrom ggplot2 ggplot xlab ylab scale_color_gradient theme_bw
+#' @importFrom rlang .data
+#' @importFrom SummarizedExperiment assay
 #' @importFrom SingleCellExperiment reducedDim
 #'
 #' @export
 #'
-plotGeneExpressionDimred <- function(se_object,
-                                     method,
-                                     n_components = c(1, 2),
-                                     feature) {
-
+plotGeneExpressionDimred <- 
+    function(se_object,
+             method,
+             n_components = c(1, 2),
+             feature) 
+{
     ## Error handling and validation
     supported_methods <- c("tSNE", "UMAP", "PCA")
     if (!(method %in% supported_methods)) {
@@ -75,15 +77,15 @@ plotGeneExpressionDimred <- function(se_object,
         stop("n_components should be a numeric vector of length 2.")
     }
 
-    if (!feature %in% rownames(assay(query_data, "logcounts"))) {
+    if (!feature %in% rownames(assay(se_object, "logcounts"))) {
         stop("Specified feature does not exist in the expression matrix.")
     }
 
     ## Extract dimension reduction coordinates from SingleCellExperiment object
-    reduction <- reducedDim(query_data, method)[, n_components]
+    reduction <- reducedDim(se_object, method)[, n_components]
 
     ## Extract gene expression vector
-    expression <- assay(query_data, "logcounts")[feature, ]
+    expression <- assay(se_object, "logcounts")[feature, ]
 
     ## Prepare data for plotting
     df <- data.frame(Dim1 = reduction[, 1],
@@ -91,8 +93,8 @@ plotGeneExpressionDimred <- function(se_object,
                      Expression = expression)
 
     ## Create the plot object
-    plot <- ggplot(df, aes(x = Dim1, y = Dim2)) +
-        geom_point(aes(color = Expression)) +
+    plot <- ggplot(df, aes(x = .data$Dim1, y = .data$Dim2)) +
+        geom_point(aes(color = .data$Expression)) +
         scale_color_gradient(low = "grey90", high = "blue") +
         xlab("Dimension 1") +
         ylab("Dimension 2") +

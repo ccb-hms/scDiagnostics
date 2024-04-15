@@ -3,9 +3,12 @@ Package: scDiagnostics
 Title: Cell type annotation diagnostics
 Version: 0.99.0
 Authors@R: c(
-    person("Smriti", "Chawla", , "smriti_chawla@g.harvard.edu", role = c("aut", "cre")),
+    person("Anthony", "Christidis", role = c("aut", "cre"), 
+            email = "anthony-alexander_christidis@hms.harvard.edu"),
     person("Andrew", "Ghazi", role = "aut"),
-    person("Ludwig", "Geistlinger", role = c("aut", "ctb")),
+    person("Smriti", "Chawla", role = "aut"),
+    person("Nitesh", "Turaga", role = "ctb"),
+    person("Ludwig", "Geistlinger", role = "aut"),
     person("Robert", "Gentleman", role = "aut")
   )
 Description: The scDiagnostics package provides diagnostic plots to
@@ -15,23 +18,28 @@ Description: The scDiagnostics package provides diagnostic plots to
     expression patterns, and explore relationships between different
     cell types in query and reference datasets allowing users to
     detect potential misalignments between reference and query
-    datasets.
+    datasets. The package also provides visualization capabilities for
+    diagnositics purposes.    
 License: Artistic-2.0
 URL: https://github.com/ccb-hms/scDiagnostics
 BugReports: https://github.com/ccb-hms/scDiagnostics/issues
 Depends:
-    R (>= 4.2.0),
-    SingleCellExperiment
+    R (>= 4.3.0)
 Imports:
+    SingleCellExperiment,
     isotree,
+    methods,
+    rlang,
     ggplot2,
     gridExtra,
     scater,
     SummarizedExperiment,
-    AUCell,
     BiocGenerics,
-    S4Vectors
+    S4Vectors,
+    stats,
+    utils
 Suggests:
+    AUCell,
     BiocStyle,
     corrplot,
     knitr,
@@ -41,9 +49,20 @@ Suggests:
     scran,
     scRNAseq,
     SingleR,
-    celldex
+    celldex,
+    testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
+biocViews:
+    Annotation,
+    Classification,
+    Clustering,
+    GeneExpression,
+    RNASeq,
+    SingleCell,
+    Software,
+    Transcriptomics
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1
+Config/testthat/edition: 3

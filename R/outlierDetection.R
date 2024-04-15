@@ -53,7 +53,7 @@
 #'
 #' # Divide the data into reference and query datasets
 #' set.seed(100)
-#' query_data <- logNormCounts(query_data)
+#' query_data <- logNormCounts(sce)
 #'
 #' query_data <- runPCA(query_data)
 #'
@@ -72,13 +72,14 @@
 #' @importFrom isotree isolation.forest
 #' 
 #' @export
-calculateOutlierScore <- function(sce,
-                                  dimred = NULL,
-                                  use_pcs = FALSE,
-                                  plot = TRUE,
-                                  prediction_thresh = 0.5,
-                                  ...) {
-
+calculateOutlierScore <- 
+    function(sce,
+             dimred = NULL,
+             use_pcs = FALSE,
+             plot = TRUE,
+             prediction_thresh = 0.5,
+             ...) 
+{
     if (use_pcs) {
 
         if (!("PCA" %in% SingleCellExperiment::reducedDimNames(sce))) {
@@ -116,5 +117,5 @@ calculateOutlierScore <- function(sce,
 
     S4Vectors::metadata(sce)$isotree_model <- isotree_res$model
 
-    return(sce)
+    sce
 }

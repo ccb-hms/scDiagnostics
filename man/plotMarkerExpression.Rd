@@ -23,25 +23,25 @@ cells.}
 object containing numeric expression matrix for the query
 cells.}
 
+\item{reference_cell_labels}{character. The column name in the
+\code{colData} of \code{reference_data} that identifies the
+cell types.}
+
+\item{query_cell_labels}{character. The column name in the
+\code{colData} of \code{query_data} that identifies the cell
+types.}
+
 \item{gene_name}{character. A string representing the gene name for
 which the distribution is to be visualized.}
 
 \item{label}{character. A vector of cell type labels to plot (e.g.,
 c("T-cell", "B-cell")).}
-
-\item{query_cell_type_col}{character. The column name in the
-\code{colData} of \code{query_data} that identifies the cell
-types.}
-
-\item{ref_cell_type_col}{character. The column name in the
-\code{colData} of \code{reference_data} that identifies the
-cell types.}
 }
 \value{
-A gtable object containing two arranged density plots as grobs. 
-        The first plot shows the overall gene expression distribution, 
-        and the second plot displays the cell type-specific expression 
-        distribution.
+A gtable object containing two arranged density plots as
+    grobs.  The first plot shows the overall gene expression
+    distribution, and the second plot displays the cell
+    type-specific expression distribution.
 }
 \description{
 This function generates density plots to visualize the distribution
@@ -68,7 +68,9 @@ sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
 # Divide the data into reference and query datasets
 set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
+indices <- sample(ncol(assay(sce)), 
+                  size = floor(0.7 * ncol(assay(sce))), 
+                  replace = FALSE)
 ref_data <- sce[, indices]
 query_data <- sce[, -indices]
 
@@ -77,12 +79,16 @@ ref_data <- logNormCounts(ref_data)
 query_data <- logNormCounts(query_data)
 
 # Get cell type scores using SingleR or any other method
-pred <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
+pred <- SingleR(query_data,
+    ref_data,
+    labels = ref_data$reclustered.broad
+)
 
 # Add labels to query object
 colData(query_data)$labels <- pred$labels
 
-# Note: Users can use SingleR or any other method to obtain the cell type annotations.
+# Note: Users can use SingleR or any other method to obtain the 
+# cell type annotations.
 plotMarkerExpression(reference_data = ref_data, 
                      query_data = query_data, 
                      reference_cell_labels = "reclustered.broad", 

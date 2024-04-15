@@ -12,7 +12,7 @@ calculatePairwiseDistancesAndPlotDensity(
   cell_type_query,
   cell_type_reference,
   distance_metric,
-  correlation_method = "pearson"
+  correlation_method = c("pearson", "spearman")
 )
 }
 \arguments{
@@ -87,7 +87,8 @@ query_data <- sce[, -indices]
 ref_data <- logNormCounts(ref_data)
 query_data <- logNormCounts(query_data)
 
-# Get cell type scores using SingleR (or any other cell type annotation method)
+# Get cell type scores using SingleR (or any other cell type
+# annotation method)
 scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
 
 # Add labels to query object
@@ -103,13 +104,16 @@ common_genes <- intersect(ref_var, query_var)
 ref_data_subset <- ref_data[common_genes, ]
 query_data_subset <- query_data[common_genes, ]
 
-# Example usage of the function
-calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, 
-                                         reference_data = ref_data_subset, 
-                                         query_cell_type_col = "labels", 
-                                         ref_cell_type_col = "reclustered.broad", 
-                                         cell_type_query = "CD8", 
-                                         cell_type_reference = "CD8", 
-                                         distance_metric = "euclidean")
+## Example usage of the function
+
+calculatePairwiseDistancesAndPlotDensity(
+    query_data = query_data_subset, 
+    reference_data = ref_data_subset,
+    query_cell_type_col = "labels", 
+    ref_cell_type_col = "reclustered.broad", 
+    cell_type_query = "CD8", 
+    cell_type_reference = "CD8", 
+    distance_metric = "euclidean"
+)
 
 }
