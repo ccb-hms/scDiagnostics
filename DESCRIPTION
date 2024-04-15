@@ -7,7 +7,7 @@ Authors@R: c(
             email = "anthony-alexander_christidis@hms.harvard.edu"),
     person("Andrew", "Ghazi", role = "aut"),
     person("Smriti", "Chawla", role = "aut"),
-    person("Nitesh", "Turage", role = "ctb"),
+    person("Nitesh", "Turaga", role = "ctb"),
     person("Ludwig", "Geistlinger", role = "aut"),
     person("Robert", "Gentleman", role = "aut")
   )
