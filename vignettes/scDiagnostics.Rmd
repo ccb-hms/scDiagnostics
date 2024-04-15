@@ -1,7 +1,19 @@
 ---
-title: "scDiagnostics: diagnostic functions to assess the quality of cell type assignments in single-cell RNA-seq"
+title: "scDiagnostics: diagnostic functions to assess the quality of cell type annotations in single-cell RNA-seq data"
 author:
-- name: Smriti Chawla
+    - name: Anthony Christidis
+      affiliation: Center for Computational Biomedicine, Harvard Medical School
+      email: anthony-alexander_christidis@hms.harvard.edu
+    - name: Andrew Ghazi
+      affiliation: Harvard Stem Cell Institute, Harvard Medical School
+    - name: Smriti Chawla
+      affiliation: Center for Computational Biomedicine, Harvard Medical School
+    - name: Nitesh Turaga
+      affiliation: Center for Computational Biomedicine, Harvard Medical School
+    - name: Ludwig Geistlinger
+      affiliation: Center for Computational Biomedicine, Harvard Medical School
+    - name: Robert Gentleman
+      affiliation: Center for Computational Biomedicine, Harvard Medical School
 package: scDiagnostics
 output: 
   BiocStyle::html_document:
@@ -20,23 +32,38 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Getting started
+# Purpose
 
-## Installation
+Annotation transfer from a reference dataset for the cell type
+annotation of a new query single-cell RNA-sequencing (scRNA-seq)
+experiment is an integral component of the typical analysis
+workflow. The approach provides a fast, automated, and reproducible
+alternative to the manual annotation of cell clusters based on marker
+gene expression. However, dataset imbalance and undiagnosed
+incompatibilities between query and reference dataset can lead to
+erroneous annotation and distort downstream applications.
 
-To install the package from Bioconductor use a following command:
+The `scDiagnostics` package provides functionality for the systematic
+evaluation of cell type assignments in scRNA-seq data.
+`scDiagnostics` offers a suite of diagnostic functions to assess
+whether both (query and reference) datasets are aligned, ensuring that
+annotations can be transferred reliably. `scDiagnostics` also provides
+functionality to assess annotation ambiguity, cluster heterogeneity,
+and marker gene alignment. The implemented functionality helps
+researchers to determine how accurately cells from a new scRNA-seq
+experiment can be assigned to known cell types.
 
-```{r install_bioc_package, eval=FALSE}
-BiocManager::install("scDiagnostics")
-```
+# Installation
 
-To install the development version from Github:
+To install the development version of the package from Github, use the following
+command:
 
 ```{r dev_version_install, eval = FALSE}
 BiocManager::install("ccb-hms/scDiagnostics")
 ```
 
-NOTE: you will need the remotes package to install from github.
+NOTE: you will need the [remotes](https://cran.r-project.org/web/packages/remotes/index.html)
+package to install from GitHub.
 
 To build the package vignettes upon installation use:
 
@@ -46,26 +73,6 @@ BiocManager::install("ccb-hms/scDiagnostics",
                      dependencies = TRUE)
 ```
 
-## Prerequisites
-
-R version tested: 4.2.3 (2023-03-15) or above
-
-To use the scDiagnostics package, you need the following R packages
-installed:
-
- * SingleCellExperiment
- * scRNAseq
- * scater
- * scran
- * ggplot2
- * AUCell
- * SingleR
- * Matrix
- * corrplot
- * celldex
- * RColorBrewer
-
- 
 # Usage
 
 To explore the capabilities of the scDiagnostics package, you can load
@@ -75,17 +82,16 @@ scDiagnostics with such datasets, which serve as valuable resources
 for exploring the package and assessing the appropriateness of cell
 type assignments.
 
-```{r Libraries, warning = FALSE, message = FALSE}
-## Loading libraries
+```{r libraries, message = FALSE}
 library(scDiagnostics)
+library(celldex)
+library(corrplot)
 library(scater)
 library(scran)
 library(scRNAseq)
+library(AUCell)
 library(RColorBrewer)
 library(SingleR)
-library(AUCell)
-library(corrplot)
-library(celldex)
 ```
 
 ## Scatter Plot: QC stats vs. Annotation Scores
