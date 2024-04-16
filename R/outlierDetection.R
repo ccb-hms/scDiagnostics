@@ -119,3 +119,48 @@ calculateOutlierScore <-
 
     sce
 }
+
+#' Calculate cell outlier scores using isolation forests by group
+#'
+#' @description This function calculates outlier scores for each cell BY CLUSTER
+#'   using \link[isotree]{isolation.forest}. See [calculateOutlierScore()] for
+#'   more detail on isoforests. This function calls that one on each cluster
+#'   separately. So instead of outlierness from the full dataset overall, this
+#'   function captures outlierness from the cell's cluster.
+#' @inheritParams calculateOutlierScore
+#' @param clusterVar the name of the cluster variable in the colData of the sce
+#'   input.
+#' @examples
+#' # TODO update this example.
+#' library(scater)
+#' library(scran)
+#' library(scRNAseq)
+#'
+#' # Load data
+#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+#'
+#' # Divide the data into reference and query datasets
+#' set.seed(100)
+#' query_data <- logNormCounts(query_data)
+#'
+#' query_data <- runPCA(query_data)
+#'
+#' query_data <- calculateOutlierScore(query_data, plot = TRUE, dimred = "PCA", use_pcs = TRUE)
+#' @export
+calculateOutlierScoreByCluster <- function(
+    sce, 
+    clusterVar,
+    dimred = NULL,
+    use_pcs = FALSE,
+    plot = TRUE,
+    prediction_thresh = 0.5,
+    ...) {
+  
+  # TODO implement the functionality.
+  
+  lapply(cluster_levels, calculateOutlierScore)
+  
+  # Combine results
+  
+  return(sce)
+}
