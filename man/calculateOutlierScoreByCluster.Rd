@@ -40,6 +40,11 @@ This function calculates outlier scores for each cell BY CLUSTER
   separately. So instead of outlierness from the full dataset overall, this
   function captures outlierness from the cell's cluster.
 }
+\details{
+This function treats NAs in clusterVar as a separate level and
+  applies the outlier scoring to them accordingly. The isolation forest model
+  objects are returned as a list in the metadata.
+}
 \examples{
 # TODO update this example.
 library(scater)
@@ -51,9 +56,13 @@ sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
 # Divide the data into reference and query datasets
 set.seed(100)
-query_data <- logNormCounts(query_data)
+query_data <- logNormCounts(sce)
 
 query_data <- runPCA(query_data)
 
-query_data <- calculateOutlierScore(query_data, plot = TRUE, dimred = "PCA", use_pcs = TRUE)
+query_data <- calculateOutlierScoreByCluster(query_data,
+                                             clusterVar = "reclustered.broad",
+                                             plot = TRUE,
+                                             dimred = "PCA",
+                                             use_pcs = TRUE)
 }

@@ -130,6 +130,10 @@ calculateOutlierScore <-
 #' @inheritParams calculateOutlierScore
 #' @param clusterVar the name of the cluster variable in the colData of the sce
 #'   input.
+#' @details This function treats NAs in clusterVar as a separate level and
+#'   applies the outlier scoring to them accordingly. The isolation forest model
+#'   objects are returned as a list in the metadata.
+#'
 #' @examples
 #' # TODO update this example.
 #' library(scater)
@@ -141,11 +145,15 @@ calculateOutlierScore <-
 #'
 #' # Divide the data into reference and query datasets
 #' set.seed(100)
-#' query_data <- logNormCounts(query_data)
+#' query_data <- logNormCounts(sce)
 #'
 #' query_data <- runPCA(query_data)
 #'
-#' query_data <- calculateOutlierScore(query_data, plot = TRUE, dimred = "PCA", use_pcs = TRUE)
+#' query_data <- calculateOutlierScoreByCluster(query_data,
+#'                                              clusterVar = "reclustered.broad",
+#'                                              plot = TRUE,
+#'                                              dimred = "PCA",
+#'                                              use_pcs = TRUE)
 #' @export
 calculateOutlierScoreByCluster <- function(
     sce, 
@@ -156,11 +164,43 @@ calculateOutlierScoreByCluster <- function(
     prediction_thresh = 0.5,
     ...) {
   
-  # TODO implement the functionality.
+  if (is.null(colnames(sce))) stop("This function requires the input SCE to have column names.")
   
-  lapply(cluster_levels, calculateOutlierScore)
+  # There's probably a better way to split an sce by a factor...
+  # Anyway, manually passing it through factor() like this way retains NAs.
+  cluster_list = split(colData(sce), 
+                       factor(colData(sce)[[clusterVar]],
+                              exclude = NULL)) |> 
+    lapply(\(x) sce[,rownames(x)]) 
   
-  # Combine results
+  # TODO: assess if it would be worth making the threshold adaptive. Different
+  # clusters can have different distributions of outlier scores.
+  score_list = lapply(cluster_list, calculateOutlierScore, 
+                      plot = FALSE,
+                      dimred = dimred,
+                      use_pcs = use_pcs, 
+                      prediction_thresh = prediction_thresh)
+  
+  score_df = score_list |>
+    lapply(\(x) colData(x)[,c("outlier_score", "is_outlier")]) |> 
+    Reduce(f = rbind)
+  
+  # If we were using an ID column instead of column names of the input we could
+  # do a join.
+  score_df = score_df[rownames(colData(sce)),]
+  colData(sce) = cbind(colData(sce), score_df)
+  
+  S4Vectors::metadata(sce)$cluster_isotree_model = score_list |> lapply(S4Vectors::metadata)
+  
+  if (!is.null(dimred) && plot) {
+    # TODO make this plot work when scater is only in the Suggests, or re-do
+    # it manually with ggplot.
+    p <- scater::plotReducedDim(sce, dimred,
+                                color_by = "outlier_score",
+                                shape_by = "is_outlier"
+    )
+    print(p)
+  }
   
   return(sce)
 }

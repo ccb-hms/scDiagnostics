@@ -3,6 +3,7 @@
 export(calculateCategorizationEntropy)
 export(calculateHVGOverlap)
 export(calculateOutlierScore)
+export(calculateOutlierScoreByCluster)
 export(calculatePairwiseDistancesAndPlotDensity)
 export(computeAveragePairwiseCorrelation)
 export(histQCvsAnnotation)
