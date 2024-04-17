@@ -114,82 +114,74 @@ calculatePairwiseDistancesAndPlotDensity <-
              cell_type_reference, 
              distance_metric, 
              correlation_method = c("pearson", "spearman"))
-{
-    ## Sanity checks
-  
-    ## Check if query_data is a SingleCellExperiment object
-    if (!is(query_data, "SingleCellExperiment")) {
-        stop("query_data must be a SingleCellExperiment object.")
-    }
+    {
+        ## Sanity checks
         
-    ## Check if reference_data is a SingleCellExperiment object
-    if (!is(reference_data, "SingleCellExperiment")) {
-        stop("reference_data must be a SingleCellExperiment object.")
+        ## Check if query_data is a SingleCellExperiment object
+        if (!is(query_data, "SingleCellExperiment")) {
+            stop("query_data must be a SingleCellExperiment object.")
+        }
+        
+        ## Check if reference_data is a SingleCellExperiment object
+        if (!is(reference_data, "SingleCellExperiment")) {
+            stop("reference_data must be a SingleCellExperiment object.")
+        }
+        
+        ## Subset query and reference data to the specified cell type
+        query_data_subset <-
+            query_data[, !is.na(query_data[[query_cell_type_col]]) & 
+                           query_data[[query_cell_type_col]] == cell_type_query]
+        ref_data_subset <-
+            reference_data[, !is.na(reference_data[[ref_cell_type_col]]) & 
+                               reference_data[[ref_cell_type_col]] == cell_type_reference]
+        
+        ## Convert to matrix
+        query_mat <- t(as.matrix(assay(query_data_subset, "logcounts")))
+        ref_mat <- t(as.matrix(assay(ref_data_subset, "logcounts")))
+        
+        ## Combine query and reference matrices
+        combined_mat <- rbind(query_mat, ref_mat)
+        
+        ## Calculate pairwise distances or correlations for all comparisons
+        correlation_method <- match.arg(correlation_method)
+        if (distance_metric == "correlation") {
+            dist_matrix <- cor(t(combined_mat), method = correlation_method)
+        } else {
+            dist_matrix <- dist(combined_mat, method = distance_metric)
+        }
+        
+        ## Convert dist_matrix to a square matrix
+        dist_matrix <- as.matrix(dist_matrix)
+        
+        ## Extract the distances or correlations for the different pairwise
+        ## comparisons
+        num_query_cells <- nrow(query_mat)
+        num_ref_cells <- nrow(ref_mat)
+        dist_query_query <-
+            dist_matrix[seq_len(num_query_cells), seq_len(num_query_cells)]
+        dist_ref_ref <-
+            dist_matrix[(num_query_cells + 1):(num_query_cells + num_ref_cells), 
+                        (num_query_cells + 1):(num_query_cells + num_ref_cells)]
+        dist_query_ref <-
+            dist_matrix[seq_len(num_query_cells),
+                        (num_query_cells + 1):(num_query_cells + num_ref_cells)]
+        
+        ## Create data frame for plotting
+        dist_df <- data.frame(
+            Comparison = c(rep("Query vs Query", length(dist_query_query)),
+                           rep("Reference vs Reference", length(dist_ref_ref)),
+                           rep("Query vs Reference", length(dist_query_ref))),
+            Distance = c(as.vector(dist_query_query),
+                         as.vector(dist_ref_ref),
+                         as.vector(dist_query_ref))
+        )
+        
+        ## Plot density plots
+        ggplot(dist_df, aes(x = .data$Distance, color = .data$Comparison)) +
+            geom_density() +
+            labs(x = ifelse(distance_metric == "correlation", 
+                            paste(correlation_method, "correlation"), 
+                            "Distance"), y = "Density", 
+                 title = "Pairwise Distance Analysis and Density Visualization") +
+            theme_bw()
     }
-  
-    ## Subset query and reference data to the specified cell type
-    query_data_subset <-
-        query_data[, !is.na(query_data[[query_cell_type_col]]) & 
-                     query_data[[query_cell_type_col]] == cell_type_query]
-    ref_data_subset <-
-        reference_data[, !is.na(reference_data[[ref_cell_type_col]]) & 
-                         reference_data[[ref_cell_type_col]] == cell_type_reference]
-
-    ## Convert to matrix
-    query_mat <- t(as.matrix(assay(query_data_subset, "logcounts")))
-    ref_mat <- t(as.matrix(assay(ref_data_subset, "logcounts")))
-
-    ## Combine query and reference matrices
-    combined_mat <- rbind(query_mat, ref_mat)
-
-    ## Calculate pairwise distances or correlations for all comparisons
-    correlation_method <- match.arg(correlation_method)
-    if (distance_metric == "correlation") {
-        dist_matrix <- cor(t(combined_mat), method = correlation_method)
-    } else {
-        dist_matrix <- dist(combined_mat, method = distance_metric)
-    }
-
-    ## Convert dist_matrix to a square matrix
-    dist_matrix <- as.matrix(dist_matrix)
-
-    ## Extract the distances or correlations for the different pairwise
-    ## comparisons
-    num_query_cells <- nrow(query_mat)
-    num_ref_cells <- nrow(ref_mat)
-<<<<<<< HEAD
-    dist_query_query <-
-        dist_matrix[seq_len(num_query_cells), seq_len(num_query_cells)]
-    dist_ref_ref <-
-        dist_matrix[(num_query_cells + 1):(num_query_cells + num_ref_cells), 
-                    (num_query_cells + 1):(num_query_cells + num_ref_cells)]
-    dist_query_ref <-
-        dist_matrix[seq_len(num_query_cells),
-                    (num_query_cells + 1):(num_query_cells + num_ref_cells)]
-=======
-    dist_query_query <- dist_matrix[seq_len(num_query_cells), seq_len(num_query_cells)]
-    dist_ref_ref <- dist_matrix[(num_query_cells + 1):(num_query_cells + num_ref_cells), 
-                              (num_query_cells + 1):(num_query_cells + num_ref_cells)]
-    dist_query_ref <- dist_matrix[seq_len(num_query_cells),
-                                  (num_query_cells + 1):(num_query_cells + num_ref_cells)]
->>>>>>> 716f604 (Modify DESCRIPTION and fix couple of BiocCheck issues)
-
-    ## Create data frame for plotting
-    dist_df <- data.frame(
-        Comparison = c(rep("Query vs Query", length(dist_query_query)),
-                       rep("Reference vs Reference", length(dist_ref_ref)),
-                       rep("Query vs Reference", length(dist_query_ref))),
-        Distance = c(as.vector(dist_query_query),
-                     as.vector(dist_ref_ref),
-                     as.vector(dist_query_ref))
-    )
-    
-    ## Plot density plots
-    ggplot(dist_df, aes(x = .data$Distance, color = .data$Comparison)) +
-        geom_density() +
-        labs(x = ifelse(distance_metric == "correlation", 
-                        paste(correlation_method, "correlation"), 
-                        "Distance"), y = "Density", 
-             title = "Pairwise Distance Analysis and Density Visualization") +
-        theme_bw()
-}
