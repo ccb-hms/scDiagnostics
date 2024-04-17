@@ -15,20 +15,54 @@ calculateOutlierScore(
 \arguments{
 \item{sce}{a SingleCellExperiment object containing a logcounts matrix}
 
+<<<<<<< HEAD
 \item{group.var}{if specified, run the outlier scoring by group (e.g. cell
 cluster) instead of across all cells globally.}
+=======
+<<<<<<< HEAD
+\item{dimred}{if specified, plot the specified reduced dimension
+with \link[scater]{plotReducedDim}, colored by outlier score}
+=======
+\item{group.var}{if specified, run the outlier scoring by group (e.g. cell
+cluster) instead of across all cells globally.}
+>>>>>>> b3fabc5 (remove pipes, remove plotting behavior, add group.var argument, use biocthis::bioc_style)
+>>>>>>> 58dcf42 (add group.var argument, remove plotting/pipes/separate function)
 
 \item{use_pcs}{if TRUE, run the outlier detection in principal component
 space. Otherwise, use logcounts.}
 
+<<<<<<< HEAD
 \item{prediction_thresh}{threshold to use for binary outlier calling}
+=======
+<<<<<<< HEAD
+\item{plot}{if TRUE and a dimred is specified, plot the isoscore
+against the specified dimred}
+
+\item{prediction_thresh}{threshold to use for binary outlier
+calling}
+=======
+\item{prediction_thresh}{threshold to use for binary outlier calling}
+>>>>>>> b3fabc5 (remove pipes, remove plotting behavior, add group.var argument, use biocthis::bioc_style)
+>>>>>>> 58dcf42 (add group.var argument, remove plotting/pipes/separate function)
 
 \item{...}{arguments to pass to \link[isotree]{isolation.forest}}
 }
 \value{
+<<<<<<< HEAD
 the SingleCellExperiment object with \code{outlier_score} and
   \code{is_outlier} added to the colData. Also, the resulting isotree model
   is attached to the object's metadata.
+=======
+<<<<<<< HEAD
+the SingleCellExperiment object with \code{outlier_score}
+    and \code{is_outlier} added to the colData. Also, the resulting
+    isotree model is attached to the object's metadata.
+=======
+the SingleCellExperiment object with \code{outlier_score} and
+  \code{is_outlier} added to the colData. Also, the resulting isotree model
+  is attached to the object's metadata.
+>>>>>>> b3fabc5 (remove pipes, remove plotting behavior, add group.var argument, use biocthis::bioc_style)
+>>>>>>> 58dcf42 (add group.var argument, remove plotting/pipes/separate function)
 }
 \description{
 This function calculates outlier scores for each cell using
@@ -65,5 +99,19 @@ query_data <- logNormCounts(sce)
 
 query_data <- runPCA(query_data)
 
+<<<<<<< HEAD
 query_data <- calculateOutlierScore(query_data, use_pcs = TRUE)
+=======
+<<<<<<< HEAD
+query_data <- calculateOutlierScore(
+    query_data,
+    plot = TRUE,
+    dimred = "PCA",
+    use_pcs = TRUE
+)
+
+=======
+query_data <- calculateOutlierScore(query_data, use_pcs = TRUE)
+>>>>>>> b3fabc5 (remove pipes, remove plotting behavior, add group.var argument, use biocthis::bioc_style)
+>>>>>>> 58dcf42 (add group.var argument, remove plotting/pipes/separate function)
 }
