@@ -709,10 +709,15 @@ PCs).
 
 ```{r}
 query_data <- calculateOutlierScore(query_data, 
-                                    use_pcs = TRUE, 
-                                    plot = TRUE,
-                                    dimred = "PCA")
+                                    use_pcs = TRUE)
+
+scater::plotReducedDim(query_data, 
+                       dimred = "PCA", 
+                       color_by = "outlier_score",
+                       shape_by = "is_outlier")
 ```
+
+By default this evaluates an isolation forest across all cells in the object. One can optionally pass a `group.var` (a column in the colData) to evaluate the outlier detection by groups (e.g. cell type). This can help assess whether a cell is atypical amongst those it was clustered with.
 
 Columns `outlier_score` and `is_outlier` are added to the colData of
 the output. The isotree model object itself is added to the metadata.
@@ -720,7 +725,7 @@ the output. The isotree model object itself is added to the metadata.
 One can pass different `dimred` names to change the plot, but running
 an isolation in forest in e.g. tSNE or UMAP space does not make sense
 due to the non-linearity of these approaches. Hence this is not
-allowed - when `use_pcs = FALSE`, the logcounts are used instead.
+allowed - when `use_pcs = FALSE`, the raw logcounts are used instead.
 
 ## Annotation entropy
 
