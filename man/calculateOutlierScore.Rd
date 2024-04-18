@@ -6,59 +6,50 @@
 \usage{
 calculateOutlierScore(
   sce,
-  dimred = NULL,
+  group.var = NULL,
   use_pcs = FALSE,
-  plot = TRUE,
   prediction_thresh = 0.5,
   ...
 )
 }
 \arguments{
-\item{sce}{a SingleCellExperiment object containing a logcounts
-matrix}
+\item{sce}{a SingleCellExperiment object containing a logcounts matrix}
 
-\item{dimred}{if specified, plot the specified reduced dimension
-with \link[scater]{plotReducedDim}, colored by outlier score}
+\item{group.var}{if specified, run the outlier scoring by group (e.g. cell
+cluster) instead of across all cells globally.}
 
-\item{use_pcs}{if TRUE, run the outlier detection in principal
-component space. Otherwise, use logcounts.}
+\item{use_pcs}{if TRUE, run the outlier detection in principal component
+space. Otherwise, use logcounts.}
 
-\item{plot}{if TRUE and a dimred is specified, plot the isoscore
-against the specified dimred}
-
-\item{prediction_thresh}{threshold to use for binary outlier
-calling}
+\item{prediction_thresh}{threshold to use for binary outlier calling}
 
 \item{...}{arguments to pass to \link[isotree]{isolation.forest}}
 }
 \value{
-the SingleCellExperiment object with \code{outlier_score}
-    and \code{is_outlier} added to the colData. Also, the resulting
-    isotree model is attached to the object's metadata.
+the SingleCellExperiment object with \code{outlier_score} and
+  \code{is_outlier} added to the colData. Also, the resulting isotree model
+  is attached to the object's metadata.
 }
 \description{
-This function calculates outlier scores for each cell
-    using \link[isotree]{isolation.forest}. Isolation forests
-    explicitly try to estimate the isolation of datapoints, in
-    contrast to estimating the full distribution of the data. To
-    quote the isotree documentation: "Isolation Forest is an
-    algorithm originally developed for outlier detection that
-    consists in splitting sub-samples of the data according to some
-    attribute/feature/column at random". Basically, it calculates
-    how quickly each cell gets split off from the rest of the group
-    when the dataset is randomly partitioned by a hyperplane. There
-    are many adjustable parameters (e.g. number of trees,
-    dimensionality of the splits, etc), but the defaults usually
-    work pretty well.
+This function calculates outlier scores for each cell using
+  \link[isotree]{isolation.forest}. Isolation forests explicitly try to
+  estimate the isolation of datapoints, in contrast to estimating the full
+  distribution of the data. To quote the isotree documentation: "Isolation
+  Forest is an algorithm originally developed for outlier detection that
+  consists in splitting sub-samples of the data according to some
+  attribute/feature/column at random." Basically, it calculates how quickly
+  each cell gets split off from the rest of the group when the dataset is
+  randomly partitioned by a hyperplane. There are many adjustable parameters
+  (e.g. number of trees, dimensionality of the splits, etc), but the defaults
+  usually work pretty well.
 }
 \details{
-If \code{use_pcs} is turned on, it will use all available
-    PCs in the PCA reduced dimension slot if it exists, and run
-    \link[scater]{runPCA} with default settings and use that if it
-    does not.
+If \code{use_pcs} is turned on, it will use all available PCs in the
+  PCA reduced dimension slot if it exists, and run \link[scater]{runPCA} with
+  default settings and use that if it does not.
 
-    \code{prediction_thresh} is the threshold to use on the
-    isoforest score predictions
+  \code{prediction_thresh} is the threshold to use on the isoforest score
+  predictions
 }
 \examples{
 library(scater)
@@ -74,11 +65,5 @@ query_data <- logNormCounts(sce)
 
 query_data <- runPCA(query_data)
 
-query_data <- calculateOutlierScore(
-    query_data,
-    plot = TRUE,
-    dimred = "PCA",
-    use_pcs = TRUE
-)
-
+query_data <- calculateOutlierScore(query_data, use_pcs = TRUE)
 }
