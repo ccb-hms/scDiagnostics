@@ -53,6 +53,7 @@ calculateOutlierScore <- function(
         plot = TRUE,
         prediction_thresh = 0.5,
         ...) {
+  
     if (use_pcs) {
         if (!("PCA" %in% SingleCellExperiment::reducedDimNames(sce))) {
             sce <- scater::runPCA(sce)

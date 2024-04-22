@@ -729,7 +729,7 @@ relationships and patterns.
      [93] locfit_1.5-9.8                Biostrings_2.68.1            
      [95] knitr_1.44                    gridExtra_2.3                
      [97] ProtGenerics_1.32.0           edgeR_3.42.4                 
-     [99] xfun_0.40                     statmod_1.5.0                
+     [99] xfun_0.43                     statmod_1.5.0                
     [101] stringi_1.7.12                lazyeval_0.2.2               
     [103] yaml_2.3.7                    evaluate_0.22                
     [105] codetools_0.2-19              tibble_3.2.1                 

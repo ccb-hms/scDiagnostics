@@ -3,6 +3,7 @@ Type: Package
 Title: Cell type annotation diagnostics 
 Version: 0.99.0
 Authors@R: c(
+  person("Christidis", "Anthony", email = "anthony-alexander_christidis@hms.harvard.edu", role = c("aut")),
   person("Smriti", "Chawla", email = "smriti_chawla@g.harvard.edu", role = c("aut", "cre")),
   person("Andrew", "Ghazi", role = "aut"),
   person("Ludwig", "Geistlinger", role = c("aut", "ctb")),
