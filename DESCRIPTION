@@ -29,7 +29,6 @@ Imports:
     SingleCellExperiment,
     isotree,
     methods,
-    rlang,
     ggplot2,
     gridExtra,
     scater,
@@ -37,7 +36,8 @@ Imports:
     BiocGenerics,
     S4Vectors,
     stats,
-    utils
+    utils,
+    scuttle
 Suggests:
     AUCell,
     BiocStyle,
