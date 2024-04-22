@@ -1,19 +1,7 @@
 ---
-title: "scDiagnostics: diagnostic functions to assess the quality of cell type annotations in single-cell RNA-seq data"
+title: "scDiagnostics: diagnostic functions to assess the quality of cell type assignments in single-cell RNA-seq"
 author:
-    - name: Anthony Christidis
-      affiliation: Center for Computational Biomedicine, Harvard Medical School
-      email: anthony-alexander_christidis@hms.harvard.edu
-    - name: Andrew Ghazi
-      affiliation: Harvard Stem Cell Institute, Harvard Medical School
-    - name: Smriti Chawla
-      affiliation: Center for Computational Biomedicine, Harvard Medical School
-    - name: Nitesh Turaga
-      affiliation: Center for Computational Biomedicine, Harvard Medical School
-    - name: Ludwig Geistlinger
-      affiliation: Center for Computational Biomedicine, Harvard Medical School
-    - name: Robert Gentleman
-      affiliation: Center for Computational Biomedicine, Harvard Medical School
+- name: Smriti Chawla
 package: scDiagnostics
 output: 
   BiocStyle::html_document:
@@ -32,38 +20,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Purpose
-
-Annotation transfer from a reference dataset for the cell type
-annotation of a new query single-cell RNA-sequencing (scRNA-seq)
-experiment is an integral component of the typical analysis
-workflow. The approach provides a fast, automated, and reproducible
-alternative to the manual annotation of cell clusters based on marker
-gene expression. However, dataset imbalance and undiagnosed
-incompatibilities between query and reference dataset can lead to
-erroneous annotation and distort downstream applications.
-
-The `scDiagnostics` package provides functionality for the systematic
-evaluation of cell type assignments in scRNA-seq data.
-`scDiagnostics` offers a suite of diagnostic functions to assess
-whether both (query and reference) datasets are aligned, ensuring that
-annotations can be transferred reliably. `scDiagnostics` also provides
-functionality to assess annotation ambiguity, cluster heterogeneity,
-and marker gene alignment. The implemented functionality helps
-researchers to determine how accurately cells from a new scRNA-seq
-experiment can be assigned to known cell types.
+<h1> Getting started </h1>
 
 # Installation
 
-To install the development version of the package from Github, use the following
-command:
+<h4> Install a Bioconductor Package </h4>
 
-```{r dev_version_install, eval = FALSE}
+To install a package from Bioconductor use a following command:
+
+```{r install_bioc_package, eval=FALSE}
 BiocManager::install("ccb-hms/scDiagnostics")
 ```
 
-NOTE: you will need the [remotes](https://cran.r-project.org/web/packages/remotes/index.html)
-package to install from GitHub.
+NOTE: you will need the remotes package to install from github.
 
 To build the package vignettes upon installation use:
 
@@ -73,56 +42,56 @@ BiocManager::install("ccb-hms/scDiagnostics",
                      dependencies = TRUE)
 ```
 
+# Prerequisites
+
+R version tested: 4.2.3 (2023-03-15) 
+
+To use the scDiagnostics package, you need the following R packages installed:
+
+ * SingleCellExperiment
+ * scRNAseq
+ * scater
+ * scran
+ * ggplot2
+ * AUCell
+ * SingleR
+ * Matrix
+ * corrplot
+ * RColorBrewer
+
+ 
 # Usage
 
-To explore the capabilities of the scDiagnostics package, you can load
-your own data or utilize publicly available datasets obtained from the
-scRNAseq R package. In this guide, we will demonstrate how to use
-scDiagnostics with such datasets, which serve as valuable resources
-for exploring the package and assessing the appropriateness of cell
-type assignments.
+To explore the capabilities of the scDiagnostics package, you can load your own data or utilize publicly available datasets obtained from the scRNAseq R package. In this guide, we will demonstrate how to use scDiagnostics with such datasets, which serve as valuable resources for exploring the package and assessing the appropriateness of cell type assignments.
 
-```{r libraries, message = FALSE}
+```{r Libraries, warning=FALSE,message=FALSE}
+## Loading libraries
 library(scDiagnostics)
-library(celldex)
-library(corrplot)
 library(scater)
 library(scran)
 library(scRNAseq)
-library(AUCell)
 library(RColorBrewer)
 library(SingleR)
+library(AUCell)
+library(corrplot)
 ```
 
 ## Scatter Plot: QC stats vs. Annotation Scores
 
-Here, we will consider the Human Primary Cell Atlas (Mabbott et
-al. 2013) as a reference dataset and our query dataset consists of
-Haematopoietic stem and progenitor cells from (Bunis DG et al. 2021).
+Here, we will consider the Human Primary Cell Atlas (Mabbott et al. 2013) as a reference dataset and our query dataset consists of Haematopoietic stem and progenitor cells from (Bunis DG et al. 2021).
 
-In scRNA-seq studies, assessing the quality of cells is important for
-accurate downstream analyses. At the same time, assigning accurate
-cell type labels based on gene expression profiles is an integral
-aspect of scRNA-seq data interpretation. Generally, these two are
-performed independently of each other. The rationale behind this
-function is to inspect whether certain QC (Quality Control) criteria
-impact the confidence level of cell type annotations.
+In scRNA-seq studies, assessing the quality of cells is important for accurate downstream analyses. At the same time, assigning accurate cell type labels based on gene expression profiles is an integral aspect of scRNA-seq data interpretation. Generally, these two are performed independently of each other. The rationale behind this function is to inspect whether certain QC (Quality Control) criteria impact the confidence level of cell type annotations. 
 
-For instance, it is reasonable to hypothesize that higher library
-sizes could contribute to increased annotation confidence due to
-enhanced statistical power for identifying cell type-specific gene
-expression patterns, as evident in the scatter plot below.
+For instance, it is reasonable to hypothesize that higher library sizes could contribute to increased annotation confidence due to enhanced statistical power for identifying cell type-specific gene expression patterns, as evident in the scatter plot below.
 
 ```{r Scatter-Plot-LibrarySize-Vs-Annotation-Scores, warning=FALSE, message=FALSE}
 
 # load reference dataset
-ref_data <- celldex::HumanPrimaryCellAtlasData()
+ref_data <- HumanPrimaryCellAtlasData()
 
-# Load query dataset (Bunis haematopoietic stem and progenitor cell
-# data) from Bunis DG et al. (2021). Single-Cell Mapping of
-# Progressive Fetal-to-Adult Transition in Human Naive T Cells Cell
-# Rep. 34(1): 108573
-
+# Load query dataset (Bunis haematopoietic stem and progenitor cell data) from 
+# Bunis DG et al. (2021). Single-Cell Mapping of Progressive Fetal-to-Adult 
+# Transition in Human Naive T Cells Cell Rep. 34(1): 108573
 query_data <- BunisHSPCData()
 rownames(query_data) <- rowData(query_data)$Symbol
 
@@ -155,19 +124,9 @@ p1 <- plotQCvsAnnotation(
 p1 + xlab("Library Size")
 ```
 
-However, certain QC metrics, such as the proportion of mitochondrial
-genes, may require careful consideration as they can sometimes be
-associated with cellular states or functions rather than noise. The
-interpretation of mitochondrial content should be context-specific and
-informed by biological knowledge.
+However, certain QC metrics, such as the proportion of mitochondrial genes, may require careful consideration as they can sometimes be associated with cellular states or functions rather than noise. The interpretation of mitochondrial content should be context-specific and informed by biological knowledge.
 
-In next analysis, we investigated the relationship between
-mitochondrial percentage and cell type annotation scores using liver
-tissue data from He S et al. 2020. Notably, we observed high
-annotation scores for macrophages and monocytes. These findings align
-with the established biological characteristic of high mitochondrial
-activity in macrophages and monocytes, adding biological context to
-our results.
+In next analysis, we investigated the relationship between mitochondrial percentage and cell type annotation scores using liver tissue data from He S et al. 2020. Notably, we observed high annotation scores for macrophages and monocytes. These findings align with the established biological characteristic of high mitochondrial activity in macrophages and monocytes, adding biological context to our results.
 
 ```{r QC-Annotation-Scatter-Mito, warning=FALSE, message=FALSE}
 # load query dataset
@@ -178,10 +137,9 @@ query_data <- HeOrganAtlasData(
 )
 
 # Add QC metrics to query data
-
 mito_genes <- rownames(query_data)[grep("^MT-", rownames(query_data))]
 query_data <- unfiltered <- addPerCellQC(query_data,subsets = list(mt = mito_genes))
-qc <- quickPerCellQC(colData(query_data), sub.fields = "subsets_mt_percent")
+qc <- quickPerCellQC(colData(query_data),sub.fields="subsets_mt_percent")
 query_data <- query_data[,!qc$discard]
 
 # Log transform query dataset
@@ -199,12 +157,10 @@ scores <- apply(pred$scores, 1, max)
 # Assign scores to query data
 colData(query_data)$cell_scores <- scores
 
-# Create a new column for the labels so it is easy to distinguish
-#  between Macrophoges, Monocytes and other cells
-query_data$label_category <-
-    ifelse(query_data$pred.labels %in% c("Macrophage", "Monocyte"),
-           query_data$pred.labels,
-           "Other cells")
+# Create a new column for the labels so it is easy to distinguish between Macrophoges, Monocytes and other cells
+query_data$label_category <- ifelse(query_data$pred.labels %in% c("Macrophage", "Monocyte"),
+                                     query_data$pred.labels,
+                                     "Other cells")
 
 
 # Define custom colors for cell type labels
@@ -224,26 +180,13 @@ p1
 
 ## Examining Distribution of QC stats and Annotation Scores
 
-In addition to the scatter plot, we can gain further insights into the
-gene expression profiles by visualizing the distribution of user
-defined QC stats and annotation scores for all the cell types or
-specific cell types. This allows us to examine the variation and
-patterns in expression levels and scores across cells assigned to the
-cell type of interest.
+In addition to the scatter plot, we can gain further insights into the gene expression profiles by visualizing the distribution of user defined QC stats and annotation scores for all the cell types or specific cell types. This allows us to examine the variation and patterns in expression levels and scores across cells assigned to the cell type of interest.
 
-To accomplish this, we create two separate histograms. The first
-histogram displays the distribution of the annotation scores.
+To accomplish this, we create two separate histograms. The first histogram displays the distribution of the annotation scores. 
 
-The second histogram visualizes the distribution of QC stats. This
-provides insights into the overall gene expression levels for the
-specific cell type. Here in this particular example we are
-investigating percentage of mitochondrial genes.
+The second histogram visualizes the distribution of QC stats. This provides insights into the overall gene expression levels for the specific cell type. Here in this particular example we are investigating percentage of mitochondrial genes.
 
-By examining the histograms, we can observe the range, shape, and
-potential outliers in the distribution of both annotation scores and
-QC stats. This allows us to assess the appropriateness of the cell
-type assignments and identify any potential discrepancies or patterns
-in the gene expression profiles for the specific cell type.
+By examining the histograms, we can observe the range, shape, and potential outliers in the distribution of both annotation scores and QC stats. This allows us to assess the appropriateness of the cell type assignments and identify any potential discrepancies or patterns in the gene expression profiles for the specific cell type.
 
 ```{r Mito-Genes-Vs-Annotation, warning=FALSE, message=FALSE}
 # Generate histogram
@@ -253,25 +196,13 @@ histQCvsAnnotation(query_data = query_data, qc_col = "subsets_mt_percent",
                    label = NULL)
 ```
 
-The right-skewed distribution for mitochondrial percentages and a
-left-skewed distribution for annotation scores in above histograms
-suggest that most cells have lower mitochondrial contamination and
-higher confidence in their assigned cell types.
+The right-skewed distribution for mitochondrial percentages and a left-skewed distribution for annotation scores in above histograms suggest that most cells have lower mitochondrial contamination and higher confidence in their assigned cell types. 
 
 ## Exploring Gene Expression Distribution
 
-This function helps user to explore the distribution of gene
-expression values for a specific gene of interest across all the cells
-in both reference and query datasets and within specific cell
-types. This helps to evaluate whether the distributions are similar or
-aligned between the datasets. Discrepancies in distribution patterns
-may indicate potential incompatibilities or differences between the
-datasets.
+This function helps user to explore the distribution of gene expression values for a specific gene of interest across all the cells in both reference and query datasets and within specific cell types. This helps to evaluate whether the distributions are similar or aligned between the datasets. Discrepancies in distribution patterns may indicate potential incompatibilities or differences between the datasets. 
 
-The function also allows users to narrow down their analysis to
-specific cell types of interest. This enables investigation of whether
-alignment between the query and reference datasets is consistent not
-only at a global level but also within specific cell types.
+The function also allows users to narrow down their analysis to specific cell types of interest. This enables investigation of whether alignment between the query and reference datasets is consistent not only at a global level but also within specific cell types.
 
 ```{r Gene-Expression-Histogram, warning=FALSE, message=FALSE}
 
@@ -308,26 +239,11 @@ plotMarkerExpression(reference_data = ref_data,
                      label = "B_and_plasma")
 ```
 
-In the provided example, we examined the distribution of expression
-values for the gene MS4A1, a marker for naive B cells, in both the
-query and reference datasets. Additionally, we also looked at the
-distribution of MS4A1 expression in the B_and_plasma cell type. We
-observed overlapping distributions in both cases, suggesting alignment
-between the reference and query datasets.
+In the provided example, we examined the distribution of expression values for the gene MS4A1, a marker for naive B cells, in both the query and reference datasets. Additionally, we also looked at the distribution of MS4A1 expression in the B_and_plasma cell type. We observed overlapping distributions in both cases, suggesting alignment between the reference and query datasets.
 
 ## Evaluating Alignment Between Reference and Query Datasets in Terms of Highly Variable Genes
 
-We are assessing the similarity or alignment between two datasets, the
-reference dataset, and the query dataset, in terms of highly variable
-genes (HVGs). We calculate the overlap coefficient between the sets of
-highly variable genes in the reference and query datasets. The overlap
-coefficient quantifies the degree of overlap or similarity between
-these two sets of genes. A value closer to 1 indicates a higher degree
-of overlap, while a value closer to 0 suggests less overlap. The
-computed overlap coefficient is printed, providing a numerical measure
-of how well the highly variable genes in the reference and query
-datasets align. In this case, the overlap coefficient is 0.62,
-indicating a moderate level of overlap.
+We are assessing the similarity or alignment between two datasets, the reference dataset, and the query dataset, in terms of highly variable genes (HVGs). We calculate the overlap coefficient between the sets of highly variable genes in the reference and query datasets. The overlap coefficient quantifies the degree of overlap or similarity between these two sets of genes. A value closer to 1 indicates a higher degree of overlap, while a value closer to 0 suggests less overlap. The computed overlap coefficient is printed, providing a numerical measure of how well the highly variable genes in the reference and query datasets align. In this case, the overlap coefficient is 0.62, indicating a moderate level of overlap.
 
 ```{r HVG overlap, warning=FALSE, message=FALSE}
 
@@ -341,31 +257,13 @@ overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var,
 print(overlap_coefficient)
 ```
 
-In the provided example, we examined the distribution of expression
-values for the gene MS4A1, a marker for naive B cells, in both the
-query and reference datasets. Additionally, we also looked at the
-distribution of MS4A1 expression in the B_and_plasma cell type. We
-observed overlapping distributions in both cases, suggesting alignment
-between the reference and query datasets.
+In the provided example, we examined the distribution of expression values for the gene MS4A1, a marker for naive B cells, in both the query and reference datasets. Additionally, we also looked at the distribution of MS4A1 expression in the B_and_plasma cell type. We observed overlapping distributions in both cases, suggesting alignment between the reference and query datasets.
 
 ## Visualize Gene Expression on Dimensional Reduction Plot
 
-To gain insights into the gene expression patterns and their
-representation in a dimensional reduction space, we can utilize the
-plotGeneExpressionDimred function. This function allows us to plot the
-gene expression values of a specific gene on a dimensional reduction
-plot generated using methods like t-SNE, UMAP, or PCA. Each single
-cell is color-coded based on its expression level of the gene of
-interest.
+To gain insights into the gene expression patterns and their representation in a dimensional reduction space, we can utilize the plotGeneExpressionDimred function. This function allows us to plot the gene expression values of a specific gene on a dimensional reduction plot generated using methods like t-SNE, UMAP, or PCA. Each single cell is color-coded based on its expression level of the gene of interest.
 
-In the provided example, we are visualizing the gene expression values
-of the gene "VPREB3" on a PCA plot. The PCA plot represents the cells
-in a lower-dimensional space, where the x-axis corresponds to the
-first principal component (Dimension 1) and the y-axis corresponds to
-the second principal component (Dimension 2). Each cell is represented
-as a point on the plot, and its color reflects the expression level of
-the gene "VPREB3," ranging from low (lighter color) to high (darker
-color).
+In the provided example, we are visualizing the gene expression values of the gene "VPREB3" on a PCA plot. The PCA plot represents the cells in a lower-dimensional space, where the x-axis corresponds to the first principal component (Dimension 1) and the y-axis corresponds to the second principal component (Dimension 2). Each cell is represented as a point on the plot, and its color reflects the expression level of the gene "VPREB3," ranging from low (lighter color) to high (darker color).
 
 ```{r Gene-Expression-Scatter, warning=FALSE, message=FALSE}
 # Generate dimension reduction plot color code by gene expression
@@ -375,34 +273,19 @@ plotGeneExpressionDimred(se_object = query_data,
                          feature = "VPREB3")
 ```
 
-The dimensional reduction plot allows us to observe how the gene
-expression of VPREB3 is distributed across the cells and whether any
-clusters or patterns emerge in the data.
+The dimensional reduction plot allows us to observe how the gene expression of VPREB3 is distributed across the cells and whether any clusters or patterns emerge in the data.
 
 ## Visualize Gene Sets or Pathway Scores on Dimensional Reduction Plot
 
-In addition to examining individual gene expression patterns, it is
-often useful to assess the collective activity of gene sets or
-pathways within single cells. This can provide insights into the
-functional states or biological processes associated with specific
-cell types or conditions. To facilitate this analysis, the
-scDiagnostics package includes a function called plotGeneSetScores
-that enables the visualization of gene set or pathway scores on a
-dimensional reduction plot.
+In addition to examining individual gene expression patterns, it is often useful to assess the collective activity of gene sets or pathways within single cells. This can provide insights into the functional states or biological processes associated with specific cell types or conditions. To facilitate this analysis, the scDiagnostics package includes a function called plotGeneSetScores that enables the visualization of gene set or pathway scores on a dimensional reduction plot.
 
-The plotGeneSetScores function allows you to plot gene set or pathway
-scores on a dimensional reduction plot generated using methods such as
-PCA, t-SNE, or UMAP. Each single cell is color-coded based on its
-scores for specific gene sets or pathways. This visualization helps
-identify the heterogeneity and patterns of gene set or pathway
-activity within the dataset, potentially revealing subpopulations with
-distinct functional characteristics.
+The plotGeneSetScores function allows you to plot gene set or pathway scores on a dimensional reduction plot generated using methods such as PCA, t-SNE, or UMAP. Each single cell is color-coded based on its scores for specific gene sets or pathways. This visualization helps identify the heterogeneity and patterns of gene set or pathway activity within the dataset, potentially revealing subpopulations with distinct functional characteristics.
 
 ```{r Pathway-Scores-on-Dimensional-Reduction-Scatter, warning=FALSE, message=FALSE}
 
 # Compute scores using AUCell
 expression_matrix <- assay(query_data, "logcounts")
-cells_rankings <- AUCell_buildRankings(expression_matrix, plotStats = FALSE)
+cells_rankings <- AUCell_buildRankings(expression_matrix, plotStats = F)
 
 # Generate gene sets
 gene_set1 <- sample(rownames(expression_matrix), 10)
@@ -423,36 +306,15 @@ plotGeneSetScores(se_object = query_data,
                   feature = "geneSetScores")
 ```
 
-In the provided example, we demonstrate the usage of the
-plotGeneSetScores function using the AUCell package to compute gene
-set or pathway scores. Custom gene sets are generated for
-demonstration purposes, but users can provide their own gene set
-scores using any method of their choice. It is important to ensure
-that the scores are assigned to the colData of the reference or query
-object and specify the correct feature name for visualization.
+In the provided example, we demonstrate the usage of the plotGeneSetScores function using the AUCell package to compute gene set or pathway scores. Custom gene sets are generated for demonstration purposes, but users can provide their own gene set scores using any method of their choice. It is important to ensure that the scores are assigned to the colData of the reference or query object and specify the correct feature name for visualization.
 
-By visualizing gene set or pathway scores on a dimensional reduction
-plot, you can gain a comprehensive understanding of the functional
-landscape within your single-cell gene expression dataset and explore
-the relationships between gene set activities and cellular phenotypes.
+By visualizing gene set or pathway scores on a dimensional reduction plot, you can gain a comprehensive understanding of the functional landscape within your single-cell gene expression dataset and explore the relationships between gene set activities and cellular phenotypes.
 
 ## Visualizing Reference and Query Cell Types using Multidimensional Scaling (MDS)
 
-This function performs Multidimensional Scaling (MDS) analysis on the
-query and reference datasets to examine their similarity. The
-dissimilarity matrix is calculated based on the correlation between
-the datasets, representing the distances between cells in terms of
-gene expression patterns. MDS is then applied to derive
-low-dimensional coordinates for each cell. Subsequently, a scatter
-plot is generated, where each data point represents a cell, and cell
-types are color-coded using custom colors provided by the user. This
-visualization enables the comparison of cell type distributions
-between the query and reference datasets in a reduced-dimensional
-space.
+This function performs Multidimensional Scaling (MDS) analysis on the query and reference datasets to examine their similarity. The dissimilarity matrix is calculated based on the correlation between the datasets, representing the distances between cells in terms of gene expression patterns. MDS is then applied to derive low-dimensional coordinates for each cell. Subsequently, a scatter plot is generated, where each data point represents a cell, and cell types are color-coded using custom colors provided by the user. This visualization enables the comparison of cell type distributions between the query and reference datasets in a reduced-dimensional space.
 
-The rationale behind this function is to visually assess the alignment
-and relationships between cell types in the query and reference
-datasets.
+The rationale behind this function is to visually assess the alignment and relationships between cell types in the query and reference datasets.
 
 ```{r CMD-Scatter-Plot, warning=FALSE, message=FALSE}
 
@@ -488,32 +350,18 @@ visualizeCellTypeMDS(query_data = query_data_subset,
                      legend_order = legend_order)
 ```
 
-Upon examining the MDS scatter plot, we observe that the CD4 and CD8
-cell types overlap to some extent.By observing the proximity or
-overlap of different cell types, one can gain insights into their
-potential relationships or shared characteristics.
+Upon examining the MDS scatter plot, we observe that the CD4 and CD8 cell types overlap to some extent.By observing the proximity or overlap of different cell types, one can gain insights into their potential relationships or shared characteristics.
 
-The selection of custom genes and desired cell types depends on the
-user's research interests and goals. It allows for flexibility in
-focusing on specific genes and examining particular cell types of
-interest in the visualization.
+The selection of custom genes and desired cell types depends on the user's research interests and goals. It allows for flexibility in focusing on specific genes and examining particular cell types of interest in the visualization.
 
 ## Cell Type-specific Pairwise Correlation Analysis and Visualization
 
-This analysis aims to explore the correlation patterns between
-different cell types in a single-cell gene expression dataset. The
-goal is to compare the gene expression profiles of cells from a
-reference dataset and a query dataset to understand the relationships
-and similarities between various cell types.
+This analysis aims to explore the correlation patterns between different cell types in a single-cell gene expression dataset. The goal is to compare the gene expression profiles of cells from a reference dataset and a query dataset to understand the relationships and similarities between various cell types. 
 
-To perform the analysis, we start by computing the pairwise
-correlations between the query and reference cells for selected cell
-types ("CD4", "CD8", "B_and_plasma"). The Spearman correlation method
-is used, user can also use Pearsons correlation coeefficient.
+To perform the analysis, we start by computing the pairwise correlations between the query and reference cells for selected cell types ("CD4", "CD8", "B_and_plasma"). The Spearman correlation method is used, user can also use Pearsons correlation coeefficient.
 
-This will return average correlation matrix which can be visulaized by
-user's method of choice. Here, the results are visualized as a
-correlation plot using the corrplot package.
+This will return average correlation matrix which can be visulaized by user's method of choice. Here, 
+the results are visualized as a correlation plot using the corrplot package.
 
 
 ```{r Cell-Type-Correlation-Analysis-Visualization, warning=FALSE, message=FALSE}
@@ -529,38 +377,19 @@ cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subs
 corrplot(cor_matrix_avg, method = "number", tl.col = "black")
 ```
 
-In this case, users have the flexibility to extract the gene
-expression profiles of specific cell types from the reference and
-query datasets and provide these profiles as input to the
-function. Additionally, they can select their own set of genes that
-they consider relevant for computing the pairwise correlations. For
-demonstartion we have used common highly variable genes from reference
-and query dataset.
+In this case, users have the flexibility to extract the gene expression profiles of specific cell types from the reference and query datasets and provide these profiles as input to the function. Additionally, they can select their own set of genes that they consider relevant for computing the pairwise correlations. For demonstartion we have used common highly variable genes from reference and query dataset.
 
-By providing their own gene expression profiles and choosing specific
-genes, users can focus the analysis on the cell types and genes of
-interest to their research question.
+By providing their own gene expression profiles and choosing specific genes, users can focus the analysis on the cell types and genes of interest to their research question. 
 
 ## Pairwise Distance Analysis and Density Visualization
 
-This function serves to conduct a analysis of pairwise distances or
-correlations between cells of specific cell types within a single-cell
-gene expression dataset. By calculating these distances or
-correlations, users can gain insights into the relationships and
-differences in gene expression profiles between different cell
-types. The function facilitates this analysis by generating density
-plots, allowing users to visualize the distribution of distances or
-correlations for various pairwise comparisons.
+This function serves to conduct a analysis of pairwise distances or correlations between cells of specific cell types within a single-cell gene expression dataset. By calculating these distances or correlations, users can gain insights into the relationships and differences in gene expression profiles between different cell types. The function facilitates this analysis by generating density plots, allowing users to visualize the distribution of distances or correlations for various pairwise comparisons.
 
-The analysis offers the flexibility to select a particular cell type
-for examination, and users can choose between different distance
-metrics, such as "euclidean" or "manhattan," to calculate pairwise
-distances.
+The analysis offers the flexibility to select a particular cell type for examination, and users can choose between different distance metrics, such as "euclidean" or "manhattan," to calculate pairwise distances.
 
-To illustrate, the function is applied to the cell type CD8 using the
-euclidean distance metric in the example below.
+To illustrate, the function is applied to the cell type CD8 using the euclidean distance metric in the example below.
 
-```{r Pairwise-Distance-Analysis-Density-Visualization, fig.width=8, message=FALSE, warning=FALSE}
+```{r Pairwise-Distance-Analysis-Density-Visualization, warning=FALSE, message=FALSE, fig.width=8}
 calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, 
                                          reference_data = ref_data_subset, 
                                          query_cell_type_col = "labels", 
@@ -570,14 +399,9 @@ calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset,
                                          distance_metric = "euclidean")
 ```
 
-Alternatively, users can opt for the "correlation" distance metric,
-which measures the similarity in gene expression profiles between
-cells.
+Alternatively, users can opt for the "correlation" distance metric, which measures the similarity in gene expression profiles between cells. 
 
-To illustrate, the function is applied to the cell type CD8 using the
-correlation distance metric in the example below. By selecting either
-the "pearson" or "spearman" correlation method, users can emphasize
-either linear or rank-based associations, respectively.
+To illustrate, the function is applied to the cell type CD8 using the correlation distance metric in the example below. By selecting either the "pearson" or "spearman" correlation method, users can emphasize either linear or rank-based associations, respectively.
 
 ```{r Pairwise-Distance-Correlation-Based-Density-Visualization, warning=FALSE, message=FALSE, fig.width=8}
 calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, 
@@ -590,39 +414,21 @@ calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset,
                                          correlation_method = "spearman")
 ```
 
-By utilizing this function, users can explore the pairwise distances
-between query and reference cells of a specific cell type and gain
-insights into the distribution of distances through density
-plots. This analysis aids in understanding the similarities and
-differences in gene expression profiles for the selected cell type
-within the query and reference datasets.
+By utilizing this function, users can explore the pairwise distances between query and reference cells of a specific cell type and gain insights into the distribution of distances through density plots. This analysis aids in understanding the similarities and differences in gene expression profiles for the selected cell type within the query and reference datasets.
 
 ## PC regression analysis
 
-Performing PC regression analysis on a SingleCellExperiment object
-enables users to examine the relationship between a principal
-component (PC) from the dimension reduction slot and an independent
-variable of interest. By specifying the desired dependent variable as
-one of the principal components (e.g., "PC1", "PC2", etc.) and
-providing the corresponding independent variable from the colData slot
-(e.g. "cell_type"), users can explore the associations between linear
-structure in the single-cell gene expression dataset (reference and
-query) and an independent variable of interest (e.g. cell type or
-batch).
+Performing PC regression analysis on a SingleCellExperiment object enables users to examine the relationship between a principal component (PC) from the dimension reduction slot and an independent variable of interest. By specifying the desired dependent variable as one of the principal components (e.g., "PC1", "PC2", etc.) and providing the corresponding independent variable from the colData slot (e.g. "cell_type"), users can explore the associations between linear structure in the single-cell gene expression dataset (reference and query) and an independent variable of interest (e.g. cell type or batch).
 
 The function prints two diagnostic plots by default:
 
 * a plot of the two PCs with the highest R^2^ with the specified independent variable
 * a dot plot showing the R^2^ of each consecutive PC ~ indep.var regression
   * Generally you should expect this plot to die off to near 0 before ~PC10
-  * Interpretation example: If the R^2^ values are high (>=50%)
-    anywhere in PCs 1-5 and your independent variable is "batch", you
-    have batch effects!
+  * Interpretation example: If the R^2^ values are high (>=50%) anywhere in PCs 1-5 and your independent variable is "batch", you have batch effects!
 
 ```{r Regression, warning=FALSE, message=FALSE}
-
-# Specify the dependent variables (principal components) and
-#  independent variable (e.g., "labels")
+ # Specify the dependent variables (principal components) and independent variable (e.g., "labels")
 dep.vars <- paste0("PC", 1:12)
 indep.var <- "labels"
 
@@ -631,8 +437,7 @@ result <- regressPC(sce = query_data,
                     dep.vars = dep.vars, 
                     indep.var = indep.var)
 
-# Print the summaries of the linear regression models and R-squared
-#  values
+# Print the summaries of the linear regression models and R-squared values
 
 # Summaries of the linear regression models
 result$regression.summaries[[1]]
@@ -647,17 +452,9 @@ result$var.contributions
 result$total.variance.explained
 ```
 
-This analysis helps uncover whether there is a systematic variation in
-PC values across different cell types. In the example above, we can
-see that the four cell types are spread out across both PC1 and
-PC2. Digging into the genes with high loadins on these PCs can help
-explain the biological or technical factors driving cellular
-heterogeneity. It can help identify PC dimensions that capture
-variation specific to certain cell types or distinguish different
-cellular states.
+This analysis helps uncover whether there is a systematic variation in PC values across different cell types. In the example above, we can see that the four cell types are spread out across both PC1 and PC2. Digging into the genes with high loadins on these PCs can help explain the biological or technical factors driving cellular heterogeneity. It can help identify PC dimensions that capture variation specific to certain cell types or distinguish different cellular states. 
 
-Let's look at the genes driving PC1 by ordering the rotation matrix by
-the absolute gene loadings for PC1:
+Let's look at the genes driving PC1 by ordering the rotation matrix by the absolute gene loadings for PC1:
 
 ```{r}
 pc_df <-  attr(reducedDims(query_data)$PCA, "rotation")[,1:5] |> 
@@ -667,9 +464,7 @@ pc_df[order(abs(pc_df$PC1)),] |>
   tail()
 ```
 
-PC1 is mostly driven by NKG7 - Natural Killer Cell Granule Protein
-7. This gene is important in CD8+ T cells, so that makes sense that
-it's distinguishing the cell types shown.
+PC1 is mostly driven by NKG7 - Natural Killer Cell Granule Protein 7. This gene is important in CD8+ T cells, so that makes sense that it's distinguishing the cell types shown.
 
 > Exercise: What genes are driving PC2? Do they make sense?
 
@@ -680,8 +475,7 @@ pc_df[order(abs(pc_df$PC2)),] |>
 # It's IL32 mostly.
 ```
 
-> Exercise: Try to use the command below to examine the spike on
-  PC5. What's going on there?
+> Exercise: Try to use the command below to examine the spike on PC5. What's going on there?
 
 `plotPCA(query_data, ncomponents = c(1,5), color_by = "labels")`
 
@@ -696,65 +490,28 @@ pc_df[order(abs(pc_df$PC5))] |>
 
 ## Outlier detection
 
-Isolation forests are a fast and effective method for detecting
-outliers in high-dimensional data without relying on density
-estimation. `calculateOutlierScore()` is a wrapper around the main
-function of the [isotree
-package](https://cran.r-project.org/web/packages/isotree/index.html). Here
-we run it on the PC embeddings but, it can also be informative to run
-it on the raw counts. Here we can see some outliers in PC1/2 space
-flagged by the default `score > 0.5` threshold due to their clear
-isolation (as well as a few that are isolated on the non-visualized
-PCs).
+Isolation forests are a fast and effective method for detecting outliers in high-dimensional data without relying on density estimation. `calculateOutlierScore()` is a wrapper around the main function of the [isotree package](https://cran.r-project.org/web/packages/isotree/index.html). Here we run it on the PC embeddings but, it can also be informative to run it on the raw counts. Here we can see some outliers in PC1/2 space flagged by the default `score > 0.5` threshold due to their clear isolation (as well as a few that are isolated on the non-visualized PCs).
 
 ```{r}
 query_data <- calculateOutlierScore(query_data, 
-                                    use_pcs = TRUE)
-
-scater::plotReducedDim(query_data, 
-                       dimred = "PCA", 
-                       color_by = "outlier_score",
-                       shape_by = "is_outlier")
+                                    use_pcs = TRUE, 
+                                    plot = TRUE,
+                                    dimred = "PCA")
 ```
 
-By default this evaluates an isolation forest across all cells in the object. One can optionally pass a `group.var` (a column in the colData) to evaluate the outlier detection by groups (e.g. cell type). This can help assess whether a cell is atypical amongst those it was clustered with.
+Columns `outlier_score` and `is_outlier` are added to the colData of the output. The isotree model object itself is added to the metadata.
 
-Columns `outlier_score` and `is_outlier` are added to the colData of
-the output. The isotree model object itself is added to the metadata.
-
-One can pass different `dimred` names to change the plot, but running
-an isolation in forest in e.g. tSNE or UMAP space does not make sense
-due to the non-linearity of these approaches. Hence this is not
-allowed - when `use_pcs = FALSE`, the raw logcounts are used instead.
+One can pass different `dimred` names to change the plot, but running an isolation in forest in e.g. tSNE or UMAP space does not make sense due to the non-linearity of these approaches. Hence this is not allowed - when `use_pcs = FALSE`, the logcounts are used instead.
 
 ## Annotation entropy
 
-In order to assess the confidence of cell type predictions, we can use
-the function `calculateCategorizationEntropy()`. This function
-calculates the information entropy of assignment probabilities across
-a set of cell types for each cell. If a set of class probabilities are
-confident, the entropies will be low.
+In order to assess the confidence of cell type predictions, we can use the function `calculateCategorizationEntropy()`. This function calculates the information entropy of assignment probabilities across a set of cell types for each cell. If a set of class probabilities are confident, the entropies will be low. 
 
-This can be used to compare two sets of cell type assignments
-(e.g. from different type assignment methods) to compare their
-relative confidence. **Please note that this has nothing to do with
-their accuracy!** Computational methods can sometimes be confidently
-incorrect.
+This can be used to compare two sets of cell type assignments (e.g. from different type assignment methods) to compare their relative confidence. **Please note that this has nothing to do with their accuracy!** Computational methods can sometimes be confidently incorrect.
 
-The cell type probabilities should be passed as a matrix with cell
-types as rows and cells as columns. If the columns of the matrix are
-not valid probability distributions (i.e. don't sum to 1 as in the
-below example), the function will perform a column-wise softmax to
-convert them to a probability scale. This may or may not work well
-depending on the distribution of the inputs, so if at all possible try
-to pass probabilities instead of arbitrary scores.
+The cell type probabilities should be passed as a matrix with cell types as rows and cells as columns. If the columns of the matrix are not valid probability distributions (i.e. don't sum to 1 as in the below example), the function will perform a column-wise softmax to convert them to a probability scale. This may or may not work well depending on the distribution of the inputs, so if at all possible try to pass probabilities instead of arbitrary scores.
 
-In this example, we create 500 random cells with random normal cell
-type "scores" across 4 cell types. For demonstration we make the score
-of the first class much higher in the first 250 cells. After the
-softmax, this will equate to a very high probability of cell type
-1. The remaining 250 will have assignments that are roughly even
-across the four cell types (i.e. high entropy).
+In this example, we create 500 random cells with random normal cell type "scores" across 4 cell types. For demonstration we make the score of the first class much higher in the first 250 cells. After the softmax, this will equate to a very high probability of cell type 1. The remaining 250 will have assignments that are roughly even across the four cell types (i.e. high entropy).
 
 ```{r}
 X <- rnorm(500 * 4) |> matrix(nrow = 4)
@@ -763,38 +520,26 @@ X[1, 1:250] <- X[1, 1:250] + 5
 entropy_scores <- calculateCategorizationEntropy(X)
 ```
 
-From the plot we can see that half of the cells (the first half we
-shifted to class 1) have low entropy, and half have high entropy.
+From the plot we can see that half of the cells (the first half we shifted to class 1) have low entropy, and half have high entropy.
 
 # Conclusion
 
-In this analysis, we have demonstrated the capabilities of the
-scDiagnostics package for assessing the appropriateness of cell
-assignments in single-cell gene expression profiles. By utilizing
-various diagnostic functions and visualization techniques, we have
-explored different aspects of the data, including total UMI counts,
-annotation scores, gene expression distributions, dimensional
-reduction plots, gene set scores, pairwise correlations, pairwise
-distances, and linear regression analysis.
+In this analysis, we have demonstrated the capabilities of the scDiagnostics package for assessing the appropriateness of cell assignments in single-cell gene expression profiles. By utilizing various diagnostic functions and visualization techniques, we have explored different aspects of the data, including total UMI counts, annotation scores, gene expression distributions, dimensional reduction plots, gene set scores, pairwise correlations, pairwise distances, and linear regression analysis.
 
-Through the scatter plots, histograms, and dimensional reduction
-plots, we were able to gain insights into the relationships between
-gene expression patterns, cell types, and the distribution of cells in
-a reduced-dimensional space. The examination of gene expression
-distributions, gene sets, and pathways allowed us to explore the
-functional landscape and identify subpopulations with distinct
-characteristics within the dataset. Additionally, the pairwise
-correlation and distance analyses provided a deeper understanding of
-the similarities and differences between cell types, highlighting
-potential relationships and patterns.
+Through the scatter plots, histograms, and dimensional reduction plots, we were able to gain insights into the relationships between gene expression patterns, cell types, and the distribution of cells in a reduced-dimensional space. The examination of gene expression distributions, gene sets, and pathways allowed us to explore the functional landscape and identify subpopulations with distinct characteristics within the dataset. Additionally, the pairwise correlation and distance analyses provided a deeper understanding of the similarities and differences between cell types, highlighting potential relationships and patterns.
+
 
 ***
 
 ## R.session Info
 
 ```{r SessionInfo, echo=FALSE, message=FALSE, warning=FALSE, comment=NA}
-options(width = 80) #reset to 'default' width
+#options(width=900) #only works properly in conjunction with the style:overflow.x option at the start
+options(width=80) #reset to 'default' width
 
 sessionInfo() #record the R and package versions used
+#######################################################
+### END
+#######################################################
 ```
 
