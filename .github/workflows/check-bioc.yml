@@ -153,6 +153,8 @@ jobs:
         run: |
           message(paste('****', Sys.time(), 'installing BiocManager ****'))
           remotes::install_cran("BiocManager")
+          install.packages("Matrix", type = "source")
+          install.packages("irlba", type = "source")
         shell: Rscript {0}
 
       - name: Set BiocVersion
