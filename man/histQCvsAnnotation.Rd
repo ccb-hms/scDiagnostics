@@ -13,38 +13,34 @@ histQCvsAnnotation(
 )
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}}
-containing the single-cell expression data and metadata.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
+expression data and metadata.}
 
-\item{qc_col}{character. A column name in the \code{colData} of
-\code{query_data} that contains the QC stats of interest.}
+\item{qc_col}{character. A column name in the \code{colData} of \code{query_data} that 
+contains the QC stats of interest.}
 
-\item{label_col}{character. The column name in the \code{colData}
-of \code{query_data} that contains the cell type labels.}
+\item{label_col}{character. The column name in the \code{colData} of \code{query_data} 
+that contains the cell type labels.}
 
-\item{score_col}{numeric. The column name in the \code{colData} of
-\code{query_data} that contains the cell type scores.}
+\item{score_col}{numeric. The column name in the \code{colData} of \code{query_data} that 
+contains the cell type scores.}
 
-\item{label}{character. A vector of cell type labels to plot (e.g.,
-c("T-cell", "B-cell")).  Defaults to \code{NULL}, which will
-include all the cells.}
+\item{label}{character. A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).
+Defaults to \code{NULL}, which will include all the cells.}
 }
 \value{
-A object containing two histograms displayed side by side.
-    The first histogram represents the distribution of QC stats,
-    and the second histogram represents the distribution of
-    annotation scores.
+A object containing two histograms displayed side by side. 
+The first histogram represents the distribution of QC stats, 
+and the second histogram represents the distribution of annotation scores.
 }
 \description{
-This function generates histograms for visualizing the distribution
-of quality control (QC) statistics and annotation scores associated
-with cell types in single-cell genomic data.
+This function generates histograms for visualizing the distribution of quality control (QC) statistics and 
+annotation scores associated with cell types in single-cell genomic data.
 }
 \details{
-The particularly useful in the analysis of data from
-    single-cell experiments, where understanding the distribution
-    of these metrics is crucial for quality assessment and
-    interpretation of cell type annotations.
+The particularly useful in the analysis of data from single-cell experiments, 
+where understanding the distribution of these metrics is crucial for quality assessment and 
+interpretation of cell type annotations.
 }
 \examples{
 library(scater)
@@ -58,11 +54,7 @@ sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
 # Divide the data into reference and query datasets
 set.seed(100)
-indices <- sample(
-    ncol(assay(sce)),
-    size = floor(0.7 * ncol(assay(sce))),
-    replace = FALSE
-)
+indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
 ref_data <- sce[, indices]
 query_data <- sce[, -indices]
 

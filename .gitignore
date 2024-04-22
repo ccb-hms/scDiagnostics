@@ -13,6 +13,7 @@
 .Rcheck/
 *.log
 *.pdf
+*.html
 *.tex
 *.docx
 
@@ -36,3 +37,6 @@
 *.swp
 *.~lock.*
 /Meta/
+
+# Package experimentation
+sandbox

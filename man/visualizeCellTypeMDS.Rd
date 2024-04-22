@@ -13,46 +13,36 @@ visualizeCellTypeMDS(
 )
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}}
-containing the single-cell expression data and metadata.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
+expression data and metadata.}
 
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}}
-object containing the single-cell expression data and metadata.}
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
+expression data and metadata.}
 
-\item{mdata}{A character vector representing cell types from both
-the query and reference datasets.  These cell types are labels
-used for visualization in the Multidimensional Scaling (MDS)
-plot.  The vector should include names of cell types as they
-appear in both datasets, prefixed appropriately to distinguish
-between query and reference (e.g., "Query CD4",
-"Reference CD8").}
+\item{mdata}{A character vector representing cell types from both the query and reference datasets. 
+These cell types are labels used for visualization in the Multidimensional Scaling (MDS) plot. 
+The vector should include names of cell types as they appear in both datasets, 
+prefixed appropriately to distinguish between query and reference (e.g., "Query CD4", "Reference CD8").}
 
-\item{cell_type_colors}{A named vector of colors corresponding to
-the cell types specified in mdata.  Each color is used to
-uniquely identify a cell type in the MDS plot.}
+\item{cell_type_colors}{A named vector of colors corresponding to the cell types specified in mdata. 
+Each color is used to uniquely identify a cell type in the MDS plot.}
 
-\item{legend_order}{A character vector specifying the order of cell
-types in the plot legend.}
+\item{legend_order}{A character vector specifying the order of cell types in the plot legend.}
 }
 \value{
-A ggplot object representing the MDS scatter plot with cell
-    type coloring.
+A ggplot object representing the MDS scatter plot with cell type coloring.
 }
 \description{
-This function facilitates the assessment of similarity between
-reference and query datasets through Multidimensional Scaling (MDS)
-scatter plots. It allows the visualization of cell types,
-color-coded with user-defined custom colors, based on a
-dissimilarity matrix computed from a user-selected gene set.
+This function facilitates the assessment of similarity between reference and query datasets 
+through Multidimensional Scaling (MDS) scatter plots. It allows the visualization of cell types, 
+color-coded with user-defined custom colors, based on a dissimilarity matrix computed from a 
+user-selected gene set.
 }
 \details{
-To evaluate dataset similarity, the function selects
-    specific subsets of cells from both reference and query
-    datasets. It then calculates Spearman correlations between gene
-    expression profiles, deriving a dissimilarity matrix. This
-    matrix undergoes Classical Multidimensional Scaling (MDS) for
-    visualization, presenting cell types in a scatter plot,
-    distinguished by colors defined by the user.
+To evaluate dataset similarity, the function selects specific subsets of cells from 
+both reference and query datasets. It then calculates Spearman correlations between gene expression profiles, 
+deriving a dissimilarity matrix. This matrix undergoes Classical Multidimensional Scaling (MDS) for 
+visualization, presenting cell types in a scatter plot, distinguished by colors defined by the user.
 }
 \examples{
 library(scater)
@@ -65,11 +55,7 @@ sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
 # Divide the data into reference and query datasets
 set.seed(100)
-indices <- sample(
-    ncol(assay(sce)), 
-    size = floor(0.7 * ncol(assay(sce))), 
-    replace = FALSE
-)
+indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
 ref_data <- sce[, indices]
 query_data <- sce[, -indices]
 
@@ -117,5 +103,6 @@ plot <- visualizeCellTypeMDS(query_data = query_data_subset,
                             mdata = mdata, 
                             cell_type_colors = cell_type_colors, 
                             legend_order = legend_order)
+print(plot)
 
 }
