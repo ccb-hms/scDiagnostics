@@ -6,9 +6,8 @@
 \usage{
 calculateOutlierScore(
   sce,
-  dimred = NULL,
+  group.var = NULL,
   use_pcs = FALSE,
-  plot = TRUE,
   prediction_thresh = 0.5,
   ...
 )
@@ -16,14 +15,11 @@ calculateOutlierScore(
 \arguments{
 \item{sce}{a SingleCellExperiment object containing a logcounts matrix}
 
-\item{dimred}{if specified, plot the specified reduced dimension with
-\link[scater]{plotReducedDim}, colored by outlier score}
+\item{group.var}{if specified, run the outlier scoring by group (e.g. cell
+cluster) instead of across all cells globally.}
 
 \item{use_pcs}{if TRUE, run the outlier detection in principal component
 space. Otherwise, use logcounts.}
-
-\item{plot}{if TRUE and a dimred is specified, plot the isoscore against the
-specified dimred}
 
 \item{prediction_thresh}{threshold to use for binary outlier calling}
 
@@ -31,8 +27,8 @@ specified dimred}
 }
 \value{
 the SingleCellExperiment object with \code{outlier_score} and
-  \code{is_outlier} added to the colData. Also, the resulting isotree model is
-  attached to the object's metadata.
+  \code{is_outlier} added to the colData. Also, the resulting isotree model
+  is attached to the object's metadata.
 }
 \description{
 This function calculates outlier scores for each cell using
@@ -65,9 +61,9 @@ sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
 # Divide the data into reference and query datasets
 set.seed(100)
-query_data <- logNormCounts(query_data)
+query_data <- logNormCounts(sce)
 
 query_data <- runPCA(query_data)
 
-query_data <- calculateOutlierScore(query_data, plot = TRUE, dimred = "PCA", use_pcs = TRUE)
+query_data <- calculateOutlierScore(query_data, use_pcs = TRUE)
 }

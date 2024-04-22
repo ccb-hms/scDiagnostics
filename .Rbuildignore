@@ -3,4 +3,5 @@
 ^doc$
 ^Meta$
 ^\.github$
-sandbox
+^docs$
+^pkgdown$
