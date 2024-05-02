@@ -6,7 +6,7 @@
 #' @title PCA Anomaly Scores via Isolation Forests with Visualization
 #'
 #' @description \code{detectAnomalyPCA} performs diagnostics using isolation forest with PCA and visualization. 
-#' It takes reference and query SingleCellExperiment objects, their corresponding labels, and various parameters to perform 
+#' It takes reference and query code{\linkS4class{SingleCellExperiment}} objects, their corresponding labels, and various parameters to perform 
 #' the analysis. The function returns a list containing the results for each cell type, including anomaly scores, outlier IDs, 
 #' PCA data, and optional PCA anomaly plots.
 #'
