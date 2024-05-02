@@ -5,7 +5,7 @@
 #' 
 #' @title PCA Anomaly Scores via Isolation Forests with Visualization
 #'
-#' @description \code{detectAnomalyPCA} performs diagnostics using isolation forest with PCA and visualization. 
+#' @description \code{detectAnomaly} performs diagnostics using isolation forest with PCA and visualization. 
 #' It takes reference and query code{\linkS4class{SingleCellExperiment}} objects, their corresponding labels, and various parameters to perform 
 #' the analysis. The function returns a list containing the results for each cell type, including anomaly scores, outlier IDs, 
 #' PCA data, and optional PCA anomaly plots.
@@ -62,15 +62,15 @@
 #' colData(query_data)$labels <- scores$labels
 #'
 #' # Store PCA anomaly data and plots
-#' iForest_output <- detectAnomalyPCA(reference_sce = ref_data, query_sce = query_data, 
-#'                                    reference_labels = ref_data$reclustered.broad, 
-#'                                    query_labels = query_data$labels,
-#'                                    n_pca = 10,
-#'                                    n_hvg = 2000,
-#'                                    n_tree = 100,
-#'                                    anomaly_treshold = 0.5,
-#'                                    verbose = FALSE,
-#'                                    store_plots = TRUE)
+#' iForest_output <- detectAnomaly(reference_sce = ref_data, query_sce = query_data, 
+#'                                 reference_labels = ref_data$reclustered.broad, 
+#'                                 query_labels = query_data$labels,
+#'                                 n_pca = 10,
+#'                                 n_hvg = 2000,
+#'                                 n_tree = 100,
+#'                                 anomaly_treshold = 0.5,
+#'                                 verbose = FALSE,
+#'                                 store_plots = TRUE)
 #'
 #' # Plot results for CD4
 #' plot_list <- list(iForest_output$CD4$PC_plots$PC1_PC2, iForest_output$CD4$PC_plots$PC3_PC4, 
@@ -78,15 +78,15 @@
 #' gridExtra::grid.arrange(grobs = plot_list, ncol = 2)#' 
 #' 
 # Function to perform diagnostics using isolation forest with PCA and visualization
-detectAnomalyPCA <- function(reference_sce, query_sce, 
-                             reference_labels, query_labels, 
-                             n_pca = 10,
-                             n_hvg = 2000,
-                             n_tree = 100,
-                             anomaly_treshold = 0.5,
-                             verbose = FALSE,
-                             store_plots = TRUE,
-                             ...) {
+detectAnomaly <- function(reference_sce, query_sce, 
+                          reference_labels, query_labels, 
+                          n_pca = 10,
+                          n_hvg = 2000,
+                          n_tree = 100,
+                          anomaly_treshold = 0.5,
+                          verbose = FALSE,
+                          store_plots = TRUE,
+                          ...) {
   
   # Get common genes
   common_genes <- BiocGenerics::intersect(rownames(reference_sce), rownames(query_sce))
