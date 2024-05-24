@@ -1,54 +1,51 @@
 #' Principal component regression
 #'
-#' This function performs linear regression of a covariate of interest
-#' onto one or more principal components, based on the data in a
-#' SingleCellExperiment object.
+#' This function performs linear regression of a covariate of interest onto one
+#' or more principal components, based on the data in a SingleCellExperiment
+#' object.
 #'
-#' @details Principal component regression, derived from PCA, can be
-#'     used to quantify the variance explained by a covariate
-#'     interest. Applications for single-cell analysis include
-#'     quantification of batch removal, assessing clustering
-#'     homogeneity, and evaluation of alignment of query and reference
-#'     datasets in cell type annotation settings.  Briefly, the R^2 is
-#'     calculated from a linear regression of the covariate B of
-#'     interest onto each principal component. The variance
-#'     contribution of the covariate effect per principal component is
-#'     then calculated as the product of the variance explained by the
-#'     ith principal component (PC) and the corresponding R2(PCi|B).
-#'     The sum across all variance contributions by the covariate
-#'     effects in all principal components gives the total variance
-#'     explained by the covariate as follows:
+#' @details Principal component regression, derived from PCA, can be used to
+#'   quantify the variance explained by a covariate interest. Applications for
+#'   single-cell analysis include quantification of batch removal, assessing
+#'   clustering homogeneity, and evaluation of alignment of query and reference
+#'   datasets in cell type annotation settings.  Briefly, the R^2 is calculated
+#'   from a linear regression of the covariate B of interest onto each principal
+#'   component. The variance contribution of the covariate effect per principal
+#'   component is then calculated as the product of the variance explained by
+#'   the ith principal component (PC) and the corresponding R2(PCi|B). The sum
+#'   across all variance contributions by the covariate effects in all principal
+#'   components gives the total variance explained by the covariate as follows:
 #'
-#'     Var(C|B) = sum_{i=1}^G Var(C|PC_i) * R^2 (PC_i | B)
+#'   Var(C|B) = sum_{i=1}^G Var(C|PC_i) * R^2 (PC_i | B)
 #'
-#'     where, Var(C|PCi) is the variance of the data matrix C explained
-#'     by the ith principal component. See references.
+#'   where, Var(C|PCi) is the variance of the data matrix C explained by the ith
+#'   principal component. See references.
 #'
-#' @param sce An object of class
-#'     \code{\linkS4class{SingleCellExperiment}} containing the data
-#'     for regression analysis.
+#'   If the input is large (>3e4 cells) and the independent variable is
+#'   categorical with >10 categories, this function will use a stripped down
+#'   linear model function that is faster but doesn't return all the same
+#'   components.
 #'
-#' @param dep.vars character. Dependent variable(s). Determines which
-#'     principal component(s) (e.g., "PC1", "PC2", etc.) are used as
-#'     explanatory variables.  Principal components are expected to be
-#'     stored in a PC matrix named \code{"PCA"} in the
-#'     \code{reducedDims} of \code{sce}. Defaults to \code{NULL} which
-#'     will then regress on each principal component present in the PC
-#'     matrix.
+#' @param sce An object of class \code{\linkS4class{SingleCellExperiment}}
+#'   containing the data for regression analysis.
 #'
-#' @param indep.var character. Independent variable. A column name in
-#'     the \code{colData} of \code{sce} specifying the response
-#'     variable.
+#' @param dep.vars character. Dependent variable(s). Determines which principal
+#'   component(s) (e.g., "PC1", "PC2", etc.) are used as explanatory variables.
+#'   Principal components are expected to be stored in a PC matrix named
+#'   \code{"PCA"} in the \code{reducedDims} of \code{sce}. Defaults to
+#'   \code{NULL} which will then regress on each principal component present in
+#'   the PC matrix.
 #'
-#' @return A \code{list} containing \itemize{ \item summaries of the
-#'     linear regression models for each specified principal
-#'     component, \item the corresponding R-squared (R2) values, \item
-#'     the variance contributions for each principal component, and
-#'     \item the total variance explained.}
+#' @param indep.var character. Independent variable. A column name in the
+#'   \code{colData} of \code{sce} specifying the response variable.
 #'
-#' @references Luecken et al. Benchmarking atlas-level data
-#'     integration in single-cell genomics. Nature Methods, 19:41-50,
-#'     2022.
+#' @return A \code{list} containing \itemize{ \item summaries of the linear
+#'   regression models for each specified principal component, \item the
+#'   corresponding R-squared (R2) values, \item the variance contributions for
+#'   each principal component, and \item the total variance explained.}
+#'
+#' @references Luecken et al. Benchmarking atlas-level data integration in
+#'   single-cell genomics. Nature Methods, 19:41-50, 2022.
 #'
 #' @examples
 #' library(scater)
@@ -214,36 +211,58 @@ regressPC <-
         res
     }
 
+#' Plot PC Regression diagnostic
+#' @description Plot the result of a PC regression diagnostic.
+#'
+#' @param regressPC_res a result from \code{\link{regressPC}}
+#' @param max_pc The maximum number of PCs to show on the plot. Set to 0 to show
+#'   all.
+#' @inheritParams regressPC
+#' @return a ggplot2 plot object
+#' @export
 plotRegressPC <- function(sce,
     regressPC_res,
+    dep.vars = NULL,
+    indep.var,
+    max_pc = 20,
     ...) {
-    p1 <- plotPCA(
-        sce,
-        color_by = indep.var,
-        ncomponents = base::rev(tail(order(rsq), 2)),
-        ...
-    )
+    stopifnot(is(sce, "SingleCellExperiment"))
+    stopifnot("PCA" %in% reducedDimNames(sce))
+
+    if (!is.null(dep.vars)) {
+        stopifnot(all(dep.vars %in% colnames(reducedDim(sce, "PCA"))))
+    }
+
+    stopifnot(indep.var %in% colnames(colData(sce)))
+
+    if (is.null(dep.vars)) {
+        dep.vars <- colnames(reducedDim(sce, "PCA"))
+    }
+
+    if (max_pc == 0) max_pc <- length(dep.vars)
 
     p2_input <- data.frame(
-        x = dep.vars,
-        i = seq_along(dep.vars),
-        r2 = rsq
+        x = dep.vars[1:max_pc],
+        i = seq_along(dep.vars[1:max_pc]),
+        r2 = regressPC_res$rsquared[1:max_pc]
     )
 
-    p2 <- ggplot(p2_input, aes(.data$i, .data$r2)) +
-        geom_point() +
-        geom_line() +
-        theme_bw() +
-        ylim(c(0, 1)) +
-        labs(
+    p2 <- ggplot2::ggplot(p2_input, aes(.data$i, .data$r2)) +
+        ggplot2::geom_point() +
+        ggplot2::geom_line() +
+        ggplot2::theme_bw() +
+        ggplot2::ylim(c(0, 1)) +
+        ggplot2::labs(
             y = bquote(R^2 ~ of ~ "PC ~ " ~ .(indep.var))
         ) +
-        scale_x_continuous(
+        ggplot2::scale_x_continuous(
             breaks = p2_input$i,
             labels = p2_input$x
         ) +
-        theme(
+        ggplot2::theme(
             axis.title.x = ggplot2::element_blank(),
             panel.grid.minor = ggplot2::element_blank()
         )
+
+    return(p2)
 }
