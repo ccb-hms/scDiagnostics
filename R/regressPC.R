@@ -130,41 +130,65 @@ regressPC <-
         )
 
         ## perform linear regression for each principal component
-        .regress <- function(pc, df, fastlm) {
-            if (fastlm) {
-                sst <- sum((df[[pc]] - mean(df[[pc]]))^2,
+        .regress <- function(pc, df) {
+            f <- paste0(pc, " ~ Independent")
+            model <- lm(f, data = df)
+            s <- summary(model)
+            return(s)
+        }
+
+        .regress_fast <- function(df) {
+            # This does the lms for large, categorical independent variables in
+            # one sweep.
+            ssts <- vapply(
+                df[, dep.vars],
+                \(x) sum((x - mean(x, na.rm = TRUE))^2,
                     na.rm = TRUE
-                )
+                ),
+                1.0
+            )
 
-                indp_list <- split(
-                    df[, c("Independent", pc)],
-                    df$Independent
-                )
+            indp_list <- split(
+                df,
+                df$Independent
+            )
 
-                sse <- sum(vapply(
-                    indp_list,
-                    \(x) sum((x[[pc]] - mean(x[[pc]], na.rm = TRUE))^2,
+            .get_sses <- function(x) {
+                vapply(
+                    x[, dep.vars],
+                    \(z) sum((z - mean(z, na.rm = TRUE))^2,
                         na.rm = TRUE
                     ),
                     1.0
-                ))
-
-                s <- list(r.squared = 1 - sse / sst)
-
-                return(s)
-            } else {
-                f <- paste0(pc, " ~ Independent")
-                model <- lm(f, data = df)
-                s <- summary(model)
-                return(s)
+                )
             }
+
+            sses <- rowSums(vapply(
+                indp_list,
+                .get_sses,
+                rep(1, length(dep.vars))
+            ))
+
+            s <- mapply(
+                \(err, tot) {
+                    list("r.squared" = 1 - err / tot)
+                },
+                sses, ssts,
+                SIMPLIFY = FALSE
+            )
+
+            return(s)
         }
 
         needs_fastlm <- (nrow(df) > 3e4) &&
             (is.character(df$Independent) || is.factor(df$Independent)) &&
             (length(unique(df$Independent)) > 10)
 
-        summaries <- lapply(dep.vars, .regress, df = df, fastlm = needs_fastlm)
+        if (needs_fastlm) {
+            summaries <- .regress_fast(df)
+        } else {
+            summaries <- lapply(dep.vars, .regress, df = df)
+        }
         names(summaries) <- dep.vars
 
         ## calculate R-squared values
@@ -189,3 +213,37 @@ regressPC <-
 
         res
     }
+
+plotRegressPC <- function(sce,
+    regressPC_res,
+    ...) {
+    p1 <- plotPCA(
+        sce,
+        color_by = indep.var,
+        ncomponents = base::rev(tail(order(rsq), 2)),
+        ...
+    )
+
+    p2_input <- data.frame(
+        x = dep.vars,
+        i = seq_along(dep.vars),
+        r2 = rsq
+    )
+
+    p2 <- ggplot(p2_input, aes(.data$i, .data$r2)) +
+        geom_point() +
+        geom_line() +
+        theme_bw() +
+        ylim(c(0, 1)) +
+        labs(
+            y = bquote(R^2 ~ of ~ "PC ~ " ~ .(indep.var))
+        ) +
+        scale_x_continuous(
+            breaks = p2_input$i,
+            labels = p2_input$x
+        ) +
+        theme(
+            axis.title.x = ggplot2::element_blank(),
+            panel.grid.minor = ggplot2::element_blank()
+        )
+}
