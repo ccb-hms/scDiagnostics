@@ -4,7 +4,7 @@
 \alias{regressPC}
 \title{Principal component regression}
 \usage{
-regressPC(sce, dep.vars = NULL, indep.var, plot = TRUE, ...)
+regressPC(sce, dep.vars = NULL, indep.var, ...)
 }
 \arguments{
 \item{sce}{An object of class
@@ -22,9 +22,6 @@ matrix.}
 \item{indep.var}{character. Independent variable. A column name in
 the \code{colData} of \code{sce} specifying the response
 variable.}
-
-\item{...}{other arguments to pass to \link[scater]{plotPCA} for
-the second diagnostic plot.}
 }
 \value{
 A \code{list} containing \itemize{ \item summaries of the
