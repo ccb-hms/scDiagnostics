@@ -4,7 +4,7 @@
 \alias{regressPC}
 \title{Principal component regression}
 \usage{
-regressPC(sce, dep.vars = NULL, indep.var, ...)
+regressPC(sce, dep.vars = NULL, indep.var)
 }
 \arguments{
 \item{sce}{An object of class \code{\linkS4class{SingleCellExperiment}}

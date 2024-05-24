@@ -177,11 +177,11 @@ calculatePairwiseDistancesAndPlotDensity <-
     )
     
     ## Plot density plots
-    ggplot(dist_df, aes(x = .data$Distance, color = .data$Comparison)) +
-        geom_density() +
-        labs(x = ifelse(distance_metric == "correlation", 
+    ggplot2::ggplot(dist_df, ggplot2::aes(x = .data$Distance, color = .data$Comparison)) +
+        ggplot2::geom_density() +
+        ggplot2::labs(x = ifelse(distance_metric == "correlation", 
                         paste(correlation_method, "correlation"), 
                         "Distance"), y = "Density", 
              title = "Pairwise Distance Analysis and Density Visualization") +
-        theme_bw()
+        ggplot2::theme_bw()
 }

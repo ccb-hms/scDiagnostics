@@ -4,7 +4,7 @@
 \alias{plotRegressPC}
 \title{Plot PC Regression diagnostic}
 \usage{
-plotRegressPC(sce, regressPC_res, dep.vars = NULL, indep.var, max_pc = 20, ...)
+plotRegressPC(sce, regressPC_res, dep.vars = NULL, indep.var, max_pc = 20)
 }
 \arguments{
 \item{sce}{An object of class \code{\linkS4class{SingleCellExperiment}}

@@ -103,8 +103,7 @@
 regressPC <-
     function(sce,
     dep.vars = NULL,
-    indep.var,
-    ...) {
+    indep.var) {
         ## sanity checks
         stopifnot(is(sce, "SingleCellExperiment"))
         stopifnot("PCA" %in% reducedDimNames(sce))
@@ -224,8 +223,7 @@ plotRegressPC <- function(sce,
     regressPC_res,
     dep.vars = NULL,
     indep.var,
-    max_pc = 20,
-    ...) {
+    max_pc = 20) {
     stopifnot(is(sce, "SingleCellExperiment"))
     stopifnot("PCA" %in% reducedDimNames(sce))
 
