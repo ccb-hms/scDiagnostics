@@ -23,11 +23,6 @@ matrix.}
 the \code{colData} of \code{sce} specifying the response
 variable.}
 
-\item{plot}{logical indicating whether to print two diagnostic
-plots: one showing the embedding of the two PCs with the
-highest R2, colored by the independent variable and a second
-showing the PC ~ independent variable R2 values.}
-
 \item{...}{other arguments to pass to \link[scater]{plotPCA} for
 the second diagnostic plot.}
 }

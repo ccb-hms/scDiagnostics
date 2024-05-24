@@ -40,14 +40,6 @@
 #'     the \code{colData} of \code{sce} specifying the response
 #'     variable.
 #'
-#' @param plot logical indicating whether to print two diagnostic
-#'     plots: one showing the embedding of the two PCs with the
-#'     highest R2, colored by the independent variable and a second
-#'     showing the PC ~ independent variable R2 values.
-#'
-#' @param ... other arguments to pass to \link[scater]{plotPCA} for
-#'     the second diagnostic plot.
-#'
 #' @return A \code{list} containing \itemize{ \item summaries of the
 #'     linear regression models for each specified principal
 #'     component, \item the corresponding R-squared (R2) values, \item
@@ -107,107 +99,93 @@
 #' res$rsquared
 #'
 #' @importFrom stats lm
-#' @importFrom ggplot2 ggplot geom_point geom_line theme_bw ylim labs
-#'     scale_x_continuous theme element_blank
 #' @importFrom utils tail
 #' @importFrom rlang .data
-#' @importFrom scater plotPCA
 #' @import SingleCellExperiment
 #' @export
-#' 
-regressPC <- 
+regressPC <-
     function(sce,
-             dep.vars = NULL,
-             indep.var,
-             plot = TRUE,
-             ...) 
-{
-    ## sanity checks
-    stopifnot(is(sce, "SingleCellExperiment"))
-    stopifnot("PCA" %in% reducedDimNames(sce))
+    dep.vars = NULL,
+    indep.var,
+    ...) {
+        ## sanity checks
+        stopifnot(is(sce, "SingleCellExperiment"))
+        stopifnot("PCA" %in% reducedDimNames(sce))
 
-    if (!is.null(dep.vars)) {
-        stopifnot(all(dep.vars %in% colnames(reducedDim(sce, "PCA"))))
-    }
+        if (!is.null(dep.vars)) {
+            stopifnot(all(dep.vars %in% colnames(reducedDim(sce, "PCA"))))
+        }
 
-    stopifnot(indep.var %in% colnames(colData(sce)))
-    
-    ## regress against all PCs if not instructed otherwise
-    if (is.null(dep.vars))
-        dep.vars <- colnames(reducedDim(sce, "PCA"))
-    
-    ## create a data frame with the dependent and independent variables
-    df <- data.frame(
-        Independent = sce[[indep.var]],
-        reducedDim(sce, "PCA")[, dep.vars]
-    )
+        stopifnot(indep.var %in% colnames(colData(sce)))
 
-    ## perform linear regression for each principal component
-    .regress <- function(pc) {
-        f <- paste0(pc, " ~ Independent")
-        model <- lm(f, data = df)
-        s <- summary(model)
-        return(s)
-    }
-    summaries <- lapply(dep.vars, .regress)
-    names(summaries) <- dep.vars
+        ## regress against all PCs if not instructed otherwise
+        if (is.null(dep.vars)) {
+            dep.vars <- colnames(reducedDim(sce, "PCA"))
+        }
 
-    ## calculate R-squared values
-    rsq <- vapply(summaries, `[[`, numeric(1), x = "r.squared")
-
-    ## calculate variance contributions by principal component
-    ind <- match(dep.vars, colnames(reducedDim(sce, "PCA")))
-    var.expl <- attr(reducedDim(sce, "PCA"), "percentVar")[ind]
-    var.contr <- var.expl * rsq
-    
-    ## calculate total variance explained by summing the variance contributions
-    total.var.expl <- sum(var.contr)
-
-    ## return the summaries of the linear regression models,
-    ## R-squared values, and variance contributions
-    res <- list(
-        regression.summaries = summaries,
-        rsquared = rsq,
-        var.contributions = var.contr,
-        total.variance.explained = total.var.expl
-    )
-
-    if (plot) {
-        message("Printing two diagnostic plots.")
-
-        p1 <- plotPCA(
-            sce,
-            color_by = indep.var,
-            ncomponents = base::rev(tail(order(rsq), 2)),
-            ...
-        )
-        
-        p2_input <- data.frame(
-            x = dep.vars,
-            i = seq_along(dep.vars),
-            r2 = rsq
+        ## create a data frame with the dependent and independent variables
+        df <- data.frame(
+            Independent = sce[[indep.var]],
+            reducedDim(sce, "PCA")[, dep.vars]
         )
 
-        p2 <- ggplot(p2_input, aes(.data$i, .data$r2)) +
-            geom_point() +
-            geom_line() +
-            theme_bw() +
-            ylim(c(0, 1)) +
-            labs(
-                y = bquote(R^2 ~ of ~ "PC ~ " ~ .(indep.var))
-            ) +
-            scale_x_continuous(
-                breaks = p2_input$i,
-                labels = p2_input$x
-            ) +
-            theme(
-                axis.title.x = ggplot2::element_blank(),
-                panel.grid.minor = ggplot2::element_blank()
-            )
-        
-        print(p1)
-        print(p2)
-    }
+        ## perform linear regression for each principal component
+        .regress <- function(pc, df, fastlm) {
+            if (fastlm) {
+                sst <- sum((df[[pc]] - mean(df[[pc]]))^2,
+                    na.rm = TRUE
+                )
 
-    res
-}
+                indp_list <- split(
+                    df[, c("Independent", pc)],
+                    df$Independent
+                )
+
+                sse <- sum(vapply(
+                    indp_list,
+                    \(x) sum((x[[pc]] - mean(x[[pc]], na.rm = TRUE))^2,
+                        na.rm = TRUE
+                    ),
+                    1.0
+                ))
+
+                s <- list(r.squared = 1 - sse / sst)
+
+                return(s)
+            } else {
+                f <- paste0(pc, " ~ Independent")
+                model <- lm(f, data = df)
+                s <- summary(model)
+                return(s)
+            }
+        }
+
+        needs_fastlm <- (nrow(df) > 3e4) &&
+            (is.character(df$Independent) || is.factor(df$Independent)) &&
+            (length(unique(df$Independent)) > 10)
+
+        summaries <- lapply(dep.vars, .regress, df = df, fastlm = needs_fastlm)
+        names(summaries) <- dep.vars
+
+        ## calculate R-squared values
+        rsq <- vapply(summaries, `[[`, numeric(1), x = "r.squared")
+
+        ## calculate variance contributions by principal component
+        ind <- match(dep.vars, colnames(reducedDim(sce, "PCA")))
+        var.expl <- attr(reducedDim(sce, "PCA"), "percentVar")[ind]
+        var.contr <- var.expl * rsq
+
+        ## calculate total variance explained by summing the variance contributions
+        total.var.expl <- sum(var.contr)
+
+        ## return the summaries of the linear regression models,
+        ## R-squared values, and variance contributions
+        res <- list(
+            regression.summaries = summaries,
+            rsquared = rsq,
+            var.contributions = var.contr,
+            total.variance.explained = total.var.expl
+        )
+
+        res
+    }
