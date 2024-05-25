@@ -7,6 +7,7 @@
 computeAveragePairwiseCorrelation(
   query_data,
   reference_data,
+  n_components = 10,
   query_cell_type_col,
   ref_cell_type_col,
   cell_types,
@@ -19,6 +20,9 @@ expression data and metadata.}
 
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
 expression data and metadata.}
+
+\item{n_components}{The number of principal components to use for the dimensionality reduction of the data using PCA. Defaults to 10.
+If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.}
 
 \item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data} 
 that identifies the cell types.}
@@ -91,9 +95,13 @@ selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
 ref_data_subset <- ref_data[common_genes, ref_data$reclustered.broad \%in\% selected_cell_types]
 query_data_subset <- query_data[common_genes, query_data$reclustered.broad \%in\% selected_cell_types]
 
+# Run PCA on the reference data
+ref_data_subset <- runPCA(ref_data_subset)
+
 # Compute pairwise correlations
 cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subset, 
                                                     reference_data = ref_data_subset, 
+                                                    n_components = 10,
                                                     query_cell_type_col = "labels", 
                                                     ref_cell_type_col = "reclustered.broad", 
                                                     cell_types = selected_cell_types, 

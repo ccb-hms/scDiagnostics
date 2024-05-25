@@ -30,26 +30,28 @@ Imports:
     isotree,
     methods,
     ggplot2,
+    RColorBrewer,
     gridExtra,
-    scater,
     SummarizedExperiment,
     BiocGenerics,
     S4Vectors,
     stats,
     utils,
-    scuttle
+    scuttle,
+    ranger
 Suggests:
     AUCell,
     BiocStyle,
     corrplot,
     knitr,
     Matrix,
-    RColorBrewer,
     rmarkdown,
     scran,
     scRNAseq,
     SingleR,
+    scater,
     celldex,
+    ComplexHeatmap,
     testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
