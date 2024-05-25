@@ -12,12 +12,15 @@
 #' expression data and metadata.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
 #' expression data and metadata.
+#' @param n_components The number of principal components to use for the dimensionality reduction of the data using PCA. Defaults to 10.
+#' If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.
 #' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data} 
 #' that identifies the cell types.
 #' @param ref_cell_type_col character. The column name in the \code{colData} of \code{reference_data} 
 #' that identifies the cell types.
 #' @param cell_type_query The query cell type for which distances or correlations are calculated.
 #' @param cell_type_reference The reference cell type for which distances or correlations are calculated.
+#' @param dim_reduction Should dimensionality reduction using Principal Component Analysis (PCA) be applied? Defaults to FALSE.
 #' @param distance_metric The distance metric to use for calculating pairwise distances, such as euclidean, manhattan etc.
 #'                        Set it to "correlation" for calculating correlation coefficients.
 #' @param correlation_method The correlation method to use when distance_metric is "correlation".
@@ -59,10 +62,14 @@
 #'
 #' ref_data_subset <- ref_data[common_genes, ]
 #' query_data_subset <- query_data[common_genes, ]
+#' 
+#' # Run PCA on the reference data
+#' ref_data_subset <- runPCA(ref_data_subset)
 #'
 #' # Example usage of the function
 #' calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, 
 #'                                          reference_data = ref_data_subset, 
+#'                                          n_components = 10,
 #'                                          query_cell_type_col = "labels", 
 #'                                          ref_cell_type_col = "reclustered.broad", 
 #'                                          cell_type_query = "CD8", 
@@ -76,6 +83,7 @@
 #' @export
 calculatePairwiseDistancesAndPlotDensity <- function(query_data, 
                                                      reference_data, 
+                                                     n_components = 10,
                                                      query_cell_type_col, 
                                                      ref_cell_type_col, 
                                                      cell_type_query, 
@@ -94,14 +102,21 @@ calculatePairwiseDistancesAndPlotDensity <- function(query_data,
   if (!is(reference_data, "SingleCellExperiment")) {
     stop("reference_data must be a SingleCellExperiment object.")
   }
-  
-  # Subset query and reference data to the specified cell type
-  query_data_subset <- query_data[, !is.na(query_data[[query_cell_type_col]]) & query_data[[query_cell_type_col]] == cell_type_query]
-  ref_data_subset <- reference_data[, !is.na(reference_data[[ref_cell_type_col]]) & reference_data[[ref_cell_type_col]] == cell_type_reference]
 
-  # Convert to matrix
-  query_mat <- t(as.matrix(assay(query_data_subset, "logcounts")))
-  ref_mat <- t(as.matrix(assay(ref_data_subset, "logcounts")))
+  # Convert to matrix and potentially applied PCA dimensionality reduction
+  if(!is.null(n_components)){
+      # Project query data onto PCA space of reference data
+      pca_output <- projectPCA(query_data = query_data, reference_data = reference_data, 
+                               n_components = n_components, return_value = "list")
+      ref_mat <- pca_output$ref[which(reference_data[[ref_cell_type_col]] == cell_type_reference), paste0("PC", 1:n_components)]
+      query_mat <- pca_output$query[which(query_data[[query_cell_type_col]] == cell_type_query), paste0("PC", 1:n_components)]
+  } else{
+      
+      # Subset query data to the specified cell type
+      query_data_subset <- query_data[, !is.na(query_data[[query_cell_type_col]]) & query_data[[query_cell_type_col]] == cell_type_query]
+      query_mat <- t(as.matrix(assay(query_data_subset, "logcounts")))
+      ref_mat <- t(as.matrix(assay(ref_data_subset, "logcounts")))
+  }
 
   # Combine query and reference matrices
   combined_mat <- rbind(query_mat, ref_mat)

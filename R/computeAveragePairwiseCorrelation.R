@@ -11,6 +11,8 @@
 #'
 #' @param query_data  A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
 #' expression data and metadata.
+#' @param n_components The number of principal components to use for the dimensionality reduction of the data using PCA. Defaults to 10.
+#' If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
 #' expression data and metadata.
 #' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data} 
@@ -68,10 +70,14 @@
 #' selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
 #' ref_data_subset <- ref_data[common_genes, ref_data$reclustered.broad %in% selected_cell_types]
 #' query_data_subset <- query_data[common_genes, query_data$reclustered.broad %in% selected_cell_types]
+#' 
+#' # Run PCA on the reference data
+#' ref_data_subset <- runPCA(ref_data_subset)
 #'
 #' # Compute pairwise correlations
 #' cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subset, 
 #'                                                     reference_data = ref_data_subset, 
+#'                                                     n_components = 10,
 #'                                                     query_cell_type_col = "labels", 
 #'                                                     ref_cell_type_col = "reclustered.broad", 
 #'                                                     cell_types = selected_cell_types, 
@@ -85,9 +91,11 @@
 #' @export
 computeAveragePairwiseCorrelation <- function(query_data, 
                                               reference_data, 
+                                              n_components = 10,
                                               query_cell_type_col, 
                                               ref_cell_type_col, 
-                                              cell_types, correlation_method) {
+                                              cell_types, 
+                                              correlation_method) {
   # Sanity checks
   
   # Check if query_data is a SingleCellExperiment object
@@ -119,16 +127,27 @@ computeAveragePairwiseCorrelation <- function(query_data,
   if (!all(cell_types %in% unique(reference_data[[ref_cell_type_col]]))) {
     stop("One or more cell_types specified are not present in reference_data.")
   }
-  
+    
   # Function to compute correlation between two cell types
   .computeCorrelation <- function(type1, type2) {
-    query_subset <- query_data[ ,query_data[[query_cell_type_col]] == type1, drop = FALSE]
-    ref_subset <- reference_data[ ,reference_data[[ref_cell_type_col]] == type2, drop = FALSE]
-    
-    query_mat <- as.matrix(assay(query_subset, "logcounts"))
-    ref_mat <- as.matrix(assay(ref_subset, "logcounts"))
-    
-    cor_matrix <- cor(query_mat, ref_mat, method = correlation_method)
+      
+      if(!is.null(n_components)){
+          # Project query data onto PCA space of reference data
+          pca_output <- projectPCA(query_data = query_data, reference_data = reference_data, 
+                                   n_components = n_components, return_value = "list")
+          ref_mat <- pca_output$ref[which(reference_data[[ref_cell_type_col]] == type2), paste0("PC", 1:n_components)]
+          query_mat <- pca_output$query[which(query_data[[query_cell_type_col]] == type1), paste0("PC", 1:n_components)]
+      } else{
+          
+          # Subset query data to the specified cell type
+          query_subset <- query_data[ , query_data[[query_cell_type_col]] == type1, drop = FALSE]
+          ref_subset <- reference_data[ , reference_data[[ref_cell_type_col]] == type2, drop = FALSE]
+          
+          query_mat <- t(as.matrix(assay(query_subset, "logcounts")))
+          ref_mat <- t(as.matrix(assay(ref_subset, "logcounts")))
+      }
+
+    cor_matrix <- cor(t(query_mat), t(ref_mat), method = correlation_method)
     mean(cor_matrix)
   }
   
