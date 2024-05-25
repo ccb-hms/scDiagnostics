@@ -5,50 +5,43 @@
 \title{PCA Anomaly Scores via Isolation Forests with Visualization}
 \usage{
 detectAnomaly(
-  reference_sce,
-  query_sce,
+  reference_data,
+  query_data,
   reference_labels,
   query_labels,
-  n_pca = 10,
-  n_hvg = 2000,
-  n_tree = 100,
+  n_components = 10,
+  n_tree = 500,
   anomaly_treshold = 0.5,
-  verbose = FALSE,
   store_plots = TRUE,
   ...
 )
 }
 \arguments{
-\item{reference_sce}{A SingleCellExperiment object containing the reference data.}
+\item{reference_data}{A SingleCellExperiment object containing the reference data.}
 
-\item{query_sce}{A SingleCellExperiment object containing the query data.}
+\item{query_data}{A SingleCellExperiment object containing the query data.}
 
 \item{reference_labels}{A vector of labels for the reference data.}
 
 \item{query_labels}{A vector of labels for the query data.}
 
-\item{n_pca}{An integer specifying the number of principal components to use. Default is 10.}
+\item{n_components}{An integer specifying the number of principal components to use. Default is 10.}
 
-\item{n_hvg}{An integer specifying the number of highly variable genes to use. Default is 2000.}
+\item{n_tree}{An integer specifying the number of trees for the isolation forest. Default is 500}
 
-\item{n_tree}{An integer specifying the number of trees for the isolation forest. Default is 100.}
-
-\item{anomaly_treshold}{A numeric value specifying the threshold for identifying outliers. Default is 0.5.}
-
-\item{verbose}{A logical value indicating whether to print verbose output. Default is FALSE.}
+\item{anomaly_treshold}{A numeric value specifying the threshold for identifying anomalies, Default is 0.5.}
 
 \item{store_plots}{A logical value indicating whether to store PCA anomaly plots. Default is TRUE.}
 
 \item{...}{Additional arguments passed to the `isolation.forest` function.}
 }
 \value{
-A list containing the results for each cell type, including anomaly scores, outlier IDs, PCA data, and 
-optional PCA anomaly plots.
+A list containing the results for each cell type, including anomaly scores, anomaly IDs and PCA data.
 }
 \description{
 \code{detectAnomaly} performs diagnostics using isolation forest with PCA and visualization. 
 It takes reference and query code{\linkS4class{SingleCellExperiment}} objects, their corresponding labels, and various parameters to perform 
-the analysis. The function returns a list containing the results for each cell type, including anomaly scores, outlier IDs, 
+the analysis. The function returns a list containing the results for each cell type, including anomaly scores, anomaly IDs, 
 PCA data, and optional PCA anomaly plots.
 }
 \details{
@@ -65,8 +58,15 @@ idea that anomalies are more susceptible to isolation than normal instances.
 The part where we project the query data onto the PCA space of the reference data is done by using the `predict` function on the PCA model with the query expression data. This allows us to transform the query data into the same PCA space as the reference data, which is necessary for the isolation forest analysis.
 }
 \examples{
+# Load required libraries
+library(scRNAseq)
+library(scuttle)
+library(SingleR)
+library(scran)
+library(scater)
+
 # Load data
-sce <- scRNAseq::HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
 # Divide the data into reference and query datasets
 set.seed(100)
@@ -75,29 +75,39 @@ ref_data <- sce[, indices]
 query_data <- sce[, -indices]
 
 # log transform datasets
-ref_data <- scuttle::logNormCounts(ref_data)
-query_data <- scuttle::logNormCounts(query_data)
+ref_data <- logNormCounts(ref_data)
+query_data <- logNormCounts(query_data)
 
-# Cell type annotation via SingleR (or any other cell type annotation method)
-scores <- SingleR::SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
+# Get cell type scores using SingleR (or any other cell type annotation method)
+scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
+
 # Add labels to query object
 colData(query_data)$labels <- scores$labels
 
+# Selecting highly variable genes (can be customized by the user)
+ref_var <- getTopHVGs(ref_data, n = 2000)
+query_var <- getTopHVGs(query_data, n = 2000)
+
+# Intersect the gene symbols to obtain common genes
+common_genes <- intersect(ref_var, query_var)
+ref_data_subset <- ref_data[common_genes, ]
+query_data_subset <- query_data[common_genes, ]
+
+# Run PCA on the reference data
+ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
+
 # Store PCA anomaly data and plots
-iForest_output <- detectAnomaly(reference_sce = ref_data, query_sce = query_data, 
+anomaly_output <- detectAnomaly(reference_data = ref_data_subset, 
+                                query_data = query_data_subset, 
                                 reference_labels = ref_data$reclustered.broad, 
                                 query_labels = query_data$labels,
-                                n_pca = 10,
-                                n_hvg = 2000,
-                                n_tree = 100,
+                                n_components = 10,
+                                n_tree = 500,
                                 anomaly_treshold = 0.5,
-                                verbose = FALSE,
-                                store_plots = TRUE)
+                                store_plots = TRUE) 
 
-# Plot results for CD4
-plot_list <- list(iForest_output$CD4$PC_plots$PC1_PC2, iForest_output$CD4$PC_plots$PC3_PC4, 
-                  iForest_output$CD4$PC_plots$PC5_PC6, iForest_output$CD4$PC_plots$PC7_PC8)
-gridExtra::grid.arrange(grobs = plot_list, ncol = 2)#' 
+# Plot the output for a cell type
+plot(anomaly_object = anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
 
 }
 \author{
