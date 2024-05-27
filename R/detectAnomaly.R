@@ -25,8 +25,8 @@
 #' 
 #' @param reference_data A SingleCellExperiment object containing the reference data.
 #' @param query_data A SingleCellExperiment object containing the query data.
-#' @param reference_labels A vector of labels for the reference data.
-#' @param query_labels A vector of labels for the query data.
+#' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
+#' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
 #' @param n_components An integer specifying the number of principal components to use. Default is 10.
 #' @param n_tree An integer specifying the number of trees for the isolation forest. Default is 500
 #' @param anomaly_treshold A numeric value specifying the threshold for identifying anomalies, Default is 0.5.
@@ -93,7 +93,8 @@
 #' 
 # Function to perform diagnostics using isolation forest with PCA and visualization
 detectAnomaly <- function(reference_data, query_data, 
-                          reference_labels, query_labels, 
+                          query_cell_type_col, 
+                          ref_cell_type_col, 
                           n_components = 10,
                           n_tree = 500,
                           anomaly_treshold = 0.5,
@@ -108,6 +109,10 @@ detectAnomaly <- function(reference_data, query_data,
   
   # List to store output
   output <- list()
+  
+  # Extract reference and query annotations
+  reference_labels <- reference_data[[ref_cell_type_col]]
+  query_labels <- query_data[[query_cell_type_col]]
   
   # Build isolation forests and perform diagnostics for each cell type
   cell_types <- BiocGenerics::unique(query_labels)[!is.na(BiocGenerics::unique(query_labels))]  # Extract unique (query) cell types

@@ -7,8 +7,8 @@
 detectAnomaly(
   reference_data,
   query_data,
-  reference_labels,
-  query_labels,
+  query_cell_type_col,
+  ref_cell_type_col,
   n_components = 10,
   n_tree = 500,
   anomaly_treshold = 0.5,
@@ -21,9 +21,9 @@ detectAnomaly(
 
 \item{query_data}{A SingleCellExperiment object containing the query data.}
 
-\item{reference_labels}{A vector of labels for the reference data.}
+\item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
 
-\item{query_labels}{A vector of labels for the query data.}
+\item{ref_cell_type_col}{A character string specifying the column name in the reference dataset containing cell type annotations.}
 
 \item{n_components}{An integer specifying the number of principal components to use. Default is 10.}
 

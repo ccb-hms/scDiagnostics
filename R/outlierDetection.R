@@ -56,7 +56,7 @@ calculateOutlierScore <- function(
   
     if (use_pcs) {
         if (!("PCA" %in% SingleCellExperiment::reducedDimNames(sce))) {
-            sce <- scater::runPCA(sce)
+            stop("The SingleCellExperiment does not contain PCA reduced dimension.")
         }
 
         X <- sce |>

@@ -38,7 +38,10 @@ Imports:
     stats,
     utils,
     scuttle,
-    ranger
+    ranger,
+    BiocNeighbors,
+    Hotelling,
+    scater
 Suggests:
     AUCell,
     BiocStyle,
@@ -49,7 +52,6 @@ Suggests:
     scran,
     scRNAseq,
     SingleR,
-    scater,
     celldex,
     ComplexHeatmap,
     testthat (>= 3.0.0)
