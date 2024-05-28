@@ -4,15 +4,15 @@
 \alias{plot.detectAnomaly}
 \title{Create Faceted Scatter Plots for Specified PC Combinations From \code{detectAnomaly} Object}
 \usage{
-\method{plot}{detectAnomaly}(anomaly_object, cell_type, pc_subset = NULL, ...)
+\method{plot}{detectAnomaly}(x, cell_type, pc_subset = NULL, ...)
 }
 \arguments{
-\item{anomaly_object}{A list object containing the anomaly detection results from the \code{detectAnomaly} function. 
+\item{x}{A list object containing the anomaly detection results from the \code{detectAnomaly} function. 
 Each element of the list should correspond to a cell type and contain \code{reference_pca_subset}, \code{query_pca_subset}, 
 \code{var_explained}, and \code{anomaly}.}
 
 \item{cell_type}{A character string specifying the cell type for which the plots should be generated. This should
-be a name present in \code{anomaly_object}.}
+be a name present in \code{x}.}
 
 \item{pc_subset}{A numeric vector specifying the indices of the PCs to be included in the plots. If NULL, all PCs
 in \code{reference_pca_subset} will be included.}
@@ -72,8 +72,7 @@ query_data_subset <- query_data[common_genes, ]
 ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
 
 # Store PCA anomaly data and plots
-anomaly_output <- detectAnomaly(reference_data = ref_data_subset, 
-                                query_data = query_data_subset, 
+anomaly_output <- detectAnomaly(query_data_subset, ref_data_subset, 
                                 reference_labels = ref_data$reclustered.broad, 
                                 query_labels = query_data$labels,
                                 n_components = 10,
@@ -82,7 +81,7 @@ anomaly_output <- detectAnomaly(reference_data = ref_data_subset,
                                 store_plots = TRUE) 
 
 # Plot the output for a cell type
-plot(anomaly_object = anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
+plot(x = anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
 
 }
 \author{

@@ -1,5 +1,4 @@
 #' @title Plot Principal Components for Different Cell Types
-
 #'
 #' @description This function generates a \code{ggplot2} boxplot visualization of principal components (PCs) for different 
 #' cell types across two datasets (query and reference).
@@ -12,8 +11,8 @@
 #' to perform the PCA projection. It then reshapes the output data into a long format suitable for ggplot2 plotting. 
 #' The color scheme is automatically determined using the \code{RColorBrewer} package, ensuring a visually distinct and appealing plot.
 #'
-#' @param query_data A SingleCellExperiment object containing the data to be projected.
-#' @param reference_data A SingleCellExperiment object containing the reference data with pre-computed PCA.
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param n_components An integer specifying the number of principal components to use for projection. Defaults to 10. 
 #' Must be less than or equal to the number of components available in the reference PCA.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
@@ -68,13 +67,16 @@
 #' # Run PCA on the reference data (assumed to be prepared)
 #' ref_data_subset <- runPCA(ref_data_subset)
 #'
-#' pc_plot <- boxplotPCA(query_data = query_data_subset, reference_data = ref_data_subset,
+#' pc_plot <- boxplotPCA(query_data_subset, ref_data_subset,
 #'                       n_components = 10,
 #'                       cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
 #'                       query_cell_type_col = "labels", 
 #'                       ref_cell_type_col = "reclustered.broad", 
 #'                       pc_subset = c(1:5))
 #' pc_plot
+#' 
+#' @importFrom stats approxfun cancor density setNames
+#' @importFrom utils combn
 #'                          
 # Function to plot PC for different cell types
 boxplotPCA <- function(query_data, reference_data, 

@@ -9,8 +9,8 @@
 #' vectors of the pseudo-bulk signatures between the reference and query datasets. The resulting p-values indicate the similarity 
 #' between the reference and query datasets for each cell type.
 #'
-#' @param query_data A SingleCellExperiment object containing the data to be projected.
-#' @param reference_data A SingleCellExperiment object containing the reference data with pre-computed PCA.
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param n_components An integer specifying the number of principal components to use for projection. Defaults to 10. 
 #' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data} 
 #' that identifies the cell types.
@@ -59,13 +59,16 @@
 #' common_genes <- intersect(ref_var, query_var)
 #' ref_data_subset <- ref_data[common_genes, ]
 #' query_data_subset <- query_data[common_genes, ]
+#' 
+#' # Run PCA on the reference data
+#' ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
 #'
 #' # Get the p-values from the test
 #' p_values <- hotellingTestPValue(query_data, reference_data, 
 #'                                 n_components = 10, 
 #'                                 query_cell_type_col = "reclustered.broad", 
-#'                                  ref_cell_type_col = "reclustered.broad",
-#'                                  pc_subset = c(1:10)) 
+#'                                 ref_cell_type_col = "reclustered.broad",
+#'                                 pc_subset = c(1:10)) 
 #' round(p_values, 5)
 #'                          
 # Function to perform Hotelling T^2 test for each cell type

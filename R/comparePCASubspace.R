@@ -13,8 +13,8 @@
 #' the subspaces spanned by the specified PCs is computed and weighted by the proportion 
 #' of variance explained by each PC.
 #'
-#' @param reference_data A SingleCellExperiment object representing the reference dataset.
-#' @param query_data A SingleCellExperiment object representing the query dataset.
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param pc_subset A numeric vector specifying the subset of principal components (PCs) 
 #' to compare. Default is the first five PCs.
 #'
@@ -72,8 +72,7 @@
 #' query_data_subset <- runPCA(query_data_subset, ncomponents = 50)
 #' 
 #' # Compare PCA subspaces
-#' subspace_comparison <- comparePCASubspace(reference_data = ref_data_subset, 
-#'                                           query_data = query_data_subset, 
+#' subspace_comparison <- comparePCASubspace(query_data_subset, ref_data_subset, 
 #'                                           pc_subset = c(1:5))
 #' 
 #' # Create a data frame for plotting

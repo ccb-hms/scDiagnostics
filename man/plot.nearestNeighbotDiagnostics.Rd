@@ -4,12 +4,12 @@
 \alias{plot.nearestNeighbotDiagnostics}
 \title{Plot Density of Probabilities for Cell Type Classification}
 \usage{
-\method{plot}{nearestNeighbotDiagnostics}(nn_object, cell_types = NULL, prob_type = c("query", "reference")[1], ...)
+\method{plot}{nearestNeighbotDiagnostics}(x, cell_types = NULL, prob_type = c("query", "reference")[1], ...)
 }
 \arguments{
-\item{nn_object}{An object of class \code{nearestNeighbotDiagnostics} containing the probabilities calculated by the \code{\link{nearestNeighborDiagnostics}} function.}
+\item{x}{An object of class \code{nearestNeighbotDiagnostics} containing the probabilities calculated by the \code{\link{nearestNeighborDiagnostics}} function.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types in \code{nn_object} will be plotted. Default is NULL.}
+\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types in \code{x} will be plotted. Default is NULL.}
 
 \item{prob_type}{A character string specifying the type of probability to plot. Must be either "query" or "reference". Default is "query".}
 
@@ -65,7 +65,7 @@ query_data_subset <- query_data[common_genes, ]
 ref_data_subset <- runPCA(ref_data_subset)
 
 # Project the query data onto PCA space of reference
-nn_output <- nearestNeighborDiagnostics(query_data = query_data_subset, reference_data = ref_data_subset,
+nn_output <- nearestNeighborDiagnostics(query_data_subset, ref_data_subset,
                                         n_neighbor = 15, 
                                         n_components = 10,
                                         pc_subset = c(1:10),

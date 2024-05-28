@@ -10,8 +10,8 @@
 #' datasets by data augmentation if necessary.
 
 #'
-#' @param query_data A SingleCellExperiment object containing the query dataset with logcounts assay.
-#' @param reference_data A SingleCellExperiment object containing the reference dataset with logcounts assay.
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param n_neighbor An integer specifying the number of nearest neighbors to consider. Default is 15.
 #' @param n_components An integer specifying the number of principal components to use for dimensionality reduction. Default is 10.
 #' @param pc_subset A vector specifying the subset of principal components to use in the analysis. Default is c(1:10).
@@ -66,7 +66,7 @@
 #' ref_data_subset <- runPCA(ref_data_subset)
 #'
 #' # Project the query data onto PCA space of reference
-#' nn_output <- nearestNeighborDiagnostics(query_data = query_data_subset, reference_data = ref_data_subset,
+#' nn_output <- nearestNeighborDiagnostics(query_data_subset, ref_data_subset,
 #'                                         n_neighbor = 15, 
 #'                                         n_components = 10,
 #'                                         pc_subset = c(1:10),

@@ -14,9 +14,9 @@ calculateVarImpOverlap(
 )
 }
 \arguments{
-\item{query_data}{A SingleCellExperiment object containing the query dataset with logcounts assay.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
-\item{reference_data}{A SingleCellExperiment object containing the reference dataset with logcounts assay.}
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
 \item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
 
@@ -25,9 +25,6 @@ calculateVarImpOverlap(
 \item{n_tree}{An integer specifying the number of trees to grow in the Random Forest. Default is 500.}
 
 \item{n_top}{An integer specifying the number of top genes to consider when comparing variable importance scores. Default is 20.}
-
-\item{compute_importance}{A logical value indicating whether to compute variable importance scores for each pairwise combination of 
-cell types. Default is TRUE.}
 }
 \value{
 A list containing three elements:
@@ -35,8 +32,8 @@ A list containing three elements:
 dataset.}
 \item{var_imp_query}{A list of data frames containing variable importance scores for each combination of cell types in the query 
 dataset.}
-\item{var_imp_comparison}{A named vector indicating the proportion of top genes that overlap between the reference and query datasets 
-for each combination of cell types.}
+\item{var_imp_comparison}{A named vector indicating the proportion of top genes that overlap between the reference and query 
+datasets for each combination of cell types.}
 }
 \description{
 This function identifies and compares the most important genes for differentiating cell types between a query dataset 
@@ -82,7 +79,7 @@ ref_data_subset <- ref_data[common_genes, ]
 query_data_subset <- query_data[common_genes, ]
 
 # Compare PCA subspaces
-rf_output <- calculateVarImpOverlap(reference_data = ref_data_subset, query_data = query_data_subset, 
+rf_output <- calculateVarImpOverlap(query_data_subset, ref_data_subset, 
                                     query_cell_type_col = "labels", 
                                     ref_cell_type_col = "reclustered.broad", 
                                     n_tree = 500,

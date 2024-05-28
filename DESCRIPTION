@@ -34,10 +34,8 @@ Imports:
     gridExtra,
     SummarizedExperiment,
     BiocGenerics,
-    S4Vectors,
     stats,
     utils,
-    scuttle,
     ranger,
     BiocNeighbors,
     Hotelling,
@@ -54,6 +52,7 @@ Suggests:
     SingleR,
     celldex,
     ComplexHeatmap,
+    scuttle,
     testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr

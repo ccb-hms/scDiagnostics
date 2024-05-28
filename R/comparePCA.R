@@ -13,8 +13,8 @@
 #' If cosine similarity is chosen, the function computes the cosine similarity between each pair of PC vectors. 
 #' If correlation is chosen, it calculates the correlation coefficient using either Spearman or Pearson method.
 #' 
-#' @param reference_data A SingleCellExperiment object representing the reference dataset.
-#' @param query_data A SingleCellExperiment object representing the query dataset.
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param n_components Number of principal components to consider. Default is 5.
 #' @param metric The similarity metric to use. It can be either "cosine" or "correlation". Default is "cosine".
 #' @param correlation_method The correlation method to use if metric is "correlation". It can be "spearman" 
@@ -73,7 +73,7 @@
 #' query_data_subset <- runPCA(query_data_subset)
 #'
 #' # Call the PCA comparison function
-#' similarity_mat <- comparePCA(reference_data = ref_data_subset, query_data = query_data_subset, 
+#' similarity_mat <- comparePCA(query_data_subset, ref_data_subset, 
 #'                              n_components = 5, 
 #'                              metric = c("cosine", "correlation")[1], 
 #'                              correlation_method = c("spearman", "pearson")[1])

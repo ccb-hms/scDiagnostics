@@ -7,8 +7,8 @@
 plotMarkerExpression(
   reference_data,
   query_data,
-  reference_cell_labels,
-  query_cell_labels,
+  ref_cell_type_col,
+  query_cell_type_col,
   gene_name,
   label
 )
@@ -18,13 +18,13 @@ plotMarkerExpression(
 
 \item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
-\item{gene_name}{character. A string representing the gene name for which the distribution is to be visualized.}
-
-\item{label}{character. A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).}
+\item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
 
 \item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+\item{gene_name}{character. A string representing the gene name for which the distribution is to be visualized.}
+
+\item{label}{character. A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).}
 }
 \value{
 A gtable object containing two arranged density plots as grobs. 
@@ -70,8 +70,8 @@ colData(query_data)$labels <- pred$labels
 # Note: Users can use SingleR or any other method to obtain the cell type annotations.
 plotMarkerExpression(reference_data = ref_data, 
                      query_data = query_data, 
-                     reference_cell_labels = "reclustered.broad", 
-                     query_cell_labels = "labels", 
+                     ref_cell_type_col = "reclustered.broad", 
+                     query_cell_type_col = "labels", 
                      gene_name = "VPREB3", 
                      label = "B_and_plasma")
 

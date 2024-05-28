@@ -20,7 +20,6 @@
 #' that identifies the cell types.
 #' @param cell_type_query The query cell type for which distances or correlations are calculated.
 #' @param cell_type_reference The reference cell type for which distances or correlations are calculated.
-#' @param dim_reduction Should dimensionality reduction using Principal Component Analysis (PCA) be applied? Defaults to FALSE.
 #' @param distance_metric The distance metric to use for calculating pairwise distances, such as euclidean, manhattan etc.
 #'                        Set it to "correlation" for calculating correlation coefficients.
 #' @param correlation_method The correlation method to use when distance_metric is "correlation".

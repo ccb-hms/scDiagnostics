@@ -7,8 +7,8 @@
 #' (obtained using \code{reducedDim(reference_data)}) and that the genes used for PCA are present in both the reference and query data. 
 #' It performs centering and scaling of the query data based on the reference data before projection.
 #'
-#' @param query_data A SingleCellExperiment object containing the data to be projected.
-#' @param reference_data A SingleCellExperiment object containing the reference data with pre-computed PCA.
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param n_components An integer specifying the number of principal components to use for projection. Defaults to 10. 
 #' Must be less than or equal to the number of components available in the reference PCA.
 #' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data} 
@@ -66,7 +66,7 @@
 #' ref_data_subset <- runPCA(ref_data_subset)
 #'
 #' # Project the query data onto PCA space of reference
-#' pca_output <- projectPCA(query_data = query_data_subset, reference_data = ref_data_subset,
+#' pca_output <- projectPCA(query_data_subset, ref_data_subset,
 #'                          n_components = 10,
 #'                          query_cell_type_col = "labels",
 #'                          ref_cell_type_col = "reclustered.broad",

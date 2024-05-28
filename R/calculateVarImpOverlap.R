@@ -7,13 +7,11 @@
 #' within both a reference dataset and a query dataset. The function then compares the top genes identified in both datasets to determine 
 #' the overlap in their importance scores.
 #'
-#' @param query_data A SingleCellExperiment object containing the query dataset with logcounts assay.
-#' @param reference_data A SingleCellExperiment object containing the reference dataset with logcounts assay.
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
 #' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
 #' @param n_tree An integer specifying the number of trees to grow in the Random Forest. Default is 500.
-#' @param compute_importance A logical value indicating whether to compute variable importance scores for each pairwise combination of 
-#' cell types. Default is TRUE.
 #' @param n_top An integer specifying the number of top genes to consider when comparing variable importance scores. Default is 20.
 #'
 #' @return A list containing three elements:
@@ -21,8 +19,8 @@
 #' dataset.}
 #' \item{var_imp_query}{A list of data frames containing variable importance scores for each combination of cell types in the query 
 #' dataset.}
-#' \item{var_imp_comparison}{A named vector indicating the proportion of top genes that overlap between the reference and query datasets 
-#' for each combination of cell types.}
+#' \item{var_imp_comparison}{A named vector indicating the proportion of top genes that overlap between the reference and query 
+#' datasets for each combination of cell types.}
 #' 
 #' @export
 #' 
@@ -63,7 +61,7 @@
 #' query_data_subset <- query_data[common_genes, ]
 #' 
 #' # Compare PCA subspaces
-#' rf_output <- calculateVarImpOverlap(reference_data = ref_data_subset, query_data = query_data_subset, 
+#' rf_output <- calculateVarImpOverlap(query_data_subset, ref_data_subset, 
 #'                                     query_cell_type_col = "labels", 
 #'                                     ref_cell_type_col = "reclustered.broad", 
 #'                                     n_tree = 500,

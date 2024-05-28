@@ -15,9 +15,9 @@ boxplotPCA(
 )
 }
 \arguments{
-\item{query_data}{A SingleCellExperiment object containing the data to be projected.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
-\item{reference_data}{A SingleCellExperiment object containing the reference data with pre-computed PCA.}
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
 \item{n_components}{An integer specifying the number of principal components to use for projection. Defaults to 10. 
 Must be less than or equal to the number of components available in the reference PCA.}
@@ -86,14 +86,14 @@ query_data_subset <- query_data[common_genes, ]
 # Run PCA on the reference data (assumed to be prepared)
 ref_data_subset <- runPCA(ref_data_subset)
 
-pc_plot <- boxplotPCA(query_data = query_data_subset, reference_data = ref_data_subset,
+pc_plot <- boxplotPCA(query_data_subset, ref_data_subset,
                       n_components = 10,
                       cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
                       query_cell_type_col = "labels", 
                       ref_cell_type_col = "reclustered.broad", 
                       pc_subset = c(1:5))
 pc_plot
-                         
+
 }
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}

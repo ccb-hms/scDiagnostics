@@ -48,8 +48,8 @@
 #' # Note: Users can use SingleR or any other method to obtain the cell type annotations.
 #' plotMarkerExpression(reference_data = ref_data, 
 #'                      query_data = query_data, 
-#'                      reference_cell_labels = "reclustered.broad", 
-#'                      query_cell_labels = "labels", 
+#'                      ref_cell_type_col = "reclustered.broad", 
+#'                      query_cell_type_col = "labels", 
 #'                      gene_name = "VPREB3", 
 #'                      label = "B_and_plasma")
 #'
@@ -61,8 +61,8 @@
 #' @export
 plotMarkerExpression <- function(reference_data, 
                                  query_data, 
-                                 reference_cell_labels, 
-                                 query_cell_labels, 
+                                 ref_cell_type_col, 
+                                 query_cell_type_col, 
                                  gene_name, 
                                  label) {
   # Sanity checks
@@ -82,14 +82,14 @@ plotMarkerExpression <- function(reference_data,
     stop("gene_name: '", gene_name, "' is not present in the 
          row names of both query_data and reference_data.")
   }
-  
+    
   # Check if all labels are present in query_data
-  if (!all(label %in% query_data[[query_cell_labels]])) {
+  if (!all(label %in% query_data[[query_cell_type_col]])) {
     stop("One or more labels specified are not present in query_data.")
   }
   
   # Check if all labels are present in reference_data
-  if (!all(label %in% reference_data[[reference_cell_labels]])) {
+  if (!all(label %in% reference_data[[ref_cell_type_col]])) {
     stop("One or more labels specified are not present in reference_data.")
   }
   
@@ -119,8 +119,8 @@ plotMarkerExpression <- function(reference_data,
     theme_minimal()
   
   # Create a subset of data for cell type-specific distribution
-  index1 <- which(reference_data[[reference_cell_labels]] %in%  label)
-  index2 <- which(query_data[[query_cell_labels]] %in%  label)
+  index1 <- which(reference_data[[ref_cell_type_col]] %in%  label)
+  index2 <- which(query_data[[query_cell_type_col]] %in%  label)
   
   reference_gene_expression_cell_type <- assay(reference_data, "logcounts")[gene_name, index1]
   query_gene_expression_cell_type <- assay(query_data, "logcounts")[gene_name, index2]

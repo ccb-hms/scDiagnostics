@@ -13,9 +13,9 @@ comparePCA(
 )
 }
 \arguments{
-\item{reference_data}{A SingleCellExperiment object representing the reference dataset.}
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
-\item{query_data}{A SingleCellExperiment object representing the query dataset.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
 \item{n_components}{Number of principal components to consider. Default is 5.}
 
@@ -88,7 +88,7 @@ ref_data_subset <- runPCA(ref_data_subset)
 query_data_subset <- runPCA(query_data_subset)
 
 # Call the PCA comparison function
-similarity_mat <- comparePCA(reference_data = ref_data_subset, query_data = query_data_subset, 
+similarity_mat <- comparePCA(query_data_subset, ref_data_subset, 
                              n_components = 5, 
                              metric = c("cosine", "correlation")[1], 
                              correlation_method = c("spearman", "pearson")[1])

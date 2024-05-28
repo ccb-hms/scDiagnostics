@@ -23,8 +23,8 @@
 #' idea that anomalies are more susceptible to isolation than normal instances.
 #' The part where we project the query data onto the PCA space of the reference data is done by using the `predict` function on the PCA model with the query expression data. This allows us to transform the query data into the same PCA space as the reference data, which is necessary for the isolation forest analysis.
 #' 
-#' @param reference_data A SingleCellExperiment object containing the reference data.
-#' @param query_data A SingleCellExperiment object containing the query data.
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
 #' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
 #' @param n_components An integer specifying the number of principal components to use. Default is 10.
@@ -79,8 +79,7 @@
 #' ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
 #' 
 #' # Store PCA anomaly data and plots
-#' anomaly_output <- detectAnomaly(reference_data = ref_data_subset, 
-#'                                 query_data = query_data_subset, 
+#' anomaly_output <- detectAnomaly(query_data_subset, ref_data_subset, 
 #'                                 reference_labels = ref_data$reclustered.broad, 
 #'                                 query_labels = query_data$labels,
 #'                                 n_components = 10,
@@ -92,7 +91,7 @@
 #' plot(anomaly_object = anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
 #' 
 # Function to perform diagnostics using isolation forest with PCA and visualization
-detectAnomaly <- function(reference_data, query_data, 
+detectAnomaly <- function(query_data, reference_data, 
                           query_cell_type_col, 
                           ref_cell_type_col, 
                           n_components = 10,

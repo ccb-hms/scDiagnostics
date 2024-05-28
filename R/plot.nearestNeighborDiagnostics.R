@@ -6,8 +6,8 @@
 #' @details This function creates a density plot to visualize the distribution of probabilities for each sample belonging to the 
 #' reference or query dataset for each cell type. It utilizes the ggplot2 package for plotting.
 #'
-#' @param nn_object An object of class \code{nearestNeighbotDiagnostics} containing the probabilities calculated by the \code{\link{nearestNeighborDiagnostics}} function.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types in \code{nn_object} will be plotted. Default is NULL.
+#' @param x An object of class \code{nearestNeighbotDiagnostics} containing the probabilities calculated by the \code{\link{nearestNeighborDiagnostics}} function.
+#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types in \code{x} will be plotted. Default is NULL.
 #' @param prob_type A character string specifying the type of probability to plot. Must be either "query" or "reference". Default is "query".
 #' @param ... Additional arguments to be passed to \code{\link[ggplot2]{geom_density}}.
 #'
@@ -56,7 +56,7 @@
 #' ref_data_subset <- runPCA(ref_data_subset)
 #'
 #' # Project the query data onto PCA space of reference
-#' nn_output <- nearestNeighborDiagnostics(query_data = query_data_subset, reference_data = ref_data_subset,
+#' nn_output <- nearestNeighborDiagnostics(query_data_subset, ref_data_subset,
 #'                                         n_neighbor = 15, 
 #'                                         n_components = 10,
 #'                                         pc_subset = c(1:10),
@@ -68,7 +68,7 @@
 #'      prob_type = "query")
 #' 
 # Function to plot probabilities of each sample of belonging to reference or query dataset for each cell type
-plot.nearestNeighbotDiagnostics <- function(nn_object, cell_types = NULL,
+plot.nearestNeighbotDiagnostics <- function(x, cell_types = NULL,
                                             prob_type = c("query", "reference")[1], ...) {
     
     # Check input for probability type
@@ -76,14 +76,14 @@ plot.nearestNeighbotDiagnostics <- function(nn_object, cell_types = NULL,
         stop("\'prob_type\' must be one of \'query\' or \'reference\'.")
     
     # Convert probabilities to data frame
-    probabilities_df <- do.call(rbind, lapply(names(nn_object), function(ct) {
+    probabilities_df <- do.call(rbind, lapply(names(x), function(ct) {
         data.frame(cell_types = ct, 
-                   probability = nn_object[[ct]][[ifelse(prob_type == "reference", "prob_ref", "prob_query")]])
+                   probability = x[[ct]][[ifelse(prob_type == "reference", "prob_ref", "prob_query")]])
     }))
     
     if(!is.null(cell_types)){
         
-        if(!all(cell_types %in% names(nn_object)))
+        if(!all(cell_types %in% names(x)))
             stop("One or more of the \'cell_types'\ is not available.")
         
         # Subset cell types

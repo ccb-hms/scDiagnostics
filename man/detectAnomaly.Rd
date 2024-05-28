@@ -5,8 +5,8 @@
 \title{PCA Anomaly Scores via Isolation Forests with Visualization}
 \usage{
 detectAnomaly(
-  reference_data,
   query_data,
+  reference_data,
   query_cell_type_col,
   ref_cell_type_col,
   n_components = 10,
@@ -17,9 +17,9 @@ detectAnomaly(
 )
 }
 \arguments{
-\item{reference_data}{A SingleCellExperiment object containing the reference data.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
-\item{query_data}{A SingleCellExperiment object containing the query data.}
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
 \item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
 
@@ -97,8 +97,7 @@ query_data_subset <- query_data[common_genes, ]
 ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
 
 # Store PCA anomaly data and plots
-anomaly_output <- detectAnomaly(reference_data = ref_data_subset, 
-                                query_data = query_data_subset, 
+anomaly_output <- detectAnomaly(query_data_subset, ref_data_subset, 
                                 reference_labels = ref_data$reclustered.broad, 
                                 query_labels = query_data$labels,
                                 n_components = 10,
