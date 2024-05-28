@@ -49,6 +49,7 @@ the overlap in their importance scores.
 library(scRNAseq)
 library(scuttle)
 library(SingleR)
+library(scran)
 
 # Load data
 sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
