@@ -31,6 +31,8 @@
 #' 
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
+#' @seealso \code{\link{plot.compareCCA}}
+#' 
 #' @examples
 #' # Load necessary library
 #' library(scRNAseq)
@@ -80,20 +82,8 @@
 #' cca_comparison <- compareCCA(query_data_subset, ref_data_subset, 
 #'                              pc_subset = c(1:5))
 #' 
-#' # Create a data frame for plotting
-#' comparison_data <- data.frame(CC = paste0("CC", 1:length(c(1:5))),
-#'                               Cosine = cca_comparison$cosine_similarity,
-#'                               Correlation = cca_comparison$correlations)
-#' comparison_data$CC <- factor(comparison_data$CC, levels = comparison_data$CC)
-#' 
-#' ggplot2::ggplot(comparison_data, aes(x = CC, y = Cosine, size = Correlation)) +
-#'     ggplot2::geom_point() +
-#'     ggplot2::scale_size_continuous(range = c(3, 10)) +
-#'     ggplot2::labs(title = "Cosine Similarities of CCA Coefficients with Correlation",
-#'                   x = "",
-#'                   y = "Cosine of CCA Coefficients",
-#'                   size = "Correlation") +
-#'     ggplot2::theme_minimal()
+#' # Visualize output of CCA comparison
+#' plot(cca_comparison)
 #' 
 # Function to compare subspace spanned by top PCs in reference and query datasets
 compareCCA <- function(reference_data, query_data, 
@@ -141,11 +131,15 @@ compareCCA <- function(reference_data, query_data,
     for (i in 1:length(pc_subset)) {
         similarities[i] <- .cosine_similarity(canonical_ref[, i], canonical_query[, i])
     }
+    
+    # Update class of return output
+    output <- list(coef_ref = canonical_ref,
+                   coef_query = canonical_query,
+                   cosine_similarity = similarities,
+                   correlations = correlations)
+    class(output) <- c(class(output), "compareCCA")
 
     # Return cosine similarity output
-    return(list(coef_ref = canonical_ref,
-                coef_query = canonical_query,
-                cosine_similarity = similarities,
-                correlations = correlations))
+    return(output)
 }
 

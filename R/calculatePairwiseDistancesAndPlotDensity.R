@@ -155,12 +155,26 @@ calculatePairwiseDistancesAndPlotDensity <- function(query_data,
                  as.vector(dist_query_ref))
   )
 
-  # Plot density plots
-  ggplot(dist_df, aes(x = Distance, color = Comparison)) +
-    geom_density() +
-    labs(x = ifelse(distance_metric == "correlation", 
-                    paste(correlation_method, "correlation"), 
-                    "Distance"), y = "Density", 
-         title = "Pairwise Distance Analysis and Density Visualization") +
-    theme_bw()
+  # Plot density plots with improved aesthetics
+  ggplot2::ggplot(dist_df, aes(x = Distance, color = Comparison, fill = Comparison)) +
+      ggplot2::geom_density(alpha = 0.5, linewidth = 1) +  # Updated: linewidth instead of size
+      ggplot2::scale_color_manual(values = c("#1f78b4", "#33a02c", "#e31a1c")) +
+      ggplot2::scale_fill_manual(values = c("#1f78b4", "#33a02c", "#e31a1c")) +
+      ggplot2::labs(x = ifelse(distance_metric == "correlation", 
+                               ifelse(correlation_method == "spearman", "Spearman Correlation", "Pearson Correlation"), 
+                               "Distance"), y = "Density", 
+                    title = "Pairwise Distance Analysis and Density Visualization") +
+      ggplot2::theme_minimal() +
+      ggplot2::theme(
+          plot.title = ggplot2::element_text(size = 16, hjust = 0.5, face = "bold"),
+          axis.title = ggplot2::element_text(size = 14),
+          axis.text = ggplot2::element_text(size = 12),
+          legend.title = ggplot2::element_blank(),
+          legend.text = ggplot2::element_text(size = 12),
+          panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dashed"),
+          panel.grid.minor = ggplot2::element_blank(),
+          panel.background = ggplot2::element_rect(fill = "white"),
+          panel.border = ggplot2::element_blank(),
+          legend.position = "top"
+      )
 }

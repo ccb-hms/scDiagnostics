@@ -95,17 +95,11 @@ similarity_mat <- comparePCA(query_data_subset, ref_data_subset,
                              correlation_method = c("spearman", "pearson")[1])
 
 # Create the heatmap
-heatmap <- Heatmap(similarity_mat,
-                   name = "Cosine Similarity",
-                   show_row_names = TRUE,
-                   show_column_names = TRUE,
-                   cluster_rows = TRUE,
-                   cluster_columns = TRUE,
-                   row_title = paste0("Reference Data (CD4)"), 
-                   column_title = "Query Data (CD4)", 
-                   row_dend_side = "left")
-heatmap
+plot(similarity_mat)
 
+}
+\seealso{
+\code{\link{plot.comparePCA}}
 }
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}

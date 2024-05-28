@@ -23,6 +23,8 @@
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
+#' @seealso \code{\link{detectAnomaly}}
+#' 
 #' @examples
 #' # Load required libraries
 #' library(scRNAseq)
@@ -64,15 +66,15 @@
 #' 
 #' # Store PCA anomaly data and plots
 #' anomaly_output <- detectAnomaly(query_data_subset, ref_data_subset, 
-#'                                 reference_labels = ref_data$reclustered.broad, 
-#'                                 query_labels = query_data$labels,
+#'                                 ref_cell_type_col = "reclustered.broad", 
+#'                                 query_cell_type_col = "labels",
 #'                                 n_components = 10,
 #'                                 n_tree = 500,
 #'                                 anomaly_treshold = 0.5,
 #'                                 store_plots = TRUE) 
 #' 
 #' # Plot the output for a cell type
-#' plot(x = anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
+#' plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
 #' 
 # Function to create faceted scatter plots for specified PC combinations
 plot.detectAnomaly <- function(x, cell_type, pc_subset = NULL, ...) {

@@ -82,7 +82,7 @@ query_data_subset <- query_data[common_genes, ]
 ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
 
 # Get the p-values from the test
-p_values <- hotellingTestPValue(query_data, reference_data, 
+p_values <- hotellingTestPValue(query_data_subset, ref_data_subset, 
                                 n_components = 10, 
                                 query_cell_type_col = "reclustered.broad", 
                                 ref_cell_type_col = "reclustered.broad",

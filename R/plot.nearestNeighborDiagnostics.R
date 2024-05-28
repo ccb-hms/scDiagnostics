@@ -17,6 +17,8 @@
 #' 
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
+#' @seealso \code{\link{nearestNeighborDiagnostics}}
+#' 
 #' @examples
 #' # Load necessary library
 #' library(scRNAseq)
@@ -69,7 +71,7 @@
 #'      prob_type = "query")
 #' 
 # Function to plot probabilities of each sample of belonging to reference or query dataset for each cell type
-plot.nearestNeighbotDiagnostics <- function(x, cell_types = NULL,
+plot.nearestNeighborDiagnostics <- function(x, cell_types = NULL,
                                             prob_type = c("query", "reference")[1], ...) {
     
     # Check input for probability type

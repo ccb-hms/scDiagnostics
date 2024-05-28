@@ -519,16 +519,16 @@ correlation plot using the corrplot package.
 ```{r Cell-Type-Correlation-Analysis-Visualization, warning=FALSE, message=FALSE}
 selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
 ref_data_subset <- runPCA(ref_data_subset)
-cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subset, 
-                                                    reference_data = ref_data_subset, 
-                                                    n_components = 5,
-                                                    query_cell_type_col = "labels", 
-                                                    ref_cell_type_col = "reclustered.broad", 
-                                                    cell_types = selected_cell_types, 
-                                                    correlation_method = "spearman")
+cor_matrix_avg <- calculateAveragePairwiseCorrelation(query_data = query_data_subset, 
+                                                      reference_data = ref_data_subset, 
+                                                      n_components = 5,
+                                                      query_cell_type_col = "labels", 
+                                                      ref_cell_type_col = "reclustered.broad", 
+                                                      cell_types = selected_cell_types, 
+                                                      correlation_method = "spearman")
 
-# Plot the pairwise average correlations using corrplot
-corrplot(cor_matrix_avg, method = "number", tl.col = "black")
+# Visualize the output
+plot(cor_matrix_avg)
 ```
 
 In this case, users have the flexibility to extract the gene expression

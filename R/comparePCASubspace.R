@@ -27,6 +27,8 @@
 #' 
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
+#' @seealso \code{\link{plot.comparePCASubspace}}
+#' 
 #' @examples
 #' # Load necessary library
 #' library(scRNAseq)
@@ -77,19 +79,7 @@
 #'                                           pc_subset = c(1:5))
 #' 
 #' # Create a data frame for plotting
-#' comparison_data <- data.frame(PC = paste0("PC", c(1:5)),
-#'                               Cosine = subspace_comparison$principal_angles_cosines,
-#'                               VarianceExplained = subspace_comparison$average_variance_explained)
-#' 
-#' # Plot the cosines of principal angles with variance explained as size
-#' ggplot(data, aes(x = PC, y = Cosine, size = VarianceExplained)) +
-#'     geom_point() +
-#'     scale_size_continuous(range = c(3, 10)) +
-#'     labs(title = "Principal Angles Cosines with Variance Explained",
-#'          x = "Principal Component",
-#'          y = "Cosine of Principal Angle",
-#'          size = "Variance Explained") +
-#'     theme_minimal()
+#' plot(subspace_comparison)
 #' 
 # Function to compare subspace spanned by top PCs in reference and query datasets
 comparePCASubspace <- function(reference_data, query_data, 
@@ -155,10 +145,14 @@ comparePCASubspace <- function(reference_data, query_data,
     # Weighted cosine similarity score
     weighted_cosine_similarity <- sum(top_cosine * var_explained_avg)
     
+    # Update class of return output
+    output <- list(cosine_similarity = top_cosine,
+                   cosine_id = cosine_id,
+                   var_explained_avg = var_explained_avg,
+                   weighted_cosine_similarity = weighted_cosine_similarity)
+    class(output) <- c(class(output), "comparePCASubspace")
+    
     # Return cosine similarity output
-    return(list(cosine_similarity = top_cosine,
-                cosine_id = cosine_id,
-                var_explained_avg = var_explained_avg,
-                weighted_cosine_similarity = weighted_cosine_similarity))
+    return(output)
 }
 

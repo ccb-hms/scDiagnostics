@@ -28,6 +28,8 @@
 #' 
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
+#' @seealso \code{\link{plot.comparePCA}}
+#' 
 #' @examples
 #' # Load necessary library
 #' library(scRNAseq)
@@ -80,16 +82,7 @@
 #'                              correlation_method = c("spearman", "pearson")[1])
 #'
 #' # Create the heatmap
-#' heatmap <- Heatmap(similarity_mat,
-#'                    name = "Cosine Similarity",
-#'                    show_row_names = TRUE,
-#'                    show_column_names = TRUE,
-#'                    cluster_rows = TRUE,
-#'                    cluster_columns = TRUE,
-#'                    row_title = paste0("Reference Data (CD4)"), 
-#'                    column_title = "Query Data (CD4)", 
-#'                    row_dend_side = "left")
-#' heatmap
+#' plot(similarity_mat)
 #'
 # Compare PCA vectors of reference and query datasets for specific cell type.
 comparePCA <- function(reference_data, query_data, 
@@ -169,6 +162,9 @@ comparePCA <- function(reference_data, query_data,
                                           round(attributes(reducedDim(query_data, "PCA"))$varExplained[1:n_components] / 
                                                     sum(attributes(reducedDim(query_data, "PCA"))$varExplained[1:n_components]) *
                                                     100, 1), "%)")
+    
+    # Update class of return output
+    class(similarity_matrix) <- c(class(similarity_matrix), "comparePCA")
     
     # Return similarity matrix
     return(similarity_matrix)

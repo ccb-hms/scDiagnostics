@@ -26,6 +26,8 @@
 #'         Rows and columns are labeled with the cell types. Each element 
 #'         in the matrix represents the average correlation between a pair 
 #'         of cell types.
+#'         
+#' @seealso \code{\link{plot.calculateAveragePairwiseCorrelation}}
 #' 
 #' @examples
 #' library(scater)
@@ -75,27 +77,28 @@
 #' ref_data_subset <- runPCA(ref_data_subset)
 #'
 #' # Compute pairwise correlations
-#' cor_matrix_avg <- computeAveragePairwiseCorrelation(query_data = query_data_subset, 
-#'                                                     reference_data = ref_data_subset, 
-#'                                                     n_components = 10,
-#'                                                     query_cell_type_col = "labels", 
-#'                                                     ref_cell_type_col = "reclustered.broad", 
-#'                                                     cell_types = selected_cell_types, 
-#'                                                     correlation_method = "spearman")
+#' cor_matrix_avg <- calculateAveragePairwiseCorrelation(query_data = query_data_subset, 
+#'                                                       reference_data = ref_data_subset, 
+#'                                                       n_components = 10,
+#'                                                       query_cell_type_col = "labels", 
+#'                                                       ref_cell_type_col = "reclustered.broad", 
+#'                                                       cell_types = selected_cell_types, 
+#'                                                       correlation_method = "spearman")
 #'
-#' # Visualize the results using any visualization method of choice
+#' # Visualize the results
+#' plot(cor_matrix_avg)
 #'
 #' @import SingleCellExperiment
 #' @importFrom SummarizedExperiment assay
 #' @importFrom stats cor
 #' @export
-computeAveragePairwiseCorrelation <- function(query_data, 
-                                              reference_data, 
-                                              n_components = 10,
-                                              query_cell_type_col, 
-                                              ref_cell_type_col, 
-                                              cell_types, 
-                                              correlation_method) {
+calculateAveragePairwiseCorrelation <- function(query_data, 
+                                                reference_data, 
+                                                n_components = 10,
+                                                query_cell_type_col, 
+                                                ref_cell_type_col, 
+                                                cell_types, 
+                                                correlation_method) {
   # Sanity checks
   
   # Check if query_data is a SingleCellExperiment object
@@ -155,7 +158,11 @@ computeAveragePairwiseCorrelation <- function(query_data,
   cor_matrix_avg <- outer(cell_types, cell_types, Vectorize(.computeCorrelation))
   
   # Assign cell type names to rows and columns
-  dimnames(cor_matrix_avg) <- list(cell_types, cell_types)
+  rownames(cor_matrix_avg) <- paste0("Query-", cell_types)
+  colnames(cor_matrix_avg) <- paste0("Ref-", cell_types)
+  
+  # Update class of output
+  class(cor_matrix_avg) <- c(class(cor_matrix_avg), "calculateAveragePairwiseCorrelation")
   
   return(cor_matrix_avg)
 }

@@ -27,6 +27,8 @@
 #' 
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
+#' @seealso \code{\link{plot.nearestNeighborDiagnostics}}
+#' 
 #' @examples
 #' # Load necessary library
 #' library(scRNAseq)
@@ -146,7 +148,7 @@ nearestNeighborDiagnostics <- function(query_data, reference_data,
     }
     
     # Creating class for output
-    class(probabilities) <- c(class(probabilities), "nearestNeighbotDiagnostics")
+    class(probabilities) <- c(class(probabilities), "nearestNeighborDiagnostics")
     
     # Return the list of probabilities
     return(probabilities)
