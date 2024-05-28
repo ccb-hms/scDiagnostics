@@ -5,10 +5,10 @@
 #'
 #' @details The function first performs PCA on the reference dataset and projects the query dataset onto the same PCA space. 
 #' It then computes pairwise Euclidean distances within the reference dataset for each cell type, as well as distances from each 
-#' query sample to all reference samples of the same cell type. The results are stored in a list, with one entry per cell type.
+#' query sample to all reference samples of a particular cell type. The results are stored in a list, with one entry per cell type.
 #'
-#' @param query_data A SingleCellExperiment object containing the data to be projected.
-#' @param reference_data A SingleCellExperiment object containing the reference data with pre-computed PCA.
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param n_components An integer specifying the number of principal components to use for projection. Defaults to 10. 
 #' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data} 
 #' that identifies the cell types.
@@ -54,23 +54,26 @@
 #' colData(query_data)$labels <- scores$labels
 #' 
 #' # Selecting highly variable genes (can be customized by the user)
-#' ref_var <- scran::getTopHVGs(ref_data, n = 2000)
-#' query_var <- scran::getTopHVGs(query_data, n = 2000)
+#' ref_var <- getTopHVGs(ref_data, n = 2000)
+#' query_var <- getTopHVGs(query_data, n = 2000)
 #' 
 #' # Intersect the gene symbols to obtain common genes
 #' common_genes <- intersect(ref_var, query_var)
 #' ref_data_subset <- ref_data[common_genes, ]
 #' query_data_subset <- query_data[common_genes, ]
 #' 
+#' # Run PCA on the reference data
+#' ref_data_subset <- runPCA(ref_data_subset)
+#' 
 #' # Plot the PC data
-#' distance_data <- computeDistanceDiagnostics(query_data, reference_data, 
-#'                                             n_components = 10, 
-#'                                             query_cell_type_col = "labels", 
-#'                                             ref_cell_type_col = "reclustered.broad",
-#'                                             pc_subset = c(1:10)) 
+#' distance_data <- calculateDistanceDiagnostics(query_data_subset, ref_data_subset, 
+#'                                               n_components = 10, 
+#'                                               query_cell_type_col = "labels", 
+#'                                               ref_cell_type_col = "reclustered.broad",
+#'                                               pc_subset = c(1:10)) 
 #' 
 #' # Identify outliers for CD4
-#' cd4_anomalites <- detectAnomaly(reference_data = ref_data_subset, query_data = query_data_subset, 
+#' cd4_anomalites <- detectAnomaly(query_data_subset, ref_data_subset, 
 #'                                 query_cell_type_col = "labels", 
 #'                                 ref_cell_type_col = "reclustered.broad",
 #'                                 n_components = 10,
@@ -80,14 +83,14 @@
 #' cd4_top_anomaly <- names(which.max(cd4_anomalites$anomaly_scores))
 #' 
 #' # Plot the densities of the distances
-#' plot(distance_data, cell_type = "CD4", sample_name = cd4_top_anomaly)
+#' plot(distance_data, ref_cell_type = "CD4", sample_name = cd4_top_anomaly)
 #' 
-# Function to compute distances from 
-computeDistanceDiagnostics <- function(query_data, reference_data, 
-                                       query_cell_type_col, 
-                                       ref_cell_type_col,
-                                       n_components = 10, 
-                                       pc_subset = c(1:5)) {
+# Function to compute distances within reference data and between query data and reference samples
+calculateDistanceDiagnostics <- function(query_data, reference_data, 
+                                         query_cell_type_col, 
+                                         ref_cell_type_col,
+                                         n_components = 10, 
+                                         pc_subset = c(1:5)) {
     
     # Get the projected PCA data
     pca_output <- projectPCA(query_data = query_data, reference_data = reference_data, 
@@ -118,7 +121,7 @@ computeDistanceDiagnostics <- function(query_data, reference_data,
         
         # Subset principal component scores for current cell type
         ref_subset_scores <- pca_output$ref[which(cell_type == reference_data[[ref_cell_type_col]]), pc_subset]
-        query_subset_scores <- pca_output$query[which(cell_type == query_data[[query_cell_type_col]]), pc_subset]
+        query_subset_scores <- pca_output$query[, pc_subset]
         
         # Compute all pairwise distances within the reference subset
         ref_distances <- as.vector(dist(ref_subset_scores))
@@ -136,7 +139,7 @@ computeDistanceDiagnostics <- function(query_data, reference_data,
     }
     
     # Add class of object
-    class(distance_data) <- c(class(distance_data), "computeDistanceDiagnostics")
+    class(distance_data) <- c(class(distance_data), "calculateDistanceDiagnostics")
     
     # Return the distance data
     return(distance_data)
