@@ -31,3 +31,50 @@ a ggplot2 plot object
 \description{
 Plot the result of a PC regression diagnostic.
 }
+\examples{
+library(scater)
+library(scran)
+library(scRNAseq)
+library(SingleR)
+
+# Load data
+sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+
+# Divide the data into reference and query datasets
+set.seed(100)
+indices <- sample(ncol(sce),
+    size = floor(0.7 * ncol(sce)),
+    replace = FALSE
+)
+ref <- sce[, indices]
+query <- sce[, -indices]
+
+# log transform datasets
+ref <- logNormCounts(ref)
+query <- logNormCounts(query)
+
+# Run PCA
+query <- runPCA(query)
+
+# Get cell type scores using SingleR
+# Note: replace when using cell type annotation scores from other methods
+scores <- SingleR(query, ref, labels = ref$reclustered.broad)
+
+# Add labels to query object
+query$labels <- scores$labels
+
+# Specify the dependent variables (principal components) and
+# independent variable (e.g., "labels")
+dep.vars <- paste0("PC", 1:3)
+indep.var <- "labels"
+
+# Perform linear regression on multiple principal components
+res <- regressPC(
+    sce = query,
+    dep.vars = dep.vars,
+    indep.var = indep.var
+)
+
+plotRegressPC(query, res, dep.vars, indep.var)
+
+}
