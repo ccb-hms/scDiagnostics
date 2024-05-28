@@ -266,7 +266,7 @@ regressPC <-
 #' plotRegressPC(query, res, dep.vars, indep.var)
 #' 
 #' @export
-plotRegressPC <- function(sce,
+plotPCRegression <- function(sce,
     regressPC_res,
     dep.vars = NULL,
     indep.var,
