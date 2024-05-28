@@ -43,6 +43,7 @@ library(scuttle)
 library(scran)
 library(SingleR)
 library(ggplot2)
+library(scater)
 
 # Load data
 sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
