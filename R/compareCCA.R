@@ -81,7 +81,7 @@
 #'                              pc_subset = c(1:5))
 #' 
 #' # Create a data frame for plotting
-#' comparison_data <- data.frame(CC = paste0("CC", 1:length(pc_subset)),
+#' comparison_data <- data.frame(CC = paste0("CC", 1:length(c(1:5))),
 #'                               Cosine = cca_comparison$cosine_similarity,
 #'                               Correlation = cca_comparison$correlations)
 #' comparison_data$CC <- factor(comparison_data$CC, levels = comparison_data$CC)
