@@ -45,7 +45,7 @@ If correlation is chosen, it calculates the correlation coefficient using either
 }
 \examples{
 # Load necessary library
-library(SingleCellExperiment)
+library(scRNAseq)
 library(scuttle)
 library(scran)
 library(SingleR)

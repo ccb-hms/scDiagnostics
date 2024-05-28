@@ -60,6 +60,7 @@ one can evaluate the consistency and reliability of annotated cell types within 
 library(scran)
 library(scRNAseq)
 library(SingleR)
+library(scater)
 
 # Load data
 sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)

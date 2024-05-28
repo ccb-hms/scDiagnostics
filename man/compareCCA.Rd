@@ -38,7 +38,7 @@ for both datasets, the cosine similarity values, and the canonical correlations.
 }
 \examples{
 # Load necessary library
-library(SingleCellExperiment)
+library(scRNAseq)
 library(scuttle)
 library(scran)
 library(SingleR)

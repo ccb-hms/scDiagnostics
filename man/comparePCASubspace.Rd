@@ -35,7 +35,7 @@ of variance explained by each PC.
 }
 \examples{
 # Load necessary library
-library(SingleCellExperiment)
+library(scRNAseq)
 library(scuttle)
 library(scran)
 library(SingleR)

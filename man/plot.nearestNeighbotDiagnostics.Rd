@@ -28,7 +28,7 @@ reference or query dataset for each cell type. It utilizes the ggplot2 package f
 }
 \examples{
 # Load necessary library
-library(SingleCellExperiment)
+library(scRNAseq)
 library(scuttle)
 library(scran)
 library(SingleR)

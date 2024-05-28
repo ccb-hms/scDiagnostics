@@ -47,7 +47,7 @@ datasets by data augmentation if necessary.
 }
 \examples{
 # Load necessary library
-library(SingleCellExperiment)
+library(scRNAseq)
 library(scuttle)
 library(scran)
 library(SingleR)

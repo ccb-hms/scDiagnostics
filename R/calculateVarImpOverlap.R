@@ -28,7 +28,7 @@
 #' 
 #' @examples
 #' # Load necessary library
-#' library(SingleCellExperiment)
+#' library(scRNAseq)
 #' library(scuttle)
 #' library(SingleR)
 #'
