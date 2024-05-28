@@ -34,6 +34,7 @@
 #' library(scran)
 #' library(SingleR)
 #' library(ggplot2)
+#' library(scater)
 #'
 #' # Load data
 #' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
@@ -76,7 +77,7 @@
 #'                                           pc_subset = c(1:5))
 #' 
 #' # Create a data frame for plotting
-#' comparison_data <- data.frame(PC = paste0("PC", pc_subset),
+#' comparison_data <- data.frame(PC = paste0("PC", c(1:5)),
 #'                               Cosine = subspace_comparison$principal_angles_cosines,
 #'                               VarianceExplained = subspace_comparison$average_variance_explained)
 #' 
