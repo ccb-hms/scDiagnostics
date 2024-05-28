@@ -101,9 +101,10 @@
 #' @import SingleCellExperiment
 #' @export
 regressPC <-
-    function(sce,
-    dep.vars = NULL,
-    indep.var) {
+    function(
+        sce,
+        dep.vars = NULL,
+        indep.var) {
         ## sanity checks
         stopifnot(is(sce, "SingleCellExperiment"))
         stopifnot("PCA" %in% reducedDimNames(sce))
@@ -167,8 +168,10 @@ regressPC <-
 
             s <- mapply(
                 \(err, tot) {
-                    list("r.squared" = 1 - err / tot,
-                         "regression.summaries" = NA)
+                    list(
+                        "r.squared" = 1 - err / tot,
+                        "regression.summaries" = NA
+                    )
                 },
                 sses, ssts,
                 SIMPLIFY = FALSE
@@ -262,15 +265,16 @@ regressPC <-
 #'     dep.vars = dep.vars,
 #'     indep.var = indep.var
 #' )
-#' 
+#'
 #' plotRegressPC(query, res, dep.vars, indep.var)
-#' 
+#'
 #' @export
-plotPCRegression <- function(sce,
-    regressPC_res,
-    dep.vars = NULL,
-    indep.var,
-    max_pc = 20) {
+plotPCRegression <- function(
+        sce,
+        regressPC_res,
+        dep.vars = NULL,
+        indep.var,
+        max_pc = 20) {
     stopifnot(is(sce, "SingleCellExperiment"))
     stopifnot("PCA" %in% reducedDimNames(sce))
 
