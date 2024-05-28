@@ -305,8 +305,8 @@ colData(query_data)$labels <- pred$labels
 # Generate density plots
 plotMarkerExpression(reference_data = ref_data, 
                      query_data = query_data, 
-                     reference_cell_labels = "reclustered.broad", 
-                     query_cell_labels = "labels", 
+                     ref_cell_type_col = "reclustered.broad", 
+                     query_cell_type_col = "labels", 
                      gene_name = "MS4A1", 
                      label = "B_and_plasma")
 ```
@@ -700,42 +700,6 @@ pc_df[order(abs(pc_df$PC5)),] |>
 # It's mostly driven by low GNLY expression in the myeloid cells.
 ```
 
-## Outlier detection
-
-Isolation forests are a fast and effective method for detecting outliers
-in high-dimensional data without relying on density estimation.
-`calculateOutlierScore()` is a wrapper around the main function of the
-[isotree
-package](https://cran.r-project.org/web/packages/isotree/index.html).
-Here we run it on the PC embeddings but, it can also be informative to
-run it on the raw counts. Here we can see some outliers in PC1/2 space
-flagged by the default `score > 0.5` threshold due to their clear
-isolation (as well as a few that are isolated on the non-visualized
-PCs).
-
-```{r}
-query_data <- calculateOutlierScore(query_data, 
-                                    use_pcs = TRUE)
-
-scater::plotReducedDim(query_data, 
-                       dimred = "PCA", 
-                       color_by = "outlier_score",
-                       shape_by = "is_outlier")
-```
-
-By default this evaluates an isolation forest across all cells in the
-object. One can optionally pass a `group.var` (a column in the colData)
-to evaluate the outlier detection by groups (e.g. cell type). This can
-help assess whether a cell is atypical amongst those it was clustered
-with.
-
-Columns `outlier_score` and `is_outlier` are added to the colData of the
-output. The isotree model object itself is added to the metadata.
-
-One can pass different `dimred` names to change the plot, but running an
-isolation in forest in e.g. tSNE or UMAP space does not make sense due
-to the non-linearity of these approaches. Hence this is not allowed -
-when `use_pcs = FALSE`, the raw logcounts are used instead.
 
 ## Annotation entropy
 
