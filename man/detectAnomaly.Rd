@@ -16,10 +16,9 @@ detectAnomaly(
 )
 }
 \arguments{
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the 
-reference cells.}
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
-\item{query_data}{(Optional) A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells. 
+\item{query_data}{An optional \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells. 
 If NULL, then the isolation forest anomaly scores are computed for the reference data. Default is NULL.}
 
 \item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
@@ -39,7 +38,7 @@ A list containing the results for each cell type, including anomaly scores, anom
 }
 \description{
 \code{detectAnomaly} performs diagnostics using isolation forest with PCA and visualization. 
-It takes reference and query code{\linkS4class{SingleCellExperiment}} objects, their corresponding labels, and various parameters to perform 
+It takes reference and query \code{\linkS4class{SingleCellExperiment}} objects, their corresponding labels, and various parameters to perform 
 the analysis. The function returns a list containing the results for each cell type, including anomaly scores, anomaly IDs, 
 PCA data, and optional PCA anomaly plots.
 }
@@ -52,6 +51,7 @@ idea that anomalies are more susceptible to isolation than normal instances.
 The part where we project the query data onto the PCA space of the reference data is done by using the `predict` function on the PCA model with the query expression data. This allows us to transform the query data into the same PCA space as the reference data, which is necessary for the isolation forest analysis.
 }
 \examples{
+\donttest{
 # Load required libraries
 library(scRNAseq)
 library(scuttle)
@@ -100,6 +100,7 @@ anomaly_output <- detectAnomaly(ref_data_subset, query_data_subset,
 
 # Plot the output for a cell type
 plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
+}
 
 }
 \seealso{

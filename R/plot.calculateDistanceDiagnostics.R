@@ -24,6 +24,7 @@
 #' @seealso \code{\link{calculateDistanceDiagnostics}}
 #'
 #' @examples
+#' \donttest{
 #' # Load required libraries
 #' library(scRNAseq)
 #' library(scuttle)
@@ -81,6 +82,7 @@
 #' # Plot the densities of the distances
 #' plot(distance_data, ref_cell_type = "CD4", sample_names = cd4_top5_anomalies)
 #' plot(distance_data, ref_cell_type = "CD8", sample_names = cd4_top5_anomalies)
+#' }
 #'  
 # Function to plot density functions for the reference data and the specified sample
 plot.calculateDistanceDiagnostics <- function(x, ref_cell_type, sample_names, ...) {

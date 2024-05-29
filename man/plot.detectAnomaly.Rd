@@ -8,14 +8,14 @@
 }
 \arguments{
 \item{x}{A list object containing the anomaly detection results from the \code{detectAnomaly} function. 
-Each element of the list should correspond to a cell type and contain \code{reference_pca_subset}, \code{query_pca_subset}, 
+Each element of the list should correspond to a cell type and contain \code{reference_mat_subset}, \code{query_mat_subset}, 
 \code{var_explained}, and \code{anomaly}.}
 
 \item{cell_type}{A character string specifying the cell type for which the plots should be generated. This should
 be a name present in \code{x}.}
 
 \item{pc_subset}{A numeric vector specifying the indices of the PCs to be included in the plots. If NULL, all PCs
-in \code{reference_pca_subset} will be included.}
+in \code{reference_mat_subset} will be included.}
 
 \item{...}{Additional arguments.}
 }
@@ -33,6 +33,7 @@ scatter plots for each pair of PCs. It uses \code{ggplot2} to create a faceted p
 a pair of PCs. Anomalies are highlighted in red, while normal points are shown in black.
 }
 \examples{
+\donttest{
 # Load required libraries
 library(scRNAseq)
 library(scuttle)
@@ -81,6 +82,7 @@ anomaly_output <- detectAnomaly(ref_data_subset, query_data_subset,
 
 # Plot the output for a cell type
 plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
+}
 
 }
 \seealso{

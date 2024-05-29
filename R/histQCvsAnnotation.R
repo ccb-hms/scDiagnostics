@@ -23,6 +23,7 @@
 #' and the second histogram represents the distribution of annotation scores.
 #' 
 #' @examples
+#' \donttest{
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
@@ -66,10 +67,8 @@
 #'                    label_col = "labels", 
 #'                    score_col = "cell_scores", 
 #'                    label = NULL)
+#' }
 #'
-#' @import ggplot2
-#' @import gridExtra
-#' @importFrom gridExtra grid.arrange
 #' @export
 histQCvsAnnotation <- function(query_data, 
                                qc_col = qc_col, 
@@ -112,18 +111,18 @@ histQCvsAnnotation <- function(query_data,
   data <- data.frame(QCStats = qc_stats, Scores = cell_type_scores)
   
   # Create histogram for QC stats
-  qc_histogram <- ggplot(data, aes(x = QCStats)) +
-    geom_histogram(color = "black", fill = "white") +
-    xlab(paste(qc_col)) +
-    ylab("Frequency") +
-    theme_bw()
+  qc_histogram <- ggplot2::ggplot(data, aes(x = QCStats)) +
+      ggplot2::geom_histogram(color = "black", fill = "white") +
+      ggplot2::xlab(paste(qc_col)) +
+      ggplot2::ylab("Frequency") +
+      ggplot2::theme_bw()
   
   # Create histogram for scores
-  scores_histogram <- ggplot(data, aes(x = Scores)) +
-    geom_histogram(color = "black", fill = "white") +
-    xlab("Annotation Scores") +
-    ylab("Frequency") +
-    theme_bw()
+  scores_histogram <- ggplot2::ggplot(data, aes(x = Scores)) +
+      ggplot2::geom_histogram(color = "black", fill = "white") +
+      ggplot2::xlab("Annotation Scores") +
+      ggplot2::ylab("Frequency") +
+      ggplot2::theme_bw()
   
   # Return the list of plots
   return(gridExtra::grid.arrange(qc_histogram, scores_histogram, ncol = 2))

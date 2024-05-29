@@ -21,6 +21,7 @@
 #' @seealso \code{\link{comparePCASubspace}}
 #'
 #' @examples
+#' \donttest{
 #' # Load necessary library
 #' library(scRNAseq)
 #' library(scuttle)
@@ -71,6 +72,7 @@
 #' 
 #' # Create a data frame for plotting
 #' plot(subspace_comparison)
+#' }
 #' 
 # Function to produce the visualization of output from comparePCASubspace function
 plot.comparePCASubspace <- function(x, ...){

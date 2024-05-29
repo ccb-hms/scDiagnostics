@@ -57,6 +57,7 @@ computes pairwise distances or correlations, and visualizes these measurements u
 one can evaluate the consistency and reliability of annotated cell types within single-cell datasets.
 }
 \examples{
+\donttest{
 library(scran)
 library(scRNAseq)
 library(SingleR)
@@ -103,4 +104,6 @@ calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset,
                                          cell_type_query = "CD8", 
                                          cell_type_reference = "CD8", 
                                          distance_metric = "euclidean")
+}
+
 }

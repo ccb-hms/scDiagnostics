@@ -25,6 +25,7 @@
 #' @return A ggplot object representing the MDS scatter plot with cell type coloring.
 #'
 #' @examples
+#' \donttest{
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
@@ -84,6 +85,7 @@
 #'                             cell_type_colors = cell_type_colors, 
 #'                             legend_order = legend_order)
 #' print(plot)
+#' }
 #'
 #' @importFrom stats cmdscale cor
 #' @importFrom ggplot2 ggplot
@@ -121,11 +123,11 @@ visualizeCellTypeMDS <- function(query_data,
   # Create the plot object
   matx <- data.frame(Dim1 = cmd[, 1], Dim2 = cmd[, 2], Type = factor(mdata, levels = legend_order))
 
-  plot <- ggplot(matx, aes(x = Dim1, y = Dim2, color = Type)) +
-    geom_point(alpha = 0.5, size = 1) +
-    scale_color_manual(values = cell_type_colors) +
-    theme_bw() +
-    guides(color = guide_legend(title = "Cell Types"))
+  plot <- ggplot2::ggplot(matx, aes(x = Dim1, y = Dim2, color = Type)) +
+      ggplot2::geom_point(alpha = 0.5, size = 1) +
+      ggplot2::scale_color_manual(values = cell_type_colors) +
+      ggplot2::theme_bw() +
+      ggplot2::guides(color = ggplot2::guide_legend(title = "Cell Types"))
 
   return(plot)
 }

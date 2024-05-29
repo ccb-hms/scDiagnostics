@@ -6,7 +6,7 @@
 #' @title PCA Anomaly Scores via Isolation Forests with Visualization
 #'
 #' @description \code{detectAnomaly} performs diagnostics using isolation forest with PCA and visualization. 
-#' It takes reference and query code{\linkS4class{SingleCellExperiment}} objects, their corresponding labels, and various parameters to perform 
+#' It takes reference and query \code{\linkS4class{SingleCellExperiment}} objects, their corresponding labels, and various parameters to perform 
 #' the analysis. The function returns a list containing the results for each cell type, including anomaly scores, anomaly IDs, 
 #' PCA data, and optional PCA anomaly plots.
 #'
@@ -18,9 +18,8 @@
 #' idea that anomalies are more susceptible to isolation than normal instances.
 #' The part where we project the query data onto the PCA space of the reference data is done by using the `predict` function on the PCA model with the query expression data. This allows us to transform the query data into the same PCA space as the reference data, which is necessary for the isolation forest analysis.
 #' 
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the 
-#' reference cells.
-#' @param query_data (Optional) A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells. 
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
+#' @param query_data An optional \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells. 
 #' If NULL, then the isolation forest anomaly scores are computed for the reference data. Default is NULL.
 #' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
 #' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
@@ -38,6 +37,7 @@
 #' @seealso \code{\link{plot.detectAnomaly}}
 #' 
 #' @examples
+#' \donttest{
 #' # Load required libraries
 #' library(scRNAseq)
 #' library(scuttle)
@@ -86,6 +86,7 @@
 #' 
 #' # Plot the output for a cell type
 #' plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
+#' }
 #' 
 # Function to perform diagnostics using isolation forest with PCA and visualization
 detectAnomaly <- function(reference_data, 
@@ -126,14 +127,14 @@ detectAnomaly <- function(reference_data,
   for (cell_type in cell_types) {
     
     # Filter reference and query PCA data for the current cell type
-    reference_pca_subset <- na.omit(reference_mat[reference_labels == cell_type,])
-    query_pca_subset <- na.omit(query_mat[query_labels == cell_type,])
+    reference_mat_subset <- na.omit(reference_mat[reference_labels == cell_type,])
+    query_mat_subset <- na.omit(query_mat[query_labels == cell_type,])
     
     # Build isolation forest on reference PCA data for this cell type
-    isolation_forest <- isotree::isolation.forest(reference_pca_subset, ntree = n_tree, ...)
+    isolation_forest <- isotree::isolation.forest(reference_mat_subset, ntree = n_tree, ...)
       
     # Calculate anomaly scores for query data (scaled by reference path length)
-    anomaly_scores <- predict(isolation_forest, newdata = query_pca_subset, type = "score")
+    anomaly_scores <- predict(isolation_forest, newdata = query_mat_subset, type = "score")
 
     # Create list of output for cell type
     output[[paste0(cell_type)]] <- list()
@@ -141,10 +142,11 @@ detectAnomaly <- function(reference_data,
     # Store cell type anomaly scores and PCA data
     output[[paste0(cell_type)]]$anomaly_scores <- anomaly_scores
     output[[paste0(cell_type)]]$anomaly <- anomaly_scores > anomaly_treshold
-    output[[paste0(cell_type)]]$reference_pca_subset <- reference_pca_subset
-    output[[paste0(cell_type)]]$query_pca_subset <- query_pca_subset
-    output[[paste0(cell_type)]]$var_explained <- (attributes(reducedDim(reference_data, "PCA"))$varExplained[1:n_components]) /
-        sum(attributes(reducedDim(reference_data, "PCA"))$varExplained)
+    output[[paste0(cell_type)]]$reference_mat_subset <- reference_mat_subset
+    output[[paste0(cell_type)]]$query_mat_subset <- query_mat_subset
+    if(!is.null(n_components))
+        output[[paste0(cell_type)]]$var_explained <- (attributes(reducedDim(reference_data, "PCA"))$varExplained[1:n_components]) /
+        sum(attributes(reducedDim(reference_data, "PCA"))$varExplained) 
   }
   
   # Set the class of the output

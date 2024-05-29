@@ -29,6 +29,7 @@
 #'         calculated distances or correlations.
 #'
 #' @examples
+#' \donttest{
 #' library(scran)
 #' library(scRNAseq)
 #' library(SingleR)
@@ -75,8 +76,8 @@
 #'                                          cell_type_query = "CD8", 
 #'                                          cell_type_reference = "CD8", 
 #'                                          distance_metric = "euclidean")
-#' @import ggplot2
-#' @importFrom ggplot2 ggplot
+#' }
+#' 
 #' @importFrom stats cor dist
 #' @import SingleCellExperiment
 #' @importFrom SummarizedExperiment assay                                       

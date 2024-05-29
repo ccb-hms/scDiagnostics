@@ -26,6 +26,7 @@ Each point in the scatter plot represents the cosine similarity of CCA coefficie
 indicating the correlation.
 }
 \examples{
+\donttest{
 # Load necessary library
 library(scRNAseq)
 library(scuttle)
@@ -76,6 +77,7 @@ cca_comparison <- compareCCA(query_data_subset, ref_data_subset,
 
 # Visualize output of CCA comparison
 plot(cca_comparison)
+}
 
 }
 \seealso{

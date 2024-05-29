@@ -37,6 +37,7 @@ canonical variables using cosine similarity. The output is a list containing the
 for both datasets, the cosine similarity values, and the canonical correlations.
 }
 \examples{
+\donttest{
 # Load necessary library
 library(scRNAseq)
 library(scuttle)
@@ -87,6 +88,7 @@ cca_comparison <- compareCCA(query_data_subset, ref_data_subset,
 
 # Visualize output of CCA comparison
 plot(cca_comparison)
+}
 
 }
 \seealso{

@@ -44,6 +44,7 @@ If cosine similarity is chosen, the function computes the cosine similarity betw
 If correlation is chosen, it calculates the correlation coefficient using either Spearman or Pearson method.
 }
 \examples{
+\donttest{
 # Load necessary library
 library(scRNAseq)
 library(scuttle)
@@ -96,6 +97,7 @@ similarity_mat <- comparePCA(query_data_subset, ref_data_subset,
 
 # Create the heatmap
 plot(similarity_mat)
+}
 
 }
 \seealso{

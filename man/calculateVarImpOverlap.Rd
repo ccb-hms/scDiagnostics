@@ -45,6 +45,7 @@ within both a reference dataset and a query dataset. The function then compares 
 the overlap in their importance scores.
 }
 \examples{
+\donttest{
 # Load necessary library
 library(scRNAseq)
 library(scuttle)
@@ -85,6 +86,7 @@ rf_output <- calculateVarImpOverlap(query_data_subset, ref_data_subset,
                                     ref_cell_type_col = "reclustered.broad", 
                                     n_tree = 500,
                                     n_top = 20)
+}
 
 }
 \author{

@@ -30,6 +30,7 @@
 #' @seealso \code{\link{plot.comparePCASubspace}}
 #' 
 #' @examples
+#' \donttest{
 #' # Load necessary library
 #' library(scRNAseq)
 #' library(scuttle)
@@ -80,6 +81,7 @@
 #' 
 #' # Create a data frame for plotting
 #' plot(subspace_comparison)
+#' }
 #' 
 # Function to compare subspace spanned by top PCs in reference and query datasets
 comparePCASubspace <- function(reference_data, query_data, 

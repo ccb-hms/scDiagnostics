@@ -45,6 +45,7 @@ deriving a dissimilarity matrix. This matrix undergoes Classical Multidimensiona
 visualization, presenting cell types in a scatter plot, distinguished by colors defined by the user.
 }
 \examples{
+\donttest{
 library(scater)
 library(scran)
 library(scRNAseq)
@@ -104,5 +105,6 @@ plot <- visualizeCellTypeMDS(query_data = query_data_subset,
                             cell_type_colors = cell_type_colors, 
                             legend_order = legend_order)
 print(plot)
+}
 
 }

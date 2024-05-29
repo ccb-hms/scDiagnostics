@@ -26,6 +26,7 @@ Each point in the scatter plot represents the cosine of a principal angle, with 
 indicating the average variance explained by the corresponding principal components.
 }
 \examples{
+\donttest{
 # Load necessary library
 library(scRNAseq)
 library(scuttle)
@@ -76,6 +77,7 @@ subspace_comparison <- comparePCASubspace(query_data_subset, ref_data_subset,
 
 # Create a data frame for plotting
 plot(subspace_comparison)
+}
 
 }
 \seealso{

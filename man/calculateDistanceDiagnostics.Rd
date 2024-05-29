@@ -45,6 +45,7 @@ It then computes pairwise Euclidean distances within the reference dataset for e
 query sample to all reference samples of a particular cell type. The results are stored in a list, with one entry per cell type.
 }
 \examples{
+\donttest{
 # Load required libraries
 library(scRNAseq)
 library(scuttle)
@@ -101,6 +102,7 @@ cd4_top5_anomalies <- names(sort(cd4_anomalies$anomaly_scores, decreasing = TRUE
 
 # Plot the densities of the distances
 plot(distance_data, ref_cell_type = "CD4", sample_names = cd4_top5_anomalies)
+}
 
 }
 \seealso{

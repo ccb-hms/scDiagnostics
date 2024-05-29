@@ -9,12 +9,12 @@
 #' a pair of PCs. Anomalies are highlighted in red, while normal points are shown in black.
 #'
 #' @param x A list object containing the anomaly detection results from the \code{detectAnomaly} function. 
-#' Each element of the list should correspond to a cell type and contain \code{reference_pca_subset}, \code{query_pca_subset}, 
+#' Each element of the list should correspond to a cell type and contain \code{reference_mat_subset}, \code{query_mat_subset}, 
 #' \code{var_explained}, and \code{anomaly}.
 #' @param cell_type A character string specifying the cell type for which the plots should be generated. This should
 #' be a name present in \code{x}.
 #' @param pc_subset A numeric vector specifying the indices of the PCs to be included in the plots. If NULL, all PCs
-#' in \code{reference_pca_subset} will be included.
+#' in \code{reference_mat_subset} will be included.
 #' @param ... Additional arguments.
 #' 
 #' @return A ggplot object displaying the faceted scatter plots for the specified PC combinations.
@@ -26,6 +26,7 @@
 #' @seealso \code{\link{detectAnomaly}}
 #' 
 #' @examples
+#' \donttest{
 #' # Load required libraries
 #' library(scRNAseq)
 #' library(scuttle)
@@ -74,9 +75,14 @@
 #' 
 #' # Plot the output for a cell type
 #' plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
+#' }
 #' 
 # Function to create faceted scatter plots for specified PC combinations
 plot.detectAnomaly <- function(x, cell_type, pc_subset = NULL, ...) {
+    
+    # Check if PCA was used for computations
+    if(!("var_explained" %in% names(x[[names(x)[1]]])))
+        stop("The plot function can only be used if \'n_components\' is not NULL.")
     
     # Check input for cell type
     if(!(cell_type %in% names(x)))
@@ -84,14 +90,14 @@ plot.detectAnomaly <- function(x, cell_type, pc_subset = NULL, ...) {
     
     # Check input for pc_subset
     if(!is.null(pc_subset)){
-        if(!all(pc_subset %in% 1:ncol(x[[cell_type]]$reference_pca_subset)))
+        if(!all(pc_subset %in% 1:ncol(x[[cell_type]]$reference_mat_subset)))
             stop("\'pc_subset\' is out of range.")
     } else{
-        pc_subset <- 1:ncol(x[[cell_type]]$reference_pca_subset)
+        pc_subset <- 1:ncol(x[[cell_type]]$reference_mat_subset)
     }
     
     # Filter data to include only specified PCs
-    data_subset <- x[[cell_type]]$query_pca_subset[, pc_subset, drop = FALSE]
+    data_subset <- x[[cell_type]]$query_mat_subset[, pc_subset, drop = FALSE]
     
     # Modify column names to include percentage of variance explained
     colnames(data_subset) <- paste0("PC", pc_subset, 

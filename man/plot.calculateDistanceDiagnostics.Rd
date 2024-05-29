@@ -31,6 +31,7 @@ reference dataset and one for the distances from the specified query sample to e
 plotted in different colors to visually assess how similar the query sample is to the reference samples of the specified cell type.
 }
 \examples{
+\donttest{
 # Load required libraries
 library(scRNAseq)
 library(scuttle)
@@ -88,6 +89,7 @@ cd4_top5_anomalies <- names(sort(cd4_anomalies$anomaly_scores, decreasing = TRUE
 # Plot the densities of the distances
 plot(distance_data, ref_cell_type = "CD4", sample_names = cd4_top5_anomalies)
 plot(distance_data, ref_cell_type = "CD8", sample_names = cd4_top5_anomalies)
+}
  
 }
 \seealso{

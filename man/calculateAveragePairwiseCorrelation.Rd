@@ -52,6 +52,7 @@ cell type pair. This function aids in assessing the similarity between cells in 
 providing insights into the reliability of cell type annotations in single-cell gene expression data.
 }
 \examples{
+\donttest{
 library(scater)
 library(scran)
 library(scRNAseq)
@@ -109,6 +110,7 @@ cor_matrix_avg <- calculateAveragePairwiseCorrelation(query_data = query_data_su
 
 # Visualize the results
 plot(cor_matrix_avg)
+}
 
 }
 \seealso{

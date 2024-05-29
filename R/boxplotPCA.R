@@ -29,6 +29,7 @@
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
+#' \donttest{
 #' # Load required libraries
 #' library(scRNAseq)
 #' library(scuttle)
@@ -74,6 +75,7 @@
 #'                       ref_cell_type_col = "reclustered.broad", 
 #'                       pc_subset = c(1:5))
 #' pc_plot
+#' }
 #' 
 #' @importFrom stats approxfun cancor density setNames
 #' @importFrom utils combn

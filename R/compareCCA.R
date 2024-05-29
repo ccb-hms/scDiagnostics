@@ -34,6 +34,7 @@
 #' @seealso \code{\link{plot.compareCCA}}
 #' 
 #' @examples
+#' \donttest{
 #' # Load necessary library
 #' library(scRNAseq)
 #' library(scuttle)
@@ -84,6 +85,7 @@
 #' 
 #' # Visualize output of CCA comparison
 #' plot(cca_comparison)
+#' }
 #' 
 # Function to compare subspace spanned by top PCs in reference and query datasets
 compareCCA <- function(reference_data, query_data, 

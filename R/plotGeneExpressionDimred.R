@@ -17,6 +17,7 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
@@ -41,6 +42,7 @@
 #'                          method = "PCA", 
 #'                          n_components = c(1, 2), 
 #'                          feature = "VPREB3")
+#' }
 #'
 plotGeneExpressionDimred <- function(se_object, 
                                      method, 

@@ -24,13 +24,15 @@
 #'         where each point represents a cell, color-coded by its cell type.
 #'
 #' @examples
+#' \donttest{
+#' library(celldex)
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
 #' library(SingleR)
 #'
 #' # load reference dataset
-#' ref_data <- HumanPrimaryCellAtlasData()
+#' ref_data <- fetchReference("hpca", "2024-02-26")
 #' 
 #' # Load query dataset (Bunis haematopoietic stem and progenitor cell data) from 
 #' # Bunis DG et al. (2021). Single-Cell Mapping of Progressive Fetal-to-Adult 
@@ -66,6 +68,7 @@
 #'       score_col = "cell_scores",
 #'       label = NULL)
 #' p1 + xlab("Library Size")
+#' }
 #'                    
 #' @import ggplot2
 #' @export

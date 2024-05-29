@@ -31,6 +31,7 @@
 #' @seealso \code{\link{plot.comparePCA}}
 #' 
 #' @examples
+#' \donttest{
 #' # Load necessary library
 #' library(scRNAseq)
 #' library(scuttle)
@@ -83,6 +84,7 @@
 #'
 #' # Create the heatmap
 #' plot(similarity_mat)
+#' }
 #'
 # Compare PCA vectors of reference and query datasets for specific cell type.
 comparePCA <- function(reference_data, query_data, 

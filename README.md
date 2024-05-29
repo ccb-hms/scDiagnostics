@@ -87,7 +87,7 @@ expression patterns, as evident in the scatter plot below.
 ``` r
 
 # load reference dataset
-ref_data <- celldex::HumanPrimaryCellAtlasData()
+ref_data <- celldex::fetchReference("hpca", "2024-02-26")
 
 # Load query dataset (Bunis haematopoietic stem and progenitor cell data) from 
 # Bunis DG et al. (2021). Single-Cell Mapping of Progressive Fetal-to-Adult 

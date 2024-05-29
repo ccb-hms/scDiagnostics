@@ -38,13 +38,15 @@ metrics, systematically influence the confidence in cell type annotations,
 which is essential for ensuring reliable cell type annotation.
 }
 \examples{
+\donttest{
+library(celldex)
 library(scater)
 library(scran)
 library(scRNAseq)
 library(SingleR)
 
 # load reference dataset
-ref_data <- HumanPrimaryCellAtlasData()
+ref_data <- fetchReference("hpca", "2024-02-26")
 
 # Load query dataset (Bunis haematopoietic stem and progenitor cell data) from 
 # Bunis DG et al. (2021). Single-Cell Mapping of Progressive Fetal-to-Adult 
@@ -80,5 +82,6 @@ p1 <- plotQCvsAnnotation(
       score_col = "cell_scores",
       label = NULL)
 p1 + xlab("Library Size")
+}
                    
 }

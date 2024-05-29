@@ -21,6 +21,7 @@
 #' @seealso \code{\link{compareCCA}}
 #' 
 #' @examples
+#' \donttest{
 #' # Load necessary library
 #' library(scRNAseq)
 #' library(scuttle)
@@ -71,6 +72,7 @@
 #' 
 #' # Visualize output of CCA comparison
 #' plot(cca_comparison)
+#' }
 #' 
 # Plot visualization of output from compareCCA function
 plot.compareCCA <- function(x, ...){

@@ -46,6 +46,7 @@ of the data before performing the nearest neighbor search. The function balances
 datasets by data augmentation if necessary.
 }
 \examples{
+\donttest{
 # Load necessary library
 library(scRNAseq)
 library(scuttle)
@@ -95,6 +96,7 @@ nn_output <- nearestNeighborDiagnostics(query_data_subset, ref_data_subset,
 # Plot output
 plot(nn_output, cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
      prob_type = "query")
+}
 
 }
 \seealso{

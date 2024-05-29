@@ -24,6 +24,7 @@
 #' single-cell genomics. Nature Methods, 19:41-50, 2022.
 #' 
 #' @examples
+#' \donttest{
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
@@ -49,6 +50,7 @@
 #' 
 #' overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var, 
 #'                                           query_genes = query_var)
+#' }
 #' @export                                       
 calculateHVGOverlap <- function(reference_genes, query_genes) {
   

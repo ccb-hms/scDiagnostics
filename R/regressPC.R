@@ -48,6 +48,7 @@
 #' single-cell genomics. Nature Methods, 19:41-50, 2022.
 #'
 #' @examples
+#' \donttest{
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
@@ -94,6 +95,7 @@
 #' # Obtain linear regression summaries and R-squared values
 #' res$regression.summaries
 #' res$rsquared
+#' }
 #'
 #' @importFrom stats lm
 #' @import SingleCellExperiment
