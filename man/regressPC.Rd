@@ -2,9 +2,12 @@
 % Please edit documentation in R/regressPC.R
 \name{regressPC}
 \alias{regressPC}
+\alias{plotPCRegression}
 \title{Principal component regression}
 \usage{
 regressPC(sce, dep.vars = NULL, indep.var)
+
+plotPCRegression(sce, regressPC_res, dep.vars = NULL, indep.var, max_pc = 20)
 }
 \arguments{
 \item{sce}{An object of class \code{\linkS4class{SingleCellExperiment}}
@@ -19,6 +22,11 @@ the PC matrix.}
 
 \item{indep.var}{character. Independent variable. A column name in the
 \code{colData} of \code{sce} specifying the response variable.}
+
+\item{regressPC_res}{a result from \code{\link{regressPC}}}
+
+\item{max_pc}{The maximum number of PCs to show on the plot. Set to 0 to show
+all.}
 }
 \value{
 A \code{list} containing \itemize{ \item summaries of the linear
@@ -52,7 +60,8 @@ Principal component regression, derived from PCA, can be used to
   If the input is large (>3e4 cells) and the independent variable is
   categorical with >10 categories, this function will use a stripped down
   linear model function that is faster but doesn't return all the same
-  components.
+  components. Namely, the \code{regression.summaries} component of the result
+  will contain only the R^2 values, nothing else.
 }
 \examples{
 library(scater)
@@ -101,6 +110,8 @@ res <- regressPC(
 # Obtain linear regression summaries and R-squared values
 res$regression.summaries
 res$rsquared
+
+plotPCRegression(query, res, dep.vars, indep.var)
 
 }
 \references{

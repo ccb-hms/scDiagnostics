@@ -24,7 +24,8 @@
 #'   If the input is large (>3e4 cells) and the independent variable is
 #'   categorical with >10 categories, this function will use a stripped down
 #'   linear model function that is faster but doesn't return all the same
-#'   components.
+#'   components. Namely, the \code{regression.summaries} component of the result
+#'   will contain only the R^2 values, nothing else.
 #'
 #' @param sce An object of class \code{\linkS4class{SingleCellExperiment}}
 #'   containing the data for regression analysis.
@@ -38,6 +39,11 @@
 #'
 #' @param indep.var character. Independent variable. A column name in the
 #'   \code{colData} of \code{sce} specifying the response variable.
+#'
+#' @param regressPC_res a result from \code{\link{regressPC}}
+#'
+#' @param max_pc The maximum number of PCs to show on the plot. Set to 0 to show
+#'   all.
 #'
 #' @return A \code{list} containing \itemize{ \item summaries of the linear
 #'   regression models for each specified principal component, \item the
@@ -94,6 +100,8 @@
 #' # Obtain linear regression summaries and R-squared values
 #' res$regression.summaries
 #' res$rsquared
+#'
+#' plotPCRegression(query, res, dep.vars, indep.var)
 #'
 #' @importFrom stats lm
 #' @importFrom utils tail
@@ -214,60 +222,7 @@ regressPC <-
         res
     }
 
-#' Plot PC Regression diagnostic
-#' @description Plot the result of a PC regression diagnostic.
-#'
-#' @param regressPC_res a result from \code{\link{regressPC}}
-#' @param max_pc The maximum number of PCs to show on the plot. Set to 0 to show
-#'   all.
-#' @inheritParams regressPC
-#' @return a ggplot2 plot object
-#' @examples
-#' library(scater)
-#' library(scran)
-#' library(scRNAseq)
-#' library(SingleR)
-#'
-#' # Load data
-#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-#'
-#' # Divide the data into reference and query datasets
-#' set.seed(100)
-#' indices <- sample(ncol(sce),
-#'     size = floor(0.7 * ncol(sce)),
-#'     replace = FALSE
-#' )
-#' ref <- sce[, indices]
-#' query <- sce[, -indices]
-#'
-#' # log transform datasets
-#' ref <- logNormCounts(ref)
-#' query <- logNormCounts(query)
-#'
-#' # Run PCA
-#' query <- runPCA(query)
-#'
-#' # Get cell type scores using SingleR
-#' # Note: replace when using cell type annotation scores from other methods
-#' scores <- SingleR(query, ref, labels = ref$reclustered.broad)
-#'
-#' # Add labels to query object
-#' query$labels <- scores$labels
-#'
-#' # Specify the dependent variables (principal components) and
-#' # independent variable (e.g., "labels")
-#' dep.vars <- paste0("PC", 1:3)
-#' indep.var <- "labels"
-#'
-#' # Perform linear regression on multiple principal components
-#' res <- regressPC(
-#'     sce = query,
-#'     dep.vars = dep.vars,
-#'     indep.var = indep.var
-#' )
-#'
-#' plotPCRegression(query, res, dep.vars, indep.var)
-#'
+#' @rdname regressPC
 #' @export
 plotPCRegression <- function(
         sce,
