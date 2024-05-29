@@ -72,13 +72,12 @@ query_data_subset <- query_data[common_genes, ]
 ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
 
 # Store PCA anomaly data and plots
-anomaly_output <- detectAnomaly(query_data_subset, ref_data_subset, 
+anomaly_output <- detectAnomaly(ref_data_subset, query_data_subset, 
                                 ref_cell_type_col = "reclustered.broad", 
                                 query_cell_type_col = "labels",
                                 n_components = 10,
                                 n_tree = 500,
-                                anomaly_treshold = 0.5,
-                                store_plots = TRUE) 
+                                anomaly_treshold = 0.5) 
 
 # Plot the output for a cell type
 plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))

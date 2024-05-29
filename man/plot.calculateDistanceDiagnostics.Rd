@@ -77,13 +77,12 @@ distance_data <- calculateDistanceDiagnostics(query_data_subset, ref_data_subset
                                               pc_subset = c(1:10)) 
 
 # Identify outliers for CD4
-cd4_anomalies <- detectAnomaly(query_data_subset, ref_data_subset, 
+cd4_anomalies <- detectAnomaly(ref_data_subset, query_data_subset, 
                                query_cell_type_col = "labels", 
                                ref_cell_type_col = "reclustered.broad",
                                n_components = 10,
                                n_tree = 500,
-                               anomaly_treshold = 0.5,
-                               store_plots = TRUE)$CD4
+                               anomaly_treshold = 0.5)$CD4
 cd4_top5_anomalies <- names(sort(cd4_anomalies$anomaly_scores, decreasing = TRUE)[1:6])
 
 # Plot the densities of the distances

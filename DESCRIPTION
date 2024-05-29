@@ -33,7 +33,6 @@ Imports:
     RColorBrewer,
     gridExtra,
     SummarizedExperiment,
-    BiocGenerics,
     stats,
     utils,
     ranger,
