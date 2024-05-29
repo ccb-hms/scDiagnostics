@@ -64,21 +64,21 @@
 #' ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
 #'
 #' # Get the p-values from the test
-#' p_values <- hotellingTestPValue(query_data_subset, ref_data_subset, 
-#'                                 n_components = 10, 
-#'                                 query_cell_type_col = "reclustered.broad", 
-#'                                 ref_cell_type_col = "reclustered.broad",
-#'                                 pc_subset = c(1:10)) 
+#' p_values <- calculateHotellingPValue(query_data_subset, ref_data_subset, 
+#'                                      n_components = 10, 
+#'                                      query_cell_type_col = "reclustered.broad", 
+#'                                      ref_cell_type_col = "reclustered.broad",
+#'                                      pc_subset = c(1:10)) 
 #' round(p_values, 5)
 #'                          
 # Function to perform Hotelling T^2 test for each cell type
 # The test is performed on the PCA space of the reference data 
 # The query data projected onto PCA space of reference
-hotellingTestPValue <- function(query_data, reference_data, 
-                                n_components = 10, 
-                                query_cell_type_col, 
-                                ref_cell_type_col,
-                                pc_subset = c(1:5)) {
+calculateHotellingPValue <- function(query_data, reference_data, 
+                                     n_components = 10, 
+                                     query_cell_type_col, 
+                                     ref_cell_type_col,
+                                     pc_subset = c(1:5)) {
     
     # Get the projected PCA data
     pca_output <- projectPCA(query_data = query_data, reference_data = reference_data, 
