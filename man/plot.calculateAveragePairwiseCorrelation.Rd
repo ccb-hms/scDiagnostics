@@ -23,7 +23,6 @@ This function converts the correlation matrix into a dataframe, creates a heatma
 and customizes the appearance of the heatmap with updated colors and improved aesthetics.
 }
 \examples{
-\donttest{
 library(scater)
 library(scran)
 library(scRNAseq)
@@ -81,7 +80,7 @@ cor_matrix_avg <- calculateAveragePairwiseCorrelation(query_data = query_data_su
 
 # Visualize the results
 plot(cor_matrix_avg)
-}
+
 
 }
 \seealso{

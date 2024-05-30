@@ -51,7 +51,6 @@ idea that anomalies are more susceptible to isolation than normal instances.
 The part where we project the query data onto the PCA space of the reference data is done by using the `predict` function on the PCA model with the query expression data. This allows us to transform the query data into the same PCA space as the reference data, which is necessary for the isolation forest analysis.
 }
 \examples{
-\donttest{
 # Load required libraries
 library(scRNAseq)
 library(scuttle)
@@ -100,7 +99,7 @@ anomaly_output <- detectAnomaly(ref_data_subset, query_data_subset,
 
 # Plot the output for a cell type
 plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
-}
+
 
 }
 \seealso{

@@ -44,7 +44,6 @@ This function assumes that the "PCA" element exists within the \code{reducedDims
 It performs centering and scaling of the query data based on the reference data before projection.
 }
 \examples{
-\donttest{
 # Load required libraries
 library(scRNAseq)
 library(scuttle)
@@ -118,7 +117,7 @@ tsne_plot <- ggplot(tsne_data[tsne_data$Type \%in\% legend_order,],
     scale_color_manual(values = cell_type_colors) +
     theme_bw() +
     guides(color = guide_legend(title = "Cell Types"))
-}
+
 
 }
 \author{

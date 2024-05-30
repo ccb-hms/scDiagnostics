@@ -39,7 +39,6 @@
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
-#' \donttest{
 #' # Load required libraries
 #' library(scRNAseq)
 #' library(scuttle)
@@ -101,7 +100,7 @@
 #'                                                    query_cell_type_col = "labels", 
 #'                                                    ref_cell_type_col = "reclustered.broad",
 #'                                                    pc_subset = c(1:10))
-#' }
+#' 
 #' 
 # Function to compute Bhattacharyya coefficients and Hellinger distances
 distanceDensityOverlapMeasures <- function(query_data, reference_data, 

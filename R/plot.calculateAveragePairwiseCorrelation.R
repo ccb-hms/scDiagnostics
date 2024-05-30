@@ -19,7 +19,6 @@
 #' @seealso \code{\link{calculateAveragePairwiseCorrelation}}
 #' 
 #' @examples
-#' \donttest{
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
@@ -77,7 +76,7 @@
 #'
 #' # Visualize the results
 #' plot(cor_matrix_avg)
-#' }
+#' 
 #'
 # Function to plot the output of the calculateAveragePairwiseCorrelation function
 plot.calculateAveragePairwiseCorrelation <- function(x, ...){

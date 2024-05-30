@@ -27,7 +27,6 @@ This function creates a density plot to visualize the distribution of probabilit
 reference or query dataset for each cell type. It utilizes the ggplot2 package for plotting.
 }
 \examples{
-\donttest{
 # Load necessary library
 library(scRNAseq)
 library(scuttle)
@@ -77,7 +76,7 @@ nn_output <- nearestNeighborDiagnostics(query_data_subset, ref_data_subset,
 # Plot output
 plot(nn_output, cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
      prob_type = "query")
-}
+
 
 }
 \seealso{

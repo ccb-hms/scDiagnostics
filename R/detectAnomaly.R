@@ -37,7 +37,6 @@
 #' @seealso \code{\link{plot.detectAnomaly}}
 #' 
 #' @examples
-#' \donttest{
 #' # Load required libraries
 #' library(scRNAseq)
 #' library(scuttle)
@@ -86,7 +85,7 @@
 #' 
 #' # Plot the output for a cell type
 #' plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
-#' }
+#' 
 #' 
 # Function to perform diagnostics using isolation forest with PCA and visualization
 detectAnomaly <- function(reference_data, 

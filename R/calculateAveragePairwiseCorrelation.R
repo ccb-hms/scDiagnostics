@@ -30,7 +30,6 @@
 #' @seealso \code{\link{plot.calculateAveragePairwiseCorrelation}}
 #' 
 #' @examples
-#' \donttest{
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
@@ -88,7 +87,7 @@
 #'
 #' # Visualize the results
 #' plot(cor_matrix_avg)
-#' }
+#' 
 #'
 #' @import SingleCellExperiment
 #' @importFrom SummarizedExperiment assay

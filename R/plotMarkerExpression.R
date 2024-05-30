@@ -23,7 +23,6 @@
 #'         distribution.
 #'         
 #' @examples
-#' \donttest{
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
@@ -55,7 +54,7 @@
 #'                      query_cell_type_col = "labels", 
 #'                      gene_name = "VPREB3", 
 #'                      label = "B_and_plasma")
-#' }
+#' 
 #'
 #' @import ggplot2
 #' @importFrom ggplot2 ggplot

@@ -24,7 +24,6 @@
 #'         where each point represents a cell, color-coded by its cell type.
 #'
 #' @examples
-#' \donttest{
 #' library(celldex)
 #' library(scater)
 #' library(scran)
@@ -68,7 +67,7 @@
 #'       score_col = "cell_scores",
 #'       label = NULL)
 #' p1 + xlab("Library Size")
-#' }
+#' 
 #'                    
 #' @import ggplot2
 #' @export

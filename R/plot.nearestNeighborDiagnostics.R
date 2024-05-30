@@ -20,7 +20,6 @@
 #' @seealso \code{\link{nearestNeighborDiagnostics}}
 #' 
 #' @examples
-#' \donttest{
 #' # Load necessary library
 #' library(scRNAseq)
 #' library(scuttle)
@@ -70,7 +69,7 @@
 #' # Plot output
 #' plot(nn_output, cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
 #'      prob_type = "query")
-#' }
+#' 
 #' 
 # Function to plot probabilities of each sample of belonging to reference or query dataset for each cell type
 plot.nearestNeighborDiagnostics <- function(x, cell_types = NULL,

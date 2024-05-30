@@ -56,7 +56,6 @@ Hellinger distances range between 0 and 1. A value closer to 0 indicates higher 
 closer to 1 indicates lower similarity.
 }
 \examples{
-\donttest{
 # Load required libraries
 library(scRNAseq)
 library(scuttle)
@@ -118,7 +117,7 @@ overlap_measures <- distanceDensityOverlapMeasures(query_data_subset,ref_data_su
                                                    query_cell_type_col = "labels", 
                                                    ref_cell_type_col = "reclustered.broad",
                                                    pc_subset = c(1:10))
-}
+
 
 }
 \author{

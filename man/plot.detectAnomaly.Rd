@@ -33,7 +33,6 @@ scatter plots for each pair of PCs. It uses \code{ggplot2} to create a faceted p
 a pair of PCs. Anomalies are highlighted in red, while normal points are shown in black.
 }
 \examples{
-\donttest{
 # Load required libraries
 library(scRNAseq)
 library(scuttle)
@@ -82,7 +81,7 @@ anomaly_output <- detectAnomaly(ref_data_subset, query_data_subset,
 
 # Plot the output for a cell type
 plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
-}
+
 
 }
 \seealso{

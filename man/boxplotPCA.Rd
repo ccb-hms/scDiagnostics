@@ -48,7 +48,6 @@ to perform the PCA projection. It then reshapes the output data into a long form
 The color scheme is automatically determined using the \code{RColorBrewer} package, ensuring a visually distinct and appealing plot.
 }
 \examples{
-\donttest{
 # Load required libraries
 library(scRNAseq)
 library(scuttle)
@@ -94,7 +93,7 @@ pc_plot <- boxplotPCA(query_data_subset, ref_data_subset,
                       ref_cell_type_col = "reclustered.broad", 
                       pc_subset = c(1:5))
 pc_plot
-}
+
 
 }
 \author{

@@ -43,7 +43,6 @@ levels as a surrogate for dataset similarity. Similar distributions suggest a go
 while differences may indicate discrepancies or incompatibilities between the datasets.
 }
 \examples{
-\donttest{
 library(scater)
 library(scran)
 library(scRNAseq)
@@ -75,6 +74,6 @@ plotMarkerExpression(reference_data = ref_data,
                      query_cell_type_col = "labels", 
                      gene_name = "VPREB3", 
                      label = "B_and_plasma")
-}
+
 
 }

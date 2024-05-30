@@ -28,7 +28,6 @@
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
-#' \donttest{
 #' # Load required libraries
 #' library(scRNAseq)
 #' library(scuttle)
@@ -102,7 +101,7 @@
 #'     scale_color_manual(values = cell_type_colors) +
 #'     theme_bw() +
 #'     guides(color = guide_legend(title = "Cell Types"))
-#' }
+#' 
 #'
 # Function to project query data onto PCA space of reference data
 projectPCA <- function(query_data, reference_data, 

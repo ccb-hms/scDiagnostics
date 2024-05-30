@@ -26,7 +26,6 @@
 #' @seealso \code{\link{detectAnomaly}}
 #' 
 #' @examples
-#' \donttest{
 #' # Load required libraries
 #' library(scRNAseq)
 #' library(scuttle)
@@ -75,7 +74,7 @@
 #' 
 #' # Plot the output for a cell type
 #' plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
-#' }
+#' 
 #' 
 # Function to create faceted scatter plots for specified PC combinations
 plot.detectAnomaly <- function(x, cell_type, pc_subset = NULL, ...) {

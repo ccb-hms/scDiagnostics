@@ -34,7 +34,6 @@ the subspaces spanned by the specified PCs is computed and weighted by the propo
 of variance explained by each PC.
 }
 \examples{
-\donttest{
 # Load necessary library
 library(scRNAseq)
 library(scuttle)
@@ -85,7 +84,7 @@ subspace_comparison <- comparePCASubspace(query_data_subset, ref_data_subset,
 
 # Create a data frame for plotting
 plot(subspace_comparison)
-}
+
 
 }
 \seealso{

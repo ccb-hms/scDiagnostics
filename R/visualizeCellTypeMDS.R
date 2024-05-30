@@ -25,7 +25,6 @@
 #' @return A ggplot object representing the MDS scatter plot with cell type coloring.
 #'
 #' @examples
-#' \donttest{
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
@@ -85,7 +84,7 @@
 #'                             cell_type_colors = cell_type_colors, 
 #'                             legend_order = legend_order)
 #' print(plot)
-#' }
+#' 
 #'
 #' @importFrom stats cmdscale cor
 #' @importFrom ggplot2 ggplot

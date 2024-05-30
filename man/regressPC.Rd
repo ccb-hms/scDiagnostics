@@ -59,7 +59,6 @@ where Var(C|PCi) is the variance of the data matrix C explained by the ith
 principal component. See references.
 }
 \examples{
-\donttest{
 library(scater)
 library(scran)
 library(scRNAseq)
@@ -106,7 +105,7 @@ res <- regressPC(
 # Obtain linear regression summaries and R-squared values
 res$regression.summaries
 res$rsquared
-}
+
 
 }
 \references{

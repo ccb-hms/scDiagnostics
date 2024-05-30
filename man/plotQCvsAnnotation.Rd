@@ -38,7 +38,6 @@ metrics, systematically influence the confidence in cell type annotations,
 which is essential for ensuring reliable cell type annotation.
 }
 \examples{
-\donttest{
 library(celldex)
 library(scater)
 library(scran)
@@ -82,6 +81,6 @@ p1 <- plotQCvsAnnotation(
       score_col = "cell_scores",
       label = NULL)
 p1 + xlab("Library Size")
-}
+
                    
 }

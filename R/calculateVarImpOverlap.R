@@ -27,7 +27,6 @@
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
 #' @examples
-#' \donttest{
 #' # Load necessary library
 #' library(scRNAseq)
 #' library(scuttle)
@@ -68,7 +67,7 @@
 #'                                     ref_cell_type_col = "reclustered.broad", 
 #'                                     n_tree = 500,
 #'                                     n_top = 20)
-#' }
+#' 
 #' 
 # RF function to compare (between datasets) which genes are best at differentiating cell types from each 
 calculateVarImpOverlap <- function(query_data, 
