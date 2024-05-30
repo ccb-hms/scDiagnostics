@@ -22,7 +22,6 @@
 #' @seealso \code{\link{comparePCA}}
 #' 
 #' @examples
-#' \donttest{
 #' # Load necessary library
 #' library(scRNAseq)
 #' library(scuttle)
@@ -75,7 +74,7 @@
 #'
 #' # Create the heatmap
 #' plot(similarity_mat)
-#' }
+#' 
 #' 
 # Function to produce the heatmap from output of comparePCA function
 plot.comparePCA <- function(x, ...){

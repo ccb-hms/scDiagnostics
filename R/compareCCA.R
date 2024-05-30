@@ -1,6 +1,6 @@
 #' @title Compare Subspaces Spanned by Top Principal Components Using Canonical Correlation Analysis
 #' 
-#' @description
+#' @description 
 #' This function compares the subspaces spanned by the top principal components (PCs) of the reference 
 #' and query datasets using canonical correlation analysis (CCA). It calculates the canonical variables, 
 #' correlations, and a similarity measure for the subspaces.
@@ -34,7 +34,6 @@
 #' @seealso \code{\link{plot.compareCCA}}
 #' 
 #' @examples
-#' \donttest{
 #' # Load necessary library
 #' library(scRNAseq)
 #' library(scuttle)
@@ -85,7 +84,7 @@
 #' 
 #' # Visualize output of CCA comparison
 #' plot(cca_comparison)
-#' }
+#' 
 #' 
 # Function to compare subspace spanned by top PCs in reference and query datasets
 compareCCA <- function(reference_data, query_data, 

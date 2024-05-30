@@ -1,9 +1,11 @@
 #' @title Project Query Data Onto PCA Space of Reference Data
 #'
-#' @description This function projects a query singleCellExperiment object onto the PCA space of a reference 
+#' @description 
+#' This function projects a query singleCellExperiment object onto the PCA space of a reference 
 #' singleCellExperiment object. The PCA analysis on the reference data is assumed to be pre-computed and stored within the object.
 #'
-#' @details This function assumes that the "PCA" element exists within the \code{reducedDims} of the reference data 
+#' @details 
+#' This function assumes that the "PCA" element exists within the \code{reducedDims} of the reference data 
 #' (obtained using \code{reducedDim(reference_data)}) and that the genes used for PCA are present in both the reference and query data. 
 #' It performs centering and scaling of the query data based on the reference data before projection.
 #'
@@ -153,7 +155,7 @@ projectPCA <- function(query_data, reference_data,
     
     # Center and scale query data based on reference for projection
     centering_vec <- apply(t(as.matrix(assay(reference_data, "logcounts"))), 2, mean)[PCA_genes]
-    query_mat <- scale(t(as.matrix(assay(query_data, "logcounts")))[, PCA_genes], center = centering_vec, scale = F) %*% 
+    query_mat <- scale(t(as.matrix(assay(query_data, "logcounts")))[, PCA_genes], center = centering_vec, scale = FALSE) %*% 
         rotation_mat
     
     # Returning output as single matrix or a list

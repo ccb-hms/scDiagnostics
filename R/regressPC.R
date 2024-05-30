@@ -1,5 +1,6 @@
-#' Principal component regression
+#' @title Principal component regression
 #'
+#' @description
 #' This function performs linear regression of a covariate of interest onto one
 #' or more principal components, based on the data in a SingleCellExperiment object.
 #'

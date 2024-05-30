@@ -25,7 +25,6 @@
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
-#' \donttest{
 #' # Load required libraries
 #' library(scRNAseq)
 #' library(scuttle)
@@ -71,7 +70,6 @@
 #'                                      ref_cell_type_col = "reclustered.broad",
 #'                                      pc_subset = c(1:10)) 
 #' round(p_values, 5)
-#' }
 #'                          
 # Function to perform Hotelling T^2 test for each cell type
 # The test is performed on the PCA space of the reference data 

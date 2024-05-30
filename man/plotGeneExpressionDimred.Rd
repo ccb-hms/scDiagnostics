@@ -23,7 +23,6 @@ A ggplot object representing the dimensional reduction plot with gene expression
 This function plots gene expression on a dimensional reduction plot using methods like t-SNE, UMAP, or PCA. Each single cell is color-coded based on the expression of a specific gene or feature.
 }
 \examples{
-\donttest{
 library(scater)
 library(scran)
 library(scRNAseq)
@@ -48,6 +47,6 @@ plotGeneExpressionDimred(se_object = query_data,
                          method = "PCA", 
                          n_components = c(1, 2), 
                          feature = "VPREB3")
-}
+
 
 }

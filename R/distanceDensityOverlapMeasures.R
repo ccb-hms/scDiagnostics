@@ -1,10 +1,12 @@
 #' @title Function to compute Bhattacharyya coefficients and Hellinger distances
 #'
-#' @description This function computes Bhattacharyya coefficients and Hellinger distances to quantify the overlap of density 
+#' @description 
+#' This function computes Bhattacharyya coefficients and Hellinger distances to quantify the overlap of density 
 #' distributions between query samples and reference data for each cell type.
 
 #'
-#' @details This function first computes distance data using the \code{calculateDistanceDiagnostics} function, which calculates 
+#' @details 
+#' This function first computes distance data using the \code{calculateDistanceDiagnostics} function, which calculates 
 #' pairwise distances between samples within the reference data and between query samples and reference samples in the PCA space.
 #' Bhattacharyya coefficients and Hellinger distances are calculated to quantify the overlap of density distributions between query 
 #' samples and reference data for each cell type. Bhattacharyya coefficient measures the similarity of two probability distributions, 

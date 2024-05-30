@@ -1,5 +1,6 @@
-#' Visualize gene expression on a dimensional reduction plot
+#' @title Visualize gene expression on a dimensional reduction plot
 #'
+#' @description
 #' This function plots gene expression on a dimensional reduction plot using methods like t-SNE, UMAP, or PCA. Each single cell is color-coded based on the expression of a specific gene or feature.
 #'
 #' @param se_object An object of class "SingleCellExperiment" containing log-transformed expression matrix and other metadata.
@@ -17,7 +18,6 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
@@ -42,7 +42,7 @@
 #'                          method = "PCA", 
 #'                          n_components = c(1, 2), 
 #'                          feature = "VPREB3")
-#' }
+#' 
 #'
 plotGeneExpressionDimred <- function(se_object, 
                                      method, 

@@ -1,5 +1,6 @@
-#' Visualization of gene sets or pathway scores on dimensional reduction plot
-#'
+#' @title Visualization of gene sets or pathway scores on dimensional reduction plot
+#' 
+#' @description
 #' Plot gene sets or pathway scores on PCA, TSNE, or UMAP. Single cells are color-coded by scores of gene sets or pathways.
 #'
 #' @param se_object An object of class "SingleCellExperiment" containing numeric expression matrix and other metadata.
@@ -14,7 +15,6 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
@@ -54,7 +54,6 @@
 #' plotGeneSetScores(se_object = query_data, 
 #'                   method = "PCA", 
 #'                   feature = "geneSetScores")
-#' }
 #'
 #' # Note: Users can provide their own gene set scores in the colData of the 'se_object' object, 
 #' # using any method of their choice.

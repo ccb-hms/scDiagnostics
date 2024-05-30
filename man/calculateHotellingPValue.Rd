@@ -43,7 +43,6 @@ vectors of the pseudo-bulk signatures between the reference and query datasets. 
 between the reference and query datasets for each cell type.
 }
 \examples{
-\donttest{
 # Load required libraries
 library(scRNAseq)
 library(scuttle)
@@ -89,7 +88,6 @@ p_values <- calculateHotellingPValue(query_data_subset, ref_data_subset,
                                      ref_cell_type_col = "reclustered.broad",
                                      pc_subset = c(1:10)) 
 round(p_values, 5)
-}
                          
 }
 \author{

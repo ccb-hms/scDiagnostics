@@ -32,7 +32,6 @@ where X and Y are the sets of highly variable genes from the reference and query
 |X ∩ Y| is the number of genes common to both X and Y, and min(|X|, |Y|) is the size of the smaller set among X and Y.
 }
 \examples{
-\donttest{
 library(scater)
 library(scran)
 library(scRNAseq)
@@ -58,7 +57,7 @@ query_var <- getTopHVGs(query_data, n=2000)
 
 overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var, 
                                           query_genes = query_var)
-}
+
 }
 \references{
 Luecken et al. Benchmarking atlas-level data integration in

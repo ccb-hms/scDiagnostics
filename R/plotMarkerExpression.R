@@ -1,9 +1,11 @@
-#' Plot gene expression distribution from overall and cell type-specific perspective
-#'
+#' @title Plot gene expression distribution from overall and cell type-specific perspective
+#' 
+#' @description
 #' This function generates density plots to visualize the distribution of gene expression values 
 #' for a specific gene across the overall dataset and within a specified cell type.
 #'
-#' @details This function generates density plots to compare the distribution of a specific marker 
+#' @details 
+#' This function generates density plots to compare the distribution of a specific marker 
 #' gene between reference and query datasets. The aim is to inspect the alignment of gene expression 
 #' levels as a surrogate for dataset similarity. Similar distributions suggest a good alignment, 
 #' while differences may indicate discrepancies or incompatibilities between the datasets.

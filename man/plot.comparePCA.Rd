@@ -27,7 +27,6 @@ color gradient to represent cosine similarity values, where blue indicates negat
 similarity, white indicates zero similarity, and red indicates positive similarity.
 }
 \examples{
-\donttest{
 # Load necessary library
 library(scRNAseq)
 library(scuttle)
@@ -80,7 +79,7 @@ similarity_mat <- comparePCA(query_data_subset, ref_data_subset,
 
 # Create the heatmap
 plot(similarity_mat)
-}
+
 
 }
 \seealso{

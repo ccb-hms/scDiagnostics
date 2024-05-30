@@ -1,9 +1,12 @@
-#' @title Plot the output of the calculateAveragePairwiseCorrelation function
+#' @title 
+#' Plot the output of the calculateAveragePairwiseCorrelation function
 #'
-#' @description This function takes the output of the calculateAveragePairwiseCorrelation function,
+#' @description 
+#' This function takes the output of the calculateAveragePairwiseCorrelation function,
 #' which should be a matrix of pairwise correlations, and plots it as a heatmap.
 #' 
-#' @details This function converts the correlation matrix into a dataframe, creates a heatmap using ggplot2,
+#' @details 
+#' This function converts the correlation matrix into a dataframe, creates a heatmap using ggplot2,
 #' and customizes the appearance of the heatmap with updated colors and improved aesthetics.
 #'
 #' @param x Output matrix from calculateAveragePairwiseCorrelation function.

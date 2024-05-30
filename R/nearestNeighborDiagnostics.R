@@ -1,10 +1,12 @@
 #' @title Calculate Nearest Neighbor Diagnostics for Cell Type Classification
 #'
-#' @description This function computes the probabilities for each sample of belonging to either the reference or query dataset for 
+#' @description 
+#' This function computes the probabilities for each sample of belonging to either the reference or query dataset for 
 #' each cell type using nearest neighbor analysis.
 
 #'
-#' @details This function performs a nearest neighbor search to calculate the probability of each sample in the query dataset 
+#' @details 
+#' This function performs a nearest neighbor search to calculate the probability of each sample in the query dataset 
 #' belonging to the reference dataset for each cell type. It uses principal component analysis (PCA) to reduce the dimensionality 
 #' of the data before performing the nearest neighbor search. The function balances the sample sizes between the reference and query 
 #' datasets by data augmentation if necessary.

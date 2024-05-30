@@ -1,5 +1,6 @@
-#' Histograms: QC Stats and Annotation Scores Visualization
+#' @title Histograms: QC Stats and Annotation Scores Visualization
 #'
+#' @description
 #' This function generates histograms for visualizing the distribution of quality control (QC) statistics and 
 #' annotation scores associated with cell types in single-cell genomic data. 
 #' 
@@ -23,7 +24,6 @@
 #' and the second histogram represents the distribution of annotation scores.
 #' 
 #' @examples
-#' \donttest{
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
@@ -67,7 +67,6 @@
 #'                    label_col = "labels", 
 #'                    score_col = "cell_scores", 
 #'                    label = NULL)
-#' }
 #'
 #' @export
 histQCvsAnnotation <- function(query_data, 

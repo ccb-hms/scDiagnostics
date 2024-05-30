@@ -21,7 +21,6 @@ A plot object with the scores plotted on the selected dimensional reduction plot
 Plot gene sets or pathway scores on PCA, TSNE, or UMAP. Single cells are color-coded by scores of gene sets or pathways.
 }
 \examples{
-\donttest{
 library(scater)
 library(scran)
 library(scRNAseq)
@@ -61,7 +60,6 @@ colData(query_data)$geneSetScores <- assay(cells_AUC)["geneSet1", ]
 plotGeneSetScores(se_object = query_data, 
                   method = "PCA", 
                   feature = "geneSetScores")
-}
 
 # Note: Users can provide their own gene set scores in the colData of the 'se_object' object, 
 # using any method of their choice.
