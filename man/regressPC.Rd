@@ -2,9 +2,12 @@
 % Please edit documentation in R/regressPC.R
 \name{regressPC}
 \alias{regressPC}
+\alias{plotPCRegression}
 \title{Principal component regression}
 \usage{
-regressPC(sce, dep.vars = NULL, indep.var, plot = TRUE, ...)
+regressPC(sce, dep.vars = NULL, indep.var)
+
+plotPCRegression(sce, regressPC_res, dep.vars = NULL, indep.var, max_pc = 20)
 }
 \arguments{
 \item{sce}{An object of class \code{\linkS4class{SingleCellExperiment}}
@@ -12,51 +15,56 @@ containing the data for regression analysis.}
 
 \item{dep.vars}{character. Dependent variable(s). Determines which principal
 component(s) (e.g., "PC1", "PC2", etc.) are used as explanatory variables.
-Principal components are expected to be stored in a PC matrix named \code{"PCA"}
-in the \code{reducedDims} of \code{sce}. Defaults to \code{NULL} which will
-then regress on each principal component present in the PC matrix.}
+Principal components are expected to be stored in a PC matrix named
+\code{"PCA"} in the \code{reducedDims} of \code{sce}. Defaults to
+\code{NULL} which will then regress on each principal component present in
+the PC matrix.}
+
 
 \item{indep.var}{character. Independent variable. A column name in the
 \code{colData} of \code{sce} specifying the response variable.}
 
-\item{plot}{logical indicating whether to print two diagnostic plots: one
-showing the embedding of the two PCs with the highest R2, colored by the
-independent variable and a second showing the PC ~ independent variable R2
-values.}
 
-\item{...}{other arguments to pass to \link[scater]{plotPCA} for the second
-diagnostic plot.}
+\item{regressPC_res}{a result from \code{\link{regressPC}}}
+
+\item{max_pc}{The maximum number of PCs to show on the plot. Set to 0 to show
+all.}
 }
 \value{
-A \code{list} containing \itemize{
-\item summaries of the linear regression models for each specified principal
-component,
-\item the corresponding R-squared (R2) values,
-\item the variance contributions for each principal component, and
-\item the total variance explained.}
+A \code{list} containing \itemize{ \item summaries of the linear
+  regression models for each specified principal component, \item the
+  corresponding R-squared (R2) values, \item the variance contributions for
+  each principal component, and \item the total variance explained.}
 }
 \description{
 This function performs linear regression of a covariate of interest onto one
-or more principal components, based on the data in a SingleCellExperiment object.
+or more principal components, based on the data in a SingleCellExperiment
+object.
 }
 \details{
 Principal component regression, derived from PCA, can be used to
-quantify the variance explained by a covariate interest. Applications for
-single-cell analysis include quantification of batch removal, assessing clustering
-homogeneity, and evaluation of alignment of query and reference datasets in
-cell type annotation settings.
-Briefly, the R^2 is calculated from a linear regression of the covariate B of
-interest onto each principal component. The variance contribution of the
-covariate effect per principal component is then calculated as the product of
-the variance explained by the ith principal component (PC) and the corresponding
-R2(PCi|B).
-The sum across all variance contributions by the covariate effects in all principal
-components gives the total variance explained by the covariate as follows:
+  quantify the variance explained by a covariate interest. Applications for
+  single-cell analysis include quantification of batch removal, assessing
+  clustering homogeneity, and evaluation of alignment of query and reference
+  datasets in cell type annotation settings.  Briefly, the R^2 is calculated
+  from a linear regression of the covariate B of interest onto each principal
+  component. The variance contribution of the covariate effect per principal
+  component is then calculated as the product of the variance explained by
+  the ith principal component (PC) and the corresponding R2(PCi|B). The sum
+  across all variance contributions by the covariate effects in all principal
+  components gives the total variance explained by the covariate as follows:
 
-Var(C|B) = sum_{i=1}^G Var(C|PC_i) * R^2 (PC_i | B)
+  Var(C|B) = sum_{i=1}^G Var(C|PC_i) * R^2 (PC_i | B)
 
-where Var(C|PCi) is the variance of the data matrix C explained by the ith
-principal component. See references.
+  where, Var(C|PCi) is the variance of the data matrix C explained by the ith
+  principal component. See references.
+
+  If the input is large (>3e4 cells) and the independent variable is
+  categorical with >10 categories, this function will use a stripped down
+  linear model function that is faster but doesn't return all the same
+  components. Namely, the \code{regression.summaries} component of the result
+  will contain only the R^2 values, nothing else.
+
 }
 \examples{
 library(scater)
@@ -107,8 +115,13 @@ res$regression.summaries
 res$rsquared
 
 
+plotPCRegression(query, res, dep.vars, indep.var)
+
+
 }
 \references{
 Luecken et al. Benchmarking atlas-level data integration in
-single-cell genomics. Nature Methods, 19:41-50, 2022.
+
+  single-cell genomics. Nature Methods, 19:41-50, 2022.
+
 }
