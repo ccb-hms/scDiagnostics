@@ -1,3 +1,4 @@
+
 #' Principal component regression
 #'
 #' This function performs linear regression of a covariate of interest onto one
@@ -100,6 +101,7 @@
 #' # Obtain linear regression summaries and R-squared values
 #' res$regression.summaries
 #' res$rsquared
+#' 
 #'
 #' plotPCRegression(query, res, dep.vars, indep.var)
 #'
@@ -230,13 +232,12 @@ plotPCRegression <- function(
         dep.vars = NULL,
         indep.var,
         max_pc = 20) {
+
     stopifnot(is(sce, "SingleCellExperiment"))
     stopifnot("PCA" %in% reducedDimNames(sce))
-
     if (!is.null(dep.vars)) {
         stopifnot(all(dep.vars %in% colnames(reducedDim(sce, "PCA"))))
     }
-
     stopifnot(indep.var %in% colnames(colData(sce)))
 
     if (is.null(dep.vars)) {

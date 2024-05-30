@@ -87,7 +87,7 @@ expression patterns, as evident in the scatter plot below.
 ``` r
 
 # load reference dataset
-ref_data <- celldex::HumanPrimaryCellAtlasData()
+ref_data <- celldex::fetchReference("hpca", "2024-02-26")
 
 # Load query dataset (Bunis haematopoietic stem and progenitor cell data) from 
 # Bunis DG et al. (2021). Single-Cell Mapping of Progressive Fetal-to-Adult 
@@ -378,7 +378,7 @@ distinct functional characteristics.
 
 # Compute scores using AUCell
 expression_matrix <- assay(query_data, "logcounts")
-cells_rankings <- AUCell_buildRankings(expression_matrix, plotStats = F)
+cells_rankings <- AUCell_buildRankings(expression_matrix, plotStats = FALSE)
 
 # Generate gene sets
 gene_set1 <- sample(rownames(expression_matrix), 10)
@@ -691,7 +691,7 @@ potential relationships and patterns.
       [7] BiocIO_1.10.0                 zlibbioc_1.46.0              
       [9] vctrs_0.6.4                   Rsamtools_2.16.0             
      [11] memoise_2.0.1                 DelayedMatrixStats_1.22.6    
-     [13] RCurl_1.98-1.12               htmltools_0.5.6.1            
+     [13] RCurl_1.98-1.12               htmltools_0.5.8.1            
      [15] S4Arrays_1.0.6                progress_1.2.2               
      [17] AnnotationHub_3.8.0           curl_5.1.0                   
      [19] BiocNeighbors_1.18.0          cachem_1.0.8                 

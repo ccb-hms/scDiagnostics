@@ -20,8 +20,10 @@ Principal components are expected to be stored in a PC matrix named
 \code{NULL} which will then regress on each principal component present in
 the PC matrix.}
 
+
 \item{indep.var}{character. Independent variable. A column name in the
 \code{colData} of \code{sce} specifying the response variable.}
+
 
 \item{regressPC_res}{a result from \code{\link{regressPC}}}
 
@@ -62,6 +64,7 @@ Principal component regression, derived from PCA, can be used to
   linear model function that is faster but doesn't return all the same
   components. Namely, the \code{regression.summaries} component of the result
   will contain only the R^2 values, nothing else.
+
 }
 \examples{
 library(scater)
@@ -111,10 +114,14 @@ res <- regressPC(
 res$regression.summaries
 res$rsquared
 
+
 plotPCRegression(query, res, dep.vars, indep.var)
+
 
 }
 \references{
 Luecken et al. Benchmarking atlas-level data integration in
+
   single-cell genomics. Nature Methods, 19:41-50, 2022.
+
 }

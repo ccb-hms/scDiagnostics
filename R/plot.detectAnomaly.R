@@ -1,0 +1,145 @@
+#' @title Create Faceted Scatter Plots for Specified PC Combinations From \code{detectAnomaly} Object
+#'
+#' @description This function generates faceted scatter plots for specified principal component (PC) combinations
+#' within an anomaly detection object. It allows visualization of the relationship between specified
+#' PCs and highlights anomalies detected by the Isolation Forest algorithm.
+#'
+#' @details The function extracts the specified PCs from the given anomaly detection object and generates
+#' scatter plots for each pair of PCs. It uses \code{ggplot2} to create a faceted plot where each facet represents
+#' a pair of PCs. Anomalies are highlighted in red, while normal points are shown in black.
+#'
+#' @param x A list object containing the anomaly detection results from the \code{detectAnomaly} function. 
+#' Each element of the list should correspond to a cell type and contain \code{reference_mat_subset}, \code{query_mat_subset}, 
+#' \code{var_explained}, and \code{anomaly}.
+#' @param cell_type A character string specifying the cell type for which the plots should be generated. This should
+#' be a name present in \code{x}.
+#' @param pc_subset A numeric vector specifying the indices of the PCs to be included in the plots. If NULL, all PCs
+#' in \code{reference_mat_subset} will be included.
+#' @param ... Additional arguments.
+#' 
+#' @return A ggplot object displaying the faceted scatter plots for the specified PC combinations.
+#' 
+#' @export
+#'
+#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' 
+#' @seealso \code{\link{detectAnomaly}}
+#' 
+#' @examples
+#' # Load required libraries
+#' library(scRNAseq)
+#' library(scuttle)
+#' library(SingleR)
+#' library(scran)
+#' library(scater)
+#'
+#' # Load data
+#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+#' 
+#' # Divide the data into reference and query datasets
+#' set.seed(100)
+#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
+#' ref_data <- sce[, indices]
+#' query_data <- sce[, -indices]
+#' 
+#' # log transform datasets
+#' ref_data <- logNormCounts(ref_data)
+#' query_data <- logNormCounts(query_data)
+#' 
+#' # Get cell type scores using SingleR (or any other cell type annotation method)
+#' scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
+#' 
+#' # Add labels to query object
+#' colData(query_data)$labels <- scores$labels
+#' 
+#' # Selecting highly variable genes (can be customized by the user)
+#' ref_var <- getTopHVGs(ref_data, n = 2000)
+#' query_var <- getTopHVGs(query_data, n = 2000)
+#' 
+#' # Intersect the gene symbols to obtain common genes
+#' common_genes <- intersect(ref_var, query_var)
+#' ref_data_subset <- ref_data[common_genes, ]
+#' query_data_subset <- query_data[common_genes, ]
+#' 
+#' # Run PCA on the reference data
+#' ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
+#' 
+#' # Store PCA anomaly data and plots
+#' anomaly_output <- detectAnomaly(ref_data_subset, query_data_subset, 
+#'                                 ref_cell_type_col = "reclustered.broad", 
+#'                                 query_cell_type_col = "labels",
+#'                                 n_components = 10,
+#'                                 n_tree = 500,
+#'                                 anomaly_treshold = 0.5) 
+#' 
+#' # Plot the output for a cell type
+#' plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
+#' 
+#' 
+# Function to create faceted scatter plots for specified PC combinations
+plot.detectAnomaly <- function(x, cell_type, pc_subset = NULL, ...) {
+    
+    # Check if PCA was used for computations
+    if(!("var_explained" %in% names(x[[names(x)[1]]])))
+        stop("The plot function can only be used if \'n_components\' is not NULL.")
+    
+    # Check input for cell type
+    if(!(cell_type %in% names(x)))
+        stop("\'cell_type\' is not available in \'x\'.")
+    
+    # Check input for pc_subset
+    if(!is.null(pc_subset)){
+        if(!all(pc_subset %in% 1:ncol(x[[cell_type]]$reference_mat_subset)))
+            stop("\'pc_subset\' is out of range.")
+    } else{
+        pc_subset <- 1:ncol(x[[cell_type]]$reference_mat_subset)
+    }
+    
+    # Filter data to include only specified PCs
+    data_subset <- x[[cell_type]]$query_mat_subset[, pc_subset, drop = FALSE]
+    
+    # Modify column names to include percentage of variance explained
+    colnames(data_subset) <- paste0("PC", pc_subset, 
+                                    " (", sprintf("%.1f%%", x[[cell_type]]$var_explained[pc_subset] * 100), ")")
+    
+    # Create all possible pairs of specified PCs
+    pc_names <- colnames(data_subset)
+    pairs <- expand.grid(x = pc_names, y = pc_names)
+    pairs <- pairs[pairs$x != pairs$y, ]
+    
+    # Create a new data frame with all possible pairs of specified PCs
+    data_pairs_list <- lapply(1:nrow(pairs), function(i) {
+        x_col <- pairs$x[i]
+        y_col <- pairs$y[i]
+        data_frame <- data_subset[, c(x_col, y_col)]
+        colnames(data_frame) <- c("x_value", "y_value")
+        data_frame$x <- x_col
+        data_frame$y <- y_col
+        data_frame
+    })
+    data_pairs <- do.call(rbind, data_pairs_list)
+    
+    # Remove redundant data (to avoid duplicated plots)
+    data_pairs <- data_pairs[as.numeric(substr(data_pairs$x, 3, 3)) < as.numeric(substr(data_pairs$y, 3, 3)),]
+    
+    # Add anomalies vector to data_pairs dataframe
+    data_pairs$anomaly <- rep(x[[cell_type]]$anomaly, choose(length(pc_subset), 2))
+    
+    # Create the ggplot object with facets
+    plot <- ggplot2::ggplot(data_pairs, ggplot2::aes(x = x_value, y = y_value, color = factor(anomaly))) +
+        ggplot2::geom_point(size = 2) + 
+        ggplot2::scale_color_manual(values = c("black", "red"), labels = c("Normal", "Anomaly")) + 
+        ggplot2::facet_grid(rows = ggplot2::vars(y), cols = ggplot2::vars(x), scales = "free") +
+        ggplot2::theme_minimal() +
+        ggplot2::theme(strip.background = ggplot2::element_rect(fill = "grey85", color = "grey70"),   
+                       strip.text = ggplot2::element_text(size = 10, face = "bold", color = "black"), 
+                       axis.title = ggplot2::element_blank(),        
+                       axis.text = ggplot2::element_text(size = 10), 
+                       panel.grid = ggplot2::element_blank(),        
+                       panel.background = ggplot2::element_rect(fill = "white", color = "black"), 
+                       legend.position = "right",          
+                       plot.title = ggplot2::element_text(size = 14, hjust = 0.5), 
+                       plot.background = ggplot2::element_rect(fill = "white")) + 
+        ggplot2::labs(title = paste0("Isolation Forest Anomaly Plot: ", cell_type), color = "iForest Type")
+    print(plot)
+}
