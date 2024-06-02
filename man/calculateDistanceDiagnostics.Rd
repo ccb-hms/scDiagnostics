@@ -97,7 +97,7 @@ cd4_anomalies <- detectAnomaly(ref_data_subset, query_data_subset,
                                n_components = 10,
                                n_tree = 500,
                                anomaly_treshold = 0.5)$CD4
-cd4_top5_anomalies <- names(sort(cd4_anomalies$anomaly_scores, decreasing = TRUE)[1:6])
+cd4_top5_anomalies <- names(sort(cd4_anomalies$query_anomaly_scores, decreasing = TRUE)[1:6])
 
 # Plot the densities of the distances
 plot(distance_data, ref_cell_type = "CD4", sample_names = cd4_top5_anomalies)

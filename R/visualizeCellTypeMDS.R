@@ -82,12 +82,12 @@ visualizeCellTypeMDS <- function(query_data,
     }
     
     # Check if query_cell_type_col is a valid column name in query_data
-    if (!query_cell_type_col %in% colnames(colData(query_data))) {
+    if (!query_cell_type_col %in% names(colData(query_data))) {
       stop("query_cell_type_col: '", query_cell_type_col, "' is not a valid column name in query_data.")
     }
     
     # Check if ref_cell_type_col is a valid column name in reference_data
-    if (!ref_cell_type_col %in% colnames(colData(reference_data))) {
+    if (!ref_cell_type_col %in% names(colData(reference_data))) {
       stop("ref_cell_type_col: '", ref_cell_type_col, "' is not a valid column name in reference_data.")
     }
     

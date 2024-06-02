@@ -12,12 +12,13 @@
 #' Each element of the list should correspond to a cell type and contain \code{reference_mat_subset}, \code{query_mat_subset}, 
 #' \code{var_explained}, and \code{anomaly}.
 #' @param cell_type A character string specifying the cell type for which the plots should be generated. This should
-#' be a name present in \code{x}.
+#' be a name present in \code{x}. If NULL, the "Combined" cell type will be plotted. Default is NULL.
 #' @param pc_subset A numeric vector specifying the indices of the PCs to be included in the plots. If NULL, all PCs
 #' in \code{reference_mat_subset} will be included.
+#' @param data_type A character string specifying whether to plot the "query" data or the "reference" data. Default is "query".
 #' @param ... Additional arguments.
 #' 
-#' @return A ggplot object displaying the faceted scatter plots for the specified PC combinations.
+#' @return A ggplot2 object representing the PCA plots with anomalies highlighted.
 #' 
 #' @export
 #'
@@ -73,19 +74,22 @@
 #'                                 anomaly_treshold = 0.5) 
 #' 
 #' # Plot the output for a cell type
-#' plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
-#' 
+#' plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5), data_type = "query")
 #' 
 # Function to create faceted scatter plots for specified PC combinations
-plot.detectAnomaly <- function(x, cell_type, pc_subset = NULL, ...) {
+plot.detectAnomaly <- function(x, cell_type = NULL, pc_subset = NULL, data_type = c("query", "reference"), ...) {
     
     # Check if PCA was used for computations
     if(!("var_explained" %in% names(x[[names(x)[1]]])))
         stop("The plot function can only be used if \'n_components\' is not NULL.")
     
     # Check input for cell type
-    if(!(cell_type %in% names(x)))
-        stop("\'cell_type\' is not available in \'x\'.")
+    if(is.null(cell_type)){
+        cell_type <- "Combined"
+    } else{
+        if(!(cell_type %in% names(x)))
+            stop("\'cell_type\' is not available in \'x\'.")
+    }
     
     # Check input for pc_subset
     if(!is.null(pc_subset)){
@@ -95,8 +99,22 @@ plot.detectAnomaly <- function(x, cell_type, pc_subset = NULL, ...) {
         pc_subset <- 1:ncol(x[[cell_type]]$reference_mat_subset)
     }
     
+    # Check input for data_type
+    data_type <- match.arg(data_type)
+    
     # Filter data to include only specified PCs
-    data_subset <- x[[cell_type]]$query_mat_subset[, pc_subset, drop = FALSE]
+    if(is.null(x[[cell_type]]$query_mat_subset) && data_type == "query"){
+        stop("There is no query data available in the \'detectAnomaly\' object.")
+    } else{
+        if(data_type == "query"){
+            data_subset <- x[[cell_type]]$query_mat_subset[, pc_subset, drop = FALSE]
+            anomaly <- x[[cell_type]]$query_anomaly
+            
+        } else if(data_type == "reference"){
+            data_subset <- x[[cell_type]]$reference_mat_subset[, pc_subset, drop = FALSE]
+            anomaly <- x[[cell_type]]$reference_anomaly
+        }
+    }
     
     # Modify column names to include percentage of variance explained
     colnames(data_subset) <- paste0("PC", pc_subset, 
@@ -111,7 +129,7 @@ plot.detectAnomaly <- function(x, cell_type, pc_subset = NULL, ...) {
     data_pairs_list <- lapply(1:nrow(pairs), function(i) {
         x_col <- pairs$x[i]
         y_col <- pairs$y[i]
-        data_frame <- data_subset[, c(x_col, y_col)]
+        data_frame <- data.frame(data_subset[, c(x_col, y_col)])
         colnames(data_frame) <- c("x_value", "y_value")
         data_frame$x <- x_col
         data_frame$y <- y_col
@@ -123,7 +141,7 @@ plot.detectAnomaly <- function(x, cell_type, pc_subset = NULL, ...) {
     data_pairs <- data_pairs[as.numeric(data_pairs$x) < as.numeric(data_pairs$y),]
     
     # Add anomalies vector to data_pairs dataframe
-    data_pairs$anomaly <- rep(x[[cell_type]]$anomaly, choose(length(pc_subset), 2))
+    data_pairs$anomaly <- rep(anomaly, choose(length(pc_subset), 2))
     
     # Create the ggplot object with facets
     plot <- ggplot2::ggplot(data_pairs, ggplot2::aes(x = x_value, y = y_value, color = factor(anomaly))) +

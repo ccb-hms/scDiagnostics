@@ -137,16 +137,6 @@ projectPCA <- function(query_data, reference_data,
         stop("\'n_components\' is larger than number of available components in reference PCA.")
     }
     
-    # Check if query_cell_type_col is a valid column name in query_data
-    if (!query_cell_type_col %in% colnames(colData(query_data))) {
-        stop("query_cell_type_col: '", query_cell_type_col, "' is not a valid column name in query_data.")
-    }
-    
-    # Check if ref_cell_type_col is a valid column name in reference_data
-    if (!ref_cell_type_col %in% colnames(colData(reference_data))) {
-        stop("ref_cell_type_col: '", ref_cell_type_col, "' is not a valid column name in reference_data.")
-    }
-    
     # Returning output as single matrix or a list
     if (!return_value %in% c("data.frame", "list")) {
         stop("Invalid \'return_value\'. Must be 'data.frame' or \'list\'.")

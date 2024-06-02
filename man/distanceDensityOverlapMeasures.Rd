@@ -108,7 +108,7 @@ cd4_anomalies <- detectAnomaly(ref_data_subset, query_data_subset,
                                n_components = 10,
                                n_tree = 500,
                                anomaly_treshold = 0.5)$CD4
-cd4_top5_anomalies <- names(sort(cd4_anomalies$anomaly_scores, decreasing = TRUE)[1:6])
+cd4_top5_anomalies <- names(sort(cd4_anomalies$query_anomaly_scores, decreasing = TRUE)[1:6])
 
 # Get overlap measures
 overlap_measures <- distanceDensityOverlapMeasures(query_data_subset,ref_data_subset, 
