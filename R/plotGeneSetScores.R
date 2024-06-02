@@ -130,7 +130,7 @@ plotGeneSetScores <- function(se_object,
   data_pairs$scores <- se_object[["geneSetScores"]]
   # Create the ggplot object (with facets if PCA)
   plot_obj <- ggplot2::ggplot(data_pairs, ggplot2::aes(x = x_value, y = y_value, color = scores)) +
-      ggplot2::geom_point(size = 2, alpha = 0.6) + 
+      ggplot2::geom_point(size = 1, alpha = 0.5) + 
       ggplot2::scale_color_gradientn(colors = c("#2171B5", "#8AABC1", "#FFEDA0", "#E6550D"), 
                                      values = seq(0, 1, by = 1/3), 
                                      limits = c(0, max(data_pairs$scores))) +
