@@ -8,8 +8,8 @@ visualizeCellTypeMDS(
   query_data,
   reference_data,
   cell_types = NULL,
-  query_cell_type_col = NULL,
-  ref_cell_type_col = NULL
+  query_cell_type_col,
+  ref_cell_type_col
 )
 }
 \arguments{

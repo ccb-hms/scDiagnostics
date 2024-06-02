@@ -68,8 +68,8 @@
 visualizeCellTypeMDS <- function(query_data, 
                                  reference_data, 
                                  cell_types = NULL,
-                                 query_cell_type_col = NULL, 
-                                 ref_cell_type_col = NULL) {
+                                 query_cell_type_col, 
+                                 ref_cell_type_col) {
 
     # Check if query_data is a SingleCellExperiment object
     if (!is(query_data, "SingleCellExperiment")) {
@@ -96,6 +96,11 @@ visualizeCellTypeMDS <- function(query_data,
        !all(cell_types %in% query_data[[query_cell_type_col]]))
         stop("One or more of the specified cell types are not available in \'reference_data\' or \'query_data\'.")
     
+    # Cell types
+    if(is.null(cell_types)){
+        cell_types <- na.omit(intersect(unique(query_data[[query_cell_type_col]]), unique(reference_data[[ref_cell_type_col]])))
+    }
+
     # Subset data
     query_data <- query_data[, which(query_data[[query_cell_type_col]] %in% cell_types)]
     reference_data <- reference_data[, which(reference_data[[ref_cell_type_col]] %in% cell_types)]

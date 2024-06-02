@@ -80,8 +80,8 @@
 visualizeCellTypePCA <- function(query_data, reference_data, 
                                  n_components = 10, 
                                  cell_types = NULL,
-                                 query_cell_type_col = NULL, 
-                                 ref_cell_type_col = NULL, 
+                                 query_cell_type_col, 
+                                 ref_cell_type_col, 
                                  pc_subset = c(1:5)){
     
     # Get the projected PCA data
