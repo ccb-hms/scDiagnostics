@@ -4,7 +4,7 @@
 \alias{plotGeneSetScores}
 \title{Visualization of gene sets or pathway scores on dimensional reduction plot}
 \usage{
-plotGeneSetScores(se_object, method, feature)
+plotGeneSetScores(se_object, method, feature, pc_subset = c(1:5))
 }
 \arguments{
 \item{se_object}{An object of class "SingleCellExperiment" containing numeric expression matrix and other metadata.
@@ -13,12 +13,22 @@ It can be either a reference or query dataset.}
 \item{method}{A character string indicating the method for visualization ("PCA", "TSNE", or "UMAP").}
 
 \item{feature}{A character string representing the name of the feature (score) in the colData(query_data) to plot.}
+
+\item{pc_subset}{An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA". 
+Default is c(1:5).}
 }
 \value{
-A plot object with the scores plotted on the selected dimensional reduction plot.
+A ggplot2 object representing the gene set scores plotted on the specified reduced dimensions.
 }
 \description{
 Plot gene sets or pathway scores on PCA, TSNE, or UMAP. Single cells are color-coded by scores of gene sets or pathways.
+}
+\details{
+This function plots gene set scores on reduced dimensions such as PCA, t-SNE, or UMAP. 
+It extracts the reduced dimensions from the provided SingleCellExperiment object.
+Gene set scores are visualized as a scatter plot with colors indicating the scores.
+For PCA, the function automatically includes the percentage of variance explained 
+in the plot's legend.
 }
 \examples{
 library(scater)
@@ -26,7 +36,7 @@ library(scran)
 library(scRNAseq)
 library(AUCell)
 
-## load data
+# Load data
 sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
 # Divide the data into reference and query datasets
@@ -59,7 +69,8 @@ colData(query_data)$geneSetScores <- assay(cells_AUC)["geneSet1", ]
 # Plot gene set scores on PCA
 plotGeneSetScores(se_object = query_data, 
                   method = "PCA", 
-                  feature = "geneSetScores")
+                  feature = "geneSetScores",
+                  pc_subset = c(1:5))
 
 # Note: Users can provide their own gene set scores in the colData of the 'se_object' object, 
 # using any method of their choice.

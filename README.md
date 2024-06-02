@@ -263,8 +263,8 @@ ref_data <- logNormCounts(ref_data)
 query_data <- logNormCounts(query_data)
 
 # Run PCA
-ref_data <- runPCA(ref_data)
-query_data <- runPCA(query_data)
+ref_data <- scater::runPCA(ref_data)
+query_data <- scater::runPCA(query_data)
 
 # Get cell type scores using SingleR
 pred <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)

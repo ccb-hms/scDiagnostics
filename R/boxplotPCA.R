@@ -119,8 +119,7 @@ boxplotPCA <- function(query_data, reference_data,
     pca_long$cell_type_dataset <- factor(pca_long$cell_type_dataset, levels = order_combinations)
     
     # Define the colors for cell types
-    color_palette <- RColorBrewer::brewer.pal(length(order_combinations), "Paired")
-    color_mapping <- setNames(color_palette, order_combinations)
+    color_mapping <- setNames(RColorBrewer::brewer.pal(length(order_combinations), "Paired"), order_combinations)
     cell_type_colors <- color_mapping[order_combinations]
     
     # Create the ggplot
