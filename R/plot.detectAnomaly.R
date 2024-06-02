@@ -120,7 +120,7 @@ plot.detectAnomaly <- function(x, cell_type, pc_subset = NULL, ...) {
     data_pairs <- do.call(rbind, data_pairs_list)
     
     # Remove redundant data (to avoid duplicated plots)
-    data_pairs <- data_pairs[as.numeric(substr(data_pairs$x, 3, 3)) < as.numeric(substr(data_pairs$y, 3, 3)),]
+    data_pairs <- data_pairs[as.numeric(data_pairs$x) < as.numeric(data_pairs$y),]
     
     # Add anomalies vector to data_pairs dataframe
     data_pairs$anomaly <- rep(x[[cell_type]]$anomaly, choose(length(pc_subset), 2))
