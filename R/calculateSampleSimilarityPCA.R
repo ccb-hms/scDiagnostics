@@ -84,7 +84,7 @@ calculateSampleSimilarityPCA <- function(se_object, samples, pc_subset = c(1:5),
     # Extract rotation matrix for SingleCellExperiment object
     rotation_mat <- attributes(reducedDim(se_object, "PCA"))$rotation[, pc_subset]
     
-    # FUnction to identify high-loading variables for each PC
+    # Function to identify high-loading variables for each PC
     .getHighLoadingVars <- function(rotation_mat, n_top_vars) {
         high_loading_vars <- lapply(1:ncol(rotation_mat), function(pc) {
             abs_loadings <- abs(rotation_mat[, pc])

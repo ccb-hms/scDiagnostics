@@ -4,7 +4,7 @@
 \alias{compareCCA}
 \title{Compare Subspaces Spanned by Top Principal Components Using Canonical Correlation Analysis}
 \usage{
-compareCCA(reference_data, query_data, pc_subset = c(1:5))
+compareCCA(reference_data, query_data, pc_subset = c(1:5), n_top_vars = 25)
 }
 \arguments{
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
@@ -13,6 +13,8 @@ compareCCA(reference_data, query_data, pc_subset = c(1:5))
 
 \item{pc_subset}{A numeric vector specifying the subset of principal components (PCs) 
 to compare. Default is the first five PCs.}
+
+\item{n_top_vars}{An integer indicating the number of top loading variables to consider for each PC. Default is 25.}
 }
 \value{
 A list containing the following elements:
@@ -83,7 +85,7 @@ query_data_subset <- runPCA(query_data_subset, ncomponents = 50)
 
 # Compare CCA
 cca_comparison <- compareCCA(query_data_subset, ref_data_subset, 
-                             pc_subset = c(1:5))
+                             pc_subset = c(1:5), n_top_vars = 25)
 
 # Visualize output of CCA comparison
 plot(cca_comparison)

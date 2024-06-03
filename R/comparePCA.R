@@ -4,18 +4,17 @@
 #' datasets for a single cell type using either cosine similarity or correlation.
 #' 
 #' @details
-#' The function compares the PCs obtained from separate PCA on the reference and query datasets for a single cell type.
-#' It computes the similarity between the principal components using either cosine similarity or correlation. 
-#' Cosine similarity measures the cosine of the angle between the PC vectors, while correlation computes the 
-#' correlation coefficient between them. The function returns a similarity matrix where each element (i, j) 
-#' represents the similarity between the i-th PC of the reference dataset and the j-th PC of the query dataset.
-#'
-#' If cosine similarity is chosen, the function computes the cosine similarity between each pair of PC vectors. 
-#' If correlation is chosen, it calculates the correlation coefficient using either Spearman or Pearson method.
+#' This function compares the PCA results between the reference and query datasets by computing cosine 
+#' similarities or correlations between the loadings of top variables for each pair of principal components. It first 
+#' extracts the PCA rotation matrices from both datasets and identifies the top variables with highest loadings for 
+#' each PC. Then, it computes the cosine similarities or correlations between the loadings of top variables for each 
+#' pair of PCs. The resulting matrix contains the similarity values, where rows represent reference PCs and columns 
+#' represent query PCs.
 #' 
 #' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
-#' @param n_components Number of principal components to consider. Default is 5.
+#' @param pc_subset A numeric vector specifying the subset of principal components (PCs) to compare. Default is the first five PCs.
+#' @param n_top_vars An integer indicating the number of top loading variables to consider for each PC. Default is 50.
 #' @param metric The similarity metric to use. It can be either "cosine" or "correlation". Default is "cosine".
 #' @param correlation_method The correlation method to use if metric is "correlation". It can be "spearman" 
 #' or "pearson". Default is "spearman".
@@ -77,17 +76,18 @@
 #'
 #' # Call the PCA comparison function
 #' similarity_mat <- comparePCA(query_data_subset, ref_data_subset, 
-#'                              n_components = 5, 
+#'                              pc_subset = c(1:5), 
+#'                              n_top_vars = 50,
 #'                              metric = c("cosine", "correlation")[1], 
 #'                              correlation_method = c("spearman", "pearson")[1])
 #'
 #' # Create the heatmap
 #' plot(similarity_mat)
 #' 
-#'
 # Compare PCA vectors of reference and query datasets for specific cell type.
 comparePCA <- function(reference_data, query_data, 
-                       n_components = 5,
+                       pc_subset = c(1:5),
+                       n_top_vars = 50,
                        metric = c("cosine", "correlation")[1], 
                        correlation_method = c("spearman", "pearson")[1]){
     
@@ -106,17 +106,10 @@ comparePCA <- function(reference_data, query_data,
             rownames(attributes(reducedDim(reference_data, "PCA"))$rotation)))
         stop("The genes in the rotation matrices differ. Consider decreasing the number of genes used for PCA.")
     
-    # Check if n_components is a positive integer
-    if (!inherits(n_components, "numeric")) {
-        stop("n_components should be numeric")
-    } else if (any(!n_components == floor(n_components), n_components < 1)) {
-        stop("n_components should be an integer, greater than zero.")
-    }
-    
-    # Check if requested number of components is within available components
-    if (ncol(reducedDim(reference_data, "PCA")) < n_components) {
-        stop("\'n_components\' is larger than number of available components in reference PCA.")
-    }
+    # Check input if PC subset is valid
+    if(!all(c(pc_subset %in% 1:ncol(reducedDim(reference_data, "PCA")), 
+              pc_subset %in% 1:ncol(reducedDim(query_data, "PCA")))))
+        stop("\'pc_subset\' is out of range.")
     
     # Check input for metric
     if(!(metric %in% c("cosine", "correlation")))
@@ -127,11 +120,26 @@ comparePCA <- function(reference_data, query_data,
         stop("\'correlation_method\' should be one of \'spearman\' or \'pearson\'.")
     
     # Extract PCA data from reference and query data
-    ref_rotation <- attributes(reducedDim(reference_data, "PCA"))$rotation[, 1:n_components]
-    query_rotation <- attributes(reducedDim(query_data, "PCA"))$rotation[, 1:n_components]
+    ref_rotation <- attributes(reducedDim(reference_data, "PCA"))$rotation[, pc_subset]
+    query_rotation <- attributes(reducedDim(query_data, "PCA"))$rotation[, pc_subset]
     
+    # Function to identify high-loading variables for each PC
+    .getHighLoadingVars <- function(rotation_mat, n_top_vars) {
+        high_loading_vars <- lapply(1:ncol(rotation_mat), function(pc) {
+            abs_loadings <- abs(rotation_mat[, pc])
+            top_vars <- names(sort(abs_loadings, decreasing = TRUE))[1:n_top_vars]
+            return(top_vars)
+        })
+        return(high_loading_vars)
+    }
+    
+    # Get union of variables with highest loadings
+    top_ref <- .getHighLoadingVars(ref_rotation, n_top_vars)
+    top_query <- .getHighLoadingVars(query_rotation, n_top_vars)
+    top_union <- lapply(1:length(pc_subset), function(i) return(union(top_ref[[i]], top_query[[i]])))
+
     # Initialize a matrix to store cosine similarities
-    similarity_matrix <- matrix(NA, nrow = n_components, ncol = n_components)
+    similarity_matrix <- matrix(NA, nrow = length(pc_subset), ncol = length(pc_subset))
     
     if(metric == "cosine"){
         # Function to compute cosine similarity
@@ -140,28 +148,31 @@ comparePCA <- function(reference_data, query_data,
         }
         
         # Loop over each pair of columns and compute cosine similarity
-        for (i in 1:n_components) {
-            for (j in 1:n_components) {
-                similarity_matrix[i, j] <- .cosine_similarity(ref_rotation[, i], query_rotation[, j])
+        for (i in 1:length(pc_subset)) {
+            for (j in 1:length(pc_subset)) {
+                combination_union <- union(top_union[[i]], top_union[[j]])
+                similarity_matrix[i, j] <- .cosine_similarity(ref_rotation[combination_union, i], query_rotation[combination_union, j])
             }
         }
     } else if(metric == "correlation"){
         # Loop over each pair of columns and compute cosine similarity
-        for (i in 1:n_components) {
-            for (j in 1:n_components) {
-                similarity_matrix[i, j] <- cor(ref_rotation[, i], query_rotation[, j], method = correlation_method)
+        for (i in 1:length(pc_subset)) {
+            for (j in 1:length(pc_subset)) {
+                combination_union <- union(top_union[[i]], top_union[[j]])
+                similarity_matrix[i, j] <- cor(ref_rotation[combination_union, i], query_rotation[combination_union, j], 
+                                               method = correlation_method)
             }
         }
     }
     
     # Add rownames and colnames with % of variance explained for each PC of each dataset 
-    rownames(similarity_matrix) <- paste0("Ref PC", 1:n_components, " (", 
-                                          round(attributes(reducedDim(reference_data, "PCA"))$varExplained[1:n_components] / 
-                                                    sum(attributes(reducedDim(reference_data, "PCA"))$varExplained[1:n_components]) *
+    rownames(similarity_matrix) <- paste0("Ref PC", pc_subset, " (", 
+                                          round(attributes(reducedDim(reference_data, "PCA"))$varExplained[pc_subset] / 
+                                                    sum(attributes(reducedDim(reference_data, "PCA"))$varExplained[pc_subset]) *
                                                             100, 1), "%)")
-    colnames(similarity_matrix) <- paste0("Query PC", 1:n_components, " (", 
-                                          round(attributes(reducedDim(query_data, "PCA"))$varExplained[1:n_components] / 
-                                                    sum(attributes(reducedDim(query_data, "PCA"))$varExplained[1:n_components]) *
+    colnames(similarity_matrix) <- paste0("Query PC", pc_subset, " (", 
+                                          round(attributes(reducedDim(query_data, "PCA"))$varExplained[pc_subset] / 
+                                                    sum(attributes(reducedDim(query_data, "PCA"))$varExplained[pc_subset]) *
                                                     100, 1), "%)")
     
     # Update class of return output
