@@ -82,12 +82,12 @@ query_data_subset <- query_data[common_genes, ]
 # Run PCA on the reference data (assumed to be prepared)
 ref_data_subset <- runPCA(ref_data_subset)
 
-pc_plot <- boxplotPCA(query_data_subset, ref_data_subset,
-                      n_components = 10,
-                      cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                      query_cell_type_col = "labels", 
-                      ref_cell_type_col = "reclustered.broad", 
-                      pc_subset = c(1:5))
+pc_plot <- visualizeCellTypePCA(query_data_subset, ref_data_subset,
+                                n_components = 10,
+                                cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+                                query_cell_type_col = "labels", 
+                                ref_cell_type_col = "reclustered.broad", 
+                                pc_subset = c(1:5))
 pc_plot
 
 

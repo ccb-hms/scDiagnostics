@@ -64,12 +64,12 @@
 #' # Run PCA on the reference data (assumed to be prepared)
 #' ref_data_subset <- runPCA(ref_data_subset)
 #'
-#' pc_plot <- boxplotPCA(query_data_subset, ref_data_subset,
-#'                       n_components = 10,
-#'                       cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-#'                       query_cell_type_col = "labels", 
-#'                       ref_cell_type_col = "reclustered.broad", 
-#'                       pc_subset = c(1:5))
+#' pc_plot <- visualizeCellTypePCA(query_data_subset, ref_data_subset,
+#'                                 n_components = 10,
+#'                                 cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+#'                                 query_cell_type_col = "labels", 
+#'                                 ref_cell_type_col = "reclustered.broad", 
+#'                                 pc_subset = c(1:5))
 #' pc_plot
 #' 
 #' 
@@ -83,6 +83,11 @@ visualizeCellTypePCA <- function(query_data, reference_data,
                                  query_cell_type_col, 
                                  ref_cell_type_col, 
                                  pc_subset = c(1:5)){
+    
+    # Cell types
+    if(is.null(cell_types)){
+        cell_types <- na.omit(intersect(unique(query_data[[query_cell_type_col]]), unique(reference_data[[ref_cell_type_col]])))
+    }
     
     # Get the projected PCA data
     pca_output <- projectPCA(query_data = query_data, reference_data = reference_data, 

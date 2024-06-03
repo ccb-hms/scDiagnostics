@@ -10,7 +10,7 @@
 #' reference dataset and one for the distances from the specified query sample to each reference sample. These distributions are 
 #' plotted in different colors to visually assess how similar the query sample is to the reference samples of the specified cell type.
 #'
-#' @param x A list containing the distance data computed by \code{calculateDistanceDiagnostics}.
+#' @param x A list containing the distance data computed by \code{calculateSampleDistances}.
 #' @param ref_cell_type A string specifying the reference cell type.
 #' @param sample_names A string specifying the query sample name for which to plot the distances.
 #' @param ... Additional arguments passed to the plotting function.
@@ -84,7 +84,7 @@
 #' 
 #'  
 # Function to plot density functions for the reference data and the specified sample
-plot.calculateDistanceDiagnostics <- function(x, ref_cell_type, sample_names, ...) {
+plot.calculateSampleDistances <- function(x, ref_cell_type, sample_names, ...) {
     
     # Check if cell type is available
     if(length(ref_cell_type) != 1 || !(ref_cell_type %in% names(x)))

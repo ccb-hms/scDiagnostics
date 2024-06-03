@@ -43,6 +43,7 @@ where understanding the distribution of these metrics is crucial for quality ass
 interpretation of cell type annotations.
 }
 \examples{
+\donttest{
 library(scater)
 library(scran)
 library(scRNAseq)
@@ -86,5 +87,6 @@ histQCvsAnnotation(query_data = query_data,
                    label_col = "labels", 
                    score_col = "cell_scores", 
                    label = NULL)
+}
 
 }

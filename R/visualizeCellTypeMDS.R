@@ -28,34 +28,37 @@
 #' library(scRNAseq)
 #' library(RColorBrewer)
 #'
-#' # load data
+#' # Load data (replace with your data loading)
 #' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-#'
+#' 
 #' # Divide the data into reference and query datasets
 #' set.seed(100)
 #' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
 #' ref_data <- sce[, indices]
 #' query_data <- sce[, -indices]
-#'
+#' 
 #' # log transform datasets
-#' ref_data <- logNormCounts(ref_data)
-#' query_data <- logNormCounts(query_data)
-#'
-#' # Selecting highly variable genes
-#' ref_var <- getTopHVGs(ref_data, n=2000)
-#' query_var <- getTopHVGs(query_data, n=2000)
-#'
+#' ref_data <- scuttle::logNormCounts(ref_data)
+#' query_data <- scuttle::logNormCounts(query_data)
+#' 
+#' # Get cell type scores using SingleR (or any other cell type annotation method)
+#' scores <- SingleR::SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
+#' 
+#' # Add labels to query object
+#' colData(query_data)$labels <- scores$labels
+#' 
+#' # Selecting highly variable genes (can be customized by the user)
+#' ref_var <- scran::getTopHVGs(ref_data, n = 2000)
+#' query_var <- scran::getTopHVGs(query_data, n = 2000)
+#' 
 #' # Intersect the gene symbols to obtain common genes
 #' common_genes <- intersect(ref_var, query_var)
-#' 
-#' # Select desired cell types
-#' ref_data_subset <- ref_data[common_genes,]
-#' query_data_subset <- query_data[common_genes,]
+#' ref_data_subset <- ref_data[common_genes, ]
+#' query_data_subset <- query_data[common_genes, ]
 #' 
 #' # Generate the MDS scatter plot with cell type coloring
 #' plot <- visualizeCellTypeMDS(query_data = query_data_subset, 
 #'                              reference_data = ref_data_subset, 
-#'                              cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid")[1:4],
 #'                              query_cell_type_col = "labels", 
 #'                              ref_cell_type_col = "reclustered.broad")
 #' print(plot)

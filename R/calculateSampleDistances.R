@@ -1,4 +1,4 @@
-#' @title Compute Distance Diagnostics Between Reference and Query Data
+#' @title Compute Sample Distances Between Reference and Query Data
 #'
 #' @description This function computes the distances within the reference dataset and the distances from each query sample to all 
 #' reference samples for each cell type. It uses PCA for dimensionality reduction and Euclidean distance for distance calculation.
@@ -68,11 +68,11 @@
 #' ref_data_subset <- runPCA(ref_data_subset)
 #' 
 #' # Plot the PC data
-#' distance_data <- calculateDistanceDiagnostics(query_data_subset, ref_data_subset, 
-#'                                               n_components = 10, 
-#'                                               query_cell_type_col = "labels", 
-#'                                               ref_cell_type_col = "reclustered.broad",
-#'                                               pc_subset = c(1:10)) 
+#' distance_data <- calculateSampleDistances(query_data_subset, ref_data_subset, 
+#'                                           n_components = 10, 
+#'                                           query_cell_type_col = "labels", 
+#'                                           ref_cell_type_col = "reclustered.broad",
+#'                                           pc_subset = c(1:10)) 
 #' 
 #' # Identify outliers for CD4
 #' cd4_anomalies <- detectAnomaly(ref_data_subset, query_data_subset, 
@@ -86,13 +86,12 @@
 #' # Plot the densities of the distances
 #' plot(distance_data, ref_cell_type = "CD4", sample_names = cd4_top5_anomalies)
 #' 
-#' 
 # Function to compute distances within reference data and between query data and reference samples
-calculateDistanceDiagnostics <- function(query_data, reference_data, 
-                                         query_cell_type_col, 
-                                         ref_cell_type_col,
-                                         n_components = 10, 
-                                         pc_subset = c(1:5)) {
+calculateSampleDistances <- function(query_data, reference_data, 
+                                     query_cell_type_col, 
+                                     ref_cell_type_col,
+                                     n_components = 10, 
+                                     pc_subset = c(1:5)) {
     
     # Get the projected PCA data
     pca_output <- projectPCA(query_data = query_data, reference_data = reference_data, 
@@ -141,7 +140,7 @@ calculateDistanceDiagnostics <- function(query_data, reference_data,
     }
     
     # Add class of object
-    class(distance_data) <- c(class(distance_data), "calculateDistanceDiagnostics")
+    class(distance_data) <- c(class(distance_data), "calculateSampleDistances")
     
     # Return the distance data
     return(distance_data)
