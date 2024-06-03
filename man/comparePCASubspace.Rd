@@ -4,15 +4,21 @@
 \alias{comparePCASubspace}
 \title{Compare Subspaces Spanned by Top Principal Components}
 \usage{
-comparePCASubspace(reference_data, query_data, pc_subset = c(1:5))
+comparePCASubspace(
+  reference_data,
+  query_data,
+  pc_subset = c(1:5),
+  n_top_vars = 50
+)
 }
 \arguments{
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
 \item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
-\item{pc_subset}{A numeric vector specifying the subset of principal components (PCs) 
-to compare. Default is the first five PCs.}
+\item{pc_subset}{A numeric vector specifying the subset of principal components (PCs) to compare. Default is the first five PCs.}
+
+\item{n_top_vars}{An integer indicating the number of top loading variables to consider for each PC. Default is 50.}
 }
 \value{
 A list containing the following components:
@@ -21,17 +27,17 @@ A list containing the following components:
   \item{weighted_cosine_similarity}{A numeric value representing the weighted cosine similarity.}
 }
 \description{
-This function compares the subspaces spanned by the top principal components of 
-two datasets using a weighted cosine similarity measure. It computes the cosine 
-similarity between the principal angles of the subspaces, weighted by the proportion 
-of variance explained by each principal component.
+This function compares the subspace spanned by the top principal components (PCs) in a reference dataset to that 
+in a query dataset. It computes the cosine similarity between the loadings of the top variables for each PC in 
+both datasets and provides a weighted cosine similarity score.
 }
 \details{
-The function takes as input two SingleCellExperiment objects representing the 
-reference and query datasets, respectively. Users can specify a subset of principal 
-components (PCs) to compare. The cosine similarity between the principal angles of 
-the subspaces spanned by the specified PCs is computed and weighted by the proportion 
-of variance explained by each PC.
+This function compares the subspace spanned by the top principal components (PCs) in a reference dataset 
+to that in a query dataset. It first computes the cosine similarity between the loadings of the top variables 
+for each PC in both datasets. The top cosine similarity scores are then selected, and their corresponding PC 
+indices are stored. Additionally, the function calculates the average percentage of variance explained by the 
+selected top PCs. Finally, it computes a weighted cosine similarity score based on the top cosine similarities 
+and the average percentage of variance explained.
 }
 \examples{
 # Load necessary library
@@ -80,11 +86,10 @@ query_data_subset <- runPCA(query_data_subset, ncomponents = 50)
 
 # Compare PCA subspaces
 subspace_comparison <- comparePCASubspace(query_data_subset, ref_data_subset, 
-                                          pc_subset = c(1:5))
+                                          pc_subset = c(1:5), n_top_vars = 50)
 
 # Create a data frame for plotting
 plot(subspace_comparison)
-
 
 }
 \seealso{

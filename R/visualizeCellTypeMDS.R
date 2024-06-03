@@ -14,77 +14,53 @@
 #' expression data and metadata.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
 #' expression data and metadata.
-#' @param mdata A character vector representing cell types from both the query and reference datasets. 
-#' These cell types are labels used for visualization in the Multidimensional Scaling (MDS) plot. 
-#' The vector should include names of cell types as they appear in both datasets, 
-#' prefixed appropriately to distinguish between query and reference (e.g., "Query CD4", "Reference CD8").
-#' @param cell_type_colors A named vector of colors corresponding to the cell types specified in mdata. 
-#' Each color is used to uniquely identify a cell type in the MDS plot. 
-#' @param legend_order A character vector specifying the order of cell types in the plot legend.
-#'
+#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
+#' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data} 
+#' that identifies the cell types.
+#' @param ref_cell_type_col character. The column name in the \code{colData} of \code{reference_data} 
+#' that identifies the cell types.
+#' 
 #' @return A ggplot object representing the MDS scatter plot with cell type coloring.
 #'
 #' @examples
 #' library(scater)
 #' library(scran)
 #' library(scRNAseq)
-#' library(RColorBrewer)
 #'
-#' # load data
+#' # Load data (replace with your data loading)
 #' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-#'
+#' 
 #' # Divide the data into reference and query datasets
 #' set.seed(100)
 #' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
 #' ref_data <- sce[, indices]
 #' query_data <- sce[, -indices]
-#'
+#' 
 #' # log transform datasets
-#' ref_data <- logNormCounts(ref_data)
-#' query_data <- logNormCounts(query_data)
-#'
-#' # Selecting highly variable genes
-#' ref_var <- getTopHVGs(ref_data, n=2000)
-#' query_var <- getTopHVGs(query_data, n=2000)
-#'
+#' ref_data <- scuttle::logNormCounts(ref_data)
+#' query_data <- scuttle::logNormCounts(query_data)
+#' 
+#' # Get cell type scores using SingleR (or any other cell type annotation method)
+#' scores <- SingleR::SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
+#' 
+#' # Add labels to query object
+#' colData(query_data)$labels <- scores$labels
+#' 
+#' # Selecting highly variable genes (can be customized by the user)
+#' ref_var <- scran::getTopHVGs(ref_data, n = 2000)
+#' query_var <- scran::getTopHVGs(query_data, n = 2000)
+#' 
 #' # Intersect the gene symbols to obtain common genes
 #' common_genes <- intersect(ref_var, query_var)
-#'
-#' # Select desired cell types
-#' selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
-#' ref_data_subset <- ref_data[common_genes, ref_data$reclustered.broad %in% selected_cell_types]
-#' query_data_subset <- query_data[common_genes, query_data$reclustered.broad %in% selected_cell_types]
-#'
-#' # Extract cell types for visualization
-#' ref_labels <- ref_data_subset$reclustered.broad
-#' query_labels <- query_data_subset$reclustered.broad
-#'
-#' # Combine the cell type labels from both datasets
-#' mdata <- c(paste("Query", query_labels), paste("Reference", ref_labels))
-#'
-#' # Define the cell types and legend order
-#' cell_types <- c("Query CD8", 
-#'                 "Reference CD8", 
-#'                  "Query CD4", 
-#'                  "Reference CD4", 
-#'                  "Query B_and_plasma", 
-#'                  "Reference B_and_plasma")
-#'                  
-#' legend_order <- cell_types
-#'
-#' # Define the colors for cell types
-#' color_palette <- brewer.pal(length(cell_types), "Paired")
-#' color_mapping <- setNames(color_palette, cell_types)
-#' cell_type_colors <- color_mapping[cell_types]
-#'
+#' ref_data_subset <- ref_data[common_genes, ]
+#' query_data_subset <- query_data[common_genes, ]
+#' 
 #' # Generate the MDS scatter plot with cell type coloring
 #' plot <- visualizeCellTypeMDS(query_data = query_data_subset, 
-#'                             reference_data = ref_data_subset, 
-#'                             mdata = mdata, 
-#'                             cell_type_colors = cell_type_colors, 
-#'                             legend_order = legend_order)
+#'                              reference_data = ref_data_subset, 
+#'                              query_cell_type_col = "labels", 
+#'                              ref_cell_type_col = "reclustered.broad")
 #' print(plot)
-#' 
 #'
 #' @importFrom stats cmdscale cor
 #' @importFrom ggplot2 ggplot
@@ -93,40 +69,70 @@
 #' 
 visualizeCellTypeMDS <- function(query_data, 
                                  reference_data, 
-                                 mdata, 
-                                 cell_type_colors, 
-                                 legend_order) {
+                                 cell_types = NULL,
+                                 query_cell_type_col, 
+                                 ref_cell_type_col) {
 
-  # Sanity checks
-  
-  # Check if query_data is a SingleCellExperiment object
-  if (!is(query_data, "SingleCellExperiment")) {
+    # Check if query_data is a SingleCellExperiment object
+    if (!is(query_data, "SingleCellExperiment")) {
     stop("query_data must be a SingleCellExperiment object.")
-  }
-  
-  # Check if reference_data is a SingleCellExperiment object
-  if (!is(reference_data, "SingleCellExperiment")) {
+    }
+    
+    # Check if reference_data is a SingleCellExperiment object
+    if (!is(reference_data, "SingleCellExperiment")) {
     stop("reference_data must be a SingleCellExperiment object.")
-  }
-  
-  # Extract logcounts
-  queryExp <- as.matrix(assay(query_data, "logcounts"))
-  refExp <- as.matrix(assay(reference_data, "logcounts"))
+    }
+    
+    # Check if query_cell_type_col is a valid column name in query_data
+    if (!query_cell_type_col %in% names(colData(query_data))) {
+      stop("query_cell_type_col: '", query_cell_type_col, "' is not a valid column name in query_data.")
+    }
+    
+    # Check if ref_cell_type_col is a valid column name in reference_data
+    if (!ref_cell_type_col %in% names(colData(reference_data))) {
+      stop("ref_cell_type_col: '", ref_cell_type_col, "' is not a valid column name in reference_data.")
+    }
+    
+    # Check if cell types available in both single-cell experiments
+    if(!all(cell_types %in% reference_data[[ref_cell_type_col]]) || 
+       !all(cell_types %in% query_data[[query_cell_type_col]]))
+        stop("One or more of the specified cell types are not available in \'reference_data\' or \'query_data\'.")
+    
+    # Cell types
+    if(is.null(cell_types)){
+        cell_types <- na.omit(intersect(unique(query_data[[query_cell_type_col]]), unique(reference_data[[ref_cell_type_col]])))
+    }
 
-  # Compute correlation and dissimilarity matrix
-  df <- cbind(queryExp, refExp)
-  corMat <- cor(df, method = "spearman")
-  disMat <- (1 - corMat)
-  cmd <- cmdscale(disMat)
+    # Subset data
+    query_data <- query_data[, which(query_data[[query_cell_type_col]] %in% cell_types)]
+    reference_data <- reference_data[, which(reference_data[[ref_cell_type_col]] %in% cell_types)]
+    
+    # Extract logcounts
+    queryExp <- as.matrix(assay(query_data, "logcounts"))
+    refExp <- as.matrix(assay(reference_data, "logcounts"))
+    
+    # Compute correlation and dissimilarity matrix
+    df <- cbind(queryExp, refExp)
+    corMat <- cor(df, method = "spearman")
+    disMat <- (1 - corMat)
+    cmd <- data.frame(cmdscale(disMat), c(rep("Query", ncol(queryExp)), rep("Reference", ncol(refExp))),
+                      c(query_data[[query_cell_type_col]], reference_data[[ref_cell_type_col]]))
+    colnames(cmd) <- c("Dim1", "Dim2", "dataset", "cellType")
+    cmd <- na.omit(cmd)
+    cmd$cell_type_dataset <- paste(cmd$dataset, cmd$cellType, sep = " ")
 
-  # Create the plot object
-  matx <- data.frame(Dim1 = cmd[, 1], Dim2 = cmd[, 2], Type = factor(mdata, levels = legend_order))
-
-  plot <- ggplot2::ggplot(matx, aes(x = Dim1, y = Dim2, color = Type)) +
+    # Define the order of cell type and dataset combinations
+    order_combinations <- paste(rep(c("Reference", "Query"), length(cell_types)), rep(sort(cell_types), each = 2))
+    cmd$cell_type_dataset <- factor(cmd$cell_type_dataset, levels = order_combinations)
+    
+    # Define the colors for cell types
+    color_mapping <- setNames(RColorBrewer::brewer.pal(length(order_combinations), "Paired"), order_combinations)
+    cell_type_colors <- color_mapping[order_combinations]
+    
+    plot <- ggplot2::ggplot(cmd, aes(x = Dim1, y = Dim2, color = cell_type_dataset)) +
       ggplot2::geom_point(alpha = 0.5, size = 1) +
-      ggplot2::scale_color_manual(values = cell_type_colors) +
+      ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Types") + 
       ggplot2::theme_bw() +
       ggplot2::guides(color = ggplot2::guide_legend(title = "Cell Types"))
-
-  return(plot)
+    return(plot)
 }

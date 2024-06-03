@@ -4,7 +4,13 @@
 \alias{plot.detectAnomaly}
 \title{Create Faceted Scatter Plots for Specified PC Combinations From \code{detectAnomaly} Object}
 \usage{
-\method{plot}{detectAnomaly}(x, cell_type, pc_subset = NULL, ...)
+\method{plot}{detectAnomaly}(
+  x,
+  cell_type = NULL,
+  pc_subset = NULL,
+  data_type = c("query", "reference"),
+  ...
+)
 }
 \arguments{
 \item{x}{A list object containing the anomaly detection results from the \code{detectAnomaly} function. 
@@ -12,15 +18,17 @@ Each element of the list should correspond to a cell type and contain \code{refe
 \code{var_explained}, and \code{anomaly}.}
 
 \item{cell_type}{A character string specifying the cell type for which the plots should be generated. This should
-be a name present in \code{x}.}
+be a name present in \code{x}. If NULL, the "Combined" cell type will be plotted. Default is NULL.}
 
 \item{pc_subset}{A numeric vector specifying the indices of the PCs to be included in the plots. If NULL, all PCs
 in \code{reference_mat_subset} will be included.}
 
+\item{data_type}{A character string specifying whether to plot the "query" data or the "reference" data. Default is "query".}
+
 \item{...}{Additional arguments.}
 }
 \value{
-A ggplot object displaying the faceted scatter plots for the specified PC combinations.
+A ggplot2 object representing the PCA plots with anomalies highlighted.
 }
 \description{
 This function generates faceted scatter plots for specified principal component (PC) combinations
@@ -80,8 +88,7 @@ anomaly_output <- detectAnomaly(ref_data_subset, query_data_subset,
                                 anomaly_treshold = 0.5) 
 
 # Plot the output for a cell type
-plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
-
+plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5), data_type = "query")
 
 }
 \seealso{

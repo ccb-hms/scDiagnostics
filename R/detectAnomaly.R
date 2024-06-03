@@ -5,30 +5,31 @@
 #' 
 #' @title PCA Anomaly Scores via Isolation Forests with Visualization
 #'
-#' @description \code{detectAnomaly} performs diagnostics using isolation forest with PCA and visualization. 
-#' It takes reference and query \code{\linkS4class{SingleCellExperiment}} objects, their corresponding labels, and various parameters to perform 
-#' the analysis. The function returns a list containing the results for each cell type, including anomaly scores, anomaly IDs, 
-#' PCA data, and optional PCA anomaly plots.
+#' @description 
+#' This function detects anomalies in single-cell data by projecting the data onto a PCA space and using an isolation forest 
+#' algorithm to identify anomalies.
 #'
-#' @details
-#' This function first applies PCA to the entire reference expression data and predicts PCA scores for the query data if it is provided. 
-#' It builds isolation forests and performs diagnostics for each cell type, calculating anomaly scores for the query data (or reference 
-#' data if the query data is not provided).
-#' Isolation Forest is an algorithm for anomaly detection that works by building an ensemble of isolation trees. It is based on the 
-#' idea that anomalies are more susceptible to isolation than normal instances.
-#' The part where we project the query data onto the PCA space of the reference data is done by using the `predict` function on the PCA model with the query expression data. This allows us to transform the query data into the same PCA space as the reference data, which is necessary for the isolation forest analysis.
+#' @details This function projects the query data onto the PCA space of the reference data. An isolation forest is then built on the 
+#' reference data to identify anomalies in the query data based on their PCA projections. If no query dataset is provided by the user,
+#' the anomaly scores are computed on the reference data itself. Anomaly scores for the data with all combined cell types are also
+#' provided as part of the output.
 #' 
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param query_data An optional \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells. 
 #' If NULL, then the isolation forest anomaly scores are computed for the reference data. Default is NULL.
-#' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
 #' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
+#' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
 #' @param n_components An integer specifying the number of principal components to use. Default is 10.
 #' @param n_tree An integer specifying the number of trees for the isolation forest. Default is 500
 #' @param anomaly_treshold A numeric value specifying the threshold for identifying anomalies, Default is 0.5.
 #' @param ... Additional arguments passed to the `isolation.forest` function.
 #' 
-#' @return A list containing the results for each cell type, including anomaly scores, anomaly IDs and PCA data.
+#' @return A list containing the following components for each cell type and the combined data:
+#' \item{anomaly_scores}{Anomaly scores for each cell in the query data.}
+#' \item{anomaly}{Logical vector indicating whether each cell is classified as an anomaly.}
+#' \item{reference_mat_subset}{PCA projections of the reference data.}
+#' \item{query_mat_subset}{PCA projections of the query data (if provided).}
+#' \item{var_explained}{Proportion of variance explained by the retained principal components.}
 #' 
 #' @export
 #' 
@@ -84,14 +85,13 @@
 #'                                 anomaly_treshold = 0.5) 
 #' 
 #' # Plot the output for a cell type
-#' plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
-#' 
+#' plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5), data_type = "query")
 #' 
 # Function to perform diagnostics using isolation forest with PCA and visualization
 detectAnomaly <- function(reference_data, 
                           query_data = NULL, 
+                          ref_cell_type_col,
                           query_cell_type_col, 
-                          ref_cell_type_col, 
                           n_components = 10,
                           n_tree = 500,
                           anomaly_treshold = 0.5,
@@ -99,19 +99,27 @@ detectAnomaly <- function(reference_data,
     
     # Check whether the anlaysis is done only for one dataset
   if (is.null(query_data)) {
-      query_data <- reference_data
-      query_cell_type_col <- ref_cell_type_col
+      include_query_in_output <- FALSE
+  } else{
+      if(is.null(query_cell_type_col))
+          stop("If \'query_data\' is not NULL, a value for \'query_cell_type_col\' must be provided.")
+      include_query_in_output <- TRUE
   }
     
   if(!is.null(n_components)){
-      # Get PCA data from reference and query datasets (query data projected onto PCA space of reference dataset)
-      pca_output <- projectPCA(query_data = query_data, reference_data = reference_data, 
-                               n_components = n_components, return_value = "list")
-      reference_mat <- pca_output$ref[, paste0("PC", 1:n_components)]
-      query_mat <- pca_output$query[, paste0("PC", 1:n_components)]
+      reference_mat <- reducedDim(reference_data, "PCA")[, 1:n_components]
+      if(include_query_in_output){
+          # Get PCA data from reference and query datasets (query data projected onto PCA space of reference dataset)
+          pca_output <- projectPCA(query_data = query_data, reference_data = reference_data, 
+                                   query_cell_type_col = query_cell_type_col, ref_cell_type_col = ref_cell_type_col,
+                                   n_components = n_components, return_value = "list")
+          query_mat <- pca_output$query[, paste0("PC", 1:n_components)]
+      }
   } else{
       reference_mat <- t(as.matrix(assay(reference_data, "logcounts")))
-      query_mat <- t(as.matrix(assay(query_data, "logcounts")))
+      if(include_query_in_output){
+          query_mat <- t(as.matrix(assay(query_data, "logcounts")))
+      }
   }
   
   # List to store output
@@ -119,32 +127,43 @@ detectAnomaly <- function(reference_data,
   
   # Extract reference and query annotations
   reference_labels <- reference_data[[ref_cell_type_col]]
-  query_labels <- query_data[[query_cell_type_col]]
-  
-  # Build isolation forests and perform diagnostics for each cell type
-  cell_types <- na.omit(intersect(unique(reference_labels), unique(query_labels)))
+  if(!include_query_in_output){
+      cell_types <- c(as.list(na.omit(unique(reference_labels))),
+                      list(na.omit(unique(reference_labels))))
+  } else{
+      query_labels <- query_data[[query_cell_type_col]]
+      cell_types <- c(as.list(na.omit(intersect(unique(reference_labels), unique(query_labels)))),
+                      list(na.omit(intersect(unique(reference_labels), unique(query_labels)))))
+  }
+
   for (cell_type in cell_types) {
     
     # Filter reference and query PCA data for the current cell type
-    reference_mat_subset <- na.omit(reference_mat[reference_labels == cell_type,])
-    query_mat_subset <- na.omit(query_mat[query_labels == cell_type,])
+    reference_mat_subset <- na.omit(reference_mat[reference_labels %in% cell_type,])
     
     # Build isolation forest on reference PCA data for this cell type
     isolation_forest <- isotree::isolation.forest(reference_mat_subset, ntree = n_tree, ...)
       
     # Calculate anomaly scores for query data (scaled by reference path length)
-    anomaly_scores <- predict(isolation_forest, newdata = query_mat_subset, type = "score")
+    reference_anomaly_scores <- predict(isolation_forest, newdata = reference_mat_subset, type = "score")
+    if(include_query_in_output){
+        query_mat_subset <- na.omit(query_mat[query_labels %in% cell_type,])
+        query_anomaly_scores <- predict(isolation_forest, newdata = query_mat_subset, type = "score")
+    }
 
-    # Create list of output for cell type
-    output[[paste0(cell_type)]] <- list()
-    
     # Store cell type anomaly scores and PCA data
-    output[[paste0(cell_type)]]$anomaly_scores <- anomaly_scores
-    output[[paste0(cell_type)]]$anomaly <- anomaly_scores > anomaly_treshold
-    output[[paste0(cell_type)]]$reference_mat_subset <- reference_mat_subset
-    output[[paste0(cell_type)]]$query_mat_subset <- query_mat_subset
+    list_name <- ifelse(length(cell_type) == 1, cell_type, "Combined")
+    output[[list_name]] <- list()
+    output[[list_name]]$reference_anomaly_scores <- reference_anomaly_scores
+    output[[list_name]]$reference_anomaly <- reference_anomaly_scores > anomaly_treshold
+    output[[list_name]]$reference_mat_subset <- reference_mat_subset
+    if(include_query_in_output){
+        output[[list_name]]$query_mat_subset <- query_mat_subset
+        output[[list_name]]$query_anomaly_scores <- query_anomaly_scores
+        output[[list_name]]$query_anomaly <- query_anomaly_scores > anomaly_treshold
+    }
     if(!is.null(n_components))
-        output[[paste0(cell_type)]]$var_explained <- (attributes(reducedDim(reference_data, "PCA"))$varExplained[1:n_components]) /
+        output[[list_name]]$var_explained <- (attributes(reducedDim(reference_data, "PCA"))$varExplained[1:n_components]) /
         sum(attributes(reducedDim(reference_data, "PCA"))$varExplained) 
   }
   

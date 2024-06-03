@@ -7,9 +7,9 @@
 visualizeCellTypeMDS(
   query_data,
   reference_data,
-  mdata,
-  cell_type_colors,
-  legend_order
+  cell_types = NULL,
+  query_cell_type_col,
+  ref_cell_type_col
 )
 }
 \arguments{
@@ -19,15 +19,13 @@ expression data and metadata.}
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
 expression data and metadata.}
 
-\item{mdata}{A character vector representing cell types from both the query and reference datasets. 
-These cell types are labels used for visualization in the Multidimensional Scaling (MDS) plot. 
-The vector should include names of cell types as they appear in both datasets, 
-prefixed appropriately to distinguish between query and reference (e.g., "Query CD4", "Reference CD8").}
+\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
 
-\item{cell_type_colors}{A named vector of colors corresponding to the cell types specified in mdata. 
-Each color is used to uniquely identify a cell type in the MDS plot.}
+\item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data} 
+that identifies the cell types.}
 
-\item{legend_order}{A character vector specifying the order of cell types in the plot legend.}
+\item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data} 
+that identifies the cell types.}
 }
 \value{
 A ggplot object representing the MDS scatter plot with cell type coloring.
@@ -48,9 +46,8 @@ visualization, presenting cell types in a scatter plot, distinguished by colors 
 library(scater)
 library(scran)
 library(scRNAseq)
-library(RColorBrewer)
 
-# load data
+# Load data (replace with your data loading)
 sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
 # Divide the data into reference and query datasets
@@ -60,50 +57,29 @@ ref_data <- sce[, indices]
 query_data <- sce[, -indices]
 
 # log transform datasets
-ref_data <- logNormCounts(ref_data)
-query_data <- logNormCounts(query_data)
+ref_data <- scuttle::logNormCounts(ref_data)
+query_data <- scuttle::logNormCounts(query_data)
 
-# Selecting highly variable genes
-ref_var <- getTopHVGs(ref_data, n=2000)
-query_var <- getTopHVGs(query_data, n=2000)
+# Get cell type scores using SingleR (or any other cell type annotation method)
+scores <- SingleR::SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
+
+# Add labels to query object
+colData(query_data)$labels <- scores$labels
+
+# Selecting highly variable genes (can be customized by the user)
+ref_var <- scran::getTopHVGs(ref_data, n = 2000)
+query_var <- scran::getTopHVGs(query_data, n = 2000)
 
 # Intersect the gene symbols to obtain common genes
 common_genes <- intersect(ref_var, query_var)
-
-# Select desired cell types
-selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
-ref_data_subset <- ref_data[common_genes, ref_data$reclustered.broad \%in\% selected_cell_types]
-query_data_subset <- query_data[common_genes, query_data$reclustered.broad \%in\% selected_cell_types]
-
-# Extract cell types for visualization
-ref_labels <- ref_data_subset$reclustered.broad
-query_labels <- query_data_subset$reclustered.broad
-
-# Combine the cell type labels from both datasets
-mdata <- c(paste("Query", query_labels), paste("Reference", ref_labels))
-
-# Define the cell types and legend order
-cell_types <- c("Query CD8", 
-                "Reference CD8", 
-                 "Query CD4", 
-                 "Reference CD4", 
-                 "Query B_and_plasma", 
-                 "Reference B_and_plasma")
-                 
-legend_order <- cell_types
-
-# Define the colors for cell types
-color_palette <- brewer.pal(length(cell_types), "Paired")
-color_mapping <- setNames(color_palette, cell_types)
-cell_type_colors <- color_mapping[cell_types]
+ref_data_subset <- ref_data[common_genes, ]
+query_data_subset <- query_data[common_genes, ]
 
 # Generate the MDS scatter plot with cell type coloring
 plot <- visualizeCellTypeMDS(query_data = query_data_subset, 
-                            reference_data = ref_data_subset, 
-                            mdata = mdata, 
-                            cell_type_colors = cell_type_colors, 
-                            legend_order = legend_order)
+                             reference_data = ref_data_subset, 
+                             query_cell_type_col = "labels", 
+                             ref_cell_type_col = "reclustered.broad")
 print(plot)
-
 
 }

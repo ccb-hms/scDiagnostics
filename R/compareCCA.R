@@ -18,6 +18,7 @@
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param pc_subset A numeric vector specifying the subset of principal components (PCs) 
 #' to compare. Default is the first five PCs.
+#' @param n_top_vars An integer indicating the number of top loading variables to consider for each PC. Default is 25.
 #'
 #' @return A list containing the following elements:
 #' \describe{
@@ -80,7 +81,7 @@
 #' 
 #' # Compare CCA
 #' cca_comparison <- compareCCA(query_data_subset, ref_data_subset, 
-#'                              pc_subset = c(1:5))
+#'                              pc_subset = c(1:5), n_top_vars = 25)
 #' 
 #' # Visualize output of CCA comparison
 #' plot(cca_comparison)
@@ -88,7 +89,8 @@
 #' 
 # Function to compare subspace spanned by top PCs in reference and query datasets
 compareCCA <- function(reference_data, query_data, 
-                       pc_subset = c(1:5)){
+                       pc_subset = c(1:5),
+                       n_top_vars = 25){
     
     # Check if query_data is a SingleCellExperiment object
     if (!is(query_data, "SingleCellExperiment")) {
@@ -111,11 +113,26 @@ compareCCA <- function(reference_data, query_data,
         stop("\'pc_subset\' is out of range.")
     
     # Extract the rotation matrices
-    ref_pcs <- attributes(reducedDim(reference_data, "PCA"))$rotation[, pc_subset]
-    query_pcs <- attributes(reducedDim(query_data, "PCA"))$rotation[, pc_subset]
+    ref_rotation <- attributes(reducedDim(reference_data, "PCA"))$rotation[, pc_subset]
+    query_rotation <- attributes(reducedDim(query_data, "PCA"))$rotation[, pc_subset]
+    
+    # Function to identify high-loading variables for each PC
+    .getHighLoadingVars <- function(rotation_mat, n_top_vars) {
+        high_loading_vars <- lapply(1:ncol(rotation_mat), function(pc) {
+            abs_loadings <- abs(rotation_mat[, pc])
+            top_vars <- names(sort(abs_loadings, decreasing = TRUE))[1:n_top_vars]
+            return(top_vars)
+        })
+        return(high_loading_vars)
+    }
+    
+    # Get union of variables with highest loadings
+    top_ref <- .getHighLoadingVars(ref_rotation, n_top_vars)
+    top_query <- .getHighLoadingVars(query_rotation, n_top_vars)
+    top_union <- unlist(lapply(1:length(pc_subset), function(i) return(union(top_ref[[i]], top_query[[i]]))))
     
     # Perform CCA
-    cca_result <- cancor(ref_pcs, query_pcs)
+    cca_result <- cancor(ref_rotation, query_rotation)
     
     # Extract canonical variables and correlations
     canonical_ref <- cca_result$xcoef

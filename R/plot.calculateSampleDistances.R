@@ -10,7 +10,7 @@
 #' reference dataset and one for the distances from the specified query sample to each reference sample. These distributions are 
 #' plotted in different colors to visually assess how similar the query sample is to the reference samples of the specified cell type.
 #'
-#' @param x A list containing the distance data computed by \code{calculateDistanceDiagnostics}.
+#' @param x A list containing the distance data computed by \code{calculateSampleDistances}.
 #' @param ref_cell_type A string specifying the reference cell type.
 #' @param sample_names A string specifying the query sample name for which to plot the distances.
 #' @param ... Additional arguments passed to the plotting function.
@@ -21,7 +21,7 @@
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
-#' @seealso \code{\link{calculateDistanceDiagnostics}}
+#' @seealso \code{\link{calculateSampleDistances}}
 #'
 #' @examples
 #' # Load required libraries
@@ -63,11 +63,11 @@
 #' ref_data_subset <- runPCA(ref_data_subset)
 #'
 #' # Plot the PC data
-#' distance_data <- calculateDistanceDiagnostics(query_data_subset, ref_data_subset, 
-#'                                               n_components = 10, 
-#'                                               query_cell_type_col = "labels", 
-#'                                               ref_cell_type_col = "reclustered.broad",
-#'                                               pc_subset = c(1:10)) 
+#' distance_data <- calculateSampleDistances(query_data_subset, ref_data_subset, 
+#'                                           n_components = 10, 
+#'                                           query_cell_type_col = "labels", 
+#'                                           ref_cell_type_col = "reclustered.broad",
+#'                                           pc_subset = c(1:10)) 
 #' 
 #' # Identify outliers for CD4
 #' cd4_anomalies <- detectAnomaly(ref_data_subset, query_data_subset, 
@@ -76,7 +76,7 @@
 #'                                n_components = 10,
 #'                                n_tree = 500,
 #'                                anomaly_treshold = 0.5)$CD4
-#' cd4_top5_anomalies <- names(sort(cd4_anomalies$anomaly_scores, decreasing = TRUE)[1:6])
+#' cd4_top5_anomalies <- names(sort(cd4_anomalies$query_anomaly_scores, decreasing = TRUE)[1:6])
 #' 
 #' # Plot the densities of the distances
 #' plot(distance_data, ref_cell_type = "CD4", sample_names = cd4_top5_anomalies)
@@ -84,7 +84,7 @@
 #' 
 #'  
 # Function to plot density functions for the reference data and the specified sample
-plot.calculateDistanceDiagnostics <- function(x, ref_cell_type, sample_names, ...) {
+plot.calculateSampleDistances <- function(x, ref_cell_type, sample_names, ...) {
     
     # Check if cell type is available
     if(length(ref_cell_type) != 1 || !(ref_cell_type %in% names(x)))

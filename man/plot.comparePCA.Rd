@@ -73,7 +73,7 @@ query_data_subset <- runPCA(query_data_subset)
 
 # Call the PCA comparison function
 similarity_mat <- comparePCA(query_data_subset, ref_data_subset, 
-                             n_components = 5, 
+                             pc_subset = c(1:5), 
                              metric = c("cosine", "correlation")[1], 
                              correlation_method = c("spearman", "pearson")[1])
 

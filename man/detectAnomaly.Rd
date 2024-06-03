@@ -7,8 +7,8 @@
 detectAnomaly(
   reference_data,
   query_data = NULL,
-  query_cell_type_col,
   ref_cell_type_col,
+  query_cell_type_col,
   n_components = 10,
   n_tree = 500,
   anomaly_treshold = 0.5,
@@ -21,9 +21,9 @@ detectAnomaly(
 \item{query_data}{An optional \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells. 
 If NULL, then the isolation forest anomaly scores are computed for the reference data. Default is NULL.}
 
-\item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
-
 \item{ref_cell_type_col}{A character string specifying the column name in the reference dataset containing cell type annotations.}
+
+\item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
 
 \item{n_components}{An integer specifying the number of principal components to use. Default is 10.}
 
@@ -34,21 +34,22 @@ If NULL, then the isolation forest anomaly scores are computed for the reference
 \item{...}{Additional arguments passed to the `isolation.forest` function.}
 }
 \value{
-A list containing the results for each cell type, including anomaly scores, anomaly IDs and PCA data.
+A list containing the following components for each cell type and the combined data:
+\item{anomaly_scores}{Anomaly scores for each cell in the query data.}
+\item{anomaly}{Logical vector indicating whether each cell is classified as an anomaly.}
+\item{reference_mat_subset}{PCA projections of the reference data.}
+\item{query_mat_subset}{PCA projections of the query data (if provided).}
+\item{var_explained}{Proportion of variance explained by the retained principal components.}
 }
 \description{
-\code{detectAnomaly} performs diagnostics using isolation forest with PCA and visualization. 
-It takes reference and query \code{\linkS4class{SingleCellExperiment}} objects, their corresponding labels, and various parameters to perform 
-the analysis. The function returns a list containing the results for each cell type, including anomaly scores, anomaly IDs, 
-PCA data, and optional PCA anomaly plots.
+This function detects anomalies in single-cell data by projecting the data onto a PCA space and using an isolation forest 
+algorithm to identify anomalies.
 }
 \details{
-This function first applies PCA to the entire reference expression data and predicts PCA scores for the query data if it is provided. 
-It builds isolation forests and performs diagnostics for each cell type, calculating anomaly scores for the query data (or reference 
-data if the query data is not provided).
-Isolation Forest is an algorithm for anomaly detection that works by building an ensemble of isolation trees. It is based on the 
-idea that anomalies are more susceptible to isolation than normal instances.
-The part where we project the query data onto the PCA space of the reference data is done by using the `predict` function on the PCA model with the query expression data. This allows us to transform the query data into the same PCA space as the reference data, which is necessary for the isolation forest analysis.
+This function projects the query data onto the PCA space of the reference data. An isolation forest is then built on the 
+reference data to identify anomalies in the query data based on their PCA projections. If no query dataset is provided by the user,
+the anomaly scores are computed on the reference data itself. Anomaly scores for the data with all combined cell types are also
+provided as part of the output.
 }
 \examples{
 # Load required libraries
@@ -98,8 +99,7 @@ anomaly_output <- detectAnomaly(ref_data_subset, query_data_subset,
                                 anomaly_treshold = 0.5) 
 
 # Plot the output for a cell type
-plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5))
-
+plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5), data_type = "query")
 
 }
 \seealso{

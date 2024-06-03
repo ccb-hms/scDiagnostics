@@ -1,9 +1,11 @@
-#' Pairwise Distance Analysis and Density Visualization
+#' @title Pairwise Distance Analysis and Density Visualization
 #'
+#' @description
 #' Calculates pairwise distances or correlations between query and reference cells 
 #' of a specific cell type.
 #' 
-#' @details  The function works with \code{\linkS4class{SingleCellExperiment}} objects, ensuring 
+#' @details  
+#' The function works with \code{\linkS4class{SingleCellExperiment}} objects, ensuring 
 #' compatibility with common single-cell analysis workflows. It subsets the data for specified cell types, 
 #' computes pairwise distances or correlations, and visualizes these measurements using density plots. By comparing the distances and correlations, 
 #' one can evaluate the consistency and reliability of annotated cell types within single-cell datasets.
@@ -81,6 +83,7 @@
 #' @import SingleCellExperiment
 #' @importFrom SummarizedExperiment assay                                       
 #' @export
+#' 
 calculatePairwiseDistancesAndPlotDensity <- function(query_data, 
                                                      reference_data, 
                                                      n_components = 10,

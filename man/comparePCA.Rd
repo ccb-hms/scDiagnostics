@@ -7,7 +7,8 @@
 comparePCA(
   reference_data,
   query_data,
-  n_components = 5,
+  pc_subset = c(1:5),
+  n_top_vars = 50,
   metric = c("cosine", "correlation")[1],
   correlation_method = c("spearman", "pearson")[1]
 )
@@ -17,7 +18,9 @@ comparePCA(
 
 \item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
-\item{n_components}{Number of principal components to consider. Default is 5.}
+\item{pc_subset}{A numeric vector specifying the subset of principal components (PCs) to compare. Default is the first five PCs.}
+
+\item{n_top_vars}{An integer indicating the number of top loading variables to consider for each PC. Default is 50.}
 
 \item{metric}{The similarity metric to use. It can be either "cosine" or "correlation". Default is "cosine".}
 
@@ -34,14 +37,12 @@ This function compares the principal components (PCs) obtained from separate PCA
 datasets for a single cell type using either cosine similarity or correlation.
 }
 \details{
-The function compares the PCs obtained from separate PCA on the reference and query datasets for a single cell type.
-It computes the similarity between the principal components using either cosine similarity or correlation. 
-Cosine similarity measures the cosine of the angle between the PC vectors, while correlation computes the 
-correlation coefficient between them. The function returns a similarity matrix where each element (i, j) 
-represents the similarity between the i-th PC of the reference dataset and the j-th PC of the query dataset.
-
-If cosine similarity is chosen, the function computes the cosine similarity between each pair of PC vectors. 
-If correlation is chosen, it calculates the correlation coefficient using either Spearman or Pearson method.
+This function compares the PCA results between the reference and query datasets by computing cosine 
+similarities or correlations between the loadings of top variables for each pair of principal components. It first 
+extracts the PCA rotation matrices from both datasets and identifies the top variables with highest loadings for 
+each PC. Then, it computes the cosine similarities or correlations between the loadings of top variables for each 
+pair of PCs. The resulting matrix contains the similarity values, where rows represent reference PCs and columns 
+represent query PCs.
 }
 \examples{
 # Load necessary library
@@ -90,13 +91,13 @@ query_data_subset <- runPCA(query_data_subset)
 
 # Call the PCA comparison function
 similarity_mat <- comparePCA(query_data_subset, ref_data_subset, 
-                             n_components = 5, 
+                             pc_subset = c(1:5), 
+                             n_top_vars = 50,
                              metric = c("cosine", "correlation")[1], 
                              correlation_method = c("spearman", "pearson")[1])
 
 # Create the heatmap
 plot(similarity_mat)
-
 
 }
 \seealso{

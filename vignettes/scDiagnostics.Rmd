@@ -118,7 +118,7 @@ could contribute to increased annotation confidence due to enhanced
 statistical power for identifying cell type-specific gene expression
 patterns, as evident in the scatter plot below.
 
-```{r Scatter-Plot-LibrarySize-Vs-Annotation-Scores, message=FALSE, warning=FALSE}
+```{r Scatter-Plot-LibrarySize-Vs-Annotation-Scores, message=FALSE, warning=FALSE, eval=FALSE}
 
 # load reference dataset
 ref_data <- celldex::fetchReference("hpca", "2024-02-26")
@@ -173,7 +173,7 @@ macrophages and monocytes. These findings align with the established
 biological characteristic of high mitochondrial activity in macrophages
 and monocytes, adding biological context to our results.
 
-```{r QC-Annotation-Scatter-Mito, warning=FALSE, message=FALSE}
+```{r QC-Annotation-Scatter-Mito, warning=FALSE, message=FALSE, eval=FALSE}
 # load query dataset
 query_data <- HeOrganAtlasData(
     tissue = c("Liver"),
@@ -249,7 +249,7 @@ stats. This allows us to assess the appropriateness of the cell type
 assignments and identify any potential discrepancies or patterns in the
 gene expression profiles for the specific cell type.
 
-```{r Mito-Genes-Vs-Annotation, warning=FALSE, message=FALSE}
+```{r Mito-Genes-Vs-Annotation, warning=FALSE, message=FALSE, eval=FALSE}
 # Generate histogram
 histQCvsAnnotation(query_data = query_data, qc_col = "subsets_mt_percent", 
                    label_col = "pred.labels", 
@@ -421,7 +421,8 @@ colData(query_data)$geneSetScores <- assay(cells_AUC)["geneSet1", ]
 # Plot gene set scores on PCA
 plotGeneSetScores(se_object = query_data, 
                   method = "PCA", 
-                  feature = "geneSetScores")
+                  feature = "geneSetScores",
+                  pc_subset = c(1:5))
 ```
 
 In the provided example, we demonstrate the usage of the
@@ -469,24 +470,11 @@ query_data_subset <- query_data[common_genes, query_data$labels %in% selected_ce
 ref_labels <- ref_data_subset$reclustered.broad
 query_labels <- query_data_subset$labels
 
-# Combine the cell type labels from both datasets
-mdata <- c(paste("Query", query_labels), paste("Reference", ref_labels))
-
-## Define the cell types and legend order
-cell_types <- c("Query CD8", "Reference CD8", "Query CD4", "Reference CD4", "Query B_and_plasma", "Reference B_and_plasma")
-legend_order <- cell_types
-
-## Define the colors for cell types
-color_palette <- brewer.pal(length(cell_types), "Paired")
-color_mapping <- setNames(color_palette, cell_types)
-cell_type_colors <- color_mapping[cell_types]
-
-## Generate the MDS scatter plot with cell type coloring
+# Generate the MDS scatter plot with cell type coloring
 visualizeCellTypeMDS(query_data = query_data_subset, 
                      reference_data = ref_data_subset, 
-                     mdata = mdata, 
-                     cell_type_colors = cell_type_colors, 
-                     legend_order = legend_order)
+                     query_cell_type_col = "labels",
+                     ref_cell_type_col = "reclustered.broad")
 ```
 
 Upon examining the MDS scatter plot, we observe that the CD4 and CD8

@@ -1,19 +1,19 @@
 #' @title Function to compute Bhattacharyya coefficients and Hellinger distances
 #'
 #' @description 
-#' This function computes Bhattacharyya coefficients and Hellinger distances to quantify the overlap of density 
+#' This function computes Bhattacharyya coefficients and Hellinger distances to quantify the similarity of density 
 #' distributions between query samples and reference data for each cell type.
 
 #'
 #' @details 
-#' This function first computes distance data using the \code{calculateDistanceDiagnostics} function, which calculates 
+#' This function first computes distance data using the \code{calculateSampleDistances} function, which calculates 
 #' pairwise distances between samples within the reference data and between query samples and reference samples in the PCA space.
-#' Bhattacharyya coefficients and Hellinger distances are calculated to quantify the overlap of density distributions between query 
+#' Bhattacharyya coefficients and Hellinger distances are calculated to quantify the similarity of density distributions between query 
 #' samples and reference data for each cell type. Bhattacharyya coefficient measures the similarity of two probability distributions, 
 #' while Hellinger distance measures the distance between two probability distributions.
 #'
-#' Bhattacharyya coefficients range between 0 and 1. A value closer to 1 indicates higher overlap between distributions, while a value 
-#' closer to 0 indicates lower overlap.
+#' Bhattacharyya coefficients range between 0 and 1. A value closer to 1 indicates higher similarity between distributions, while a value 
+#' closer to 0 indicates lower similarity
 #'
 #' Hellinger distances range between 0 and 1. A value closer to 0 indicates higher similarity between distributions, while a value 
 #' closer to 1 indicates lower similarity.
@@ -78,11 +78,11 @@
 #' ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
 #' 
 #' # Plot the PC data
-#' distance_data <- calculateDistanceDiagnostics(query_data_subset, ref_data_subset, 
-#'                                               n_components = 10, 
-#'                                               query_cell_type_col = "labels", 
-#'                                               ref_cell_type_col = "reclustered.broad",
-#'                                               pc_subset = c(1:10)) 
+#' distance_data <- calculateSampleDistances(query_data_subset, ref_data_subset, 
+#'                                           n_components = 10, 
+#'                                           query_cell_type_col = "labels", 
+#'                                           ref_cell_type_col = "reclustered.broad",
+#'                                           pc_subset = c(1:10)) 
 #' 
 #' # Identify outliers for CD4
 #' cd4_anomalies <- detectAnomaly(ref_data_subset, query_data_subset, 
@@ -91,24 +91,24 @@
 #'                                n_components = 10,
 #'                                n_tree = 500,
 #'                                anomaly_treshold = 0.5)$CD4
-#' cd4_top5_anomalies <- names(sort(cd4_anomalies$anomaly_scores, decreasing = TRUE)[1:6])
+#' cd4_top5_anomalies <- names(sort(cd4_anomalies$query_anomaly_scores, decreasing = TRUE)[1:6])
 #' 
 #' # Get overlap measures
-#' overlap_measures <- distanceDensityOverlapMeasures(query_data_subset,ref_data_subset, 
-#'                                                    sample_names = cd4_top5_anomalies,
-#'                                                    n_components = 10, 
-#'                                                    query_cell_type_col = "labels", 
-#'                                                    ref_cell_type_col = "reclustered.broad",
-#'                                                    pc_subset = c(1:10))
+#' overlap_measures <- calculateSampleDistancesSimilarity(query_data_subset,ref_data_subset, 
+#'                                                        sample_names = cd4_top5_anomalies,
+#'                                                        n_components = 10, 
+#'                                                        query_cell_type_col = "labels", 
+#'                                                        ref_cell_type_col = "reclustered.broad",
+#'                                                        pc_subset = c(1:10))
 #' 
 #' 
 # Function to compute Bhattacharyya coefficients and Hellinger distances
-distanceDensityOverlapMeasures <- function(query_data, reference_data, 
-                                           query_cell_type_col, 
-                                           ref_cell_type_col,
-                                           sample_names,
-                                           n_components = 10, 
-                                           pc_subset = c(1:5)) {
+calculateSampleDistancesSimilarity <- function(query_data, reference_data, 
+                                               query_cell_type_col, 
+                                               ref_cell_type_col,
+                                               sample_names,
+                                               n_components = 10, 
+                                               pc_subset = c(1:5)) {
 
     # Check if samples are available in data for that cell type
     if(!all(sample_names %in% colnames(query_data)))
@@ -116,11 +116,11 @@ distanceDensityOverlapMeasures <- function(query_data, reference_data,
     
     # Compute distance data
     query_data_subset <- query_data[, sample_names]
-    distance_data <- calculateDistanceDiagnostics(query_data = query_data_subset, reference_data = reference_data, 
-                                                  query_cell_type_col = query_cell_type_col, 
-                                                  ref_cell_type_col = ref_cell_type_col,
-                                                  n_components = n_components, 
-                                                  pc_subset = pc_subset)
+    distance_data <- calculateSampleDistances(query_data = query_data_subset, reference_data = reference_data, 
+                                              query_cell_type_col = query_cell_type_col, 
+                                              ref_cell_type_col = ref_cell_type_col,
+                                              n_components = n_components, 
+                                              pc_subset = pc_subset)
     
     # Initialize empty lists to store results
     bhattacharyya_list <- list()

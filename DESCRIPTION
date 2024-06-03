@@ -38,7 +38,7 @@ Imports:
     ranger,
     BiocNeighbors,
     Hotelling,
-    scater
+    rlang
 Suggests:
     AUCell,
     BiocStyle,
@@ -52,6 +52,7 @@ Suggests:
     celldex,
     ComplexHeatmap,
     scuttle,
+    scater,
     testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
