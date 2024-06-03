@@ -1,8 +1,4 @@
-\name{scDiagnostics}
-\title{scDiagnostics News}
-\encoding{UTF-8}
+# scDiagnostics 0.99.0
 
-\section{Version 0.99.0}{\itemize{
-\item
-New package scDiagnostics, for cell type annotation diagnostics.
-}}
+* Initial CRAN submission.
+* New package scDiagnostics, for cell type annotation diagnostics.
