@@ -50,6 +50,7 @@ library(scuttle)
 library(SingleR)
 library(scran)
 library(scater)
+library(RColorBrewer)
 
 # Load data (replace with your data loading)
 sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)

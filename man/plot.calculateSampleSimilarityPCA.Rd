@@ -11,6 +11,8 @@
 between samples and PCs.}
 
 \item{pc_subset}{A numeric vector specifying the subset of principal components to include in the plot (default: c(1:5)).}
+
+\item{...}{Additional arguments passed to the plotting function.}
 }
 \value{
 A ggplot object representing the cosine similarity heatmap.
@@ -68,7 +70,8 @@ anomaly_output <- detectAnomaly(reference_data = ref_data_subset,
                                 n_components = 10,
                                 n_tree = 500,
                                 anomaly_treshold = 0.5) 
-top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores, decreasing = TRUE)[1:6])
+top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores, 
+                             decreasing = TRUE)[1:6])
 
 # Compute cosine similarity between anomalies and top PCs
 cosine_similarities <- calculateSampleSimilarityPCA(ref_data_subset, samples = top6_anomalies, 

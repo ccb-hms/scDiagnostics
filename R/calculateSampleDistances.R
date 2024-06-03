@@ -26,7 +26,7 @@
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
-#' @seealso \code{\link{plot.calculateDistanceDiagnostics}}
+#' @seealso \code{\link{plot.calculateSampleDistances}}
 #'
 #' @examples
 #' # Load required libraries

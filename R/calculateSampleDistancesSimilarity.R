@@ -78,11 +78,11 @@
 #' ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
 #' 
 #' # Plot the PC data
-#' distance_data <- calculateDistanceDiagnostics(query_data_subset, ref_data_subset, 
-#'                                               n_components = 10, 
-#'                                               query_cell_type_col = "labels", 
-#'                                               ref_cell_type_col = "reclustered.broad",
-#'                                               pc_subset = c(1:10)) 
+#' distance_data <- calculateSampleDistances(query_data_subset, ref_data_subset, 
+#'                                           n_components = 10, 
+#'                                           query_cell_type_col = "labels", 
+#'                                           ref_cell_type_col = "reclustered.broad",
+#'                                           pc_subset = c(1:10)) 
 #' 
 #' # Identify outliers for CD4
 #' cd4_anomalies <- detectAnomaly(ref_data_subset, query_data_subset, 

@@ -104,7 +104,7 @@ plot(distance_data, ref_cell_type = "CD4", sample_names = cd4_top5_anomalies)
 
 }
 \seealso{
-\code{\link{plot.calculateDistanceDiagnostics}}
+\code{\link{plot.calculateSampleDistances}}
 }
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}

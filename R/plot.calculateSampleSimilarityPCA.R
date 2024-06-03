@@ -11,6 +11,7 @@
 #' @param x An object of class 'calculateSampleSimilarityPCA' containing a dataframe of cosine similarity values 
 #' between samples and PCs.
 #' @param pc_subset A numeric vector specifying the subset of principal components to include in the plot (default: c(1:5)).
+#' @param ... Additional arguments passed to the plotting function.
 #'
 #' @return A ggplot object representing the cosine similarity heatmap.
 #'
@@ -65,7 +66,8 @@
 #'                                 n_components = 10,
 #'                                 n_tree = 500,
 #'                                 anomaly_treshold = 0.5) 
-#' top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores, decreasing = TRUE)[1:6])
+#' top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores, 
+#'                              decreasing = TRUE)[1:6])
 #' 
 #' # Compute cosine similarity between anomalies and top PCs
 #' cosine_similarities <- calculateSampleSimilarityPCA(ref_data_subset, samples = top6_anomalies, 

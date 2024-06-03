@@ -68,7 +68,8 @@
 #'                                 n_components = 10,
 #'                                 n_tree = 500,
 #'                                 anomaly_treshold = 0.5) 
-#' top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores, decreasing = TRUE)[1:6])
+#' top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores, 
+#'                              decreasing = TRUE)[1:6])
 #' 
 #' # Compute cosine similarity between anomalies and top PCs
 #' cosine_similarities <- calculateSampleSimilarityPCA(ref_data_subset, samples = top6_anomalies, 
