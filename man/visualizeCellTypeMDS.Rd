@@ -46,7 +46,6 @@ visualization, presenting cell types in a scatter plot, distinguished by colors 
 library(scater)
 library(scran)
 library(scRNAseq)
-library(RColorBrewer)
 
 # Load data (replace with your data loading)
 sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
