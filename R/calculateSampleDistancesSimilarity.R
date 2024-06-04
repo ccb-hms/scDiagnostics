@@ -3,7 +3,6 @@
 #' @description 
 #' This function computes Bhattacharyya coefficients and Hellinger distances to quantify the similarity of density 
 #' distributions between query samples and reference data for each cell type.
-
 #'
 #' @details 
 #' This function first computes distance data using the \code{calculateSampleDistances} function, which calculates 
@@ -100,6 +99,7 @@
 #'                                                        query_cell_type_col = "labels", 
 #'                                                        ref_cell_type_col = "reclustered.broad",
 #'                                                        pc_subset = c(1:10))
+#' overlap_measures
 #' 
 #' 
 # Function to compute Bhattacharyya coefficients and Hellinger distances

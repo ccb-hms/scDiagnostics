@@ -22,67 +22,9 @@
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
 #' @seealso \code{\link{calculateSampleDistances}}
+#' 
+#' @rdname calculateSampleDistances
 #'
-#' @examples
-#' # Load required libraries
-#' library(scRNAseq)
-#' library(scuttle)
-#' library(SingleR)
-#' library(scran)
-#' library(scater)
-#'
-#' # Load data (replace with your data loading)
-#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-#' 
-#' # Divide the data into reference and query datasets
-#' set.seed(100)
-#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-#' ref_data <- sce[, indices]
-#' query_data <- sce[, -indices]
-#' 
-#' # log transform datasets
-#' ref_data <- scuttle::logNormCounts(ref_data)
-#' query_data <- scuttle::logNormCounts(query_data)
-#' 
-#' # Get cell type scores using SingleR (or any other cell type annotation method)
-#' scores <- SingleR::SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-#' 
-#' # Add labels to query object
-#' colData(query_data)$labels <- scores$labels
-#' 
-#' # Selecting highly variable genes (can be customized by the user)
-#' ref_var <- scran::getTopHVGs(ref_data, n = 2000)
-#' query_var <- scran::getTopHVGs(query_data, n = 2000)
-#' 
-#' # Intersect the gene symbols to obtain common genes
-#' common_genes <- intersect(ref_var, query_var)
-#' ref_data_subset <- ref_data[common_genes, ]
-#' query_data_subset <- query_data[common_genes, ]
-#' 
-#' # Run PCA on the reference data
-#' ref_data_subset <- runPCA(ref_data_subset)
-#'
-#' # Plot the PC data
-#' distance_data <- calculateSampleDistances(query_data_subset, ref_data_subset, 
-#'                                           n_components = 10, 
-#'                                           query_cell_type_col = "labels", 
-#'                                           ref_cell_type_col = "reclustered.broad",
-#'                                           pc_subset = c(1:10)) 
-#' 
-#' # Identify outliers for CD4
-#' cd4_anomalies <- detectAnomaly(ref_data_subset, query_data_subset, 
-#'                                query_cell_type_col = "labels", 
-#'                                ref_cell_type_col = "reclustered.broad",
-#'                                n_components = 10,
-#'                                n_tree = 500,
-#'                                anomaly_treshold = 0.5)$CD4
-#' cd4_top5_anomalies <- names(sort(cd4_anomalies$query_anomaly_scores, decreasing = TRUE)[1:6])
-#' 
-#' # Plot the densities of the distances
-#' plot(distance_data, ref_cell_type = "CD4", sample_names = cd4_top5_anomalies)
-#' plot(distance_data, ref_cell_type = "CD8", sample_names = cd4_top5_anomalies)
-#' 
-#'  
 # Function to plot density functions for the reference data and the specified sample
 plot.calculateSampleDistances <- function(x, ref_cell_type, sample_names, ...) {
     

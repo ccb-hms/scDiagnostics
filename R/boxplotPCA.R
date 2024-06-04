@@ -72,7 +72,7 @@
 #'                       cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
 #'                       query_cell_type_col = "labels", 
 #'                       ref_cell_type_col = "reclustered.broad", 
-#'                       pc_subset = c(1:5))
+#'                       pc_subset = c(1:6))
 #' pc_plot
 #' 
 #' 

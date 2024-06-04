@@ -455,7 +455,6 @@ The rationale behind this function is to visually assess the alignment
 and relationships between cell types in the query and reference
 datasets.
 
-
 ```{r CMD-Scatter-Plot, warning=FALSE, message=FALSE}
 
 # Intersect the gene symbols to obtain common genes
@@ -586,9 +585,6 @@ analysis aids in understanding the similarities and differences in gene
 expression profiles for the selected cell type within the query and
 reference datasets.
 
-
-
-
 ## PC regression analysis
 
 Performing PC regression analysis on a SingleCellExperiment object
@@ -687,7 +683,6 @@ pc_df[order(abs(pc_df$PC5)),] |>
   tail()
 # It's mostly driven by low GNLY expression in the myeloid cells.
 ```
-
 
 ## Annotation entropy
 

@@ -59,15 +59,15 @@ plotGeneExpressionDimred <- function(se_object,
     stop("n_components should be a numeric vector of length 2.")
   }
 
-  if (!feature %in% rownames(assay(query_data, "logcounts"))) {
+  if (!feature %in% rownames(assay(se_object, "logcounts"))) {
     stop("Specified feature does not exist in the expression matrix.")
   }
 
   # Extract dimension reduction coordinates from SingleCellExperiment object
-  reduction <- reducedDim(query_data, method)[, n_components]
+  reduction <- reducedDim(se_object, method)[, n_components]
 
   # Extract gene expression vector
-  expression <- assay(query_data, "logcounts")[feature, ]
+  expression <- assay(se_object, "logcounts")[feature, ]
 
   # Prepare data for plotting
   df <- data.frame(Dim1 = reduction[, 1], Dim2 = reduction[, 2], Expression = expression)

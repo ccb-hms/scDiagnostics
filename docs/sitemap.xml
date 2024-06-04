@@ -16,7 +16,19 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/news/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/boxplotPCA.html</loc>
+  </url>
+  <url>
+    <loc>/reference/calculateAveragePairwiseCorrelation.html</loc>
+  </url>
+  <url>
     <loc>/reference/calculateCategorizationEntropy.html</loc>
+  </url>
+  <url>
+    <loc>/reference/calculateHotellingPValue.html</loc>
   </url>
   <url>
     <loc>/reference/calculateHVGOverlap.html</loc>
@@ -28,13 +40,64 @@
     <loc>/reference/calculatePairwiseDistancesAndPlotDensity.html</loc>
   </url>
   <url>
+    <loc>/reference/calculateSampleDistances.html</loc>
+  </url>
+  <url>
+    <loc>/reference/calculateSampleDistancesSimilarity.html</loc>
+  </url>
+  <url>
+    <loc>/reference/calculateSampleSimilarityPCA.html</loc>
+  </url>
+  <url>
+    <loc>/reference/calculateVarImpOverlap.html</loc>
+  </url>
+  <url>
+    <loc>/reference/compareCCA.html</loc>
+  </url>
+  <url>
+    <loc>/reference/comparePCA.html</loc>
+  </url>
+  <url>
+    <loc>/reference/comparePCASubspace.html</loc>
+  </url>
+  <url>
     <loc>/reference/computeAveragePairwiseCorrelation.html</loc>
+  </url>
+  <url>
+    <loc>/reference/detectAnomaly.html</loc>
   </url>
   <url>
     <loc>/reference/histQCvsAnnotation.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/nearestNeighborDiagnostics.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot.calculateAveragePairwiseCorrelation.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot.calculateSampleDistances.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot.calculateSampleSimilarityPCA.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot.compareCCA.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot.comparePCA.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot.comparePCASubspace.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot.detectAnomaly.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot.nearestNeighborDiagnostics.html</loc>
   </url>
   <url>
     <loc>/reference/plotGeneExpressionDimred.html</loc>
@@ -49,9 +112,15 @@
     <loc>/reference/plotQCvsAnnotation.html</loc>
   </url>
   <url>
+    <loc>/reference/projectPCA.html</loc>
+  </url>
+  <url>
     <loc>/reference/regressPC.html</loc>
   </url>
   <url>
     <loc>/reference/visualizeCellTypeMDS.html</loc>
+  </url>
+  <url>
+    <loc>/reference/visualizeCellTypePCA.html</loc>
   </url>
 </urlset>

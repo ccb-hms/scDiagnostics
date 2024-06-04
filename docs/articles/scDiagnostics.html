@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>scDiagnostics: diagnostic functions to assess the quality of cell type assignments in single-cell RNA-seq • scDiagnostics</title>
+<title>scDiagnostics: diagnostic functions to assess the quality of cell type annotations in single-cell RNA-seq data • scDiagnostics</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="scDiagnostics: diagnostic functions to assess the quality of cell type assignments in single-cell RNA-seq">
+<meta property="og:title" content="scDiagnostics: diagnostic functions to assess the quality of cell type annotations in single-cell RNA-seq data">
 <meta property="og:description" content="scDiagnostics">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -46,6 +46,9 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -68,57 +71,80 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>scDiagnostics: diagnostic functions to assess
-the quality of cell type assignments in single-cell RNA-seq</h1>
-                        <h4 data-toc-skip class="author">Smriti
+the quality of cell type annotations in single-cell RNA-seq data</h1>
+                        <h4 data-toc-skip class="author">Anthony
+Christidis</h4>
+            <address class="author_afil">
+      Center for Computational Biomedicine, Harvard Medical
+School<br><a class="author_email" href="mailto:#"></a><a href="mailto:anthony-alexander_christidis@hms.harvard.edu" class="email">anthony-alexander_christidis@hms.harvard.edu</a>
+      </address>
+                              <h4 data-toc-skip class="author">Andrew
+Ghazi</h4>
+            <address class="author_afil">
+      Center for Computational Biomedicine, Harvard Medical
+School<br><h4 data-toc-skip class="author">Smriti
 Chawla</h4>
-                        
-      
-      <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/HEAD/vignettes/scDiagnostics.Rmd" class="external-link"><code>vignettes/scDiagnostics.Rmd</code></a></small>
+            <address class="author_afil">
+      Center for Computational Biomedicine, Harvard Medical
+School<br><h4 data-toc-skip class="author">Nitesh
+Turaga</h4>
+            <address class="author_afil">
+      Center for Computational Biomedicine, Harvard Medical
+School<br><h4 data-toc-skip class="author">Ludwig
+Geistlinger</h4>
+            <address class="author_afil">
+      Center for Computational Biomedicine, Harvard Medical
+School<br><h4 data-toc-skip class="author">Robert
+Gentleman</h4>
+            <address class="author_afil">
+      Center for Computational Biomedicine, Harvard Medical
+School<br><small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/HEAD/vignettes/scDiagnostics.Rmd" class="external-link"><code>vignettes/scDiagnostics.Rmd</code></a></small>
       <div class="hidden name"><code>scDiagnostics.Rmd</code></div>
 
-    </div>
+    </address>
+</address>
+</address>
+</address>
+</address>
+</div>
 
     
     
 <div class="section level2">
-<h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
+<h2 id="purpose">Purpose<a class="anchor" aria-label="anchor" href="#purpose"></a>
 </h2>
-<div class="section level3">
-<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h3>
-<p>To install the package from Bioconductor use a following command:</p>
+<p>Annotation transfer from a reference dataset for the cell type
+annotation of a new query single-cell RNA-sequencing (scRNA-seq)
+experiment is an integral component of the typical analysis workflow.
+The approach provides a fast, automated, and reproducible alternative to
+the manual annotation of cell clusters based on marker gene expression.
+However, dataset imbalance and undiagnosed incompatibilities between
+query and reference dataset can lead to erroneous annotation and distort
+downstream applications.</p>
+<p>The <code>scDiagnostics</code> package provides functionality for the
+systematic evaluation of cell type assignments in scRNA-seq data.
+<code>scDiagnostics</code> offers a suite of diagnostic functions to
+assess whether both (query and reference) datasets are aligned, ensuring
+that annotations can be transferred reliably. <code>scDiagnostics</code>
+also provides functionality to assess annotation ambiguity, cluster
+heterogeneity, and marker gene alignment. The implemented functionality
+helps researchers to determine how accurately cells from a new scRNA-seq
+experiment can be assigned to known cell types.</p>
+</div>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>To install the development version of the package from Github, use
+the following command:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"scDiagnostics"</span><span class="op">)</span></span></code></pre></div>
-<p>To install the development version from Github:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"ccb-hms/scDiagnostics"</span><span class="op">)</span></span></code></pre></div>
-<p>NOTE: you will need the remotes package to install from github.</p>
+<p>NOTE: you will need the <a href="https://cran.r-project.org/web/packages/remotes/index.html" class="external-link">remotes</a>
+package to install from GitHub.</p>
 <p>To build the package vignettes upon installation use:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"ccb-hms/scDiagnostics"</span>,</span>
 <span>                     build_vignettes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                     dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
-</h3>
-<p>R version tested: 4.2.3 (2023-03-15) or above</p>
-<p>To use the scDiagnostics package, you need the following R packages
-installed:</p>
-<ul>
-<li>SingleCellExperiment</li>
-<li>scRNAseq</li>
-<li>scater</li>
-<li>scran</li>
-<li>ggplot2</li>
-<li>AUCell</li>
-<li>SingleR</li>
-<li>Matrix</li>
-<li>corrplot</li>
-<li>celldex</li>
-<li>RColorBrewer</li>
-</ul>
-</div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
@@ -129,22 +155,22 @@ the scRNAseq R package. In this guide, we will demonstrate how to use
 scDiagnostics with such datasets, which serve as valuable resources for
 exploring the package and assessing the appropriateness of cell type
 assignments.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Loading libraries</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ccb-hms/scDiagnostics" class="external-link">scDiagnostics</a></span><span class="op">)</span></span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ccb-hms/scDiagnostics" class="external-link">scDiagnostics</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LTLA/celldex" class="external-link">celldex</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/taiyun/corrplot" class="external-link">corrplot</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/" class="external-link">scater</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scran</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scRNAseq</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://scenic.aertslab.org" class="external-link">AUCell</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LTLA/SingleR" class="external-link">SingleR</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://scenic.aertslab.org" class="external-link">AUCell</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/taiyun/corrplot" class="external-link">corrplot</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LTLA/celldex" class="external-link">celldex</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/ComplexHeatmap" class="external-link">ComplexHeatmap</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="scatter-plot-qc-stats-vs--annotation-scores">Scatter Plot: QC stats vs. Annotation Scores<a class="anchor" aria-label="anchor" href="#scatter-plot-qc-stats-vs--annotation-scores"></a>
 </h3>
-<p>Here, we will consider the Human Primary Cell Atlas (Mabbott et
-al. 2013) as a reference dataset and our query dataset consists of
+<p>Here, we will consider the Human Primary Cell Atlas (Mabbott et al.
+2013) as a reference dataset and our query dataset consists of
 Haematopoietic stem and progenitor cells from (Bunis DG et
 al. 2021).</p>
 <p>In scRNA-seq studies, assessing the quality of cells is important for
@@ -158,10 +184,10 @@ confidence level of cell type annotations.</p>
 sizes could contribute to increased annotation confidence due to
 enhanced statistical power for identifying cell type-specific gene
 expression patterns, as evident in the scatter plot below.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># load reference dataset</span></span>
-<span><span class="va">ref_data</span> <span class="op">&lt;-</span> <span class="fu">celldex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/celldex/man/HumanPrimaryCellAtlasData.html" class="external-link">HumanPrimaryCellAtlasData</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ref_data</span> <span class="op">&lt;-</span> <span class="fu">celldex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/celldex/man/fetchReference.html" class="external-link">fetchReference</a></span><span class="op">(</span><span class="st">"hpca"</span>, <span class="st">"2024-02-26"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load query dataset (Bunis haematopoietic stem and progenitor cell</span></span>
 <span><span class="co"># data) from Bunis DG et al. (2021). Single-Cell Mapping of</span></span>
@@ -198,7 +224,6 @@ expression patterns, as evident in the scatter plot below.</p>
 <span>    label <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">p1</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Library Size"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="scDiagnostics_files/figure-html/Scatter-Plot-LibrarySize-Vs-Annotation-Scores-1.png" width="700"></p>
 <p>However, certain QC metrics, such as the proportion of mitochondrial
 genes, may require careful consideration as they can sometimes be
 associated with cellular states or functions rather than noise. The
@@ -210,7 +235,7 @@ tissue data from He S et al. 2020. Notably, we observed high annotation
 scores for macrophages and monocytes. These findings align with the
 established biological characteristic of high mitochondrial activity in
 macrophages and monocytes, adding biological context to our results.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load query dataset</span></span>
 <span><span class="va">query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scRNAseq/man/HeOrganAtlasData.html" class="external-link">HeOrganAtlasData</a></span><span class="op">(</span></span>
 <span>    tissue <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Liver"</span><span class="op">)</span>,</span>
@@ -261,7 +286,6 @@ macrophages and monocytes, adding biological context to our results.</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">cols</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"subsets_mt_percent"</span><span class="op">)</span></span>
 <span><span class="va">p1</span></span></code></pre></div>
-<p><img src="scDiagnostics_files/figure-html/QC-Annotation-Scatter-Mito-1.png" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="examining-distribution-of-qc-stats-and-annotation-scores">Examining Distribution of QC stats and Annotation Scores<a class="anchor" aria-label="anchor" href="#examining-distribution-of-qc-stats-and-annotation-scores"></a>
@@ -283,13 +307,12 @@ potential outliers in the distribution of both annotation scores and QC
 stats. This allows us to assess the appropriateness of the cell type
 assignments and identify any potential discrepancies or patterns in the
 gene expression profiles for the specific cell type.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate histogram</span></span>
 <span><span class="fu"><a href="../reference/histQCvsAnnotation.html">histQCvsAnnotation</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>, qc_col <span class="op">=</span> <span class="st">"subsets_mt_percent"</span>, </span>
 <span>                   label_col <span class="op">=</span> <span class="st">"pred.labels"</span>, </span>
 <span>                   score_col <span class="op">=</span> <span class="st">"cell_scores"</span>, </span>
 <span>                   label <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
-<p><img src="scDiagnostics_files/figure-html/Mito-Genes-Vs-Annotation-1.png" width="700"></p>
 <p>The right-skewed distribution for mitochondrial percentages and a
 left-skewed distribution for annotation scores in above histograms
 suggest that most cells have lower mitochondrial contamination and
@@ -309,7 +332,7 @@ datasets.</p>
 specific cell types of interest. This enables investigation of whether
 alignment between the query and reference datasets is consistent not
 only at a global level but also within specific cell types.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Load data</span></span>
 <span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scRNAseq/man/HeOrganAtlasData.html" class="external-link">HeOrganAtlasData</a></span><span class="op">(</span>tissue <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Marrow"</span><span class="op">)</span>, ensembl <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -338,8 +361,8 @@ only at a global level but also within specific cell types.</p>
 <span><span class="co"># Generate density plots</span></span>
 <span><span class="fu"><a href="../reference/plotMarkerExpression.html">plotMarkerExpression</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">ref_data</span>, </span>
 <span>                     query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
-<span>                     reference_cell_labels <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
-<span>                     query_cell_labels <span class="op">=</span> <span class="st">"labels"</span>, </span>
+<span>                     ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
+<span>                     query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
 <span>                     gene_name <span class="op">=</span> <span class="st">"MS4A1"</span>, </span>
 <span>                     label <span class="op">=</span> <span class="st">"B_and_plasma"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scDiagnostics_files/figure-html/Gene-Expression-Histogram-1.png" width="700"></p>
@@ -365,7 +388,7 @@ computed overlap coefficient is printed, providing a numerical measure
 of how well the highly variable genes in the reference and query
 datasets align. In this case, the overlap coefficient is 0.62,
 indicating a moderate level of overlap.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Selecting highly variable genes</span></span>
 <span><span class="va">ref_var</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scran/man/getTopHVGs.html" class="external-link">getTopHVGs</a></span><span class="op">(</span><span class="va">ref_data</span>, n<span class="op">=</span><span class="fl">2000</span><span class="op">)</span></span>
@@ -401,7 +424,7 @@ the second principal component (Dimension 2). Each cell is represented
 as a point on the plot, and its color reflects the expression level of
 the gene “VPREB3,” ranging from low (lighter color) to high (darker
 color).</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate dimension reduction plot color code by gene expression</span></span>
 <span><span class="fu"><a href="../reference/plotGeneExpressionDimred.html">plotGeneExpressionDimred</a></span><span class="op">(</span>se_object <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                         method <span class="op">=</span> <span class="st">"PCA"</span>, </span>
@@ -431,11 +454,11 @@ for specific gene sets or pathways. This visualization helps identify
 the heterogeneity and patterns of gene set or pathway activity within
 the dataset, potentially revealing subpopulations with distinct
 functional characteristics.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Compute scores using AUCell</span></span>
 <span><span class="va">expression_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">query_data</span>, <span class="st">"logcounts"</span><span class="op">)</span></span>
-<span><span class="va">cells_rankings</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AUCell/man/AUCell_buildRankings.html" class="external-link">AUCell_buildRankings</a></span><span class="op">(</span><span class="va">expression_matrix</span>, plotStats <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
+<span><span class="va">cells_rankings</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AUCell/man/AUCell_buildRankings.html" class="external-link">AUCell_buildRankings</a></span><span class="op">(</span><span class="va">expression_matrix</span>, plotStats <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Generate gene sets</span></span>
 <span><span class="va">gene_set1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">expression_matrix</span><span class="op">)</span>, <span class="fl">10</span><span class="op">)</span></span>
@@ -453,7 +476,8 @@ functional characteristics.</p>
 <span><span class="co"># Plot gene set scores on PCA</span></span>
 <span><span class="fu"><a href="../reference/plotGeneSetScores.html">plotGeneSetScores</a></span><span class="op">(</span>se_object <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                  method <span class="op">=</span> <span class="st">"PCA"</span>, </span>
-<span>                  feature <span class="op">=</span> <span class="st">"geneSetScores"</span><span class="op">)</span></span></code></pre></div>
+<span>                  feature <span class="op">=</span> <span class="st">"geneSetScores"</span>,</span>
+<span>                  pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scDiagnostics_files/figure-html/Pathway-Scores-on-Dimensional-Reduction-Scatter-1.png" width="700"></p>
 <p>In the provided example, we demonstrate the usage of the
 plotGeneSetScores function using the AUCell package to compute gene set
@@ -485,7 +509,7 @@ datasets in a reduced-dimensional space.</p>
 <p>The rationale behind this function is to visually assess the
 alignment and relationships between cell types in the query and
 reference datasets.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Intersect the gene symbols to obtain common genes</span></span>
 <span><span class="va">common_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">ref_var</span>, <span class="va">query_var</span><span class="op">)</span></span>
@@ -499,24 +523,11 @@ reference datasets.</p>
 <span><span class="va">ref_labels</span> <span class="op">&lt;-</span> <span class="va">ref_data_subset</span><span class="op">$</span><span class="va">reclustered.broad</span></span>
 <span><span class="va">query_labels</span> <span class="op">&lt;-</span> <span class="va">query_data_subset</span><span class="op">$</span><span class="va">labels</span></span>
 <span></span>
-<span><span class="co"># Combine the cell type labels from both datasets</span></span>
-<span><span class="va">mdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Query"</span>, <span class="va">query_labels</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Reference"</span>, <span class="va">ref_labels</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## Define the cell types and legend order</span></span>
-<span><span class="va">cell_types</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Query CD8"</span>, <span class="st">"Reference CD8"</span>, <span class="st">"Query CD4"</span>, <span class="st">"Reference CD4"</span>, <span class="st">"Query B_and_plasma"</span>, <span class="st">"Reference B_and_plasma"</span><span class="op">)</span></span>
-<span><span class="va">legend_order</span> <span class="op">&lt;-</span> <span class="va">cell_types</span></span>
-<span></span>
-<span><span class="co">## Define the colors for cell types</span></span>
-<span><span class="va">color_palette</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">cell_types</span><span class="op">)</span>, <span class="st">"Paired"</span><span class="op">)</span></span>
-<span><span class="va">color_mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">color_palette</span>, <span class="va">cell_types</span><span class="op">)</span></span>
-<span><span class="va">cell_type_colors</span> <span class="op">&lt;-</span> <span class="va">color_mapping</span><span class="op">[</span><span class="va">cell_types</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co">## Generate the MDS scatter plot with cell type coloring</span></span>
+<span><span class="co"># Generate the MDS scatter plot with cell type coloring</span></span>
 <span><span class="fu"><a href="../reference/visualizeCellTypeMDS.html">visualizeCellTypeMDS</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
 <span>                     reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
-<span>                     mdata <span class="op">=</span> <span class="va">mdata</span>, </span>
-<span>                     cell_type_colors <span class="op">=</span> <span class="va">cell_type_colors</span>, </span>
-<span>                     legend_order <span class="op">=</span> <span class="va">legend_order</span><span class="op">)</span></span></code></pre></div>
+<span>                     query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>,</span>
+<span>                     ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scDiagnostics_files/figure-html/CMD-Scatter-Plot-1.png" width="700"></p>
 <p>Upon examining the MDS scatter plot, we observe that the CD4 and CD8
 cell types overlap to some extent.By observing the proximity or overlap
@@ -543,17 +554,19 @@ used, user can also use Pearsons correlation coeefficient.</p>
 <p>This will return average correlation matrix which can be visulaized
 by user’s method of choice. Here, the results are visualized as a
 correlation plot using the corrplot package.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">selected_cell_types</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span><span class="op">)</span></span>
-<span><span class="va">cor_matrix_avg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/computeAveragePairwiseCorrelation.html">computeAveragePairwiseCorrelation</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
-<span>                                                    reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
-<span>                                                    query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
-<span>                                                    ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
-<span>                                                    cell_types <span class="op">=</span> <span class="va">selected_cell_types</span>, </span>
-<span>                                                    correlation_method <span class="op">=</span> <span class="st">"spearman"</span><span class="op">)</span></span>
+<span><span class="va">ref_data_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">ref_data_subset</span><span class="op">)</span></span>
+<span><span class="va">cor_matrix_avg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
+<span>                                                      reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
+<span>                                                      n_components <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>                                                      query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
+<span>                                                      ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
+<span>                                                      cell_types <span class="op">=</span> <span class="va">selected_cell_types</span>, </span>
+<span>                                                      correlation_method <span class="op">=</span> <span class="st">"spearman"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Plot the pairwise average correlations using corrplot</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/corrplot/man/corrplot.html" class="external-link">corrplot</a></span><span class="op">(</span><span class="va">cor_matrix_avg</span>, method <span class="op">=</span> <span class="st">"number"</span>, tl.col <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Visualize the output</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cor_matrix_avg</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scDiagnostics_files/figure-html/Cell-Type-Correlation-Analysis-Visualization-1.png" width="700"></p>
 <p>In this case, users have the flexibility to extract the gene
 expression profiles of specific cell types from the reference and query
@@ -583,9 +596,10 @@ metrics, such as “euclidean” or “manhattan,” to calculate pairwise
 distances.</p>
 <p>To illustrate, the function is applied to the cell type CD8 using the
 euclidean distance metric in the example below.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/calculatePairwiseDistancesAndPlotDensity.html">calculatePairwiseDistancesAndPlotDensity</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
 <span>                                         reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
+<span>                                         n_components <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>                                         query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
 <span>                                         ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
 <span>                                         cell_type_query <span class="op">=</span> <span class="st">"CD8"</span>, </span>
@@ -599,9 +613,10 @@ cells.</p>
 correlation distance metric in the example below. By selecting either
 the “pearson” or “spearman” correlation method, users can emphasize
 either linear or rank-based associations, respectively.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/calculatePairwiseDistancesAndPlotDensity.html">calculatePairwiseDistancesAndPlotDensity</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
 <span>                                         reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
+<span>                                         n_components <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>                                         query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
 <span>                                         ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
 <span>                                         cell_type_query <span class="op">=</span> <span class="st">"CD8"</span>, </span>
@@ -624,8 +639,8 @@ enables users to examine the relationship between a principal component
 (PC) from the dimension reduction slot and an independent variable of
 interest. By specifying the desired dependent variable as one of the
 principal components (e.g., “PC1”, “PC2”, etc.) and providing the
-corresponding independent variable from the colData slot
-(e.g. “cell_type”), users can explore the associations between linear
+corresponding independent variable from the colData slot (e.g.
+“cell_type”), users can explore the associations between linear
 structure in the single-cell gene expression dataset (reference and
 query) and an independent variable of interest (e.g. cell type or
 batch).</p>
@@ -644,7 +659,7 @@ you have batch effects!</li>
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Specify the dependent variables (principal components) and</span></span>
 <span><span class="co">#  independent variable (e.g., "labels")</span></span>
@@ -654,10 +669,8 @@ you have batch effects!</li>
 <span><span class="co"># Perform linear regression on multiple principal components</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/regressPC.html">regressPC</a></span><span class="op">(</span>sce <span class="op">=</span> <span class="va">query_data</span>,</span>
 <span>                    dep.vars <span class="op">=</span> <span class="va">dep.vars</span>, </span>
-<span>                    indep.var <span class="op">=</span> <span class="va">indep.var</span><span class="op">)</span></span></code></pre></div>
-<p><img src="scDiagnostics_files/figure-html/Regression-1.png" width="700"><img src="scDiagnostics_files/figure-html/Regression-2.png" width="700"></p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span>                    indep.var <span class="op">=</span> <span class="va">indep.var</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Print the summaries of the linear regression models and R-squared</span></span>
 <span><span class="co">#  values</span></span>
 <span></span>
@@ -682,22 +695,25 @@ you have batch effects!</li>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Residual standard error: 4.156 on 965 degrees of freedom</span></span>
 <span><span class="co">#&gt; Multiple R-squared:  0.5996, Adjusted R-squared:  0.5984 </span></span>
-<span><span class="co">#&gt; F-statistic: 481.7 on 3 and 965 DF,  p-value: &lt; 2.2e-16</span></span>
-<span></span>
+<span><span class="co">#&gt; F-statistic: 481.7 on 3 and 965 DF,  p-value: &lt; 2.2e-16</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># R-squared values</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">rsquared</span></span>
 <span><span class="co">#&gt;         PC1         PC2         PC3         PC4         PC5         PC6 </span></span>
 <span><span class="co">#&gt; 0.599614123 0.537021405 0.435744738 0.139056106 0.117961322 0.114439358 </span></span>
 <span><span class="co">#&gt;         PC7         PC8         PC9        PC10        PC11        PC12 </span></span>
-<span><span class="co">#&gt; 0.039179544 0.001160446 0.002783929 0.005571931 0.001378947 0.002534793</span></span>
-<span></span>
+<span><span class="co">#&gt; 0.039179544 0.001160446 0.002783929 0.005571931 0.001378947 0.002534793</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># Variance contributions for each principal component</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">var.contributions</span></span>
 <span><span class="co">#&gt;          PC1          PC2          PC3          PC4          PC5          PC6 </span></span>
 <span><span class="co">#&gt; 6.7286315831 2.7629320174 1.2945575966 0.3166828703 0.2377093993 0.1592056363 </span></span>
 <span><span class="co">#&gt;          PC7          PC8          PC9         PC10         PC11         PC12 </span></span>
-<span><span class="co">#&gt; 0.0426559772 0.0008730584 0.0020421974 0.0038728627 0.0008466853 0.0014487730</span></span>
-<span></span>
+<span><span class="co">#&gt; 0.0426559772 0.0008730584 0.0020421974 0.0038728627 0.0008466853 0.0014487730</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># Total variance explained</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">total.variance.explained</span></span>
 <span><span class="co">#&gt; [1] 11.55146</span></span></code></pre></div>
@@ -710,7 +726,7 @@ can help identify PC dimensions that capture variation specific to
 certain cell types or distinguish different cellular states.</p>
 <p>Let’s look at the genes driving PC1 by ordering the rotation matrix
 by the absolute gene loadings for PC1:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pc_df</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDims</a></span><span class="op">(</span><span class="va">query_data</span><span class="op">)</span><span class="op">$</span><span class="va">PCA</span>, <span class="st">"rotation"</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -734,36 +750,6 @@ distinguishing the cell types shown.</p>
 What’s going on there?</p>
 </blockquote>
 <p><code>plotPCA(query_data, ncomponents = c(1,5), color_by = "labels")</code></p>
-</div>
-<div class="section level3">
-<h3 id="outlier-detection">Outlier detection<a class="anchor" aria-label="anchor" href="#outlier-detection"></a>
-</h3>
-<p>Isolation forests are a fast and effective method for detecting
-outliers in high-dimensional data without relying on density estimation.
-<code><a href="../reference/calculateOutlierScore.html">calculateOutlierScore()</a></code> is a wrapper around the main
-function of the <a href="https://cran.r-project.org/web/packages/isotree/index.html" class="external-link">isotree
-package</a>. Here we run it on the PC embeddings but, it can also be
-informative to run it on the raw counts. Here we can see some outliers
-in PC1/2 space flagged by the default <code>score &gt; 0.5</code>
-threshold due to their clear isolation (as well as a few that are
-isolated on the non-visualized PCs).</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateOutlierScore.html">calculateOutlierScore</a></span><span class="op">(</span><span class="va">query_data</span>, </span>
-<span>                                    use_pcs <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>                                    plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                                    dimred <span class="op">=</span> <span class="st">"PCA"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in isotree::isolation.forest(X, output_score = TRUE, ...): Attempting</span></span>
-<span><span class="co">#&gt; to use more than 1 thread, but package was compiled without OpenMP support. See</span></span>
-<span><span class="co">#&gt; https://github.com/david-cortes/installing-optimized-libraries#4-macos-install-and-enable-openmp</span></span></code></pre></div>
-<p><img src="scDiagnostics_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
-<p>Columns <code>outlier_score</code> and <code>is_outlier</code> are
-added to the colData of the output. The isotree model object itself is
-added to the metadata.</p>
-<p>One can pass different <code>dimred</code> names to change the plot,
-but running an isolation in forest in e.g. tSNE or UMAP space does not
-make sense due to the non-linearity of these approaches. Hence this is
-not allowed - when <code>use_pcs = FALSE</code>, the logcounts are used
-instead.</p>
 </div>
 <div class="section level3">
 <h3 id="annotation-entropy">Annotation entropy<a class="anchor" aria-label="anchor" href="#annotation-entropy"></a>
@@ -796,9 +782,9 @@ four cell types (i.e. high entropy).</p>
 <span><span class="va">X</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">250</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">X</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">250</span><span class="op">]</span> <span class="op">+</span> <span class="fl">5</span> </span>
 <span></span>
 <span><span class="va">entropy_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateCategorizationEntropy.html">calculateCategorizationEntropy</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
-<span><span class="co">#&gt; X doesn't seem to be on the probability scale,applying column-wise softmax.</span></span>
+<span><span class="co">#&gt; X doesn't seem to be on the probability scale, applying column-wise softmax.</span></span>
 <span><span class="co">#&gt; Max possible entropy given 4 categories: 1.39</span></span></code></pre></div>
-<p><img src="scDiagnostics_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p><img src="scDiagnostics_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <p>From the plot we can see that half of the cells (the first half we
 shifted to class 1) have low entropy, and half have high entropy.</p>
 </div>
@@ -828,110 +814,117 @@ relationships and patterns.</p>
 <div class="section level3">
 <h3 id="r-session-info">R.session Info<a class="anchor" aria-label="anchor" href="#r-session-info"></a>
 </h3>
-<pre><code>R version 4.3.3 (2024-02-29)
-Platform: aarch64-apple-darwin20 (64-bit)
-Running under: macOS Sonoma 14.4
+<pre><code>R version 4.4.0 (2024-04-24 ucrt)
+Platform: x86_64-w64-mingw32/x64
+Running under: Windows 11 x64 (build 22631)
 
 Matrix products: default
-BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
 
 locale:
-[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
 
-time zone: Pacific/Honolulu
+time zone: America/New_York
 tzcode source: internal
 
 attached base packages:
-[1] stats4    stats     graphics  grDevices utils     datasets  methods  
-[8] base     
+[1] grid      stats4    stats     graphics  grDevices utils     datasets 
+[8] methods   base     
 
 other attached packages:
- [1] celldex_1.12.0              corrplot_0.92              
- [3] AUCell_1.24.0               SingleR_2.4.1              
- [5] RColorBrewer_1.1-3          scRNAseq_2.16.0            
- [7] scran_1.30.2                scater_1.30.1              
- [9] ggplot2_3.5.0               scuttle_1.12.0             
-[11] scDiagnostics_0.99.0        SingleCellExperiment_1.24.0
-[13] SummarizedExperiment_1.32.0 Biobase_2.62.0             
-[15] GenomicRanges_1.54.1        GenomeInfoDb_1.38.8        
-[17] IRanges_2.36.0              S4Vectors_0.40.2           
-[19] BiocGenerics_0.48.1         MatrixGenerics_1.14.0      
-[21] matrixStats_1.3.0           BiocStyle_2.30.0           
+ [1] ComplexHeatmap_2.20.0       SingleR_2.6.0              
+ [3] RColorBrewer_1.1-3          AUCell_1.26.0              
+ [5] scRNAseq_2.18.0             scran_1.32.0               
+ [7] scater_1.32.0               ggplot2_3.5.1              
+ [9] scuttle_1.14.0              SingleCellExperiment_1.26.0
+[11] corrplot_0.92               celldex_1.14.0             
+[13] SummarizedExperiment_1.34.0 Biobase_2.64.0             
+[15] GenomicRanges_1.56.0        GenomeInfoDb_1.40.1        
+[17] IRanges_2.38.0              S4Vectors_0.42.0           
+[19] BiocGenerics_0.50.0         MatrixGenerics_1.16.0      
+[21] matrixStats_1.3.0           scDiagnostics_0.99.0       
+[23] BiocStyle_2.32.0           
 
 loaded via a namespace (and not attached):
-  [1] later_1.3.2                   BiocIO_1.12.0                
-  [3] bitops_1.0-7                  filelock_1.0.3               
-  [5] R.oo_1.26.0                   tibble_3.2.1                 
-  [7] graph_1.80.0                  XML_3.99-0.16.1              
-  [9] lifecycle_1.0.4               edgeR_4.0.16                 
- [11] lattice_0.22-6                ensembldb_2.26.0             
- [13] isotree_0.6.1-1               magrittr_2.0.3               
- [15] limma_3.58.1                  sass_0.4.9                   
- [17] rmarkdown_2.26                jquerylib_0.1.4              
- [19] yaml_2.3.8                    metapod_1.10.1               
- [21] httpuv_1.6.15                 DBI_1.2.2                    
- [23] abind_1.4-5                   zlibbioc_1.48.2              
- [25] purrr_1.0.2                   R.utils_2.12.3               
- [27] AnnotationFilter_1.26.0       RCurl_1.98-1.14              
- [29] rappdirs_0.3.3                GenomeInfoDbData_1.2.11      
- [31] ggrepel_0.9.5                 irlba_2.3.5.1                
- [33] annotate_1.80.0               dqrng_0.3.2                  
- [35] pkgdown_2.0.8                 DelayedMatrixStats_1.24.0    
- [37] codetools_0.2-20              DelayedArray_0.28.0          
- [39] xml2_1.3.6                    tidyselect_1.2.1             
- [41] farver_2.1.1                  ScaledMatrix_1.10.0          
- [43] viridis_0.6.5                 BiocFileCache_2.10.2         
- [45] GenomicAlignments_1.38.2      jsonlite_1.8.8               
- [47] BiocNeighbors_1.20.2          systemfonts_1.0.6            
- [49] tools_4.3.3                   progress_1.2.3               
- [51] ragg_1.3.0                    Rcpp_1.0.12                  
- [53] glue_1.7.0                    gridExtra_2.3                
- [55] SparseArray_1.2.4             xfun_0.43                    
- [57] dplyr_1.1.4                   withr_3.0.0                  
- [59] BiocManager_1.30.22           fastmap_1.1.1                
- [61] bluster_1.12.0                fansi_1.0.6                  
- [63] digest_0.6.35                 rsvd_1.0.5                   
- [65] R6_2.5.1                      mime_0.12                    
- [67] textshaping_0.3.7             colorspace_2.1-0             
- [69] biomaRt_2.58.2                RSQLite_2.3.6                
- [71] R.methodsS3_1.8.2             utf8_1.2.4                   
- [73] generics_0.1.3                data.table_1.15.4            
- [75] rtracklayer_1.62.0            prettyunits_1.2.0            
- [77] httr_1.4.7                    htmlwidgets_1.6.4            
- [79] S4Arrays_1.2.1                pkgconfig_2.0.3              
- [81] gtable_0.3.4                  blob_1.2.4                   
- [83] XVector_0.42.0                htmltools_0.5.8.1            
- [85] bookdown_0.38                 GSEABase_1.64.0              
- [87] ProtGenerics_1.34.0           scales_1.3.0                 
- [89] png_0.1-8                     knitr_1.46                   
- [91] rstudioapi_0.16.0             rjson_0.2.21                 
- [93] curl_5.2.1                    cachem_1.0.8                 
- [95] stringr_1.5.1                 BiocVersion_3.18.1           
- [97] parallel_4.3.3                vipor_0.4.7                  
- [99] AnnotationDbi_1.64.1          restfulr_0.0.15              
-[101] desc_1.4.3                    pillar_1.9.0                 
-[103] grid_4.3.3                    vctrs_0.6.5                  
-[105] promises_1.3.0                BiocSingular_1.18.0          
-[107] dbplyr_2.5.0                  beachmat_2.18.1              
-[109] xtable_1.8-4                  cluster_2.1.6                
-[111] beeswarm_0.4.0                evaluate_0.23                
-[113] GenomicFeatures_1.54.4        cli_3.6.2                    
-[115] locfit_1.5-9.9                compiler_4.3.3               
-[117] Rsamtools_2.18.0              rlang_1.1.3                  
-[119] crayon_1.5.2                  labeling_0.4.3               
-[121] fs_1.6.3                      ggbeeswarm_0.7.2             
-[123] stringi_1.8.3                 viridisLite_0.4.2            
-[125] BiocParallel_1.36.0           munsell_0.5.1                
-[127] Biostrings_2.70.3             lazyeval_0.2.2               
-[129] Matrix_1.6-5                  ExperimentHub_2.10.0         
-[131] hms_1.1.3                     sparseMatrixStats_1.14.0     
-[133] bit64_4.0.5                   KEGGREST_1.42.0              
-[135] statmod_1.5.0                 shiny_1.8.1.1                
-[137] highr_0.10                    interactiveDisplayBase_1.40.0
-[139] AnnotationHub_3.10.1          igraph_2.0.3                 
-[141] memoise_2.0.1                 bslib_0.7.0                  
-[143] bit_4.0.5                    </code></pre>
+  [1] BiocIO_1.14.0             bitops_1.0-7             
+  [3] filelock_1.0.3            R.oo_1.26.0              
+  [5] tibble_3.2.1              graph_1.82.0             
+  [7] XML_3.99-0.16.1           lifecycle_1.0.4          
+  [9] httr2_1.0.1               doParallel_1.0.17        
+ [11] edgeR_4.2.0               lattice_0.22-6           
+ [13] ensembldb_2.28.0          alabaster.base_1.4.1     
+ [15] magrittr_2.0.3            limma_3.60.2             
+ [17] sass_0.4.9                rmarkdown_2.27           
+ [19] jquerylib_0.1.4           yaml_2.3.8               
+ [21] metapod_1.12.0            DBI_1.2.2                
+ [23] abind_1.4-5               zlibbioc_1.50.0          
+ [25] purrr_1.0.2               R.utils_2.12.3           
+ [27] AnnotationFilter_1.28.0   RCurl_1.98-1.14          
+ [29] rappdirs_0.3.3            circlize_0.4.16          
+ [31] GenomeInfoDbData_1.2.12   ggrepel_0.9.5            
+ [33] irlba_2.3.5.1             alabaster.sce_1.4.0      
+ [35] annotate_1.82.0           dqrng_0.4.1              
+ [37] pkgdown_2.0.9             DelayedMatrixStats_1.26.0
+ [39] codetools_0.2-20          DelayedArray_0.30.1      
+ [41] shape_1.4.6.1             tidyselect_1.2.1         
+ [43] farver_2.1.2              UCSC.utils_1.0.0         
+ [45] ScaledMatrix_1.12.0       viridis_0.6.5            
+ [47] BiocFileCache_2.12.0      GenomicAlignments_1.40.0 
+ [49] jsonlite_1.8.8            GetoptLong_1.0.5         
+ [51] BiocNeighbors_1.22.0      iterators_1.0.14         
+ [53] systemfonts_1.1.0         foreach_1.5.2            
+ [55] tools_4.4.0               ragg_1.3.2               
+ [57] Rcpp_1.0.12               glue_1.7.0               
+ [59] gridExtra_2.3             SparseArray_1.4.8        
+ [61] xfun_0.44                 dplyr_1.1.4              
+ [63] HDF5Array_1.32.0          gypsum_1.0.1             
+ [65] withr_3.0.0               BiocManager_1.30.23      
+ [67] fastmap_1.2.0             rhdf5filters_1.16.0      
+ [69] bluster_1.14.0            fansi_1.0.6              
+ [71] digest_0.6.35             rsvd_1.0.5               
+ [73] R6_2.5.1                  textshaping_0.4.0        
+ [75] colorspace_2.1-0          RSQLite_2.3.7            
+ [77] R.methodsS3_1.8.2         utf8_1.2.4               
+ [79] generics_0.1.3            data.table_1.15.4        
+ [81] rtracklayer_1.64.0        httr_1.4.7               
+ [83] htmlwidgets_1.6.4         S4Arrays_1.4.1           
+ [85] pkgconfig_2.0.3           gtable_0.3.5             
+ [87] blob_1.2.4                XVector_0.44.0           
+ [89] htmltools_0.5.8.1         bookdown_0.39            
+ [91] clue_0.3-65               GSEABase_1.66.0          
+ [93] ProtGenerics_1.36.0       scales_1.3.0             
+ [95] alabaster.matrix_1.4.0    png_0.1-8                
+ [97] knitr_1.46                rstudioapi_0.16.0        
+ [99] rjson_0.2.21              curl_5.2.1               
+[101] GlobalOptions_0.1.2       cachem_1.1.0             
+[103] rhdf5_2.48.0              BiocVersion_3.19.1       
+[105] parallel_4.4.0            vipor_0.4.7              
+[107] AnnotationDbi_1.66.0      restfulr_0.0.15          
+[109] desc_1.4.3                pillar_1.9.0             
+[111] alabaster.schemas_1.4.0   vctrs_0.6.5              
+[113] BiocSingular_1.20.0       dbplyr_2.5.0             
+[115] beachmat_2.20.0           xtable_1.8-4             
+[117] cluster_2.1.6             beeswarm_0.4.0           
+[119] evaluate_0.23             GenomicFeatures_1.56.0   
+[121] cli_3.6.2                 locfit_1.5-9.9           
+[123] compiler_4.4.0            Rsamtools_2.20.0         
+[125] rlang_1.1.3               crayon_1.5.2             
+[127] labeling_0.4.3            fs_1.6.4                 
+[129] ggbeeswarm_0.7.2          viridisLite_0.4.2        
+[131] alabaster.se_1.4.1        BiocParallel_1.38.0      
+[133] munsell_0.5.1             Biostrings_2.72.0        
+[135] lazyeval_0.2.2            Matrix_1.7-0             
+[137] ExperimentHub_2.12.0      sparseMatrixStats_1.16.0 
+[139] bit64_4.0.5               Rhdf5lib_1.26.0          
+[141] KEGGREST_1.44.0           statmod_1.5.0            
+[143] highr_0.11                alabaster.ranges_1.4.1   
+[145] AnnotationHub_3.12.0      igraph_2.0.3             
+[147] memoise_2.0.1             bslib_0.7.0              
+[149] bit_4.0.5                </code></pre>
 </div>
 </div>
   </div>
@@ -948,12 +941,12 @@ loaded via a namespace (and not attached):
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Smriti Chawla, Andrew Ghazi, Ludwig Geistlinger, Robert Gentleman.</p>
+<p>Developed by Anthony Christidis, Andrew Ghazi, Smriti Chawla, Ludwig Geistlinger, Robert Gentleman.</p>
 </div>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer>
