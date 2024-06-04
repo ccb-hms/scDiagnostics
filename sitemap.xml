@@ -70,30 +70,6 @@
     <loc>/reference/nearestNeighborDiagnostics.html</loc>
   </url>
   <url>
-    <loc>/reference/plot.calculateAveragePairwiseCorrelation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.calculateSampleDistances.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.calculateSampleSimilarityPCA.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.compareCCA.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.comparePCA.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.comparePCASubspace.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.detectAnomaly.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.nearestNeighborDiagnostics.html</loc>
-  </url>
-  <url>
     <loc>/reference/plotGeneExpressionDimred.html</loc>
   </url>
   <url>

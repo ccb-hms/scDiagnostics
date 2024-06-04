@@ -158,12 +158,12 @@ between the reference and query datasets for each cell type.</p>
 <span class="r-in"><span><span class="co"># Get the p-values from the test</span></span></span>
 <span class="r-in"><span><span class="va">p_values</span> <span class="op">&lt;-</span> <span class="fu">calculateHotellingPValue</span><span class="op">(</span><span class="va">query_data_subset</span>, <span class="va">ref_data_subset</span>, </span></span>
 <span class="r-in"><span>                                     n_components <span class="op">=</span> <span class="fl">10</span>, </span></span>
-<span class="r-in"><span>                                     query_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span></span>
+<span class="r-in"><span>                                     query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span></span>
 <span class="r-in"><span>                                     ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>,</span></span>
 <span class="r-in"><span>                                     pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span> </span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">p_values</span>, <span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> B_and_plasma          CD8          CD4      Myeloid </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      0.10311      0.00000      0.00000      0.49561 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      0.01132      0.00000      0.00000      0.00000 </span>
 <span class="r-in"><span>                         </span></span>
 </code></pre></div>
     </div>
