@@ -49,6 +49,7 @@
 #' 
 #' overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var, 
 #'                                           query_genes = query_var)
+#' overlap_coefficient
 #' 
 #' @export                                       
 calculateHVGOverlap <- function(reference_genes, query_genes) {

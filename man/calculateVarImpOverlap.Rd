@@ -85,6 +85,7 @@ rf_output <- calculateVarImpOverlap(query_data_subset, ref_data_subset,
                                     ref_cell_type_col = "reclustered.broad", 
                                     n_tree = 500,
                                     n_top = 20)
+rf_output
 
 
 }

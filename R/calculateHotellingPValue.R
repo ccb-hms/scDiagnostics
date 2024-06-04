@@ -66,7 +66,7 @@
 #' # Get the p-values from the test
 #' p_values <- calculateHotellingPValue(query_data_subset, ref_data_subset, 
 #'                                      n_components = 10, 
-#'                                      query_cell_type_col = "reclustered.broad", 
+#'                                      query_cell_type_col = "labels", 
 #'                                      ref_cell_type_col = "reclustered.broad",
 #'                                      pc_subset = c(1:10)) 
 #' round(p_values, 5)

@@ -26,55 +26,7 @@
 #' 
 #' @seealso \code{\link{detectAnomaly}}
 #' 
-#' @examples
-#' # Load required libraries
-#' library(scRNAseq)
-#' library(scuttle)
-#' library(SingleR)
-#' library(scran)
-#' library(scater)
-#'
-#' # Load data
-#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-#' 
-#' # Divide the data into reference and query datasets
-#' set.seed(100)
-#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-#' ref_data <- sce[, indices]
-#' query_data <- sce[, -indices]
-#' 
-#' # log transform datasets
-#' ref_data <- logNormCounts(ref_data)
-#' query_data <- logNormCounts(query_data)
-#' 
-#' # Get cell type scores using SingleR (or any other cell type annotation method)
-#' scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-#' 
-#' # Add labels to query object
-#' colData(query_data)$labels <- scores$labels
-#' 
-#' # Selecting highly variable genes (can be customized by the user)
-#' ref_var <- getTopHVGs(ref_data, n = 2000)
-#' query_var <- getTopHVGs(query_data, n = 2000)
-#' 
-#' # Intersect the gene symbols to obtain common genes
-#' common_genes <- intersect(ref_var, query_var)
-#' ref_data_subset <- ref_data[common_genes, ]
-#' query_data_subset <- query_data[common_genes, ]
-#' 
-#' # Run PCA on the reference data
-#' ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
-#' 
-#' # Store PCA anomaly data and plots
-#' anomaly_output <- detectAnomaly(ref_data_subset, query_data_subset, 
-#'                                 ref_cell_type_col = "reclustered.broad", 
-#'                                 query_cell_type_col = "labels",
-#'                                 n_components = 10,
-#'                                 n_tree = 500,
-#'                                 anomaly_treshold = 0.5) 
-#' 
-#' # Plot the output for a cell type
-#' plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5), data_type = "query")
+#' @rdname detectAnomaly
 #' 
 # Function to create faceted scatter plots for specified PC combinations
 plot.detectAnomaly <- function(x, cell_type = NULL, pc_subset = NULL, data_type = c("query", "reference"), ...) {

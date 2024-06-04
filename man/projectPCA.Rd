@@ -117,6 +117,7 @@ tsne_plot <- ggplot(tsne_data[tsne_data$Type \%in\% legend_order,],
     scale_color_manual(values = cell_type_colors) +
     theme_bw() +
     guides(color = guide_legend(title = "Cell Types"))
+tsne_plot     
 
 
 }

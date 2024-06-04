@@ -101,6 +101,7 @@
 #'     scale_color_manual(values = cell_type_colors) +
 #'     theme_bw() +
 #'     guides(color = guide_legend(title = "Cell Types"))
+#' tsne_plot     
 #' 
 #'
 # Function to project query data onto PCA space of reference data

@@ -117,6 +117,7 @@ overlap_measures <- calculateSampleDistancesSimilarity(query_data_subset,ref_dat
                                                        query_cell_type_col = "labels", 
                                                        ref_cell_type_col = "reclustered.broad",
                                                        pc_subset = c(1:10))
+overlap_measures
 
 
 }
