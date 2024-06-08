@@ -1,16 +1,18 @@
 #' @title Compare Gene Importance Across Datasets Using Random Forest
 #'
-#' @description This function identifies and compares the most important genes for differentiating cell types between a query dataset 
+#' @description 
+#' This function identifies and compares the most important genes for differentiating cell types between a query dataset 
 #' and a reference dataset using Random Forest.
 #'
 #' @details This function uses the Random Forest algorithm to calculate the importance of genes in differentiating between cell types 
 #' within both a reference dataset and a query dataset. The function then compares the top genes identified in both datasets to determine 
 #' the overlap in their importance scores.
 #'
-#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
-#' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' If NULL, then the variable importance scores are only computed for the reference data. Default is NULL.
 #' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
+#' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
 #' @param n_tree An integer specifying the number of trees to grow in the Random Forest. Default is 500.
 #' @param n_top An integer specifying the number of top genes to consider when comparing variable importance scores. Default is 20.
 #'
@@ -61,38 +63,38 @@
 #' ref_data_subset <- ref_data[common_genes, ]
 #' query_data_subset <- query_data[common_genes, ]
 #' 
-#' # Compare PCA subspaces
-#' rf_output <- calculateVarImpOverlap(query_data_subset, ref_data_subset, 
-#'                                     query_cell_type_col = "labels", 
+#' # Compute important variables for all pairwise cell comparisons
+#' rf_output <- calculateVarImpOverlap(ref_data_subset, 
+#'                                     query_data_subset,
 #'                                     ref_cell_type_col = "reclustered.broad", 
+#'                                     query_cell_type_col = "labels", 
 #'                                     n_tree = 500,
 #'                                     n_top = 20)
-#' rf_output
 #' 
+#' # Comparison table
+#' rf_output$var_imp_comparison
 #' 
 # RF function to compare (between datasets) which genes are best at differentiating cell types from each 
-calculateVarImpOverlap <- function(query_data, 
-                                   reference_data, 
-                                   query_cell_type_col, 
+calculateVarImpOverlap <- function(reference_data,
+                                   query_data = NULL, 
                                    ref_cell_type_col,
+                                   query_cell_type_col, 
                                    n_tree = 500,
                                    n_top = 20){
     
     # Extract assay data for reference and query datasets
     ref_x <- t(as.matrix(assay(reference_data, "logcounts")))
-    query_x <- t(as.matrix(assay(query_data, "logcounts")))
-        
+
     # Extract labels from reference and query datasets
     ref_y <- reference_data[[ref_cell_type_col]]
-    query_y <- query_data[[query_cell_type_col]]
-    
+
     # Remove NA from reference
-    ref_x <- ref_x[-which(is.na(ref_y)),]
-    ref_y <- ref_y[-which(is.na(ref_y))]
+    ref_x <- ref_x[which(!is.na(ref_y)),]
+    ref_y <- na.omit(ref_y)
     
     # Finding importance scores for each cell type in reference dataset
     var_imp_ref <- list()
-    cell_types <- unique(intersect(ref_y, query_y))
+    cell_types <- unique(ref_y)
     cell_types_combn <- combn(length(cell_types), 2)
     for(combn_id in 1:ncol(cell_types_combn)){
         
@@ -102,40 +104,60 @@ calculateVarImpOverlap <- function(query_data,
         rf_binary <- ranger::ranger(cell_type ~ ., data = training_data, num.trees = n_tree, importance = "impurity")
         var_importance_name <- paste0(cell_types[cell_types_combn[1, combn_id]], "-", cell_types[cell_types_combn[2, combn_id]])
         var_imp_ref[[var_importance_name]] <- rf_binary$variable.importance
+        names(var_imp_ref[[var_importance_name]]) <- colnames(ref_x_subset)
         var_imp_ref[[var_importance_name]] <- 
             data.frame(Gene = names(var_imp_ref[[var_importance_name]])[order(var_imp_ref[[var_importance_name]], 
                                                                                     decreasing = TRUE)], 
                        RF_Importance = var_imp_ref[[var_importance_name]][order(var_imp_ref[[var_importance_name]], 
                                                                                    decreasing = TRUE)])
+        rownames(var_imp_ref[[var_importance_name]]) <- NULL
     }
     
-    # Finding importance scores for each cell type in query dataset
-    var_imp_query <- list()
-    for(combn_id in 1:ncol(cell_types_combn)){
+    if(!is.null(query_data)){
         
-        ref_x_subset <- ref_x[which(ref_y %in% c(cell_types[cell_types_combn[1, combn_id]], cell_types[cell_types_combn[2, combn_id]])),]
-        ref_y_subset <- ref_y[which(ref_y %in% c(cell_types[cell_types_combn[1, combn_id]], cell_types[cell_types_combn[2, combn_id]]))]
-        training_data <- data.frame(ref_x_subset, cell_type = factor(ref_y_subset))
-        rf_binary <- ranger::ranger(cell_type ~ ., data = training_data, num.trees = n_tree, importance = "impurity")
-        var_importance_name <- paste0(cell_types[cell_types_combn[1, combn_id]], "-", cell_types[cell_types_combn[2, combn_id]])
-        var_imp_query[[var_importance_name]] <- rf_binary$variable.importance
-        var_imp_query[[var_importance_name]] <- 
-            data.frame(Gene = names(var_imp_query[[var_importance_name]])[order(var_imp_query[[var_importance_name]], 
-                                                                                 decreasing = TRUE)], 
-                       RF_Importance = var_imp_query[[var_importance_name]][order(var_imp_query[[var_importance_name]], 
-                                                                                   decreasing = TRUE)])
+        # Extract assay data for query dataset
+        query_x <- t(as.matrix(assay(query_data, "logcounts")))
+        
+        # Extract labels from query dataset
+        query_y <- query_data[[query_cell_type_col]]
+        
+        # Remove NA from query
+        query_x <- query_x[which(!is.na(query_y)),]
+        query_y <- na.omit(query_y)
+        
+        # Finding importance scores for each cell type in query dataset
+        cell_types <- unique(intersect(ref_y, query_y))
+        var_imp_query <- list()
+        for(combn_id in 1:ncol(cell_types_combn)){
+            
+            query_x_subset <- query_x[which(query_y %in% c(cell_types[cell_types_combn[1, combn_id]], cell_types[cell_types_combn[2, combn_id]])),]
+            query_y_subset <- query_y[which(query_y %in% c(cell_types[cell_types_combn[1, combn_id]], cell_types[cell_types_combn[2, combn_id]]))]
+            training_data <- data.frame(query_x_subset, cell_type = factor(query_y_subset))
+            rf_binary <- ranger::ranger(cell_type ~ ., data = training_data, num.trees = n_tree, importance = "impurity")
+            var_importance_name <- paste0(cell_types[cell_types_combn[1, combn_id]], "-", cell_types[cell_types_combn[2, combn_id]])
+            var_imp_query[[var_importance_name]] <- rf_binary$variable.importance
+            names(var_imp_query[[var_importance_name]]) <- colnames(query_x_subset)
+            var_imp_query[[var_importance_name]] <- 
+                data.frame(Gene = names(var_imp_query[[var_importance_name]])[order(var_imp_query[[var_importance_name]], 
+                                                                                    decreasing = TRUE)], 
+                           RF_Importance = var_imp_query[[var_importance_name]][order(var_imp_query[[var_importance_name]], 
+                                                                                      decreasing = TRUE)])
+            rownames(var_imp_query[[var_importance_name]]) <- NULL
+        }
+        
+        # Comparison vector
+        var_imp_comparison <- rep(NA, length(var_imp_ref))
+        names(var_imp_comparison) <- names(var_imp_ref)
+        for(cells in names(var_imp_comparison)){
+            var_imp_comparison[cells] <- length(intersect(var_imp_ref[[cells]]$Gene[1:n_top], 
+                                                          var_imp_query[[cells]]$Gene[1:n_top])) / n_top
+        }
+        
+        # Return variable importance scores for each combination of cell types in each dataset and the comparison 
+        return(list(var_imp_ref = var_imp_ref, 
+                    var_imp_query = var_imp_query,
+                    var_imp_comparison = var_imp_comparison))
+    } else{
+        return(list(var_imp_ref = var_imp_ref))
     }
-    
-    # Comparison vector
-    var_imp_comparison <- rep(NA, length(var_imp_ref))
-    names(var_imp_comparison) <- names(var_imp_ref)
-    for(cells in names(var_imp_comparison)){
-        var_imp_comparison[cells] <- length(intersect(var_imp_ref[[cells]]$Gene[1:n_top], 
-                                                      var_imp_query[[cells]]$Gene[1:n_top])) / n_top
-    }
-    
-    # Return variable importance scores for each combination of cell types in each dataset and the comparison 
-    return(list(var_imp_ref = var_imp_ref, 
-                var_imp_query = var_imp_query,
-                var_imp_comparison = var_imp_comparison))
 }

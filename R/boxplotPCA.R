@@ -94,29 +94,29 @@ boxplotPCA <- function(query_data, reference_data,
                              ref_cell_type_col = ref_cell_type_col)
     
     # Create the long format data frame manually
-    pca_output <- pca_output[!is.na(pca_output$cell_type),]
+    pca_output <- pca_output[!is.na(pca_output[["cell_type"]]),]
     if(!is.null(cell_types)){
-        if(all(cell_types %in% pca_output$cell_type)){
-            pca_output <- pca_output[which(pca_output$cell_type %in% cell_types),]
+        if(all(cell_types %in% pca_output[["cell_type"]])){
+            pca_output <- pca_output[which(pca_output[["cell_type"]] %in% cell_types),]
         } else{
             stop("One or more of the specified \'cell_types\' are not available.")
         }
     }
     pca_long <- data.frame(PC = rep(paste0("pc", pc_subset), each = nrow(pca_output)),
                            Value = unlist(c(pca_output[, pc_subset])),
-                           dataset = rep(pca_output$dataset, length(pc_subset)),
-                           cell_type = rep(pca_output$cell_type, length(pc_subset)))
-    pca_long$PC <- toupper(pca_long$PC)
+                           dataset = rep(pca_output[["dataset"]], length(pc_subset)),
+                           cell_type = rep(pca_output[["cell_type"]], length(pc_subset)))
+    pca_long[["PC"]] <- toupper(pca_long[["PC"]])
     
     # Create a new variable representing the combination of cell type and dataset
-    pca_long$cell_type_dataset <- paste(pca_long$dataset, pca_long$cell_type, sep = " ")
+    pca_long[["cell_type_dataset"]] <- paste(pca_long[["dataset"]], pca_long[["cell_type"]], sep = " ")
     
     # Define the order of cell type and dataset combinations
-    order_combinations <- paste(rep(c("Reference", "Query"), length(unique(pca_long$cell_type))),
-                                rep(sort(unique(pca_long$cell_type)), each = 2))
+    order_combinations <- paste(rep(c("Reference", "Query"), length(unique(pca_long[["cell_type"]]))),
+                                rep(sort(unique(pca_long[["cell_type"]])), each = 2))
     
     # Reorder the levels of cell type and dataset factor
-    pca_long$cell_type_dataset <- factor(pca_long$cell_type_dataset, levels = order_combinations)
+    pca_long[["cell_type_dataset"]] <- factor(pca_long[["cell_type_dataset"]], levels = order_combinations)
     
     # Define the colors for cell types
     color_mapping <- setNames(RColorBrewer::brewer.pal(length(order_combinations), "Paired"), order_combinations)
