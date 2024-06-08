@@ -372,7 +372,7 @@ gene "VPREB3," ranging from low (lighter color) to high (darker color).
 # Generate dimension reduction plot color code by gene expression
 plotGeneExpressionDimred(se_object = query_data, 
                          method = "PCA", 
-                         n_components = c(1, 2), 
+                         pc_subset = c(1:5), 
                          feature = "VPREB3")
 ```
 
