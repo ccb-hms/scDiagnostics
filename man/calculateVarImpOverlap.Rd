@@ -5,22 +5,23 @@
 \title{Compare Gene Importance Across Datasets Using Random Forest}
 \usage{
 calculateVarImpOverlap(
-  query_data,
   reference_data,
-  query_cell_type_col,
+  query_data = NULL,
   ref_cell_type_col,
+  query_cell_type_col,
   n_tree = 500,
   n_top = 20
 )
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
-
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+If NULL, then the variable importance scores are only computed for the reference data. Default is NULL.}
 
 \item{ref_cell_type_col}{A character string specifying the column name in the reference dataset containing cell type annotations.}
+
+\item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
 
 \item{n_tree}{An integer specifying the number of trees to grow in the Random Forest. Default is 500.}
 
@@ -79,14 +80,16 @@ common_genes <- intersect(ref_var, query_var)
 ref_data_subset <- ref_data[common_genes, ]
 query_data_subset <- query_data[common_genes, ]
 
-# Compare PCA subspaces
-rf_output <- calculateVarImpOverlap(query_data_subset, ref_data_subset, 
-                                    query_cell_type_col = "labels", 
+# Compute important variables for all pairwise cell comparisons
+rf_output <- calculateVarImpOverlap(ref_data_subset, 
+                                    query_data_subset,
                                     ref_cell_type_col = "reclustered.broad", 
+                                    query_cell_type_col = "labels", 
                                     n_tree = 500,
                                     n_top = 20)
-rf_output
 
+# Comparison table
+rf_output$var_imp_comparison
 
 }
 \author{
