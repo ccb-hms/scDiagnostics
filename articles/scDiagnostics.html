@@ -428,7 +428,7 @@ color).</p>
 <code class="sourceCode R"><span><span class="co"># Generate dimension reduction plot color code by gene expression</span></span>
 <span><span class="fu"><a href="../reference/plotGeneExpressionDimred.html">plotGeneExpressionDimred</a></span><span class="op">(</span>se_object <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                         method <span class="op">=</span> <span class="st">"PCA"</span>, </span>
-<span>                         n_components <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, </span>
+<span>                         pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>, </span>
 <span>                         feature <span class="op">=</span> <span class="st">"VPREB3"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scDiagnostics_files/figure-html/Gene-Expression-Scatter-1.png" width="700"></p>
 <p>The dimensional reduction plot allows us to observe how the gene
