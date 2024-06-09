@@ -8,7 +8,11 @@
 #' This function generates density plots to compare the distribution of a specific marker 
 #' gene between reference and query datasets. The aim is to inspect the alignment of gene expression 
 #' levels as a surrogate for dataset similarity. Similar distributions suggest a good alignment, 
-#' while differences may indicate discrepancies or incompatibilities between the datasets.
+#' while differences may indicate discrepancies or incompatibilities between the datasets. 
+#' To make the gene expression scales comparable between the datasets, the gene expression values 
+#' are transformed using z-rank normalization. This transformation ranks the expression values 
+#' and then scales the ranks to have a mean of 0 and a standard deviation of 1, which helps 
+#' in standardizing the distributions for comparison.
 #' 
 #' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
@@ -102,9 +106,20 @@ plotMarkerExpression <- function(reference_data,
   ref_gene_expression_specific <- assay(reference_data, "logcounts")[gene_name, which(reference_data[[ref_cell_type_col]] %in% label)]
   query_gene_expression_specific <- assay(query_data, "logcounts")[gene_name, which(query_data[[query_cell_type_col]] %in% label)]
   
+  # Z-rank transformation
+  .rankTransformation <- function(x) {
+      ranks <- rank(x, ties.method = "average")
+      z_ranks <- (ranks - mean(ranks)) / sd(ranks)
+      return(z_ranks)
+  }
+  ref_gene_expression_zr <- .rankTransformation(ref_gene_expression)
+  query_gene_expression_zr <- .rankTransformation(query_gene_expression)
+  ref_gene_expression_specific_zr <- .rankTransformation(ref_gene_expression_specific)
+  query_gene_expression_specific_zr <- .rankTransformation(query_gene_expression_specific)
+  
   # Create a combined vector of gene expression values
-  combined_gene_expression <- c(ref_gene_expression, query_gene_expression,
-                                ref_gene_expression_specific, query_gene_expression_specific)
+  combined_gene_expression <- c(ref_gene_expression_zr, query_gene_expression_zr,
+                                ref_gene_expression_specific_zr, query_gene_expression_specific_zr)
   
   # Create a grouping vector for dataset labels
   dataset_labels <- rep(c("Reference", "Query", "Reference", "Query"), 

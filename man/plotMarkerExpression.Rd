@@ -40,7 +40,11 @@ for a specific gene across the overall dataset and within a specified cell type.
 This function generates density plots to compare the distribution of a specific marker 
 gene between reference and query datasets. The aim is to inspect the alignment of gene expression 
 levels as a surrogate for dataset similarity. Similar distributions suggest a good alignment, 
-while differences may indicate discrepancies or incompatibilities between the datasets.
+while differences may indicate discrepancies or incompatibilities between the datasets. 
+To make the gene expression scales comparable between the datasets, the gene expression values 
+are transformed using z-rank normalization. This transformation ranks the expression values 
+and then scales the ranks to have a mean of 0 and a standard deviation of 1, which helps 
+in standardizing the distributions for comparison.
 }
 \examples{
 library(scater)
