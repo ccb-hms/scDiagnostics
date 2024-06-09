@@ -38,8 +38,10 @@ plot.comparePCASubspace <- function(x, ...){
         ggplot2::scale_size_continuous(range = c(3, 10)) +
         ggplot2::labs(title = "Principal Angles Cosines with Variance Explained",
                       x = "",
-                      y = "Cosine of Principal Angle",
+                      y = "Cosine Similarity of Principal Angle",
                       size = "Variance Explained") +
-        ggplot2::theme_minimal()
-    print(pc_plot)
+        ggplot2::theme_minimal() +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, 
+                                                           size = 12, hjust = 1))
+    return(pc_plot)
 }

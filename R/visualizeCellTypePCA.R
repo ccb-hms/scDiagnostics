@@ -126,16 +126,11 @@ visualizeCellTypePCA <- function(query_data, reference_data,
         ggplot2::geom_point(alpha = 0.5, size = 1) +
         ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Types") + 
         ggplot2::facet_grid(rows = ggplot2::vars(y), cols = ggplot2::vars(x), scales = "free") +
-        ggplot2::theme_minimal() +
-        ggplot2::theme(strip.background = ggplot2::element_rect(fill = "grey85", color = "grey70"),   
-                       strip.text = ggplot2::element_text(size = 10, face = "bold", color = "black"), 
-                       axis.title = ggplot2::element_blank(),        
-                       axis.text = ggplot2::element_text(size = 10), 
-                       panel.grid = ggplot2::element_blank(),        
-                       panel.background = ggplot2::element_rect(fill = "white", color = "black"), 
-                       legend.position = "right",          
-                       plot.title = ggplot2::element_text(size = 14, hjust = 0.5), 
-                       plot.background = ggplot2::element_rect(fill = "white")) 
+        ggplot2::theme_bw() +
+        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
     
     # Return the plot
     return(plot_obj)

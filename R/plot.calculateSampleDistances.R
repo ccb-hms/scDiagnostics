@@ -74,13 +74,11 @@ plot.calculateSampleDistances <- function(x, ref_cell_type, sample_names, ...) {
                       x = "Distance", y = "Density") +
         ggplot2::scale_fill_manual(name = "Distance Type", values = c("Reference" = "blue", "Sample" = "red")) +
         ggplot2::facet_wrap(~ Sample, scales = "free_y", labeller = ggplot2::labeller(Sample = label_parsed)) +
-        ggplot2::theme_minimal() +
-        ggplot2::theme(
-            strip.background = ggplot2::element_rect(fill = "lightgrey", color = "grey50"),
-            strip.text = ggplot2::element_text(color = "grey20", size = 10, face = "bold"),
-            panel.grid.major = ggplot2::element_line(color = "grey90", linetype = "dashed"),
-            panel.grid.minor = ggplot2::element_line(color = "grey95", linetype = "dashed")
-        )
+        ggplot2::theme_bw() +
+        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
     
     # Print the density plot
     print(density_plot)

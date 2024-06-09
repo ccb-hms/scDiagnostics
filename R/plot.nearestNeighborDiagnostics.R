@@ -43,22 +43,20 @@ plot.nearestNeighborDiagnostics <- function(x, cell_types = NULL,
         # Subset cell types
         probabilities_df <- probabilities_df[probabilities_df$cell_types %in% cell_types,]
     }
-    
+
     # Create density plot
     density_plot <- ggplot2::ggplot(probabilities_df, ggplot2::aes(x = probability, fill = cell_types)) +
         ggplot2::geom_density(alpha = 0.7) +
         ggplot2::labs(x = "Probability", y = "Density", title = "Density Plot of Probabilities") +
         ggplot2::theme_minimal() +
-        ggplot2::theme(
-            legend.position = "none",
-            strip.background = ggplot2::element_rect(fill = "grey90", color = NA),
-            strip.text = ggplot2::element_text(face = "bold")
-        ) +
+        ggplot2::theme(legend.position = "none",
+                       strip.background = ggplot2::element_rect(fill = "grey90", color = NA),
+                       strip.text = ggplot2::element_text(face = "bold")) +
         ggplot2::facet_wrap(~cell_types, scales = "free", labeller = ggplot2::labeller(cell_types = label_value))
     if(length(unique(probabilities_df$cell_types)) > 2)
         density_plot <- density_plot + 
-        ggplot2::scale_fill_manual(values = RColorBrewer::brewer.pal(n = nlevels(as.factor(probabilities_df$cell_types)), 
-                                                                     name = "Set1")) 
+        ggplot2::scale_fill_manual(values = RColorBrewer::brewer.pal(n = nlevels(
+            factor(probabilities_df$cell_types, levels =  sort(unique(probabilities_df$cell_types)))), name = "Set1")) 
     
     return(density_plot)
 }

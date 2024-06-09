@@ -119,13 +119,16 @@ plotQCvsAnnotation <- function(query_data,
                      CellType = cell_labels)
   
   # Create a scatter plot with color-coded points based on cell types or labels
-  plot <- ggplot(data, aes(x = QCStats, 
-                           y = Scores, 
-                           color = CellType)) +
-    geom_point() +
-    xlab("QC stats") +
-    ylab("Annotation Scores") +
-    theme_bw()
+  plot <- ggplot2::ggplot(data, aes(x = QCStats, y = Scores, color = CellType)) +
+      ggplot2::geom_point() +
+      ggplot2::xlab("QC stats") +
+      ggplot2::ylab("Annotation Scores") +
+      ggplot2::labs(color = "Cell Type") +
+      ggplot2::theme_bw() +
+      ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                     panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                     plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                     axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
   
   return(plot)
 }

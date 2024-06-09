@@ -14,7 +14,7 @@
 #' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
 #' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
 #' @param n_tree An integer specifying the number of trees to grow in the Random Forest. Default is 500.
-#' @param n_top An integer specifying the number of top genes to consider when comparing variable importance scores. Default is 20.
+#' @param n_top An integer specifying the number of top genes to consider when comparing variable importance scores. Default is 50.
 #'
 #' @return A list containing three elements:
 #' \item{var_imp_ref}{A list of data frames containing variable importance scores for each combination of cell types in the reference 
@@ -80,7 +80,7 @@ calculateVarImpOverlap <- function(reference_data,
                                    ref_cell_type_col,
                                    query_cell_type_col, 
                                    n_tree = 500,
-                                   n_top = 20){
+                                   n_top = 50){
     
     # Extract assay data for reference and query datasets
     ref_x <- t(as.matrix(assay(reference_data, "logcounts")))

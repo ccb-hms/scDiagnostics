@@ -2,7 +2,7 @@
 % Please edit documentation in R/calculateSampleDistancesSimilarity.R
 \name{calculateSampleDistancesSimilarity}
 \alias{calculateSampleDistancesSimilarity}
-\title{Function to compute Bhattacharyya coefficients and Hellinger distances}
+\title{Function to Calculate Bhattacharyya Coefficients and Hellinger Distances}
 \usage{
 calculateSampleDistancesSimilarity(
   query_data,

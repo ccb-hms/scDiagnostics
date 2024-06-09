@@ -10,7 +10,7 @@ calculateVarImpOverlap(
   ref_cell_type_col,
   query_cell_type_col,
   n_tree = 500,
-  n_top = 20
+  n_top = 50
 )
 }
 \arguments{
@@ -25,7 +25,7 @@ If NULL, then the variable importance scores are only computed for the reference
 
 \item{n_tree}{An integer specifying the number of trees to grow in the Random Forest. Default is 500.}
 
-\item{n_top}{An integer specifying the number of top genes to consider when comparing variable importance scores. Default is 20.}
+\item{n_top}{An integer specifying the number of top genes to consider when comparing variable importance scores. Default is 50.}
 }
 \value{
 A list containing three elements:

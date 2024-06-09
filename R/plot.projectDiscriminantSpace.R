@@ -76,13 +76,12 @@ plot.projectDiscriminantSpace <- function(x, cell_types, plot_type = c("scatterp
             ggplot2::geom_point(alpha = 0.5, size = 1) +
             ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Types") + 
             ggplot2::facet_wrap(~ cell_type_combination, scales = "free") +
-            ggplot2::theme_minimal() +
-            ggplot2::theme(legend.position = "right", axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10),  
-                           axis.title = ggplot2::element_text(size = 14), strip.text = ggplot2::element_text(size = 12, face = "bold"), 
-                           panel.grid.major = ggplot2::element_line(color = "grey", linetype = "dotted", linewidth = 0.7),  
-                           panel.grid.minor = ggplot2::element_blank(), panel.border = ggplot2::element_blank(),  
-                           strip.background = ggplot2::element_rect(fill = "lightgrey", color = "grey", linewidth = 0.5),  
-                           plot.title = ggplot2::element_text(size = 16, face = "bold", hjust = 0.5)) 
+            ggplot2::theme_bw() +
+            ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                           panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                           plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                           axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
+                           axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10))
         return(scatter_plot)
         
     } else if (plot_type == "boxplot"){ # Boxplot
@@ -128,13 +127,12 @@ plot.projectDiscriminantSpace <- function(x, cell_types, plot_type = c("scatterp
             ggplot2::facet_wrap(~ variable, scales = "free") +
             ggplot2::scale_fill_manual(values = cell_type_colors, name = "Cell Types") + 
             ggplot2::labs(x = "", y = "Value") +  
-            ggplot2::theme_minimal() +
-            ggplot2::theme(legend.position = "right", axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10),  
-                           axis.title = ggplot2::element_text(size = 14), strip.text = ggplot2::element_text(size = 12, face = "bold"), 
-                           panel.grid.major = ggplot2::element_line(color = "grey", linetype = "dotted", linewidth = 0.7),  
-                           panel.grid.minor = ggplot2::element_blank(), panel.border = ggplot2::element_blank(),  
-                           strip.background = ggplot2::element_rect(fill = "lightgrey", color = "grey", linewidth = 0.5),  
-                           plot.title = ggplot2::element_text(size = 16, face = "bold", hjust = 0.5))
+            ggplot2::theme_bw() +
+            ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                           panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                           plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                           axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
+                           axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10))
         return(box_plot)
     }
 }
