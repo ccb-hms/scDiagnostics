@@ -116,8 +116,7 @@ could contribute to increased annotation confidence due to enhanced
 statistical power for identifying cell type-specific gene expression
 patterns, as evident in the scatter plot below.
 
-```{r QC-plot-QC-vs-Annotation-1, message=FALSE, warning=FALSE, eval=FALSE}
-
+```{r QC-plot-QC-vs-Annotation-1, message=FALSE, warning=FALSE, eval=TRUE}
 # load reference dataset
 ref_data <- fetchReference("hpca", "2024-02-26")
 
@@ -168,7 +167,7 @@ macrophages and monocytes. These findings align with the established
 biological characteristic of high mitochondrial activity in macrophages
 and monocytes, adding biological context to our results.
 
-```{r QC-plot-QC-vs-Annotation-2, warning=FALSE, message=FALSE, eval=FALSE}
+```{r QC-plot-QC-vs-Annotation-2, warning=FALSE, message=FALSE, eval=TRUE}
 # load query dataset
 query_data <- HeOrganAtlasData(tissue = c("Liver"), ensembl = FALSE, location = TRUE)
 
@@ -238,7 +237,7 @@ stats. This allows us to assess the appropriateness of the cell type
 assignments and identify any potential discrepancies or patterns in the
 gene expression profiles for the specific cell type.
 
-```{r hist-QC-vs-Annotation, warning=FALSE, message=FALSE, eval=FALSE}
+```{r hist-QC-vs-Annotation, warning=FALSE, message=FALSE, eval=TRUE}
 # Generate histogram
 histQCvsAnnotation(query_data = query_data, qc_col = "subsets_mt_percent", 
                    label_col = "pred.labels", 
