@@ -30,6 +30,7 @@
 #' library(scran)
 #' library(scRNAseq)
 #' library(SingleR)
+#' library(ggplot2)
 #'
 #' # load reference dataset
 #' ref_data <- fetchReference("hpca", "2024-02-26")
@@ -71,7 +72,6 @@
 #' }
 #' 
 #'                    
-#' @import ggplot2
 #' @export
 #'
 plotQCvsAnnotation <- function(query_data, 
@@ -119,7 +119,7 @@ plotQCvsAnnotation <- function(query_data,
                      CellType = cell_labels)
   
   # Create a scatter plot with color-coded points based on cell types or labels
-  plot <- ggplot2::ggplot(data, aes(x = QCStats, y = Scores, color = CellType)) +
+  plot <- ggplot2::ggplot(data, ggplot2::aes(x = QCStats, y = Scores, color = CellType)) +
       ggplot2::geom_point() +
       ggplot2::xlab("QC stats") +
       ggplot2::ylab("Annotation Scores") +

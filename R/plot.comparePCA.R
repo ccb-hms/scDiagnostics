@@ -35,7 +35,7 @@ plot.comparePCA <- function(x, ...){
     # Create the heatmap
     pc_plot <- ggplot2::ggplot(similarity_df, ggplot2::aes(x = Query, y = Ref, fill = value)) +
         ggplot2::geom_tile(color = "white") +
-        ggplot2::geom_text(aes(label = sprintf("%.2f", value)), size = 3) +  # Add text with rounded values
+        ggplot2::geom_text(ggplot2::aes(label = sprintf("%.2f", value)), size = 3) +  # Add text with rounded values
         ggplot2::scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
                                       midpoint = 0, limit = c(min(x, -0.5), max(x, 0.5)), space = "Lab", 
                                       name = "Cosine Similarity") +

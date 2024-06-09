@@ -32,7 +32,7 @@ plot.compareCCA <- function(x, ...){
     comparison_data$CC <- factor(comparison_data$CCA, levels = comparison_data$CCA)
     
     
-    cca_plot <- ggplot2::ggplot(comparison_data, aes(x = CCA, y = Cosine, size = Correlation)) +
+    cca_plot <- ggplot2::ggplot(comparison_data, ggplot2::aes(x = CCA, y = Cosine, size = Correlation)) +
         ggplot2::geom_point() +
         ggplot2::scale_size_continuous(range = c(3, 10)) +
         ggplot2::labs(title = "Cosine Similarities of CCA Coefficients with Correlation",

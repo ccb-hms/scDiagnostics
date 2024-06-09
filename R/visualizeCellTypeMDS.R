@@ -63,7 +63,6 @@
 #' print(plot)
 #'
 #' @importFrom stats cmdscale cor
-#' @importFrom ggplot2 ggplot
 #' @importFrom SummarizedExperiment assay
 #' @export
 #' 

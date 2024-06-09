@@ -157,7 +157,7 @@ plotPairwiseDistancesDensity <- function(query_data,
   )
 
   # Plot density plots with improved aesthetics
-  ggplot2::ggplot(dist_df, aes(x = Distance, color = Comparison, fill = Comparison)) +
+  ggplot2::ggplot(dist_df, ggplot2::aes(x = Distance, color = Comparison, fill = Comparison)) +
       ggplot2::geom_density(alpha = 0.5, linewidth = 1) +  # Updated: linewidth instead of size
       ggplot2::scale_color_manual(values = c("#D9534F", "#BA55D3", "#5DADE2")) +
       ggplot2::scale_fill_manual(values = c("#D9534F", "#BA55D3", "#5DADE2")) +

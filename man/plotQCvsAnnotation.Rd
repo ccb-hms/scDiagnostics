@@ -44,6 +44,7 @@ library(scater)
 library(scran)
 library(scRNAseq)
 library(SingleR)
+library(ggplot2)
 
 # load reference dataset
 ref_data <- fetchReference("hpca", "2024-02-26")

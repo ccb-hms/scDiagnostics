@@ -60,10 +60,9 @@
 #'                      label = "B_and_plasma")
 #' 
 #'
-#' @import ggplot2
-#' @importFrom ggplot2 ggplot
 #' @importFrom gridExtra grid.arrange
 #' @importFrom SummarizedExperiment assay
+#' @importFrom stats sd
 #' @import SingleCellExperiment
 #' @export
 plotMarkerExpression <- function(reference_data, 

@@ -123,7 +123,7 @@ boxplotPCA <- function(query_data, reference_data,
     cell_type_colors <- color_mapping[order_combinations]
     
     # Create the ggplot
-    plot <- ggplot2::ggplot(pca_long, aes(x = cell_type, y = Value, fill = cell_type_dataset)) +
+    plot <- ggplot2::ggplot(pca_long, ggplot2::aes(x = cell_type, y = Value, fill = cell_type_dataset)) +
         ggplot2::geom_boxplot(alpha = 0.7, outlier.shape = NA, width = 0.7) + 
         ggplot2::facet_wrap(~ PC, scales = "free") +
         ggplot2::scale_fill_manual(values = cell_type_colors, name = "Cell Types") + 

@@ -10,8 +10,6 @@
 #'        Default is c(1:5).
 #' @param feature A character string representing the name of the gene or feature to be visualized.
 #'
-#' @import ggplot2
-#' @importFrom ggplot2 ggplot
 #' @importFrom SummarizedExperiment assay
 #' @import SingleCellExperiment
 #'
@@ -71,11 +69,11 @@ plotGeneExpressionDimred <- function(se_object,
       df <- data.frame(Dim1 = reduction[, 1], Dim2 = reduction[, 2], Expression = expression)
       
       # Create the plot object
-      plot_obj <- ggplot(df, aes(x = Dim1, y = Dim2)) +
-          geom_point(aes(color = Expression)) +
-          scale_color_gradient(low = "grey90", high = "blue") +
-          xlab("Dimension 1") +
-          ylab("Dimension 2") +
+      plot_obj <- ggplot2::ggplot(df, ggplot2::aes(x = Dim1, y = Dim2)) +
+          ggplot2::geom_point(ggplot2::aes(color = Expression)) +
+          ggplot2::scale_color_gradient(low = "grey90", high = "blue") +
+          ggplot2::xlab("Dimension 1") +
+          ggplot2::ylab("Dimension 2") +
           ggplot2::theme_minimal() +
           ggplot2::theme(strip.background = ggplot2::element_rect(fill = "grey85", color = "grey70"),   
                          strip.text = ggplot2::element_text(size = 10, face = "bold", color = "black"), 

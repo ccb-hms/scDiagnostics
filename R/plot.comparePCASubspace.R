@@ -33,7 +33,7 @@ plot.comparePCASubspace <- function(x, ...){
     x$PC <- factor(x$PC, levels = x$PC)
     
     # Create plot
-    pc_plot <- ggplot2::ggplot(x, aes(x = PC, y = Cosine, size = VarianceExplained)) +
+    pc_plot <- ggplot2::ggplot(x, ggplot2::aes(x = PC, y = Cosine, size = VarianceExplained)) +
         ggplot2::geom_point() +
         ggplot2::scale_size_continuous(range = c(3, 10)) +
         ggplot2::labs(title = "Principal Angles Cosines with Variance Explained",

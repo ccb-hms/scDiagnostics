@@ -126,7 +126,7 @@ visualizeCellTypePCA <- function(query_data, reference_data,
         ggplot2::geom_point(alpha = 0.5, size = 1) +
         ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Types") + 
         ggplot2::facet_grid(rows = ggplot2::vars(y), cols = ggplot2::vars(x), scales = "free") +
-        xlab("") + ylab("") + 
+        ggplot2::xlab("") + ggplot2::ylab("") + 
         ggplot2::theme_bw() +
         ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
                        panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
