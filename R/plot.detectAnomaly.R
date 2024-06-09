@@ -100,6 +100,7 @@ plot.detectAnomaly <- function(x, cell_type = NULL, pc_subset = NULL, data_type 
         ggplot2::geom_point(size = 1, alpha = 0.5) + 
         ggplot2::scale_color_manual(values = c("black", "red"), labels = c("Normal", "Anomaly")) + 
         ggplot2::facet_grid(rows = ggplot2::vars(y), cols = ggplot2::vars(x), scales = "free") +
+        xlab("") + ylab("") + 
         ggplot2::theme_bw() +
         ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
                        panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),

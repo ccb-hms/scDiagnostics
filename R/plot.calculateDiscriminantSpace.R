@@ -8,7 +8,7 @@
 #' For scatterplot, each point represents a projected data point, and colors are used to differentiate between different cell types 
 #' and datasets. For boxplot, the distribution of the projected data values for each cell type is shown, separated by datasets.
 #'
-#' @param x An object of class \code{projectDiscriminantSpace} containing the projected data on the discriminant space.. 
+#' @param x An object of class \code{calculateDiscriminantSpace} containing the projected data on the discriminant space.. 
 #' Each element of the list represents a combination of cell types and datasets. Each element should contain 'ref_proj' and 'query_proj' data frames.
 #' @param cell_types A character vector specifying the cell types to plot. If not provided, all cell types will be plotted.
 #' @param plot_type Type of plot to generate. Options are "scatterplot" and "boxplot". Default is "scatterplot".
@@ -20,12 +20,12 @@
 #' 
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
-#' @seealso \code{\link{projectDiscriminantSpace}}
+#' @seealso \code{\link{calculateDiscriminantSpace}}
 #' 
-#' @rdname projectDiscriminantSpace
+#' @rdname calculateDiscriminantSpace
 #' 
 # Function to plot the projected reference/query data on the discriminant spaces.
-plot.projectDiscriminantSpace <- function(x, cell_types, plot_type = c("scatterplot", "boxplot"), ...){
+plot.calculateDiscriminantSpace <- function(x, cell_types, plot_type = c("scatterplot", "boxplot"), ...){
     
     # Check if query data is available in the object
     if(!("query_proj" %in% names(x[[names(x)[[1]]]])))

@@ -38,6 +38,6 @@ BiocManager::install("ccb-hms/scDiagnostics",
 
 # Usage
 
-To get an overview of the functionality of the package, refer to the [pkgdown website](https://ccb-hms.github.io/scDiagnostics/index.html) for code examples. The complete documentation of each available function in `scDiagnostics`, which includes implementation details and working examples, is available in the [reference tab](https://ccb-hms.github.io/scDiagnostics/reference/index.html).
+To get an overview of the functionality of the package, refer to the [pkgdown website](https://ccb-hms.github.io/scDiagnostics/index.html) for code examples. The complete documentation of each available function in **`scDiagnostics`**, which includes implementation details and working examples, is available in the [reference tab](https://ccb-hms.github.io/scDiagnostics/reference/index.html).
 
 **`scDiagnostics`** is designed to be user-friendly and integrates seamlessly into any scRNA-seq analysis workflow. By providing robust diagnostic tools, the package helps ensure the accuracy and reliability of cell type annotations, leading to more meaningful and reproducible results.

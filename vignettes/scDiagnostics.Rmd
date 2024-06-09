@@ -988,10 +988,10 @@ types:
     reference data using cosine similarity and Mahalanobis distance.
 
 ```{r project-Discriminant-Space, warning=FALSE, message=FALSE, fig.width=8}
-disc_output <- projectDiscriminantSpace(reference_data = ref_data_subset,
-                                        query_data = query_data_subset, 
-                                        query_cell_type_col = "labels", 
-                                        ref_cell_type_col = "reclustered.broad")
+disc_output <- calculateDiscriminantSpace(reference_data = ref_data_subset,
+                                          query_data = query_data_subset, 
+                                          query_cell_type_col = "labels", 
+                                          ref_cell_type_col = "reclustered.broad")
 
 # Generate scatterplot
 plot(disc_output, plot_type = "scatterplot")
