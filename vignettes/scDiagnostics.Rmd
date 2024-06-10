@@ -565,6 +565,9 @@ type characteristics are well captured and comparable between the
 datasets.
 
 ```{r boxplot-PCA, warning=FALSE, message=FALSE}
+# Run PCA on the reference data
+ref_data_subset <- runPCA(ref_data_subset)
+
 # Boxplots of PCs
 boxplotPCA(query_data = query_data_subset, reference_data = ref_data_subset,
            query_cell_type_col = "labels", 
