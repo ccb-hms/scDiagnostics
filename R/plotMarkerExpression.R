@@ -60,7 +60,6 @@
 #'                      label = "B_and_plasma")
 #' 
 #'
-#' @importFrom gridExtra grid.arrange
 #' @importFrom SummarizedExperiment assay
 #' @importFrom stats sd
 #' @import SingleCellExperiment

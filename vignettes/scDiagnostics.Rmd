@@ -760,11 +760,11 @@ reference datasets.
 
 ## Calculate Nearest Neighbor Diagnostics for Cell Type Classification
 
-The nearestNeighborDiagnostics function is designed to compute the
-probabilities that each sample in a query dataset belongs to either the
-reference or the query dataset for each cell type using nearest neighbor
-analysis. This function is particularly useful for evaluating the
-consistency of cell type classification across datasets.
+The calculateNearestNeighborProbabilities function is designed to
+compute the probabilities that each sample in a query dataset belongs to
+either the reference or the query dataset for each cell type using
+nearest neighbor analysis. This function is particularly useful for
+evaluating the consistency of cell type classification across datasets.
 
 This function projects the query data onto the PCA space of the
 reference data, balances the sample sizes between the reference and
@@ -784,10 +784,10 @@ quality of the query dataset, possibly revealing the presence of
 unexpected or mislabeled cells.
 
 ```{r nearest-Neighbor-Diagnostics, warning=FALSE, message=FALSE, fig.width=8}
-nn_output <- nearestNeighborDiagnostics(query_data = query_data_subset, 
-                                        reference_data = ref_data_subset,
-                                        query_cell_type_col = "labels", 
-                                        ref_cell_type_col = "reclustered.broad")
+nn_output <- calculateNearestNeighborProbabilities(query_data = query_data_subset, 
+                                                   reference_data = ref_data_subset,
+                                                   query_cell_type_col = "labels", 
+                                                   ref_cell_type_col = "reclustered.broad")
 
 # Plot output
 plot(nn_output)

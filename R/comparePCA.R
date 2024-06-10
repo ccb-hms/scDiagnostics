@@ -35,7 +35,6 @@
 #' library(scuttle)
 #' library(scran)
 #' library(SingleR)
-#' library(ComplexHeatmap)
 #' library(scater)
 #'
 #' # Load data
