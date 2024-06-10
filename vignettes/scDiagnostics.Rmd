@@ -351,7 +351,7 @@ the heterogeneity and patterns of gene set or pathway activity within
 the dataset, potentially revealing subpopulations with distinct
 functional characteristics.
 
-```{r plot-Gene-Set-Scores, warning=FALSE, message=FALSE}
+```{r plot-Gene-Set-Scores, warning=FALSE, message=FALSE, eval=FALSE}
 # Compute scores using AUCell
 expression_matrix <- assay(query_data, "logcounts")
 cells_rankings <- AUCell_buildRankings(expression_matrix, plotStats = FALSE)
@@ -373,7 +373,7 @@ colData(query_data)$geneSetScores <- assay(cells_AUC)["geneSet1", ]
 plotGeneSetScores(se_object = query_data, 
                   method = "PCA", 
                   feature = "geneSetScores",
-                  pc_subset = c(1:5))
+                  pc_subset = c(1:6))
 ```
 
 In the provided example, we demonstrate the usage of the
@@ -531,7 +531,7 @@ cell types. Conversely, if the clusters overlap significantly, it could
 imply that the chosen principal components do not fully capture the
 distinctions between these cell types.
 
-```{r visualize-Cell-Type-PCA, warning=FALSE, message=FALSE}
+```{r visualize-Cell-Type-PCA, warning=FALSE, message=FALSE, eval=FALSE}
 # Run PCA on the reference data
 ref_data_subset <- runPCA(ref_data_subset)
 
