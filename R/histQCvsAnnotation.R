@@ -29,7 +29,6 @@
 #' library(scran)
 #' library(scRNAseq)
 #' library(SingleR)
-#' library(gridExtra)
 #'
 #' # Load data
 #' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
@@ -109,24 +108,22 @@ histQCvsAnnotation <- function(query_data,
   cell_type_scores <- colData(query_data)[, score_col]
 
   # Combine QC stats, scores, and labels into a data frame
-  data <- data.frame(QCStats = qc_stats, Scores = cell_type_scores)
+  data <- data.frame(stats = c(qc_stats, cell_type_scores), 
+                     Metric = c(rep("QC Statistics", length(qc_stats)), rep("Annotation Scores", length(cell_type_scores))))
+  data[["Metric"]] <- factor(data[["Metric"]], levels = c("QC Statistics", "Annotation Scores"))
   
-  # Create histogram for QC stats
-  qc_histogram <- ggplot2::ggplot(data, aes(x = QCStats)) +
-      ggplot2::geom_histogram(color = "black", fill = "#2E8B57", bins = 30) +
-      ggplot2::xlab(paste(qc_col)) +
-      ggplot2::ylab("Frequency") +
+  # Create histogram plots
+  hist_plot <- ggplot2::ggplot(data, ggplot2::aes(x = stats, fill = Metric)) +
+      ggplot2::geom_histogram(bins = 30, alpha = 0.5, position = "identity", color = "gray50") +
+      ggplot2::facet_wrap(~ Metric, scales = "free") +
+      ggplot2::labs(x = "", y = "Frequency", fill = "Metric") +
       ggplot2::theme_bw() +
-      ggplot2::theme(panel.grid.minor = ggplot2::element_blank())
-  
-  # Create histogram for scores
-  scores_histogram <- ggplot2::ggplot(data, aes(x = Scores)) +
-      ggplot2::geom_histogram(color = "black", fill = "#4169E1", bins = 30) +
-      ggplot2::xlab("Annotation Scores") +
-      ggplot2::ylab("Frequency") +
-      ggplot2::theme_bw() +
-      ggplot2::theme(panel.grid.minor = ggplot2::element_blank())
+      ggplot2::theme(legend.position = "none",
+                     panel.grid.minor = ggplot2::element_blank(),
+                     panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                     plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                     axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
   
   # Return the list of plots
-  return(gridExtra::grid.arrange(qc_histogram, scores_histogram, ncol = 2))
+  return(hist_plot)
 }

@@ -8,7 +8,11 @@
 #' This function generates density plots to compare the distribution of a specific marker 
 #' gene between reference and query datasets. The aim is to inspect the alignment of gene expression 
 #' levels as a surrogate for dataset similarity. Similar distributions suggest a good alignment, 
-#' while differences may indicate discrepancies or incompatibilities between the datasets.
+#' while differences may indicate discrepancies or incompatibilities between the datasets. 
+#' To make the gene expression scales comparable between the datasets, the gene expression values 
+#' are transformed using z-rank normalization. This transformation ranks the expression values 
+#' and then scales the ranks to have a mean of 0 and a standard deviation of 1, which helps 
+#' in standardizing the distributions for comparison.
 #' 
 #' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
@@ -56,10 +60,8 @@
 #'                      label = "B_and_plasma")
 #' 
 #'
-#' @import ggplot2
-#' @importFrom ggplot2 ggplot
-#' @importFrom gridExtra grid.arrange
 #' @importFrom SummarizedExperiment assay
+#' @importFrom stats sd
 #' @import SingleCellExperiment
 #' @export
 plotMarkerExpression <- function(reference_data, 
@@ -97,60 +99,50 @@ plotMarkerExpression <- function(reference_data,
   }
   
   # Get expression of the specified gene for reference and query datasets
-  reference_gene_expression <- assay(reference_data, "logcounts")[gene_name, ]
+  ref_gene_expression <- assay(reference_data, "logcounts")[gene_name, ]
   query_gene_expression <- assay(query_data, "logcounts")[gene_name, ]
+  ref_gene_expression_specific <- assay(reference_data, "logcounts")[gene_name, which(reference_data[[ref_cell_type_col]] %in% label)]
+  query_gene_expression_specific <- assay(query_data, "logcounts")[gene_name, which(query_data[[query_cell_type_col]] %in% label)]
+  
+  # Z-rank transformation
+  .rankTransformation <- function(x) {
+      ranks <- rank(x, ties.method = "average")
+      z_ranks <- (ranks - mean(ranks)) / sd(ranks)
+      return(z_ranks)
+  }
+  ref_gene_expression_zr <- .rankTransformation(ref_gene_expression)
+  query_gene_expression_zr <- .rankTransformation(query_gene_expression)
+  ref_gene_expression_specific_zr <- .rankTransformation(ref_gene_expression_specific)
+  query_gene_expression_specific_zr <- .rankTransformation(query_gene_expression_specific)
   
   # Create a combined vector of gene expression values
-  combined_gene_expression <- c(reference_gene_expression, query_gene_expression)
+  combined_gene_expression <- c(ref_gene_expression_zr, query_gene_expression_zr,
+                                ref_gene_expression_specific_zr, query_gene_expression_specific_zr)
   
   # Create a grouping vector for dataset labels
-  dataset_labels <- rep(c("Reference", "Query"), times = c(length(reference_gene_expression), 
-                                                           length(query_gene_expression)))
+  dataset_labels <- rep(c("Reference", "Query", "Reference", "Query"), 
+                        times = c(length(ref_gene_expression), length(query_gene_expression),
+                                  length(ref_gene_expression_specific), length(query_gene_expression_specific)))
   
   # Combine the gene expression values and dataset labels
-  data <- data.frame(
-    GeneExpression = combined_gene_expression,
-    Dataset = dataset_labels
-  )
+  data <- data.frame(GeneExpression = combined_gene_expression,
+                     Dataset = dataset_labels,
+                     plot_type = rep(c("Overall Distribution", "Cell Type-Specific Distribution"), 
+                                     times = c(length(ref_gene_expression) + length(query_gene_expression),
+                                               length(ref_gene_expression_specific) + length(query_gene_expression_specific))))
   
   # Create a stacked density plot using ggplot2 for overall dataset
-  overall_plot <- ggplot(data, aes(x = GeneExpression, fill = Dataset)) +
-    geom_density(alpha = 0.5) +
-    labs(title = paste("Overall Distribution"), 
-         x = paste("Log gene Expression", gene_name), 
+  plot_obj <- ggplot2::ggplot(data, ggplot2::aes(x = GeneExpression, fill = Dataset)) +
+      ggplot2::geom_density(alpha = 0.5) +
+      ggplot2::facet_wrap(~ plot_type, scales = "free") + 
+      ggplot2::labs(title = paste("Overall Distribution"), 
+         x = paste("Log Gene Expression", gene_name), 
          y = "Density") +
-    theme_minimal()
+      ggplot2::theme_bw() +
+      ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                     panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                     plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                     axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
   
-  # Create a subset of data for cell type-specific distribution
-  index1 <- which(reference_data[[ref_cell_type_col]] %in%  label)
-  index2 <- which(query_data[[query_cell_type_col]] %in%  label)
-  
-  reference_gene_expression_cell_type <- assay(reference_data, "logcounts")[gene_name, index1]
-  query_gene_expression_cell_type <- assay(query_data, "logcounts")[gene_name, index2]
-  
-  # Combine the gene expression values and dataset labels for cell type-specific
-  combined_gene_expression <- c(reference_gene_expression_cell_type, 
-                                query_gene_expression_cell_type)
-  
-  # Create a grouping vector for dataset labels
-  dataset_labels <- rep(c("Reference", "Query"), 
-                        times = c(length(reference_gene_expression_cell_type), 
-                                  length(query_gene_expression_cell_type)))
-  
-  # Combine the gene expression values and dataset labels
-  cell_type_specific_data <- data.frame(
-    GeneExpression = combined_gene_expression,
-    Dataset = dataset_labels
-  )
-  
-  # Create a stacked density plot using ggplot2 for cell type-specific dataset
-  cell_type_specific_plot <- ggplot(cell_type_specific_data, 
-                                    aes(x = GeneExpression, fill = Dataset)) +
-    geom_density(alpha = 0.5) +
-    labs(title = paste("Cell Type-Specific Distribution"), 
-         x = paste("Log gene Expression", gene_name), 
-         y = "Density") +
-    theme_minimal()
-  
-  return(gridExtra::grid.arrange(overall_plot, cell_type_specific_plot, ncol = 2))
+  return(plot_obj)
 }

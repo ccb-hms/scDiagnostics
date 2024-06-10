@@ -88,15 +88,13 @@ assignments.
 
 ```{r libraries, message = FALSE}
 library(scDiagnostics)
-library(celldex)
-library(corrplot)
+library(scRNAseq)
 library(scater)
 library(scran)
-library(scRNAseq)
-library(AUCell)
-library(RColorBrewer)
+library(scuttle)
 library(SingleR)
-library(ComplexHeatmap)
+library(AUCell)
+library(celldex)
 ```
 
 ## Scatter Plot: QC stats vs. Annotation Scores
@@ -118,16 +116,14 @@ could contribute to increased annotation confidence due to enhanced
 statistical power for identifying cell type-specific gene expression
 patterns, as evident in the scatter plot below.
 
-```{r Scatter-Plot-LibrarySize-Vs-Annotation-Scores, message=FALSE, warning=FALSE, eval=FALSE}
-
+```{r QC-plot-QC-vs-Annotation-1, message=FALSE, warning=FALSE, eval=FALSE}
 # load reference dataset
-ref_data <- celldex::fetchReference("hpca", "2024-02-26")
+ref_data <- fetchReference("hpca", "2024-02-26")
 
 # Load query dataset (Bunis haematopoietic stem and progenitor cell
 # data) from Bunis DG et al. (2021). Single-Cell Mapping of
 # Progressive Fetal-to-Adult Transition in Human Naive T Cells Cell
 # Rep. 34(1): 108573
-
 query_data <- BunisHSPCData()
 rownames(query_data) <- rowData(query_data)$Symbol
 
@@ -150,13 +146,11 @@ scores <- apply(pred$scores, 1, max)
 colData(query_data)$cell_scores <- scores
 
 # Create a scatter plot between library size and annotation scores
-p1 <- plotQCvsAnnotation(
-    query_data = query_data,
-    qc_col = "total",
-    label_col = "pred.labels",
-    score_col = "cell_scores",
-    label = NULL
-)
+p1 <- plotQCvsAnnotation(query_data = query_data,
+                         qc_col = "total",
+                         label_col = "pred.labels",
+                         score_col = "cell_scores",
+                         label = NULL)
 p1 + xlab("Library Size")
 ```
 
@@ -173,13 +167,9 @@ macrophages and monocytes. These findings align with the established
 biological characteristic of high mitochondrial activity in macrophages
 and monocytes, adding biological context to our results.
 
-```{r QC-Annotation-Scatter-Mito, warning=FALSE, message=FALSE, eval=FALSE}
+```{r QC-plot-QC-vs-Annotation-2, warning=FALSE, message=FALSE, eval=FALSE}
 # load query dataset
-query_data <- HeOrganAtlasData(
-    tissue = c("Liver"),
-    ensembl = FALSE,
-    location = TRUE
-)
+query_data <- HeOrganAtlasData(tissue = c("Liver"), ensembl = FALSE, location = TRUE)
 
 # Add QC metrics to query data
 
@@ -208,22 +198,20 @@ colData(query_data)$cell_scores <- scores
 query_data$label_category <-
     ifelse(query_data$pred.labels %in% c("Macrophage", "Monocyte"),
            query_data$pred.labels,
-           "Other cells")
+           "Other Cells")
 
 
 # Define custom colors for cell type labels
-cols <- c("Other cells" = "grey", "Macrophage" = "green", "Monocyte" = "red")
+cols <- c("Other Cells" = "grey", "Macrophage" = "green", "Monocyte" = "red")
 
 # Generate scatter plot for all cell types
-p1 <- plotQCvsAnnotation(
-    query_data = query_data,
-    qc_col = "subsets_mt_percent",
-    label_col = "label_category",
-    score_col = "cell_scores",
-    label = NULL) + 
-    scale_color_manual(values = cols) +
-    xlab("subsets_mt_percent")
-p1
+p2 <- plotQCvsAnnotation(query_data = query_data,
+                         qc_col = "subsets_mt_percent",
+                         label_col = "label_category",
+                         score_col = "cell_scores",
+                         label = NULL)
+p2 + scale_color_manual(values = cols) +
+    xlab("Subsets Mitochondrial Percentage (%)")
 ```
 
 ## Examining Distribution of QC stats and Annotation Scores
@@ -249,7 +237,7 @@ stats. This allows us to assess the appropriateness of the cell type
 assignments and identify any potential discrepancies or patterns in the
 gene expression profiles for the specific cell type.
 
-```{r Mito-Genes-Vs-Annotation, warning=FALSE, message=FALSE, eval=FALSE}
+```{r hist-QC-vs-Annotation, warning=FALSE, message=FALSE, eval=FALSE}
 # Generate histogram
 histQCvsAnnotation(query_data = query_data, qc_col = "subsets_mt_percent", 
                    label_col = "pred.labels", 
@@ -276,8 +264,7 @@ cell types of interest. This enables investigation of whether alignment
 between the query and reference datasets is consistent not only at a
 global level but also within specific cell types.
 
-```{r Gene-Expression-Histogram, warning=FALSE, message=FALSE}
-
+```{r plot-Marker-Expression, warning=FALSE, message=FALSE}
 # Load data
 sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
@@ -291,14 +278,9 @@ query_data <- sce[, -indices]
 ref_data <- logNormCounts(ref_data)
 query_data <- logNormCounts(query_data)
 
-# Run PCA
-ref_data <- runPCA(ref_data)
-query_data <- runPCA(query_data)
-
 # Get cell type scores using SingleR
 pred <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-pred <- as.data.frame(pred)
-   
+
 # Assign labels to query data
 colData(query_data)$labels <- pred$labels
    
@@ -309,39 +291,6 @@ plotMarkerExpression(reference_data = ref_data,
                      query_cell_type_col = "labels", 
                      gene_name = "MS4A1", 
                      label = "B_and_plasma")
-```
-
-In the provided example, we examined the distribution of expression
-values for the gene MS4A1, a marker for naive B cells, in both the query
-and reference datasets. Additionally, we also looked at the distribution
-of MS4A1 expression in the B_and_plasma cell type. We observed
-overlapping distributions in both cases, suggesting alignment between
-the reference and query datasets.
-
-## Evaluating Alignment Between Reference and Query Datasets in Terms of Highly Variable Genes
-
-We are assessing the similarity or alignment between two datasets, the
-reference dataset, and the query dataset, in terms of highly variable
-genes (HVGs). We calculate the overlap coefficient between the sets of
-highly variable genes in the reference and query datasets. The overlap
-coefficient quantifies the degree of overlap or similarity between these
-two sets of genes. A value closer to 1 indicates a higher degree of
-overlap, while a value closer to 0 suggests less overlap. The computed
-overlap coefficient is printed, providing a numerical measure of how
-well the highly variable genes in the reference and query datasets
-align. In this case, the overlap coefficient is 0.62, indicating a
-moderate level of overlap.
-
-```{r HVG overlap, warning=FALSE, message=FALSE}
-
-# Selecting highly variable genes
-ref_var <- getTopHVGs(ref_data, n=2000)
-query_var <- getTopHVGs(query_data, n=2000)
-
-# Compute the overlap coefficient
-overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var, 
-                                           query_genes = query_var)
-print(overlap_coefficient)
 ```
 
 In the provided example, we examined the distribution of expression
@@ -368,7 +317,10 @@ second principal component (Dimension 2). Each cell is represented as a
 point on the plot, and its color reflects the expression level of the
 gene "VPREB3," ranging from low (lighter color) to high (darker color).
 
-```{r Gene-Expression-Scatter, warning=FALSE, message=FALSE}
+```{r plot-Gene-Expression-Dimred, warning=FALSE, message=FALSE}
+# Run PCA on the query data
+query_data <- runPCA(query_data)
+
 # Generate dimension reduction plot color code by gene expression
 plotGeneExpressionDimred(se_object = query_data, 
                          method = "PCA", 
@@ -399,8 +351,7 @@ the heterogeneity and patterns of gene set or pathway activity within
 the dataset, potentially revealing subpopulations with distinct
 functional characteristics.
 
-```{r Pathway-Scores-on-Dimensional-Reduction-Scatter, warning=FALSE, message=FALSE}
-
+```{r plot-Gene-Set-Scores, warning=FALSE, message=FALSE, eval=FALSE}
 # Compute scores using AUCell
 expression_matrix <- assay(query_data, "logcounts")
 cells_rankings <- AUCell_buildRankings(expression_matrix, plotStats = FALSE)
@@ -422,7 +373,7 @@ colData(query_data)$geneSetScores <- assay(cells_AUC)["geneSet1", ]
 plotGeneSetScores(se_object = query_data, 
                   method = "PCA", 
                   feature = "geneSetScores",
-                  pc_subset = c(1:5))
+                  pc_subset = c(1:6))
 ```
 
 In the provided example, we demonstrate the usage of the
@@ -437,6 +388,87 @@ By visualizing gene set or pathway scores on a dimensional reduction
 plot, you can gain a comprehensive understanding of the functional
 landscape within your single-cell gene expression dataset and explore
 the relationships between gene set activities and cellular phenotypes.
+
+## Evaluating Alignment Between Reference and Query Datasets in Terms of Highly Variable Genes
+
+We are assessing the similarity or alignment between two datasets, the
+reference dataset, and the query dataset, in terms of highly variable
+genes (HVGs). We calculate the overlap coefficient between the sets of
+highly variable genes in the reference and query datasets. The overlap
+coefficient quantifies the degree of overlap or similarity between these
+two sets of genes. A value closer to 1 indicates a higher degree of
+overlap, while a value closer to 0 suggests less overlap. The computed
+overlap coefficient is printed, providing a numerical measure of how
+well the highly variable genes in the reference and query datasets
+align. In this case, the overlap coefficient is 0.63, indicating a
+moderate level of overlap.
+
+```{r calculate-HVG-Overlap, warning=FALSE, message=FALSE}
+# Get top HVG genes on each dataset
+ref_var <- getTopHVGs(ref_data, n = 2000) 
+query_var <- getTopHVGs(query_data, n = 2000)  
+
+# Compute the overlap coefficient 
+overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var,
+                                           query_genes = query_var) 
+overlap_coefficient
+```
+
+## Compare Gene Importance Across Datasets Using Random Forest
+
+The calculateVarImpOverlap function in this package is designed to
+identify and compare the most important genes for differentiating cell
+types between a query dataset and a reference dataset using the Random
+Forest algorithm. This comparison helps in understanding the overlap and
+consistency of key gene markers across different datasets.
+
+This function applies the Random Forest algorithm to compute the
+importance of genes in differentiating between cell types within both a
+reference dataset and a query dataset. It then compares the top genes
+identified in both datasets to assess the overlap in their importance
+scores. This can be particularly useful for researchers aiming to
+validate their findings across different single-cell RNA-seq datasets,
+ensuring the robustness of identified markers and improving the
+reliability of subsequent analyses and annotations.
+
+```{r calculate-Var-Imp-Overlap, warning=FALSE, message=FALSE}
+# Intersect the gene symbols to obtain common genes
+common_genes <- intersect(ref_var, query_var)
+
+# Select desired cell types
+selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
+ref_data_subset <- ref_data[common_genes, ref_data$reclustered.broad %in% selected_cell_types]
+query_data_subset <- query_data[common_genes, query_data$labels %in% selected_cell_types]
+
+# Compute important variables for all pairwise cell comparisons
+var_imp_overlap <- calculateVarImpOverlap(ref_data_subset, 
+                                          query_data_subset,
+                                          ref_cell_type_col = "reclustered.broad", 
+                                          query_cell_type_col = "labels",
+                                          n_top = 50)
+
+# Comparison table
+var_imp_overlap$var_imp_comparison
+```
+
+The resulting overlap in the top genes' importance scores for
+differentiating CD4+ T cells from CD8+ T cells between the reference and
+query datasets is 0.72. This implies that only 72% of the top 50 genes
+identified as important in distinguishing these two cell types in the
+reference dataset are also identified as important in the query dataset.
+
+This moderate overlap indicates some level of consistency in the gene
+markers identified across the datasets, but it also highlights potential
+differences in the biological or technical conditions between the
+datasets. Factors such as batch effects, differences in sample
+preparation, or inherent biological variability could contribute to
+these differences. Consequently, while some key markers for CD4+ and
+CD8+ T cells are reliably detected in both datasets, additional
+validation and possibly further investigation into the causes of
+variability are warranted to ensure robust and accurate cell type
+differentiation. This finding underscores the importance of
+cross-dataset comparisons to validate and refine marker genes in
+single-cell transcriptomic studies.
 
 ## Visualizing Reference and Query Cell Types using Multidimensional Scaling (MDS)
 
@@ -455,20 +487,7 @@ The rationale behind this function is to visually assess the alignment
 and relationships between cell types in the query and reference
 datasets.
 
-```{r CMD-Scatter-Plot, warning=FALSE, message=FALSE}
-
-# Intersect the gene symbols to obtain common genes
-common_genes <- intersect(ref_var, query_var)
-
-# Select desired cell types
-selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
-ref_data_subset <- ref_data[common_genes, ref_data$reclustered.broad %in% selected_cell_types]
-query_data_subset <- query_data[common_genes, query_data$labels %in% selected_cell_types]
-
-# Extract cell types for visualization
-ref_labels <- ref_data_subset$reclustered.broad
-query_labels <- query_data_subset$labels
-
+```{r visualize-Cell-Type-MDS, warning=FALSE, message=FALSE}
 # Generate the MDS scatter plot with cell type coloring
 visualizeCellTypeMDS(query_data = query_data_subset, 
                      reference_data = ref_data_subset, 
@@ -486,106 +505,98 @@ user's research interests and goals. It allows for flexibility in
 focusing on specific genes and examining particular cell types of
 interest in the visualization.
 
-## Cell Type-specific Pairwise Correlation Analysis and Visualization
+## Visualizing Principal Components for Different Cell Types
 
-This analysis aims to explore the correlation patterns between different
-cell types in a single-cell gene expression dataset. The goal is to
-compare the gene expression profiles of cells from a reference dataset
-and a query dataset to understand the relationships and similarities
-between various cell types.
+The visualizeCellTypePCA function is designed to provide a clear visual
+representation of the principal components for different cell types in
+both query and reference datasets. This visualization helps in comparing
+the cell type distributions and identifying potential differences or
+similarities between datasets.
 
-To perform the analysis, we start by computing the pairwise correlations
-between the query and reference cells for selected cell types ("CD4",
-"CD8", "B_and_plasma"). The Spearman correlation method is used, user
-can also use Pearsons correlation coeefficient.
+This function projects the query dataset onto the principal component
+space of the reference dataset. It then visualizes the specified
+principal components for the specified cell types using ggplot2 for
+creating plots. By default, the function considers the first ten
+principal components and allows the user to select specific components
+for detailed visualization. The function will project the query dataset
+onto the PCA space of the reference dataset and generate scatter plots
+for pairs of principal components (e.g., PC1 vs. PC2, PC1 vs. PC3,
+etc.).
 
-This will return average correlation matrix which can be visulaized by
-user's method of choice. Here, the results are visualized as a
-correlation plot using the corrplot package.
+When interpreting these plots, one might observe distinct clustering of
+cell types, indicating clear differentiation in the principal component
+space. For instance, if CD4+ and CD8+ T cells form separate clusters, it
+suggests that the PCA effectively captures the differences between these
+cell types. Conversely, if the clusters overlap significantly, it could
+imply that the chosen principal components do not fully capture the
+distinctions between these cell types.
 
-```{r Cell-Type-Correlation-Analysis-Visualization, warning=FALSE, message=FALSE}
-selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
+```{r visualize-Cell-Type-PCA, warning=FALSE, message=FALSE, eval=FALSE}
+# Run PCA on the reference data
 ref_data_subset <- runPCA(ref_data_subset)
-cor_matrix_avg <- calculateAveragePairwiseCorrelation(query_data = query_data_subset, 
-                                                      reference_data = ref_data_subset, 
-                                                      n_components = 5,
-                                                      query_cell_type_col = "labels", 
-                                                      ref_cell_type_col = "reclustered.broad", 
-                                                      cell_types = selected_cell_types, 
-                                                      correlation_method = "spearman")
 
-# Visualize the output
-plot(cor_matrix_avg)
+# Plot the PCs data
+visualizeCellTypePCA(query_data = query_data_subset, reference_data = ref_data_subset,
+                     query_cell_type_col = "reclustered.broad", 
+                     ref_cell_type_col = "reclustered.broad", 
+                     pc_subset = c(1:6))
 ```
 
-In this case, users have the flexibility to extract the gene expression
-profiles of specific cell types from the reference and query datasets
-and provide these profiles as input to the function. Additionally, they
-can select their own set of genes that they consider relevant for
-computing the pairwise correlations. For demonstartion we have used
-common highly variable genes from reference and query dataset.
+The B and plasma cell types from the reference and query datasets do not
+overlap well in the PCA space. This lack of overlap could indicate
+discrepancies between the datasets, such as poor classification by
+SingleR, differences in data quality, technical artifacts, or biological
+variations that were not accounted for.
 
-By providing their own gene expression profiles and choosing specific
-genes, users can focus the analysis on the cell types and genes of
-interest to their research question.
+## Boxplot of Principal Components for Different Cell Types
 
-## Pairwise Distance Analysis and Density Visualization
+The boxplotPCA function provides a detailed visualization of principal
+component analysis (PCA) results for different cell types across two
+datasets: query and reference. This function generates boxplots of
+principal components (PCs), allowing for comparative analysis of the
+distributions of the PCs across various cell types and datasets.
 
-This function serves to conduct a analysis of pairwise distances or
-correlations between cells of specific cell types within a single-cell
-gene expression dataset. By calculating these distances or correlations,
-users can gain insights into the relationships and differences in gene
-expression profiles between different cell types. The function
-facilitates this analysis by generating density plots, allowing users to
-visualize the distribution of distances or correlations for various
-pairwise comparisons.
+These boxplots allow us to observe the distribution of each principal
+component for each cell type across the reference and query datasets. If
+the boxplots for a given cell type overlap significantly between the
+reference and query datasets, it suggests that the PCA results are
+consistent across these datasets. This overlap indicates that the cell
+type characteristics are well captured and comparable between the
+datasets.
 
-The analysis offers the flexibility to select a particular cell type for
-examination, and users can choose between different distance metrics,
-such as "euclidean" or "manhattan," to calculate pairwise distances.
+```{r boxplot-PCA, warning=FALSE, message=FALSE}
+# Run PCA on the reference data
+ref_data_subset <- runPCA(ref_data_subset)
 
-To illustrate, the function is applied to the cell type CD8 using the
-euclidean distance metric in the example below.
-
-```{r Pairwise-Distance-Analysis-Density-Visualization, fig.width=8, message=FALSE, warning=FALSE}
-calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, 
-                                         reference_data = ref_data_subset, 
-                                         n_components = 10,
-                                         query_cell_type_col = "labels", 
-                                         ref_cell_type_col = "reclustered.broad", 
-                                         cell_type_query = "CD8", 
-                                         cell_type_reference = "CD8", 
-                                         distance_metric = "euclidean")
+# Boxplots of PCs
+boxplotPCA(query_data = query_data_subset, reference_data = ref_data_subset,
+           query_cell_type_col = "labels", 
+           ref_cell_type_col = "reclustered.broad", 
+           pc_subset = c(1:6))
 ```
 
-Alternatively, users can opt for the "correlation" distance metric,
-which measures the similarity in gene expression profiles between cells.
+The boxplots for the different cell types from the reference and query
+datasets do not overlap well. This lack of overlap could indicate
+discrepancies between the datasets, such as differences poor
+classification by SingleR, differences in data quality, technical
+artifacts, or biological variations that were not accounted for. This
+outcome might prompt further investigation into the preprocessing steps
+or the inherent variability within these cell types, potentially leading
+to refinements in data normalization or correction for batch effects to
+achieve better alignment.
 
-To illustrate, the function is applied to the cell type CD8 using the
-correlation distance metric in the example below. By selecting either
-the "pearson" or "spearman" correlation method, users can emphasize
-either linear or rank-based associations, respectively.
+## Hotelling's Two-Sample T^2^ Test on Bulk PCA Scores
 
-```{r Pairwise-Distance-Correlation-Based-Density-Visualization, warning=FALSE, message=FALSE, fig.width=8}
-calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, 
-                                         reference_data = ref_data_subset, 
-                                         n_components = 10,
-                                         query_cell_type_col = "labels", 
-                                         ref_cell_type_col = "reclustered.broad", 
-                                         cell_type_query = "CD8", 
-                                         cell_type_reference = "CD8", 
-                                         distance_metric = "correlation",
-                                         correlation_method = "spearman")
+```{r calculate-Hotelling-P-Value, warning=FALSE, message=FALSE}
+p_values <- calculateHotellingPValue(query_data = query_data_subset, 
+                                     reference_data = ref_data_subset, 
+                                     query_cell_type_col = "labels", 
+                                     ref_cell_type_col = "reclustered.broad",
+                                     pc_subset = c(1:6)) 
+round(p_values, 5)
 ```
 
-By utilizing this function, users can explore the pairwise distances
-between query and reference cells of a specific cell type and gain
-insights into the distribution of distances through density plots. This
-analysis aids in understanding the similarities and differences in gene
-expression profiles for the selected cell type within the query and
-reference datasets.
-
-## PC regression analysis
+## PC Regression Analysis
 
 Performing PC regression analysis on a SingleCellExperiment object
 enables users to examine the relationship between a principal component
@@ -610,8 +621,7 @@ The function prints two diagnostic plots by default:
         anywhere in PCs 1-5 and your independent variable is "batch",
         you have batch effects!
 
-```{r Regression, warning=FALSE, message=FALSE}
-
+```{r regress-PC, warning=FALSE, message=FALSE}
 # Specify the dependent variables (principal components) and
 #  independent variable (e.g., "labels")
 dep.vars <- paste0("PC", 1:12)
@@ -641,7 +651,7 @@ result$total.variance.explained
 This analysis helps uncover whether there is a systematic variation in
 PC values across different cell types. In the example above, we can see
 that the four cell types are spread out across both PC1 and PC2. Digging
-into the genes with high loadins on these PCs can help explain the
+into the genes with high loadings on these PCs can help explain the
 biological or technical factors driving cellular heterogeneity. It can
 help identify PC dimensions that capture variation specific to certain
 cell types or distinguish different cellular states.
@@ -650,10 +660,10 @@ Let's look at the genes driving PC1 by ordering the rotation matrix by
 the absolute gene loadings for PC1:
 
 ```{r}
-pc_df <-  attr(reducedDims(query_data)$PCA, "rotation")[,1:5] |> 
+pc_df <-  attr(reducedDims(query_data)$PCA, "rotation")[, 1:5] |> 
   as.data.frame()
 
-pc_df[order(abs(pc_df$PC1)),] |> 
+pc_df[order(abs(pc_df$PC1)), "PC1", drop = FALSE] |> 
   tail()
 ```
 
@@ -661,66 +671,444 @@ PC1 is mostly driven by NKG7 - Natural Killer Cell Granule Protein 7.
 This gene is important in CD8+ T cells, so that makes sense that it's
 distinguishing the cell types shown.
 
-> Exercise: What genes are driving PC2? Do they make sense?
+## Cell Type-specific Pairwise Correlation Analysis and Visualization
 
-```{r echo = FALSE, eval = FALSE}
-pc_df[order(abs(pc_df$PC2)),] |> 
-  tail()
+This analysis aims to explore the correlation patterns between different
+cell types in a single-cell gene expression dataset. The goal is to
+compare the gene expression profiles of cells from a reference dataset
+and a query dataset to understand the relationships and similarities
+between various cell types.
 
-# It's IL32 mostly.
+To perform the analysis, we start by computing the pairwise correlations
+between the query and reference cells for selected cell types ("CD4",
+"CD8", "B_and_plasma"). The Spearman correlation method is used, user
+can also use Pearsons correlation coefficient.
+
+```{r calculate-Average-Pairwise-Correlation, warning=FALSE, message=FALSE}
+cor_matrix_avg <- calculateAveragePairwiseCorrelation(query_data = query_data_subset,
+                                                      reference_data = ref_data_subset, 
+                                                      query_cell_type_col = "labels", 
+                                                      ref_cell_type_col = "reclustered.broad", 
+                                                      cell_types = selected_cell_types, 
+                                                      correlation_method = "spearman")
+
+# Visualize the output
+plot(cor_matrix_avg)
 ```
 
-> Exercise: Try to use the command below to examine the spike on PC5.
-> What's going on there?
+In this case, users have the flexibility to extract the gene expression
+profiles of specific cell types from the reference and query datasets
+and provide these profiles as input to the function. Additionally, they
+can select their own set of genes that they consider relevant for
+computing the pairwise correlations. For demonstration we have used
+common highly variable genes from reference and query dataset.
 
-`plotPCA(query_data, ncomponents = c(1,5), color_by = "labels")`
+By providing their own gene expression profiles and choosing specific
+genes, users can focus the analysis on the cell types and genes of
+interest to their research question.
 
-```{r eval=FALSE, echo=FALSE}
-plotPCA(query_data, ncomponents = c(1,5), color_by = "labels")
-# The myeloid cells are shifted off from the other types.
+## Pairwise Distance Analysis and Density Visualization
 
-pc_df[order(abs(pc_df$PC5)),] |> 
-  tail()
-# It's mostly driven by low GNLY expression in the myeloid cells.
+This function serves to conduct a analysis of pairwise distances or
+correlations between cells of specific cell types within a single-cell
+gene expression dataset. By calculating these distances or correlations,
+users can gain insights into the relationships and differences in gene
+expression profiles between different cell types. The function
+facilitates this analysis by generating density plots, allowing users to
+visualize the distribution of distances or correlations for various
+pairwise comparisons.
+
+The analysis offers the flexibility to select a particular cell type for
+examination, and users can choose between different distance metrics,
+such as "euclidean" or "manhattan," to calculate pairwise distances.
+
+To illustrate, the function is applied to the cell type CD8 using the
+euclidean distance metric in the example below.
+
+```{r plotPairwise-Distances-Density, fig.width=8, message=FALSE, warning=FALSE}
+plotPairwiseDistancesDensity(query_data = query_data_subset, 
+                             reference_data = ref_data_subset, 
+                             query_cell_type_col = "labels", 
+                             ref_cell_type_col = "reclustered.broad", 
+                             cell_type_query = "CD4", 
+                             cell_type_reference = "CD4", 
+                             distance_metric = "euclidean")
 ```
 
-## Annotation entropy
+Alternatively, users can opt for the "correlation" distance metric,
+which measures the similarity in gene expression profiles between cells.
 
-In order to assess the confidence of cell type predictions, we can use
-the function `calculateCategorizationEntropy()`. This function
-calculates the information entropy of assignment probabilities across a
-set of cell types for each cell. If a set of class probabilities are
-confident, the entropies will be low.
+To illustrate, the function is applied to the cell type CD4 using the
+correlation distance metric in the example below. By selecting either
+the "pearson" or "spearman" correlation method, users can emphasize
+either linear or rank-based associations, respectively.
 
-This can be used to compare two sets of cell type assignments (e.g. from
-different type assignment methods) to compare their relative confidence.
-**Please note that this has nothing to do with their accuracy!**
-Computational methods can sometimes be confidently incorrect.
-
-The cell type probabilities should be passed as a matrix with cell types
-as rows and cells as columns. If the columns of the matrix are not valid
-probability distributions (i.e. don't sum to 1 as in the below example),
-the function will perform a column-wise softmax to convert them to a
-probability scale. This may or may not work well depending on the
-distribution of the inputs, so if at all possible try to pass
-probabilities instead of arbitrary scores.
-
-In this example, we create 500 random cells with random normal cell type
-"scores" across 4 cell types. For demonstration we make the score of the
-first class much higher in the first 250 cells. After the softmax, this
-will equate to a very high probability of cell type 1. The remaining 250
-will have assignments that are roughly even across the four cell types
-(i.e. high entropy).
-
-```{r}
-X <- rnorm(500 * 4) |> matrix(nrow = 4)
-X[1, 1:250] <- X[1, 1:250] + 5 
-
-entropy_scores <- calculateCategorizationEntropy(X)
+```{r plot-Pairwise-Distances-Density, warning=FALSE, message=FALSE, fig.width=8}
+plotPairwiseDistancesDensity(query_data = query_data_subset, 
+                             reference_data = ref_data_subset, 
+                             query_cell_type_col = "labels", 
+                             ref_cell_type_col = "reclustered.broad", 
+                             cell_type_query = "CD4", 
+                             cell_type_reference = "CD4", 
+                             distance_metric = "correlation",
+                             correlation_method = "spearman")
 ```
 
-From the plot we can see that half of the cells (the first half we
-shifted to class 1) have low entropy, and half have high entropy.
+By utilizing this function, users can explore the pairwise distances
+between query and reference cells of a specific cell type and gain
+insights into the distribution of distances through density plots. This
+analysis aids in understanding the similarities and differences in gene
+expression profiles for the selected cell type within the query and
+reference datasets.
+
+## Calculate Nearest Neighbor Diagnostics for Cell Type Classification
+
+The calculateNearestNeighborProbabilities function is designed to
+compute the probabilities that each sample in a query dataset belongs to
+either the reference or the query dataset for each cell type using
+nearest neighbor analysis. This function is particularly useful for
+evaluating the consistency of cell type classification across datasets.
+
+This function projects the query data onto the PCA space of the
+reference data, balances the sample sizes between the reference and
+query datasets through data augmentation if necessary, and calculates
+the probability of each cell in the query dataset belonging to the query
+dataset for each cell type using a nearest neighbor search.
+
+Ideally, the probability distributions for each cell type would center
+around 0.5, indicating an equal likelihood of belonging to either the
+reference or query dataset. This balanced probability suggests that the
+query and reference datasets are well-matched for that cell type.
+Deviations from this ideal, such as bimodal distributions, may indicate
+that the query dataset contains additional, unaccounted-for cell types
+or subpopulations within that particular cell type. Such patterns can
+highlight the need for further investigation into the composition and
+quality of the query dataset, possibly revealing the presence of
+unexpected or mislabeled cells.
+
+```{r nearest-Neighbor-Diagnostics, warning=FALSE, message=FALSE, fig.width=8}
+nn_output <- calculateNearestNeighborProbabilities(query_data = query_data_subset, 
+                                                   reference_data = ref_data_subset,
+                                                   query_cell_type_col = "labels", 
+                                                   ref_cell_type_col = "reclustered.broad")
+
+# Plot output
+plot(nn_output)
+```
+
+The nearest neighbor diagnostics for CD4+ T cells yield a bimodal
+probability distribution, this suggests that the query dataset contains
+distinct subpopulations or potentially mislabeled cells within the CD4+
+T cell category. Ideally, the probability distribution should center
+around 0.5, indicating an equal likelihood of belonging to either the
+reference or query dataset. A bimodal distribution, however, indicates
+that some CD4+ T cells in the query dataset are very similar to those in
+the reference, while others are distinctly different.
+
+## Isolation Forest-based Anomaly Detection in PCA Space for Single-Cell Data
+
+The detectAnomaly function is designed to identify anomalies in
+single-cell RNA sequencing (scRNA-seq) data by leveraging principal
+component analysis (PCA) and the isolation forest algorithm. The main
+purpose of this function is to project both reference and query datasets
+onto a common PCA space, build an isolation forest on the reference
+data, and use it to detect anomalies in the query data based on their
+PCA projections. If a query dataset is not provided, the function
+computes anomaly scores for the reference data itself. This process
+helps in distinguishing cells that deviate significantly from the
+expected patterns within a given cell type, thereby highlighting
+potential errors, rare cell types, or other interesting biological
+variations.
+
+The function returns a comprehensive output, including anomaly scores
+for each cell, logical vectors indicating whether a cell is classified
+as an anomaly, and the PCA projections of both reference and query
+datasets. Additionally, it provides the proportion of variance explained
+by the retained principal components. To interpret the results, anomaly
+scores closer to the specified threshold (default 0.5) suggest cells
+that are considered borderline anomalies. Scores significantly above
+this threshold indicate strong anomalies. By examining these scores and
+their distributions, users can identify and investigate outlier cells,
+ensuring data quality and uncovering potential biological insights.
+
+```{r detect-Anomaly, warning=FALSE, message=FALSE, fig.width=8}
+# Store PCA anomaly data
+anomaly_output <- detectAnomaly(reference_data = ref_data_subset, 
+                                query_data = query_data_subset, 
+                                ref_cell_type_col = "reclustered.broad", 
+                                query_cell_type_col = "labels") 
+
+# Plot the anomaly output for a cell type
+plot(anomaly_output, cell_type = "CD4", pc_subset = c(1:5), data_type = "query")
+```
+
+The high frequency of anomalies within CD4+ T cells could suggest the
+presence of annotation errors or rare CD4+ T cells sub-populations. This
+capability allows researchers to not only assess the quality of their
+datasets but also uncover potential biological insights that might
+otherwise go unnoticed.
+
+## Compute Sample Distances Between Reference and Query Data
+
+The calculateSampleDistances function is designed to analyze the spatial
+relationships within and between single-cell RNA sequencing (scRNA-seq)
+datasets by computing distances within a reference dataset and from
+query samples to reference samples. Using PCA for dimensionality
+reduction and Euclidean distance for the actual distance calculations,
+this function helps in understanding how closely the query samples
+resemble the reference data in the reduced PCA space.
+
+When the resulting distance metrics are visualized, particularly if a
+significant spread or clustering of distances is observed, it can
+provide insights into the similarity or dissimilarity between the
+datasets. For instance, large distances from query samples to reference
+samples could indicate that the query data contains different or novel
+cell types not well-represented in the reference dataset. Conversely,
+small distances suggest that the query samples closely match the
+reference cell types, implying a good overlap between the datasets. This
+functionality is crucial for assessing annotation quality, quality
+control, identification of outliers, and further biological
+interpretation, particularly when analyzing heterogeneous cell
+populations.
+
+```{r calculate-Sample-Distances, warning=FALSE, message=FALSE, fig.width=8}
+# Compute sample distance data
+distance_data <- calculateSampleDistances(query_data = query_data_subset, reference_data = ref_data_subset, 
+                                          query_cell_type_col = "labels", 
+                                          ref_cell_type_col = "reclustered.broad") 
+
+# Store top six anomalies for CD4
+cd4_top6_anomalies <- names(sort(anomaly_output$CD4$query_anomaly_scores, decreasing = TRUE)[1:6])
+
+# Plot the densities of the distances for the anomalies
+plot(distance_data, ref_cell_type = "CD4", sample_names = cd4_top6_anomalies)
+```
+
+```{r calculate-Sample-Distances-CD8, warning=FALSE, message=FALSE, fig.width=8}
+# Plot the densities of the distances for the anomalies
+plot(distance_data, ref_cell_type = "CD8", sample_names = cd4_top6_anomalies)
+```
+
+When using the detectAnomaly function to identify the top 6 anomalies in
+CD4+ T cells, a subsequent analysis reveals that these anomalous cells
+exhibit minimal overlap with the reference CD4+ T cell data. Instead,
+they show a significantly larger overlap with the reference data for
+CD8+ T cells. This pattern suggests that the anomalous CD4+ T cells may
+possess characteristics more akin to CD8+ T cells, possibly indicating a
+misclassification or a transitional cell state. This finding could have
+important biological implications, such as uncovering a subset of CD4+ T
+cells undergoing differentiation into CD8+ T cells, or identifying a
+distinct cell population that shares features of both T cell types. Such
+insights are critical for understanding cell identity and plasticity in
+immune responses, highlighting the utility of anomaly detection in
+single-cell RNA sequencing data analysis.
+
+## Compute Bhattacharyya Coefficients and Hellinger Distances on Sample Distances
+
+This function calculates Bhattacharyya coefficients and Hellinger
+distances to quantify the similarity between density distributions of
+query samples and reference data.
+
+```{r calculate-Sample-Distances-Similarity, warning=FALSE, message=FALSE, fig.width=8}
+# Get overlap measures
+overlap_measures <- calculateSampleDistancesSimilarity(query_data = query_data_subset, reference_data = ref_data_subset, 
+                                                       sample_names = cd4_top6_anomalies,
+                                                       query_cell_type_col = "labels", 
+                                                       ref_cell_type_col = "reclustered.broad") 
+overlap_measures$bhattacharyya_coef
+```
+
+```{r calculate-Sample-Distances-Similarity-Hellinger, warning=FALSE, message=FALSE, fig.width=8}
+overlap_measures$hellinger_dist
+```
+
+When employing the calculateSampleDistancesSimilarity function, the
+anomalous CD4+ T cells identified using detectAnomaly demonstrate
+intriguing patterns in their similarity measures. Specifically, these
+anomalous CD4+ T cells exhibit Bhattacharyya coefficients closest to 1
+when compared to the reference CD8+ T cells. This high Bhattacharyya
+coefficient indicates a significant similarity between the distribution
+of these anomalous CD4+ T cells and the reference CD8+ T cell
+population.
+
+Furthermore, the Hellinger distance for these anomalous CD4+ T cells,
+when measured against the CD8+ T cell reference data, is closest to 0.
+The low Hellinger distance reinforces the observation that these
+anomalous CD4+ T cells share a high degree of similarity with CD8+ T
+cells. Such findings suggest that these CD4+ T cells might be
+misclassified, potentially representing a transitional cell state or a
+subset with distinct characteristics that align more closely with CD8+ T
+cells. This nuanced analysis underscores the importance of combining
+anomaly detection with robust similarity measures to uncover hidden
+insights in single-cell RNA sequencing data.
+
+## Calculate Sample Similarity to PC Loadings
+
+This function aims to compute the cosine similarity between samples
+based on the PCs obtained from PCA loadings. Anomalous cells, often
+identified through anomaly detection methods, may exhibit substantial
+effects on PCs with small eigenvalues. This function facilitates the
+examination of how anomalous samples align with principal components,
+potentially revealing aberrant expression patterns and aiding in the
+identification of outlier cells in scRNA-seq datasets.
+
+```{r calculate-Sample-Similarity-PCA, warning=FALSE, message=FALSE, fig.width=8}
+# Store PCA anomaly data and plots
+anomaly_output <- detectAnomaly(reference_data = ref_data_subset, 
+                                query_data = query_data_subset,
+                                ref_cell_type_col = "reclustered.broad", 
+                                query_cell_type_col = "labels") 
+top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores, decreasing = TRUE)[1:6])
+
+# Compute cosine similarity between anomalies and PCs
+cosine_similarities <- calculateSampleSimilarityPCA(ref_data_subset, samples = top6_anomalies, 
+                                                    pc_subset = c(1:50), n_top_vars = 50)
+# Plot similarities
+plot(cosine_similarities, pc_subset = c(15:25))
+```
+
+## Project Query Data onto Discriminant Space of Reference Data
+
+This function facilitates the projection of query single-cell RNA-seq
+data onto the discriminant space defined by reference data. By
+leveraging the discriminant space established using reference data, the
+function assesses the similarity between the query and reference data
+projections using cosine similarity and Mahalanobis distance.
+
+The process involves several steps for each pairwise combination of cell
+types:
+
+-   Identification of top important variables to distinguish between the
+    two cell types from the reference data.
+-   Computation of the Ledoit-Wolf shrinkage estimate of the covariance
+    matrix for each cell type using the top important genes.
+-   Construction of within-class and between-class scatter matrices.
+-   Solution of the generalized eigenvalue problem to obtain
+    discriminant vectors.
+-   Projection of both reference and query data onto the discriminant
+    space.
+-   Assessment of the similarity of the query data projection to the
+    reference data using cosine similarity and Mahalanobis distance.
+
+```{r project-Discriminant-Space, warning=FALSE, message=FALSE, fig.width=8}
+disc_output <- calculateDiscriminantSpace(reference_data = ref_data_subset,
+                                          query_data = query_data_subset, 
+                                          query_cell_type_col = "labels", 
+                                          ref_cell_type_col = "reclustered.broad")
+
+# Generate scatterplot
+plot(disc_output, plot_type = "scatterplot")
+```
+
+```{r project-Discriminant-Space-Boxplot, warning=FALSE, message=FALSE, fig.width=8}
+plot(disc_output, cell_types = "CD4-CD8", plot_type = "boxplot")
+```
+
+The scatterplot provides compelling evidence of an overlap between CD4+
+and CD8+ cells, indicating a potential misannotation. Furthermore, the
+boxplot reveals a noticeable incongruity between the query and reference
+data in the discriminant space specifically for CD4+ T cells.
+
+## Compare PCA Results Across Datasets
+
+The `comparePCA` function is designed to compare the principal
+components (PCs) obtained from separate PCA analyses on reference and
+query datasets for a specific cell type. It allows users to assess the
+similarity between the PCs using either cosine similarity or correlation
+metrics.
+
+This function computes cosine similarities or correlations between the
+loadings of top variables for each pair of principal components from the
+reference and query datasets. It first extracts the PCA rotation
+matrices from both datasets and identifies the top variables with the
+highest loadings for each PC. Then, it computes the similarity values
+between the loadings of top variables for each pair of PCs. The
+resulting matrix contains similarity values, where rows represent
+reference PCs and columns represent query PCs.
+
+```{r compare-PCA, warning=FALSE, message=FALSE, fig.width=8}
+# Selecting highly variable genes
+ref_var <- getTopHVGs(ref_data, n = 500)
+query_var <- getTopHVGs(query_data, n = 500)
+
+# Intersect the gene symbols to obtain common genes
+common_genes <- intersect(ref_var, query_var)
+ref_data_subset <- ref_data[common_genes, ]
+query_data_subset <- query_data[common_genes, ]
+
+# Subset reference and query data for a specific cell type
+ref_data_subset <- ref_data_subset[, which(ref_data_subset$reclustered.broad == "CD4")]
+query_data_subset <- query_data_subset[, which(query_data_subset$reclustered.broad == "CD4")]
+
+# Run PCA on the reference and query datasets separately
+ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
+query_data_subset <- runPCA(query_data_subset, ncomponents = 50)
+
+# Call the PCA comparison function
+similarity_mat <- comparePCA(reference_data = ref_data_subset, query_data = query_data_subset, 
+                             pc_subset = c(1:5),  
+                             n_top_vars = 50,
+                             metric = c("cosine", "correlation")[1], 
+                             correlation_method = c("spearman", "pearson")[1])
+
+# Create the heatmap
+plot(similarity_mat)
+```
+
+The comparePCA function provides insights into the consistency or
+discrepancy between the PCA results of reference and query datasets. By
+comparing the similarity matrix generated, users can discern patterns of
+similarity or dissimilarity in the principal components across datasets.
+This insight can help evaluate the quality of the reference dataset and
+the effectiveness of the PCA analysis in capturing similar structures in
+the query dataset.
+
+## Compare Subspaces Spanned by Top Principal Components
+
+This function first computes the cosine similarity between the loadings
+of the top variables for each PC in both the reference and query
+datasets. It then selects the top cosine similarity scores and their
+corresponding PC indices. Additionally, the function calculates the
+average percentage of variance explained by the selected top PCs.
+Finally, it computes a weighted cosine similarity score based on the top
+cosine similarities and the average percentage of variance explained.
+
+The comparePCASubspace function provides insights into the similarity
+between the subspaces spanned by the top PCs of the reference and query
+datasets. By comparing the weighted cosine similarity score, users can
+assess how closely aligned the subspaces are. This insight is valuable
+for understanding the consistency of the principal components between
+datasets and can aid in assessing the quality of data integration or
+comparative analysis.
+
+```{r compare-PCA-Subspace, warning=FALSE, message=FALSE, fig.width=8}
+subspace_comparison <- comparePCASubspace(reference_data = ref_data_subset, query_data = query_data_subset, 
+                                          pc_subset = c(1:5))
+
+# Plot output for PCA subspace comparison
+plot(subspace_comparison)
+```
+
+## Compare Subspaces Spanned by Top Principal Components Using Canonical Correlation Analysis
+
+The compareCCA function is a versatile tool designed to compare the
+subspaces defined by the top principal components (PCs) in two distinct
+datasets using Canonical Correlation Analysis (CCA). Its primary
+functionality lies in assessing the similarity between the structures
+represented by these PCs, providing researchers with a quantitative
+measure of the concordance between high-dimensional datasets. By
+focusing on the top loading variables for each PC, the function allows
+for a targeted examination of the most informative features driving the
+observed variation, enhancing the interpretability of the comparative
+analysis.
+
+```{r compare-CCA, warning=FALSE, message=FALSE, fig.width=8}
+cca_comparison <- compareCCA(reference_data = ref_data_subset, query_data = query_data_subset, 
+                             pc_subset = c(1:5))
+
+# Create a data frame for plotting
+plot(cca_comparison)
+```
 
 # Conclusion
 

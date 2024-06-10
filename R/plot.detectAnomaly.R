@@ -97,19 +97,15 @@ plot.detectAnomaly <- function(x, cell_type = NULL, pc_subset = NULL, data_type 
     
     # Create the ggplot object with facets
     plot <- ggplot2::ggplot(data_pairs, ggplot2::aes(x = x_value, y = y_value, color = factor(anomaly))) +
-        ggplot2::geom_point(size = 2) + 
+        ggplot2::geom_point(size = 1, alpha = 0.5) + 
         ggplot2::scale_color_manual(values = c("black", "red"), labels = c("Normal", "Anomaly")) + 
         ggplot2::facet_grid(rows = ggplot2::vars(y), cols = ggplot2::vars(x), scales = "free") +
-        ggplot2::theme_minimal() +
-        ggplot2::theme(strip.background = ggplot2::element_rect(fill = "grey85", color = "grey70"),   
-                       strip.text = ggplot2::element_text(size = 10, face = "bold", color = "black"), 
-                       axis.title = ggplot2::element_blank(),        
-                       axis.text = ggplot2::element_text(size = 10), 
-                       panel.grid = ggplot2::element_blank(),        
-                       panel.background = ggplot2::element_rect(fill = "white", color = "black"), 
-                       legend.position = "right",          
-                       plot.title = ggplot2::element_text(size = 14, hjust = 0.5), 
-                       plot.background = ggplot2::element_rect(fill = "white")) + 
+        ggplot2::xlab("") + ggplot2::ylab("") + 
+        ggplot2::theme_bw() +
+        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10)) + 
         ggplot2::labs(title = paste0("Isolation Forest Anomaly Plot: ", cell_type), color = "iForest Type")
     print(plot)
 }

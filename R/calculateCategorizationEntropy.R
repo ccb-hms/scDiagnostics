@@ -85,13 +85,13 @@ calculateCategorizationEntropy <- function(X,
 
     if (plot) {
         p <- data.frame(entropies = entropies) |>
-            ggplot(aes(entropies)) +
-            geom_histogram(
+            ggplot2::ggplot(ggplot2::aes(entropies)) +
+            ggplot2::geom_histogram(
                 color = "black", fill = "white",
                 bins = 30,
                 boundary = 0
             ) +
-            theme_bw()
+            ggplot2::theme_bw()
         print(p)
     }
 

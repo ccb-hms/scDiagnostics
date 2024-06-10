@@ -48,7 +48,6 @@ library(scater)
 library(scran)
 library(scRNAseq)
 library(SingleR)
-library(gridExtra)
 
 # Load data
 sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)

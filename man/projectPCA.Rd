@@ -90,36 +90,6 @@ pca_output <- projectPCA(query_data_subset, ref_data_subset,
                          ref_cell_type_col = "reclustered.broad",
                          return_value = c("data.frame", "list")[1])
 
-# Compute t-SNE and UMAP using first 10 PCs
-tsne_data <- data.frame(calculateTSNE(t(pca_output[, paste0("PC", 1:10)])))
-umap_data <- data.frame(calculateUMAP(t(pca_output[, paste0("PC", 1:10)])))
-
-# Combine the cell type labels from both datasets
-tsne_data$Type <- paste(pca_output$dataset, pca_output$cell_type)
-
-# Define the cell types and legend order
-legend_order <- c("Query CD8",
-                  "Reference CD8",
-                  "Query CD4",
-                  "Reference CD4",
-                  "Query B_and_plasma",
-                  "Reference B_and_plasma")
-
-# Define the colors for cell types
-color_palette <- brewer.pal(length(legend_order), "Paired")
-color_mapping <- setNames(color_palette, legend_order)
-cell_type_colors <- color_mapping[legend_order]
-
-# Visualize t-SNE output
-tsne_plot <- ggplot(tsne_data[tsne_data$Type \%in\% legend_order,],
-                    aes(x = TSNE1, y = TSNE2, color = factor(Type, levels = legend_order))) +
-    geom_point(alpha = 0.5, size = 1) +
-    scale_color_manual(values = cell_type_colors) +
-    theme_bw() +
-    guides(color = guide_legend(title = "Cell Types"))
-tsne_plot     
-
-
 }
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}

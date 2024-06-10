@@ -127,23 +127,19 @@ plotGeneSetScores <- function(se_object,
   data_pairs <- do.call(rbind, data_pairs_list)
   # Remove redundant data (to avoid duplicated plots)
   data_pairs <- data_pairs[as.numeric(data_pairs$x) < as.numeric(data_pairs$y),]
-  data_pairs$scores <- se_object[["geneSetScores"]]
+  data_pairs$Scores <- se_object[["geneSetScores"]]
   # Create the ggplot object (with facets if PCA)
-  plot_obj <- ggplot2::ggplot(data_pairs, ggplot2::aes(x = x_value, y = y_value, color = scores)) +
+  plot_obj <- ggplot2::ggplot(data_pairs, ggplot2::aes(x = x_value, y = y_value, color = Scores)) +
       ggplot2::geom_point(size = 1, alpha = 0.5) + 
+      ggplot2::xlab("") + ggplot2::ylab("") + 
       ggplot2::scale_color_gradientn(colors = c("#2171B5", "#8AABC1", "#FFEDA0", "#E6550D"), 
                                      values = seq(0, 1, by = 1/3), 
-                                     limits = c(0, max(data_pairs$scores))) +
+                                     limits = c(0, max(data_pairs$Scores))) +
       ggplot2::facet_grid(rows = ggplot2::vars(y), cols = ggplot2::vars(x), scales = "free") +
-      ggplot2::theme_minimal() +
-      ggplot2::theme(strip.background = ggplot2::element_rect(fill = "grey85", color = "grey70"),   
-                     strip.text = ggplot2::element_text(size = 10, face = "bold", color = "black"), 
-                     axis.title = ggplot2::element_blank(),        
-                     axis.text = ggplot2::element_text(size = 10), 
-                     panel.grid = ggplot2::element_blank(),        
-                     panel.background = ggplot2::element_rect(fill = "white", color = "black"), 
-                     legend.position = "right",          
-                     plot.title = ggplot2::element_text(size = 14, hjust = 0.5), 
-                     plot.background = ggplot2::element_rect(fill = "white")) 
+      ggplot2::theme_bw() +
+      ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                     panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                     plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                     axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
   return(plot_obj)
 }

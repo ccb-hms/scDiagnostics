@@ -27,22 +27,17 @@ Depends:
     R (>= 4.4.0)
 Imports:
     SingleCellExperiment,
-    isotree,
     methods,
+    isotree,
     ggplot2,
     RColorBrewer,
-    gridExtra,
     SummarizedExperiment,
-    stats,
-    utils,
     ranger,
-    BiocNeighbors,
     Hotelling,
     rlang
 Suggests:
     AUCell,
     BiocStyle,
-    corrplot,
     knitr,
     Matrix,
     rmarkdown,
@@ -50,7 +45,6 @@ Suggests:
     scRNAseq,
     SingleR,
     celldex,
-    ComplexHeatmap,
     scuttle,
     scater,
     testthat (>= 3.0.0)

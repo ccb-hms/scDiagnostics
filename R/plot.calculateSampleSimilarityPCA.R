@@ -48,17 +48,15 @@ plot.calculateSampleSimilarityPCA <- function(x, pc_subset = c(1:5), ...){
                               PC = pc_names, CosineSimilarity = cosine_values)
     
     # Create the heatmap plot
-    plot <- ggplot(cosine_long, aes(x = PC, y = Sample, fill = CosineSimilarity)) +
-        geom_tile(color = "white") +
-        geom_text(aes(label = sprintf("%.2f", CosineSimilarity)), size = 3) +
-        scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0,
+    plot <- ggplot2::ggplot(cosine_long, ggplot2::aes(x = PC, y = Sample, fill = CosineSimilarity)) +
+        ggplot2::geom_tile(color = "white") +
+        ggplot2::geom_text(ggplot2::aes(label = sprintf("%.2f", CosineSimilarity)), size = 3) +
+        ggplot2::scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0,
                              limits = c(-1, 1), space = "Lab", name = "Cosine Similarity") +
-        labs(title = "Cosine Similarity Heatmap",
-             x = "",
-             y = "") +
-        theme_minimal() +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1),
-              plot.title = element_text(hjust = 0.5))
+        ggplot2::labs(title = "Cosine Similarity Heatmap", x = "", y = "") +
+        ggplot2::theme_minimal() +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
+                       plot.title = ggplot2::element_text(hjust = 0.5))
     return(plot)
 }
 

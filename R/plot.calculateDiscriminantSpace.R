@@ -8,7 +8,7 @@
 #' For scatterplot, each point represents a projected data point, and colors are used to differentiate between different cell types 
 #' and datasets. For boxplot, the distribution of the projected data values for each cell type is shown, separated by datasets.
 #'
-#' @param x An object of class \code{projectDiscriminantSpace} containing the projected data on the discriminant space.. 
+#' @param x An object of class \code{calculateDiscriminantSpace} containing the projected data on the discriminant space.. 
 #' Each element of the list represents a combination of cell types and datasets. Each element should contain 'ref_proj' and 'query_proj' data frames.
 #' @param cell_types A character vector specifying the cell types to plot. If not provided, all cell types will be plotted.
 #' @param plot_type Type of plot to generate. Options are "scatterplot" and "boxplot". Default is "scatterplot".
@@ -20,12 +20,12 @@
 #' 
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
-#' @seealso \code{\link{projectDiscriminantSpace}}
+#' @seealso \code{\link{calculateDiscriminantSpace}}
 #' 
-#' @rdname projectDiscriminantSpace
+#' @rdname calculateDiscriminantSpace
 #' 
 # Function to plot the projected reference/query data on the discriminant spaces.
-plot.projectDiscriminantSpace <- function(x, cell_types, plot_type = c("scatterplot", "boxplot"), ...){
+plot.calculateDiscriminantSpace <- function(x, cell_types, plot_type = c("scatterplot", "boxplot"), ...){
     
     # Check if query data is available in the object
     if(!("query_proj" %in% names(x[[names(x)[[1]]]])))
@@ -76,13 +76,12 @@ plot.projectDiscriminantSpace <- function(x, cell_types, plot_type = c("scatterp
             ggplot2::geom_point(alpha = 0.5, size = 1) +
             ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Types") + 
             ggplot2::facet_wrap(~ cell_type_combination, scales = "free") +
-            ggplot2::theme_minimal() +
-            ggplot2::theme(legend.position = "right", axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10),  
-                           axis.title = ggplot2::element_text(size = 14), strip.text = ggplot2::element_text(size = 12, face = "bold"), 
-                           panel.grid.major = ggplot2::element_line(color = "grey", linetype = "dotted", linewidth = 0.7),  
-                           panel.grid.minor = ggplot2::element_blank(), panel.border = ggplot2::element_blank(),  
-                           strip.background = ggplot2::element_rect(fill = "lightgrey", color = "grey", linewidth = 0.5),  
-                           plot.title = ggplot2::element_text(size = 16, face = "bold", hjust = 0.5)) 
+            ggplot2::theme_bw() +
+            ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                           panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                           plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                           axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
+                           axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10))
         return(scatter_plot)
         
     } else if (plot_type == "boxplot"){ # Boxplot
@@ -123,18 +122,17 @@ plot.projectDiscriminantSpace <- function(x, cell_types, plot_type = c("scatterp
         cell_type_colors <- color_mapping[order_combinations]
         
         # Generate the boxplot
-        box_plot <- ggplot2::ggplot(data_long, aes(x = cell_type, y = value, fill = cell_type_dataset)) +
+        box_plot <- ggplot2::ggplot(data_long, ggplot2::aes(x = cell_type, y = value, fill = cell_type_dataset)) +
             ggplot2::geom_boxplot(alpha = 0.7, outlier.shape = NA, width = 0.7) + 
             ggplot2::facet_wrap(~ variable, scales = "free") +
             ggplot2::scale_fill_manual(values = cell_type_colors, name = "Cell Types") + 
             ggplot2::labs(x = "", y = "Value") +  
-            ggplot2::theme_minimal() +
-            ggplot2::theme(legend.position = "right", axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10),  
-                           axis.title = ggplot2::element_text(size = 14), strip.text = ggplot2::element_text(size = 12, face = "bold"), 
-                           panel.grid.major = ggplot2::element_line(color = "grey", linetype = "dotted", linewidth = 0.7),  
-                           panel.grid.minor = ggplot2::element_blank(), panel.border = ggplot2::element_blank(),  
-                           strip.background = ggplot2::element_rect(fill = "lightgrey", color = "grey", linewidth = 0.5),  
-                           plot.title = ggplot2::element_text(size = 16, face = "bold", hjust = 0.5))
+            ggplot2::theme_bw() +
+            ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                           panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                           plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                           axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
+                           axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10))
         return(box_plot)
     }
 }

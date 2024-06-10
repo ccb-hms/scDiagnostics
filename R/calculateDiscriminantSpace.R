@@ -39,7 +39,7 @@
 #' 
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
-#' @seealso \code{\link{plot.projectDiscriminantSpace}}
+#' @seealso \code{\link{plot.calculateDiscriminantSpace}}
 #' 
 #' @examples
 #' # Load necessary library
@@ -78,7 +78,7 @@
 #' 
 #' # Project query data onto discriminant space of reference data 
 #' # for each pairwise combination of cell types
-#' disc_output <- projectDiscriminantSpace(reference_data = ref_data_subset,
+#' disc_output <- calculateDiscriminantSpace(reference_data = ref_data_subset,
 #'                                         query_data = query_data_subset, 
 #'                                         query_cell_type_col = c("reclustered.broad", "labels")[1], 
 #'                                         ref_cell_type_col = "reclustered.broad",
@@ -96,12 +96,12 @@
 # Function to get the discriminant spaces for each pairwise combination of cell types and the projected reference/query data on 
 # the discriminant space. Similarity measures (cosine similarity/Mahalanobis distance) for the projected query data are also 
 # available.
-projectDiscriminantSpace <- function(reference_data, query_data = NULL,
-                                     ref_cell_type_col, query_cell_type_col,
-                                     eigen_threshold  = 1e-1,
-                                     n_tree = 500,
-                                     n_top = 20,
-                                     alpha = 0.01){
+calculateDiscriminantSpace <- function(reference_data, query_data = NULL,
+                                       ref_cell_type_col, query_cell_type_col,
+                                       eigen_threshold  = 1e-1,
+                                       n_tree = 500,
+                                       n_top = 20,
+                                       alpha = 0.01){
     
     # Input check for eigen_threshold
     if (!is.numeric(eigen_threshold) || eigen_threshold <= 0) {
@@ -214,6 +214,6 @@ projectDiscriminantSpace <- function(reference_data, query_data = NULL,
     }
     
     # Return data projected onto (reference) discriminant space for each combination of cell types
-    class(discriminant_output) <- c(class(discriminant_output), "projectDiscriminantSpace")
+    class(discriminant_output) <- c(class(discriminant_output), "calculateDiscriminantSpace")
     return(discriminant_output)
 }

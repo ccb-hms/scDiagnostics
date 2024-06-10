@@ -100,10 +100,8 @@ calculateHotellingPValue <- function(query_data, reference_data,
         # Subset principal component scores for current cell type
         ref_subset_scores <- pca_output$ref[which(cell_type == reference_data[[ref_cell_type_col]]), pc_subset]
         query_subset_scores <- pca_output$query[which(cell_type == query_data[[query_cell_type_col]]), pc_subset]
-        
         # Calculate the p-value
         hotelling_output <- Hotelling::hotelling.test(x = ref_subset_scores, y = query_subset_scores)
-        
         # Store the result
         p_values[cell_type] <- hotelling_output$pval
     }

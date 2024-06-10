@@ -1,8 +1,7 @@
 #' @title Pairwise Distance Analysis and Density Visualization
 #'
 #' @description
-#' Calculates pairwise distances or correlations between query and reference cells 
-#' of a specific cell type.
+#' Calculates pairwise distances or correlations between query and reference cells of a specific cell type.
 #' 
 #' @details  
 #' The function works with \code{\linkS4class{SingleCellExperiment}} objects, ensuring 
@@ -69,14 +68,14 @@
 #' ref_data_subset <- runPCA(ref_data_subset)
 #'
 #' # Example usage of the function
-#' calculatePairwiseDistancesAndPlotDensity(query_data = query_data_subset, 
-#'                                          reference_data = ref_data_subset, 
-#'                                          n_components = 10,
-#'                                          query_cell_type_col = "labels", 
-#'                                          ref_cell_type_col = "reclustered.broad", 
-#'                                          cell_type_query = "CD8", 
-#'                                          cell_type_reference = "CD8", 
-#'                                          distance_metric = "euclidean")
+#' plotPairwiseDistancesDensity(query_data = query_data_subset, 
+#'                              reference_data = ref_data_subset, 
+#'                              n_components = 10,
+#'                              query_cell_type_col = "labels", 
+#'                              ref_cell_type_col = "reclustered.broad", 
+#'                              cell_type_query = "CD8", 
+#'                              cell_type_reference = "CD8", 
+#'                              distance_metric = "euclidean")
 #' 
 #' 
 #' @importFrom stats cor dist
@@ -84,18 +83,17 @@
 #' @importFrom SummarizedExperiment assay                                       
 #' @export
 #' 
-calculatePairwiseDistancesAndPlotDensity <- function(query_data, 
-                                                     reference_data, 
-                                                     n_components = 10,
-                                                     query_cell_type_col, 
-                                                     ref_cell_type_col, 
-                                                     cell_type_query, 
-                                                     cell_type_reference, 
-                                                     distance_metric, 
-                                                     correlation_method = "pearson") {
+plotPairwiseDistancesDensity <- function(query_data, 
+                                         reference_data, 
+                                         n_components = 10,
+                                         query_cell_type_col, 
+                                         ref_cell_type_col, 
+                                         cell_type_query, 
+                                         cell_type_reference, 
+                                         distance_metric, 
+                                         correlation_method = "pearson") {
   
   # Sanity checks
-  
   # Check if query_data is a SingleCellExperiment object
   if (!is(query_data, "SingleCellExperiment")) {
     stop("query_data must be a SingleCellExperiment object.")
@@ -159,25 +157,17 @@ calculatePairwiseDistancesAndPlotDensity <- function(query_data,
   )
 
   # Plot density plots with improved aesthetics
-  ggplot2::ggplot(dist_df, aes(x = Distance, color = Comparison, fill = Comparison)) +
+  ggplot2::ggplot(dist_df, ggplot2::aes(x = Distance, color = Comparison, fill = Comparison)) +
       ggplot2::geom_density(alpha = 0.5, linewidth = 1) +  # Updated: linewidth instead of size
-      ggplot2::scale_color_manual(values = c("#1f78b4", "#33a02c", "#e31a1c")) +
-      ggplot2::scale_fill_manual(values = c("#1f78b4", "#33a02c", "#e31a1c")) +
+      ggplot2::scale_color_manual(values = c("#D9534F", "#BA55D3", "#5DADE2")) +
+      ggplot2::scale_fill_manual(values = c("#D9534F", "#BA55D3", "#5DADE2")) +
       ggplot2::labs(x = ifelse(distance_metric == "correlation", 
                                ifelse(correlation_method == "spearman", "Spearman Correlation", "Pearson Correlation"), 
                                "Distance"), y = "Density", 
                     title = "Pairwise Distance Analysis and Density Visualization") +
-      ggplot2::theme_minimal() +
-      ggplot2::theme(
-          plot.title = ggplot2::element_text(size = 16, hjust = 0.5, face = "bold"),
-          axis.title = ggplot2::element_text(size = 14),
-          axis.text = ggplot2::element_text(size = 12),
-          legend.title = ggplot2::element_blank(),
-          legend.text = ggplot2::element_text(size = 12),
-          panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dashed"),
-          panel.grid.minor = ggplot2::element_blank(),
-          panel.background = ggplot2::element_rect(fill = "white"),
-          panel.border = ggplot2::element_blank(),
-          legend.position = "top"
-      )
+      ggplot2::theme_bw() +
+      ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                     panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                     plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                     axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
 }

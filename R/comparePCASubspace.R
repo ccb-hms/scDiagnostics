@@ -120,14 +120,14 @@ comparePCASubspace <- function(reference_data, query_data,
     for(id in 1:length(pc_subset)){
         
         # Store data for top cosine
-        top_ref <- which.max(apply(cosine_similarity, 1, max))
-        top_query <- which.max(cosine_similarity[top_ref,])
-        top_cosine[id] <- cosine_similarity[top_ref, top_query]
+        top_ref <- which.max(apply(abs(cosine_similarity), 1, max))
+        top_query <- which.max(abs(cosine_similarity)[top_ref,])
+        top_cosine[id] <- abs(cosine_similarity)[top_ref, top_query]
         cosine_id[id,] <- c(top_ref, top_query)
         
         # Remove as candidate
-        cosine_similarity[top_ref,] <- -Inf 
-        cosine_similarity[, top_query] <- -Inf
+        cosine_similarity[top_ref,] <- 0 
+        cosine_similarity[, top_query] <- 0
     }
     
     # Vector of variance explained

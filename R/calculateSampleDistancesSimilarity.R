@@ -1,4 +1,4 @@
-#' @title Function to compute Bhattacharyya coefficients and Hellinger distances
+#' @title Function to Calculate Bhattacharyya Coefficients and Hellinger Distances
 #'
 #' @description 
 #' This function computes Bhattacharyya coefficients and Hellinger distances to quantify the similarity of density 

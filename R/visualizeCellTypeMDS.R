@@ -63,7 +63,6 @@
 #' print(plot)
 #'
 #' @importFrom stats cmdscale cor
-#' @importFrom ggplot2 ggplot
 #' @importFrom SummarizedExperiment assay
 #' @export
 #' 
@@ -129,10 +128,14 @@ visualizeCellTypeMDS <- function(query_data,
     color_mapping <- setNames(RColorBrewer::brewer.pal(length(order_combinations), "Paired"), order_combinations)
     cell_type_colors <- color_mapping[order_combinations]
     
-    plot <- ggplot2::ggplot(cmd, aes(x = Dim1, y = Dim2, color = cell_type_dataset)) +
-      ggplot2::geom_point(alpha = 0.5, size = 1) +
-      ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Types") + 
-      ggplot2::theme_bw() +
+    plot_obj <- ggplot2::ggplot(cmd, aes(x = Dim1, y = Dim2, color = cell_type_dataset)) +
+        ggplot2::geom_point(alpha = 0.5, size = 1) +
+        ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Types") + 
+        ggplot2::theme_bw() +
+        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10)) + 
       ggplot2::guides(color = ggplot2::guide_legend(title = "Cell Types"))
-    return(plot)
+    return(plot_obj)
 }

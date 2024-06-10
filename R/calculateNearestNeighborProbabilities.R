@@ -29,7 +29,7 @@
 #' 
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
-#' @seealso \code{\link{plot.nearestNeighborDiagnostics}}
+#' @seealso \code{\link{plot.calculateNearestNeighborProbabilities}}
 #' 
 #' @examples
 #' # Load necessary library
@@ -71,7 +71,7 @@
 #' ref_data_subset <- runPCA(ref_data_subset)
 #'
 #' # Project the query data onto PCA space of reference
-#' nn_output <- nearestNeighborDiagnostics(query_data_subset, ref_data_subset,
+#' nn_output <- calculateNearestNeighborProbabilities(query_data_subset, ref_data_subset,
 #'                                         n_neighbor = 15, 
 #'                                         n_components = 10,
 #'                                         pc_subset = c(1:10),
@@ -84,12 +84,12 @@
 #' 
 #' 
 # Function to get probabilities for each sample of belonging to reference or query dataset for each cell type
-nearestNeighborDiagnostics <- function(query_data, reference_data,
-                                       n_neighbor = 15,
-                                       n_components = 10,
-                                       pc_subset = c(1:10),
-                                       query_cell_type_col, 
-                                       ref_cell_type_col){
+calculateNearestNeighborProbabilities <- function(query_data, reference_data,
+                                                  n_neighbor = 15,
+                                                  n_components = 10,
+                                                  pc_subset = c(1:10),
+                                                  query_cell_type_col, 
+                                                  ref_cell_type_col){
     
     # Check if n_components is a positive integer
     if (!inherits(n_components, "numeric")) {
@@ -131,18 +131,22 @@ nearestNeighborDiagnostics <- function(query_data, reference_data,
             
             combined_data_cell_type <- rbind(combined_data_cell_type,
                                              query_pca_cell_type[sample(1:n_query, n_ref - n_query, replace = TRUE),])
+            combined_data_cell_type <- data.frame(combined_data_cell_type, data_type = rep(c("Reference", "Query"), each = n_ref))
         } else if (n_query > n_ref){
             
             combined_data_cell_type <- rbind(combined_data_cell_type,
                                              ref_pca_cell_type[sample(1:n_ref, n_query - n_ref, replace = TRUE),])
+            combined_data_cell_type <- data.frame(combined_data_cell_type, data_type = c(rep("Reference", n_ref), rep("Query", n_query),
+                                                                                         rep("Reference", n_query - n_ref)))
         }
         
         # Perform nearest neighbors search
-        knn_result <- BiocNeighbors::findKNN(combined_data_cell_type, k = n_neighbor, warn.ties = FALSE)
-        
-        prob_ref <- apply(knn_result$index[(n_ref + 1):nrow(knn_result$index),], 1, function(x, n_ref) {
-            mean(x <= n_ref)},
-            n_ref = n_ref)
+        dist_mat <- as.matrix(dist(combined_data_cell_type[, paste0("PC", pc_subset)]))
+        neighbors_indices <- t(apply(dist_mat, 1, get_lowest_indices <- function(row, n_neighbor) {
+            return(order(row)[2:(n_neighbor + 1)])
+        }, n_neighbor = n_neighbor))
+        prob_ref <- apply(neighbors_indices, 1, function(x, data_type) {mean(data_type[x] == "Reference")}, 
+                          data_type = combined_data_cell_type$data_type)
         
         # Store the probabilities
         probabilities[[cell_type]] <- list()
@@ -151,7 +155,7 @@ nearestNeighborDiagnostics <- function(query_data, reference_data,
     }
     
     # Creating class for output
-    class(probabilities) <- c(class(probabilities), "nearestNeighborDiagnostics")
+    class(probabilities) <- c(class(probabilities), "calculateNearestNeighborProbabilities")
     
     # Return the list of probabilities
     return(probabilities)
