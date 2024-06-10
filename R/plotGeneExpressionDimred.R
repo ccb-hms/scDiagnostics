@@ -119,7 +119,7 @@ plotGeneExpressionDimred <- function(se_object,
       plot_obj <- ggplot2::ggplot(data_pairs, ggplot2::aes(x = x_value, y = y_value, color = Expression)) +
           ggplot2::geom_point(size = 1, alpha = 0.5) + 
           ggplot2::xlab("") + ggplot2::ylab("") + 
-          scale_color_gradient(low = "grey90", high = "blue") +
+          ggplot2::scale_color_gradient(low = "grey90", high = "blue") +
           ggplot2::facet_grid(rows = ggplot2::vars(y), cols = ggplot2::vars(x), scales = "free") +
           ggplot2::theme_bw() +
           ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),

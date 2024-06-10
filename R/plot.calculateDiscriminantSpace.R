@@ -80,8 +80,7 @@ plot.calculateDiscriminantSpace <- function(x, cell_types, plot_type = c("scatte
             ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
                            panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
                            plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                           axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
-                           axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10))
+                           axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
         return(scatter_plot)
         
     } else if (plot_type == "boxplot"){ # Boxplot
@@ -131,8 +130,7 @@ plot.calculateDiscriminantSpace <- function(x, cell_types, plot_type = c("scatte
             ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
                            panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
                            plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                           axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
-                           axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10))
+                           axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
         return(box_plot)
     }
 }
