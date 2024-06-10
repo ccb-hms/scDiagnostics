@@ -16,9 +16,6 @@
     <loc>/index.html</loc>
   </url>
   <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
     <loc>/reference/boxplotPCA.html</loc>
   </url>
   <url>
@@ -28,13 +25,16 @@
     <loc>/reference/calculateCategorizationEntropy.html</loc>
   </url>
   <url>
+    <loc>/reference/calculateDiscriminantSpace.html</loc>
+  </url>
+  <url>
     <loc>/reference/calculateHVGOverlap.html</loc>
   </url>
   <url>
     <loc>/reference/calculateHotellingPValue.html</loc>
   </url>
   <url>
-    <loc>/reference/calculatePairwiseDistancesAndPlotDensity.html</loc>
+    <loc>/reference/calculateNearestNeighborProbabilities.html</loc>
   </url>
   <url>
     <loc>/reference/calculateSampleDistances.html</loc>
@@ -67,9 +67,6 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/nearestNeighborDiagnostics.html</loc>
-  </url>
-  <url>
     <loc>/reference/plotGeneExpressionDimred.html</loc>
   </url>
   <url>
@@ -79,10 +76,10 @@
     <loc>/reference/plotMarkerExpression.html</loc>
   </url>
   <url>
-    <loc>/reference/plotQCvsAnnotation.html</loc>
+    <loc>/reference/plotPairwiseDistancesDensity.html</loc>
   </url>
   <url>
-    <loc>/reference/projectDiscriminantSpace.html</loc>
+    <loc>/reference/plotQCvsAnnotation.html</loc>
   </url>
   <url>
     <loc>/reference/projectPCA.html</loc>

@@ -46,9 +46,6 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -157,15 +154,13 @@ exploring the package and assessing the appropriateness of cell type
 assignments.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ccb-hms/scDiagnostics" class="external-link">scDiagnostics</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LTLA/celldex" class="external-link">celldex</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/taiyun/corrplot" class="external-link">corrplot</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scRNAseq</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/" class="external-link">scater</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scran</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scRNAseq</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://scenic.aertslab.org" class="external-link">AUCell</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scuttle</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LTLA/SingleR" class="external-link">SingleR</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/ComplexHeatmap" class="external-link">ComplexHeatmap</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://scenic.aertslab.org" class="external-link">AUCell</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LTLA/celldex" class="external-link">celldex</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="scatter-plot-qc-stats-vs--annotation-scores">Scatter Plot: QC stats vs. Annotation Scores<a class="anchor" aria-label="anchor" href="#scatter-plot-qc-stats-vs--annotation-scores"></a>
 </h3>
@@ -185,15 +180,13 @@ sizes could contribute to increased annotation confidence due to
 enhanced statistical power for identifying cell type-specific gene
 expression patterns, as evident in the scatter plot below.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># load reference dataset</span></span>
-<span><span class="va">ref_data</span> <span class="op">&lt;-</span> <span class="fu">celldex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/celldex/man/fetchReference.html" class="external-link">fetchReference</a></span><span class="op">(</span><span class="st">"hpca"</span>, <span class="st">"2024-02-26"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># load reference dataset</span></span>
+<span><span class="va">ref_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/celldex/man/fetchReference.html" class="external-link">fetchReference</a></span><span class="op">(</span><span class="st">"hpca"</span>, <span class="st">"2024-02-26"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load query dataset (Bunis haematopoietic stem and progenitor cell</span></span>
 <span><span class="co"># data) from Bunis DG et al. (2021). Single-Cell Mapping of</span></span>
 <span><span class="co"># Progressive Fetal-to-Adult Transition in Human Naive T Cells Cell</span></span>
 <span><span class="co"># Rep. 34(1): 108573</span></span>
-<span></span>
 <span><span class="va">query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scRNAseq/man/BunisHSPCData.html" class="external-link">BunisHSPCData</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">query_data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">query_data</span><span class="op">)</span><span class="op">$</span><span class="va">Symbol</span></span>
 <span></span>
@@ -216,13 +209,11 @@ expression patterns, as evident in the scatter plot below.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">query_data</span><span class="op">)</span><span class="op">$</span><span class="va">cell_scores</span> <span class="op">&lt;-</span> <span class="va">scores</span></span>
 <span></span>
 <span><span class="co"># Create a scatter plot between library size and annotation scores</span></span>
-<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotQCvsAnnotation.html">plotQCvsAnnotation</a></span><span class="op">(</span></span>
-<span>    query_data <span class="op">=</span> <span class="va">query_data</span>,</span>
-<span>    qc_col <span class="op">=</span> <span class="st">"total"</span>,</span>
-<span>    label_col <span class="op">=</span> <span class="st">"pred.labels"</span>,</span>
-<span>    score_col <span class="op">=</span> <span class="st">"cell_scores"</span>,</span>
-<span>    label <span class="op">=</span> <span class="cn">NULL</span></span>
-<span><span class="op">)</span></span>
+<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotQCvsAnnotation.html">plotQCvsAnnotation</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>,</span>
+<span>                         qc_col <span class="op">=</span> <span class="st">"total"</span>,</span>
+<span>                         label_col <span class="op">=</span> <span class="st">"pred.labels"</span>,</span>
+<span>                         score_col <span class="op">=</span> <span class="st">"cell_scores"</span>,</span>
+<span>                         label <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="va">p1</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Library Size"</span><span class="op">)</span></span></code></pre></div>
 <p>However, certain QC metrics, such as the proportion of mitochondrial
 genes, may require careful consideration as they can sometimes be
@@ -237,11 +228,7 @@ established biological characteristic of high mitochondrial activity in
 macrophages and monocytes, adding biological context to our results.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load query dataset</span></span>
-<span><span class="va">query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scRNAseq/man/HeOrganAtlasData.html" class="external-link">HeOrganAtlasData</a></span><span class="op">(</span></span>
-<span>    tissue <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Liver"</span><span class="op">)</span>,</span>
-<span>    ensembl <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>    location <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span>
+<span><span class="va">query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scRNAseq/man/HeOrganAtlasData.html" class="external-link">HeOrganAtlasData</a></span><span class="op">(</span>tissue <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Liver"</span><span class="op">)</span>, ensembl <span class="op">=</span> <span class="cn">FALSE</span>, location <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Add QC metrics to query data</span></span>
 <span></span>
@@ -270,22 +257,20 @@ macrophages and monocytes, adding biological context to our results.</p>
 <span><span class="va">query_data</span><span class="op">$</span><span class="va">label_category</span> <span class="op">&lt;-</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">query_data</span><span class="op">$</span><span class="va">pred.labels</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Macrophage"</span>, <span class="st">"Monocyte"</span><span class="op">)</span>,</span>
 <span>           <span class="va">query_data</span><span class="op">$</span><span class="va">pred.labels</span>,</span>
-<span>           <span class="st">"Other cells"</span><span class="op">)</span></span>
+<span>           <span class="st">"Other Cells"</span><span class="op">)</span></span>
 <span></span>
 <span></span>
 <span><span class="co"># Define custom colors for cell type labels</span></span>
-<span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Other cells"</span> <span class="op">=</span> <span class="st">"grey"</span>, <span class="st">"Macrophage"</span> <span class="op">=</span> <span class="st">"green"</span>, <span class="st">"Monocyte"</span> <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span>
+<span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Other Cells"</span> <span class="op">=</span> <span class="st">"grey"</span>, <span class="st">"Macrophage"</span> <span class="op">=</span> <span class="st">"green"</span>, <span class="st">"Monocyte"</span> <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Generate scatter plot for all cell types</span></span>
-<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotQCvsAnnotation.html">plotQCvsAnnotation</a></span><span class="op">(</span></span>
-<span>    query_data <span class="op">=</span> <span class="va">query_data</span>,</span>
-<span>    qc_col <span class="op">=</span> <span class="st">"subsets_mt_percent"</span>,</span>
-<span>    label_col <span class="op">=</span> <span class="st">"label_category"</span>,</span>
-<span>    score_col <span class="op">=</span> <span class="st">"cell_scores"</span>,</span>
-<span>    label <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">cols</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"subsets_mt_percent"</span><span class="op">)</span></span>
-<span><span class="va">p1</span></span></code></pre></div>
+<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotQCvsAnnotation.html">plotQCvsAnnotation</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>,</span>
+<span>                         qc_col <span class="op">=</span> <span class="st">"subsets_mt_percent"</span>,</span>
+<span>                         label_col <span class="op">=</span> <span class="st">"label_category"</span>,</span>
+<span>                         score_col <span class="op">=</span> <span class="st">"cell_scores"</span>,</span>
+<span>                         label <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="va">p2</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">cols</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Subsets Mitochondrial Percentage (%)"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="examining-distribution-of-qc-stats-and-annotation-scores">Examining Distribution of QC stats and Annotation Scores<a class="anchor" aria-label="anchor" href="#examining-distribution-of-qc-stats-and-annotation-scores"></a>
@@ -333,8 +318,7 @@ specific cell types of interest. This enables investigation of whether
 alignment between the query and reference datasets is consistent not
 only at a global level but also within specific cell types.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Load data</span></span>
+<code class="sourceCode R"><span><span class="co"># Load data</span></span>
 <span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scRNAseq/man/HeOrganAtlasData.html" class="external-link">HeOrganAtlasData</a></span><span class="op">(</span>tissue <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Marrow"</span><span class="op">)</span>, ensembl <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Divide the data into reference and query datasets</span></span>
@@ -347,14 +331,9 @@ only at a global level but also within specific cell types.</p>
 <span><span class="va">ref_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/logNormCounts.html" class="external-link">logNormCounts</a></span><span class="op">(</span><span class="va">ref_data</span><span class="op">)</span></span>
 <span><span class="va">query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/logNormCounts.html" class="external-link">logNormCounts</a></span><span class="op">(</span><span class="va">query_data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Run PCA</span></span>
-<span><span class="va">ref_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">ref_data</span><span class="op">)</span></span>
-<span><span class="va">query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">query_data</span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># Get cell type scores using SingleR</span></span>
 <span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SingleR/man/SingleR.html" class="external-link">SingleR</a></span><span class="op">(</span><span class="va">query_data</span>, <span class="va">ref_data</span>, labels <span class="op">=</span> <span class="va">ref_data</span><span class="op">$</span><span class="va">reclustered.broad</span><span class="op">)</span></span>
-<span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">pred</span><span class="op">)</span></span>
-<span>   </span>
+<span></span>
 <span><span class="co"># Assign labels to query data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">query_data</span><span class="op">)</span><span class="op">$</span><span class="va">labels</span> <span class="op">&lt;-</span> <span class="va">pred</span><span class="op">$</span><span class="va">labels</span></span>
 <span>   </span>
@@ -365,40 +344,7 @@ only at a global level but also within specific cell types.</p>
 <span>                     query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
 <span>                     gene_name <span class="op">=</span> <span class="st">"MS4A1"</span>, </span>
 <span>                     label <span class="op">=</span> <span class="st">"B_and_plasma"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="scDiagnostics_files/figure-html/Gene-Expression-Histogram-1.png" width="700"></p>
-<p>In the provided example, we examined the distribution of expression
-values for the gene MS4A1, a marker for naive B cells, in both the query
-and reference datasets. Additionally, we also looked at the distribution
-of MS4A1 expression in the B_and_plasma cell type. We observed
-overlapping distributions in both cases, suggesting alignment between
-the reference and query datasets.</p>
-</div>
-<div class="section level3">
-<h3 id="evaluating-alignment-between-reference-and-query-datasets-in-terms-of-highly-variable-genes">Evaluating Alignment Between Reference and Query Datasets in Terms
-of Highly Variable Genes<a class="anchor" aria-label="anchor" href="#evaluating-alignment-between-reference-and-query-datasets-in-terms-of-highly-variable-genes"></a>
-</h3>
-<p>We are assessing the similarity or alignment between two datasets,
-the reference dataset, and the query dataset, in terms of highly
-variable genes (HVGs). We calculate the overlap coefficient between the
-sets of highly variable genes in the reference and query datasets. The
-overlap coefficient quantifies the degree of overlap or similarity
-between these two sets of genes. A value closer to 1 indicates a higher
-degree of overlap, while a value closer to 0 suggests less overlap. The
-computed overlap coefficient is printed, providing a numerical measure
-of how well the highly variable genes in the reference and query
-datasets align. In this case, the overlap coefficient is 0.62,
-indicating a moderate level of overlap.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Selecting highly variable genes</span></span>
-<span><span class="va">ref_var</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scran/man/getTopHVGs.html" class="external-link">getTopHVGs</a></span><span class="op">(</span><span class="va">ref_data</span>, n<span class="op">=</span><span class="fl">2000</span><span class="op">)</span></span>
-<span><span class="va">query_var</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scran/man/getTopHVGs.html" class="external-link">getTopHVGs</a></span><span class="op">(</span><span class="va">query_data</span>, n<span class="op">=</span><span class="fl">2000</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Compute the overlap coefficient</span></span>
-<span><span class="va">overlap_coefficient</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateHVGOverlap.html">calculateHVGOverlap</a></span><span class="op">(</span>reference_genes <span class="op">=</span> <span class="va">ref_var</span>, </span>
-<span>                                           query_genes <span class="op">=</span> <span class="va">query_var</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">overlap_coefficient</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.63</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/plot-Marker-Expression-1.png" width="700"></p>
 <p>In the provided example, we examined the distribution of expression
 values for the gene MS4A1, a marker for naive B cells, in both the query
 and reference datasets. Additionally, we also looked at the distribution
@@ -424,13 +370,16 @@ the second principal component (Dimension 2). Each cell is represented
 as a point on the plot, and its color reflects the expression level of
 the gene “VPREB3,” ranging from low (lighter color) to high (darker
 color).</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Generate dimension reduction plot color code by gene expression</span></span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Run PCA on the query data</span></span>
+<span><span class="va">query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">query_data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Generate dimension reduction plot color code by gene expression</span></span>
 <span><span class="fu"><a href="../reference/plotGeneExpressionDimred.html">plotGeneExpressionDimred</a></span><span class="op">(</span>se_object <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                         method <span class="op">=</span> <span class="st">"PCA"</span>, </span>
 <span>                         pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>, </span>
 <span>                         feature <span class="op">=</span> <span class="st">"VPREB3"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="scDiagnostics_files/figure-html/Gene-Expression-Scatter-1.png" width="700"></p>
+<p><img src="scDiagnostics_files/figure-html/plot-Gene-Expression-Dimred-1.png" width="700"></p>
 <p>The dimensional reduction plot allows us to observe how the gene
 expression of VPREB3 is distributed across the cells and whether any
 clusters or patterns emerge in the data.</p>
@@ -454,9 +403,8 @@ for specific gene sets or pathways. This visualization helps identify
 the heterogeneity and patterns of gene set or pathway activity within
 the dataset, potentially revealing subpopulations with distinct
 functional characteristics.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Compute scores using AUCell</span></span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Compute scores using AUCell</span></span>
 <span><span class="va">expression_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">query_data</span>, <span class="st">"logcounts"</span><span class="op">)</span></span>
 <span><span class="va">cells_rankings</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AUCell/man/AUCell_buildRankings.html" class="external-link">AUCell_buildRankings</a></span><span class="op">(</span><span class="va">expression_matrix</span>, plotStats <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
@@ -477,8 +425,7 @@ functional characteristics.</p>
 <span><span class="fu"><a href="../reference/plotGeneSetScores.html">plotGeneSetScores</a></span><span class="op">(</span>se_object <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                  method <span class="op">=</span> <span class="st">"PCA"</span>, </span>
 <span>                  feature <span class="op">=</span> <span class="st">"geneSetScores"</span>,</span>
-<span>                  pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="scDiagnostics_files/figure-html/Pathway-Scores-on-Dimensional-Reduction-Scatter-1.png" width="700"></p>
+<span>                  pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>In the provided example, we demonstrate the usage of the
 plotGeneSetScores function using the AUCell package to compute gene set
 or pathway scores. Custom gene sets are generated for demonstration
@@ -491,6 +438,87 @@ plot, you can gain a comprehensive understanding of the functional
 landscape within your single-cell gene expression dataset and explore
 the relationships between gene set activities and cellular
 phenotypes.</p>
+</div>
+<div class="section level3">
+<h3 id="evaluating-alignment-between-reference-and-query-datasets-in-terms-of-highly-variable-genes">Evaluating Alignment Between Reference and Query Datasets in Terms
+of Highly Variable Genes<a class="anchor" aria-label="anchor" href="#evaluating-alignment-between-reference-and-query-datasets-in-terms-of-highly-variable-genes"></a>
+</h3>
+<p>We are assessing the similarity or alignment between two datasets,
+the reference dataset, and the query dataset, in terms of highly
+variable genes (HVGs). We calculate the overlap coefficient between the
+sets of highly variable genes in the reference and query datasets. The
+overlap coefficient quantifies the degree of overlap or similarity
+between these two sets of genes. A value closer to 1 indicates a higher
+degree of overlap, while a value closer to 0 suggests less overlap. The
+computed overlap coefficient is printed, providing a numerical measure
+of how well the highly variable genes in the reference and query
+datasets align. In this case, the overlap coefficient is 0.63,
+indicating a moderate level of overlap.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get top HVG genes on each dataset</span></span>
+<span><span class="va">ref_var</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scran/man/getTopHVGs.html" class="external-link">getTopHVGs</a></span><span class="op">(</span><span class="va">ref_data</span>, n <span class="op">=</span> <span class="fl">2000</span><span class="op">)</span> </span>
+<span><span class="va">query_var</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scran/man/getTopHVGs.html" class="external-link">getTopHVGs</a></span><span class="op">(</span><span class="va">query_data</span>, n <span class="op">=</span> <span class="fl">2000</span><span class="op">)</span>  </span>
+<span></span>
+<span><span class="co"># Compute the overlap coefficient </span></span>
+<span><span class="va">overlap_coefficient</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateHVGOverlap.html">calculateHVGOverlap</a></span><span class="op">(</span>reference_genes <span class="op">=</span> <span class="va">ref_var</span>,</span>
+<span>                                           query_genes <span class="op">=</span> <span class="va">query_var</span><span class="op">)</span> </span>
+<span><span class="va">overlap_coefficient</span></span>
+<span><span class="co">#&gt; [1] 0.63</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="compare-gene-importance-across-datasets-using-random-forest">Compare Gene Importance Across Datasets Using Random Forest<a class="anchor" aria-label="anchor" href="#compare-gene-importance-across-datasets-using-random-forest"></a>
+</h3>
+<p>The calculateVarImpOverlap function in this package is designed to
+identify and compare the most important genes for differentiating cell
+types between a query dataset and a reference dataset using the Random
+Forest algorithm. This comparison helps in understanding the overlap and
+consistency of key gene markers across different datasets.</p>
+<p>This function applies the Random Forest algorithm to compute the
+importance of genes in differentiating between cell types within both a
+reference dataset and a query dataset. It then compares the top genes
+identified in both datasets to assess the overlap in their importance
+scores. This can be particularly useful for researchers aiming to
+validate their findings across different single-cell RNA-seq datasets,
+ensuring the robustness of identified markers and improving the
+reliability of subsequent analyses and annotations.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Intersect the gene symbols to obtain common genes</span></span>
+<span><span class="va">common_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">ref_var</span>, <span class="va">query_var</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Select desired cell types</span></span>
+<span><span class="va">selected_cell_types</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span><span class="op">)</span></span>
+<span><span class="va">ref_data_subset</span> <span class="op">&lt;-</span> <span class="va">ref_data</span><span class="op">[</span><span class="va">common_genes</span>, <span class="va">ref_data</span><span class="op">$</span><span class="va">reclustered.broad</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected_cell_types</span><span class="op">]</span></span>
+<span><span class="va">query_data_subset</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[</span><span class="va">common_genes</span>, <span class="va">query_data</span><span class="op">$</span><span class="va">labels</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected_cell_types</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Compute important variables for all pairwise cell comparisons</span></span>
+<span><span class="va">var_imp_overlap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateVarImpOverlap.html">calculateVarImpOverlap</a></span><span class="op">(</span><span class="va">ref_data_subset</span>, </span>
+<span>                                          <span class="va">query_data_subset</span>,</span>
+<span>                                          ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
+<span>                                          query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>,</span>
+<span>                                          n_top <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Comparison table</span></span>
+<span><span class="va">var_imp_overlap</span><span class="op">$</span><span class="va">var_imp_comparison</span></span>
+<span><span class="co">#&gt; B_and_plasma-CD8 B_and_plasma-CD4          CD8-CD4 </span></span>
+<span><span class="co">#&gt;             0.74             0.84             0.72</span></span></code></pre></div>
+<p>The resulting overlap in the top genes’ importance scores for
+differentiating CD4+ T cells from CD8+ T cells between the reference and
+query datasets is 0.72. This implies that only 72% of the top 50 genes
+identified as important in distinguishing these two cell types in the
+reference dataset are also identified as important in the query
+dataset.</p>
+<p>This moderate overlap indicates some level of consistency in the gene
+markers identified across the datasets, but it also highlights potential
+differences in the biological or technical conditions between the
+datasets. Factors such as batch effects, differences in sample
+preparation, or inherent biological variability could contribute to
+these differences. Consequently, while some key markers for CD4+ and
+CD8+ T cells are reliably detected in both datasets, additional
+validation and possibly further investigation into the causes of
+variability are warranted to ensure robust and accurate cell type
+differentiation. This finding underscores the importance of
+cross-dataset comparisons to validate and refine marker genes in
+single-cell transcriptomic studies.</p>
 </div>
 <div class="section level3">
 <h3 id="visualizing-reference-and-query-cell-types-using-multidimensional-scaling-mds">Visualizing Reference and Query Cell Types using Multidimensional
@@ -509,26 +537,13 @@ datasets in a reduced-dimensional space.</p>
 <p>The rationale behind this function is to visually assess the
 alignment and relationships between cell types in the query and
 reference datasets.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Intersect the gene symbols to obtain common genes</span></span>
-<span><span class="va">common_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">ref_var</span>, <span class="va">query_var</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Select desired cell types</span></span>
-<span><span class="va">selected_cell_types</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span><span class="op">)</span></span>
-<span><span class="va">ref_data_subset</span> <span class="op">&lt;-</span> <span class="va">ref_data</span><span class="op">[</span><span class="va">common_genes</span>, <span class="va">ref_data</span><span class="op">$</span><span class="va">reclustered.broad</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected_cell_types</span><span class="op">]</span></span>
-<span><span class="va">query_data_subset</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[</span><span class="va">common_genes</span>, <span class="va">query_data</span><span class="op">$</span><span class="va">labels</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected_cell_types</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># Extract cell types for visualization</span></span>
-<span><span class="va">ref_labels</span> <span class="op">&lt;-</span> <span class="va">ref_data_subset</span><span class="op">$</span><span class="va">reclustered.broad</span></span>
-<span><span class="va">query_labels</span> <span class="op">&lt;-</span> <span class="va">query_data_subset</span><span class="op">$</span><span class="va">labels</span></span>
-<span></span>
-<span><span class="co"># Generate the MDS scatter plot with cell type coloring</span></span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Generate the MDS scatter plot with cell type coloring</span></span>
 <span><span class="fu"><a href="../reference/visualizeCellTypeMDS.html">visualizeCellTypeMDS</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
 <span>                     reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
 <span>                     query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>,</span>
 <span>                     ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="scDiagnostics_files/figure-html/CMD-Scatter-Plot-1.png" width="700"></p>
+<p><img src="scDiagnostics_files/figure-html/visualize-Cell-Type-MDS-1.png" width="700"></p>
 <p>Upon examining the MDS scatter plot, we observe that the CD4 and CD8
 cell types overlap to some extent.By observing the proximity or overlap
 of different cell types, one can gain insights into their potential
@@ -539,100 +554,95 @@ focusing on specific genes and examining particular cell types of
 interest in the visualization.</p>
 </div>
 <div class="section level3">
-<h3 id="cell-type-specific-pairwise-correlation-analysis-and-visualization">Cell Type-specific Pairwise Correlation Analysis and
-Visualization<a class="anchor" aria-label="anchor" href="#cell-type-specific-pairwise-correlation-analysis-and-visualization"></a>
+<h3 id="visualizing-principal-components-for-different-cell-types">Visualizing Principal Components for Different Cell Types<a class="anchor" aria-label="anchor" href="#visualizing-principal-components-for-different-cell-types"></a>
 </h3>
-<p>This analysis aims to explore the correlation patterns between
-different cell types in a single-cell gene expression dataset. The goal
-is to compare the gene expression profiles of cells from a reference
-dataset and a query dataset to understand the relationships and
-similarities between various cell types.</p>
-<p>To perform the analysis, we start by computing the pairwise
-correlations between the query and reference cells for selected cell
-types (“CD4”, “CD8”, “B_and_plasma”). The Spearman correlation method is
-used, user can also use Pearsons correlation coeefficient.</p>
-<p>This will return average correlation matrix which can be visulaized
-by user’s method of choice. Here, the results are visualized as a
-correlation plot using the corrplot package.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">selected_cell_types</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span><span class="op">)</span></span>
-<span><span class="va">ref_data_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">ref_data_subset</span><span class="op">)</span></span>
-<span><span class="va">cor_matrix_avg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
-<span>                                                      reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
-<span>                                                      n_components <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>                                                      query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
-<span>                                                      ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
-<span>                                                      cell_types <span class="op">=</span> <span class="va">selected_cell_types</span>, </span>
-<span>                                                      correlation_method <span class="op">=</span> <span class="st">"spearman"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Visualize the output</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cor_matrix_avg</span><span class="op">)</span></span></code></pre></div>
-<p><img src="scDiagnostics_files/figure-html/Cell-Type-Correlation-Analysis-Visualization-1.png" width="700"></p>
-<p>In this case, users have the flexibility to extract the gene
-expression profiles of specific cell types from the reference and query
-datasets and provide these profiles as input to the function.
-Additionally, they can select their own set of genes that they consider
-relevant for computing the pairwise correlations. For demonstartion we
-have used common highly variable genes from reference and query
-dataset.</p>
-<p>By providing their own gene expression profiles and choosing specific
-genes, users can focus the analysis on the cell types and genes of
-interest to their research question.</p>
-</div>
-<div class="section level3">
-<h3 id="pairwise-distance-analysis-and-density-visualization">Pairwise Distance Analysis and Density Visualization<a class="anchor" aria-label="anchor" href="#pairwise-distance-analysis-and-density-visualization"></a>
-</h3>
-<p>This function serves to conduct a analysis of pairwise distances or
-correlations between cells of specific cell types within a single-cell
-gene expression dataset. By calculating these distances or correlations,
-users can gain insights into the relationships and differences in gene
-expression profiles between different cell types. The function
-facilitates this analysis by generating density plots, allowing users to
-visualize the distribution of distances or correlations for various
-pairwise comparisons.</p>
-<p>The analysis offers the flexibility to select a particular cell type
-for examination, and users can choose between different distance
-metrics, such as “euclidean” or “manhattan,” to calculate pairwise
-distances.</p>
-<p>To illustrate, the function is applied to the cell type CD8 using the
-euclidean distance metric in the example below.</p>
+<p>The visualizeCellTypePCA function is designed to provide a clear
+visual representation of the principal components for different cell
+types in both query and reference datasets. This visualization helps in
+comparing the cell type distributions and identifying potential
+differences or similarities between datasets.</p>
+<p>This function projects the query dataset onto the principal component
+space of the reference dataset. It then visualizes the specified
+principal components for the specified cell types using ggplot2 for
+creating plots. By default, the function considers the first ten
+principal components and allows the user to select specific components
+for detailed visualization. The function will project the query dataset
+onto the PCA space of the reference dataset and generate scatter plots
+for pairs of principal components (e.g., PC1 vs. PC2, PC1 vs. PC3,
+etc.).</p>
+<p>When interpreting these plots, one might observe distinct clustering
+of cell types, indicating clear differentiation in the principal
+component space. For instance, if CD4+ and CD8+ T cells form separate
+clusters, it suggests that the PCA effectively captures the differences
+between these cell types. Conversely, if the clusters overlap
+significantly, it could imply that the chosen principal components do
+not fully capture the distinctions between these cell types.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/calculatePairwiseDistancesAndPlotDensity.html">calculatePairwiseDistancesAndPlotDensity</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
-<span>                                         reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
-<span>                                         n_components <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>                                         query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
-<span>                                         ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
-<span>                                         cell_type_query <span class="op">=</span> <span class="st">"CD8"</span>, </span>
-<span>                                         cell_type_reference <span class="op">=</span> <span class="st">"CD8"</span>, </span>
-<span>                                         distance_metric <span class="op">=</span> <span class="st">"euclidean"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="scDiagnostics_files/figure-html/Pairwise-Distance-Analysis-Density-Visualization-1.png" width="768"></p>
-<p>Alternatively, users can opt for the “correlation” distance metric,
-which measures the similarity in gene expression profiles between
-cells.</p>
-<p>To illustrate, the function is applied to the cell type CD8 using the
-correlation distance metric in the example below. By selecting either
-the “pearson” or “spearman” correlation method, users can emphasize
-either linear or rank-based associations, respectively.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/calculatePairwiseDistancesAndPlotDensity.html">calculatePairwiseDistancesAndPlotDensity</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
-<span>                                         reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
-<span>                                         n_components <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>                                         query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
-<span>                                         ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
-<span>                                         cell_type_query <span class="op">=</span> <span class="st">"CD8"</span>, </span>
-<span>                                         cell_type_reference <span class="op">=</span> <span class="st">"CD8"</span>, </span>
-<span>                                         distance_metric <span class="op">=</span> <span class="st">"correlation"</span>,</span>
-<span>                                         correlation_method <span class="op">=</span> <span class="st">"spearman"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="scDiagnostics_files/figure-html/Pairwise-Distance-Correlation-Based-Density-Visualization-1.png" width="768"></p>
-<p>By utilizing this function, users can explore the pairwise distances
-between query and reference cells of a specific cell type and gain
-insights into the distribution of distances through density plots. This
-analysis aids in understanding the similarities and differences in gene
-expression profiles for the selected cell type within the query and
-reference datasets.</p>
+<code class="sourceCode R"><span><span class="co"># Run PCA on the reference data</span></span>
+<span><span class="va">ref_data_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">ref_data_subset</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot the PCs data</span></span>
+<span><span class="fu"><a href="../reference/visualizeCellTypePCA.html">visualizeCellTypePCA</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>,</span>
+<span>                     query_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
+<span>                     ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
+<span>                     pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>The B and plasma cell types from the reference and query datasets do
+not overlap well in the PCA space. This lack of overlap could indicate
+discrepancies between the datasets, such as poor classification by
+SingleR, differences in data quality, technical artifacts, or biological
+variations that were not accounted for.</p>
 </div>
 <div class="section level3">
-<h3 id="pc-regression-analysis">PC regression analysis<a class="anchor" aria-label="anchor" href="#pc-regression-analysis"></a>
+<h3 id="boxplot-of-principal-components-for-different-cell-types">Boxplot of Principal Components for Different Cell Types<a class="anchor" aria-label="anchor" href="#boxplot-of-principal-components-for-different-cell-types"></a>
+</h3>
+<p>The boxplotPCA function provides a detailed visualization of
+principal component analysis (PCA) results for different cell types
+across two datasets: query and reference. This function generates
+boxplots of principal components (PCs), allowing for comparative
+analysis of the distributions of the PCs across various cell types and
+datasets.</p>
+<p>These boxplots allow us to observe the distribution of each principal
+component for each cell type across the reference and query datasets. If
+the boxplots for a given cell type overlap significantly between the
+reference and query datasets, it suggests that the PCA results are
+consistent across these datasets. This overlap indicates that the cell
+type characteristics are well captured and comparable between the
+datasets.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Run PCA on the reference data</span></span>
+<span><span class="va">ref_data_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">ref_data_subset</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Boxplots of PCs</span></span>
+<span><span class="fu"><a href="../reference/boxplotPCA.html">boxplotPCA</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>,</span>
+<span>           query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
+<span>           ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
+<span>           pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/boxplot-PCA-1.png" width="700"></p>
+<p>The boxplots for the different cell types from the reference and
+query datasets do not overlap well. This lack of overlap could indicate
+discrepancies between the datasets, such as differences poor
+classification by SingleR, differences in data quality, technical
+artifacts, or biological variations that were not accounted for. This
+outcome might prompt further investigation into the preprocessing steps
+or the inherent variability within these cell types, potentially leading
+to refinements in data normalization or correction for batch effects to
+achieve better alignment.</p>
+</div>
+<div class="section level3">
+<h3 id="hotellings-two-sample-t2-test-on-bulk-pca-scores">Hotelling’s Two-Sample T<sup>2</sup> Test on Bulk PCA Scores<a class="anchor" aria-label="anchor" href="#hotellings-two-sample-t2-test-on-bulk-pca-scores"></a>
+</h3>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateHotellingPValue.html">calculateHotellingPValue</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
+<span>                                     reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
+<span>                                     query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
+<span>                                     ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>,</span>
+<span>                                     pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span> </span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">p_values</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; B_and_plasma          CD8          CD4 </span></span>
+<span><span class="co">#&gt;      0.00406      0.00000      0.00000</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="pc-regression-analysis">PC Regression Analysis<a class="anchor" aria-label="anchor" href="#pc-regression-analysis"></a>
 </h3>
 <p>Performing PC regression analysis on a SingleCellExperiment object
 enables users to examine the relationship between a principal component
@@ -659,9 +669,8 @@ you have batch effects!</li>
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Specify the dependent variables (principal components) and</span></span>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Specify the dependent variables (principal components) and</span></span>
 <span><span class="co">#  independent variable (e.g., "labels")</span></span>
 <span><span class="va">dep.vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"PC"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span></span>
 <span><span class="va">indep.var</span> <span class="op">&lt;-</span> <span class="st">"labels"</span></span>
@@ -696,7 +705,7 @@ you have batch effects!</li>
 <span><span class="co">#&gt; Residual standard error: 4.156 on 965 degrees of freedom</span></span>
 <span><span class="co">#&gt; Multiple R-squared:  0.5996, Adjusted R-squared:  0.5984 </span></span>
 <span><span class="co">#&gt; F-statistic: 481.7 on 3 and 965 DF,  p-value: &lt; 2.2e-16</span></span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># R-squared values</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">rsquared</span></span>
@@ -704,7 +713,7 @@ you have batch effects!</li>
 <span><span class="co">#&gt; 0.599614123 0.537021405 0.435744738 0.139056106 0.117961322 0.114439358 </span></span>
 <span><span class="co">#&gt;         PC7         PC8         PC9        PC10        PC11        PC12 </span></span>
 <span><span class="co">#&gt; 0.039179544 0.001160446 0.002783929 0.005571931 0.001378947 0.002534793</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Variance contributions for each principal component</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">var.contributions</span></span>
@@ -712,7 +721,7 @@ you have batch effects!</li>
 <span><span class="co">#&gt; 6.7286315831 2.7629320174 1.2945575966 0.3166828703 0.2377093993 0.1592056363 </span></span>
 <span><span class="co">#&gt;          PC7          PC8          PC9         PC10         PC11         PC12 </span></span>
 <span><span class="co">#&gt; 0.0426559772 0.0008730584 0.0020421974 0.0038728627 0.0008466853 0.0014487730</span></span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Total variance explained</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">total.variance.explained</span></span>
@@ -720,73 +729,466 @@ you have batch effects!</li>
 <p>This analysis helps uncover whether there is a systematic variation
 in PC values across different cell types. In the example above, we can
 see that the four cell types are spread out across both PC1 and PC2.
-Digging into the genes with high loadins on these PCs can help explain
+Digging into the genes with high loadings on these PCs can help explain
 the biological or technical factors driving cellular heterogeneity. It
 can help identify PC dimensions that capture variation specific to
 certain cell types or distinguish different cellular states.</p>
 <p>Let’s look at the genes driving PC1 by ordering the rotation matrix
 by the absolute gene loadings for PC1:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pc_df</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDims</a></span><span class="op">(</span><span class="va">query_data</span><span class="op">)</span><span class="op">$</span><span class="va">PCA</span>, <span class="st">"rotation"</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pc_df</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDims</a></span><span class="op">(</span><span class="va">query_data</span><span class="op">)</span><span class="op">$</span><span class="va">PCA</span>, <span class="st">"rotation"</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">pc_df</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">pc_df</span><span class="op">$</span><span class="va">PC1</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">pc_df</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">pc_df</span><span class="op">$</span><span class="va">PC1</span><span class="op">)</span><span class="op">)</span>, <span class="st">"PC1"</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;            PC1         PC2         PC3          PC4         PC5</span></span>
-<span><span class="co">#&gt; GZMA 0.1517186  0.04586987 -0.08107421 -0.026938885 -0.02137103</span></span>
-<span><span class="co">#&gt; GNLY 0.1552411 -0.08726472  0.12820759 -0.101178473 -0.31953772</span></span>
-<span><span class="co">#&gt; CST7 0.1665665  0.02884329 -0.08880178 -0.034188322 -0.06706179</span></span>
-<span><span class="co">#&gt; CCL4 0.1686632  0.03547543 -0.17317610 -0.009090169  0.01089660</span></span>
-<span><span class="co">#&gt; CCL5 0.1815465  0.12081019 -0.19633461  0.008349436  0.06547467</span></span>
-<span><span class="co">#&gt; NKG7 0.2286197  0.01800213 -0.04694001 -0.090383938 -0.13464307</span></span></code></pre></div>
+<span><span class="co">#&gt;            PC1</span></span>
+<span><span class="co">#&gt; GZMA 0.1517186</span></span>
+<span><span class="co">#&gt; GNLY 0.1552411</span></span>
+<span><span class="co">#&gt; CST7 0.1665665</span></span>
+<span><span class="co">#&gt; CCL4 0.1686632</span></span>
+<span><span class="co">#&gt; CCL5 0.1815465</span></span>
+<span><span class="co">#&gt; NKG7 0.2286197</span></span></code></pre></div>
 <p>PC1 is mostly driven by NKG7 - Natural Killer Cell Granule Protein 7.
 This gene is important in CD8+ T cells, so that makes sense that it’s
 distinguishing the cell types shown.</p>
-<blockquote>
-<p>Exercise: What genes are driving PC2? Do they make sense?</p>
-</blockquote>
-<blockquote>
-<p>Exercise: Try to use the command below to examine the spike on PC5.
-What’s going on there?</p>
-</blockquote>
-<p><code>plotPCA(query_data, ncomponents = c(1,5), color_by = "labels")</code></p>
 </div>
 <div class="section level3">
-<h3 id="annotation-entropy">Annotation entropy<a class="anchor" aria-label="anchor" href="#annotation-entropy"></a>
+<h3 id="cell-type-specific-pairwise-correlation-analysis-and-visualization">Cell Type-specific Pairwise Correlation Analysis and
+Visualization<a class="anchor" aria-label="anchor" href="#cell-type-specific-pairwise-correlation-analysis-and-visualization"></a>
 </h3>
-<p>In order to assess the confidence of cell type predictions, we can
-use the function <code><a href="../reference/calculateCategorizationEntropy.html">calculateCategorizationEntropy()</a></code>. This
-function calculates the information entropy of assignment probabilities
-across a set of cell types for each cell. If a set of class
-probabilities are confident, the entropies will be low.</p>
-<p>This can be used to compare two sets of cell type assignments
-(e.g. from different type assignment methods) to compare their relative
-confidence. <strong>Please note that this has nothing to do with their
-accuracy!</strong> Computational methods can sometimes be confidently
-incorrect.</p>
-<p>The cell type probabilities should be passed as a matrix with cell
-types as rows and cells as columns. If the columns of the matrix are not
-valid probability distributions (i.e. don’t sum to 1 as in the below
-example), the function will perform a column-wise softmax to convert
-them to a probability scale. This may or may not work well depending on
-the distribution of the inputs, so if at all possible try to pass
-probabilities instead of arbitrary scores.</p>
-<p>In this example, we create 500 random cells with random normal cell
-type “scores” across 4 cell types. For demonstration we make the score
-of the first class much higher in the first 250 cells. After the
-softmax, this will equate to a very high probability of cell type 1. The
-remaining 250 will have assignments that are roughly even across the
-four cell types (i.e. high entropy).</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">500</span> <span class="op">*</span> <span class="fl">4</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>nrow <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="va">X</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">250</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">X</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">250</span><span class="op">]</span> <span class="op">+</span> <span class="fl">5</span> </span>
+<p>This analysis aims to explore the correlation patterns between
+different cell types in a single-cell gene expression dataset. The goal
+is to compare the gene expression profiles of cells from a reference
+dataset and a query dataset to understand the relationships and
+similarities between various cell types.</p>
+<p>To perform the analysis, we start by computing the pairwise
+correlations between the query and reference cells for selected cell
+types (“CD4”, “CD8”, “B_and_plasma”). The Spearman correlation method is
+used, user can also use Pearsons correlation coefficient.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cor_matrix_avg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>,</span>
+<span>                                                      reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
+<span>                                                      query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
+<span>                                                      ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
+<span>                                                      cell_types <span class="op">=</span> <span class="va">selected_cell_types</span>, </span>
+<span>                                                      correlation_method <span class="op">=</span> <span class="st">"spearman"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">entropy_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateCategorizationEntropy.html">calculateCategorizationEntropy</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
-<span><span class="co">#&gt; X doesn't seem to be on the probability scale, applying column-wise softmax.</span></span>
-<span><span class="co">#&gt; Max possible entropy given 4 categories: 1.39</span></span></code></pre></div>
-<p><img src="scDiagnostics_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
-<p>From the plot we can see that half of the cells (the first half we
-shifted to class 1) have low entropy, and half have high entropy.</p>
+<span><span class="co"># Visualize the output</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cor_matrix_avg</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/calculate-Average-Pairwise-Correlation-1.png" width="700"></p>
+<p>In this case, users have the flexibility to extract the gene
+expression profiles of specific cell types from the reference and query
+datasets and provide these profiles as input to the function.
+Additionally, they can select their own set of genes that they consider
+relevant for computing the pairwise correlations. For demonstration we
+have used common highly variable genes from reference and query
+dataset.</p>
+<p>By providing their own gene expression profiles and choosing specific
+genes, users can focus the analysis on the cell types and genes of
+interest to their research question.</p>
+</div>
+<div class="section level3">
+<h3 id="pairwise-distance-analysis-and-density-visualization">Pairwise Distance Analysis and Density Visualization<a class="anchor" aria-label="anchor" href="#pairwise-distance-analysis-and-density-visualization"></a>
+</h3>
+<p>This function serves to conduct a analysis of pairwise distances or
+correlations between cells of specific cell types within a single-cell
+gene expression dataset. By calculating these distances or correlations,
+users can gain insights into the relationships and differences in gene
+expression profiles between different cell types. The function
+facilitates this analysis by generating density plots, allowing users to
+visualize the distribution of distances or correlations for various
+pairwise comparisons.</p>
+<p>The analysis offers the flexibility to select a particular cell type
+for examination, and users can choose between different distance
+metrics, such as “euclidean” or “manhattan,” to calculate pairwise
+distances.</p>
+<p>To illustrate, the function is applied to the cell type CD8 using the
+euclidean distance metric in the example below.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPairwiseDistancesDensity.html">plotPairwiseDistancesDensity</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
+<span>                             reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
+<span>                             query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
+<span>                             ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
+<span>                             cell_type_query <span class="op">=</span> <span class="st">"CD4"</span>, </span>
+<span>                             cell_type_reference <span class="op">=</span> <span class="st">"CD4"</span>, </span>
+<span>                             distance_metric <span class="op">=</span> <span class="st">"euclidean"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/plotPairwise-Distances-Density-1.png" width="768"></p>
+<p>Alternatively, users can opt for the “correlation” distance metric,
+which measures the similarity in gene expression profiles between
+cells.</p>
+<p>To illustrate, the function is applied to the cell type CD4 using the
+correlation distance metric in the example below. By selecting either
+the “pearson” or “spearman” correlation method, users can emphasize
+either linear or rank-based associations, respectively.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPairwiseDistancesDensity.html">plotPairwiseDistancesDensity</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
+<span>                             reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
+<span>                             query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
+<span>                             ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
+<span>                             cell_type_query <span class="op">=</span> <span class="st">"CD4"</span>, </span>
+<span>                             cell_type_reference <span class="op">=</span> <span class="st">"CD4"</span>, </span>
+<span>                             distance_metric <span class="op">=</span> <span class="st">"correlation"</span>,</span>
+<span>                             correlation_method <span class="op">=</span> <span class="st">"spearman"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/plot-Pairwise-Distances-Density-1.png" width="768"></p>
+<p>By utilizing this function, users can explore the pairwise distances
+between query and reference cells of a specific cell type and gain
+insights into the distribution of distances through density plots. This
+analysis aids in understanding the similarities and differences in gene
+expression profiles for the selected cell type within the query and
+reference datasets.</p>
+</div>
+<div class="section level3">
+<h3 id="calculate-nearest-neighbor-diagnostics-for-cell-type-classification">Calculate Nearest Neighbor Diagnostics for Cell Type
+Classification<a class="anchor" aria-label="anchor" href="#calculate-nearest-neighbor-diagnostics-for-cell-type-classification"></a>
+</h3>
+<p>The calculateNearestNeighborProbabilities function is designed to
+compute the probabilities that each sample in a query dataset belongs to
+either the reference or the query dataset for each cell type using
+nearest neighbor analysis. This function is particularly useful for
+evaluating the consistency of cell type classification across
+datasets.</p>
+<p>This function projects the query data onto the PCA space of the
+reference data, balances the sample sizes between the reference and
+query datasets through data augmentation if necessary, and calculates
+the probability of each cell in the query dataset belonging to the query
+dataset for each cell type using a nearest neighbor search.</p>
+<p>Ideally, the probability distributions for each cell type would
+center around 0.5, indicating an equal likelihood of belonging to either
+the reference or query dataset. This balanced probability suggests that
+the query and reference datasets are well-matched for that cell type.
+Deviations from this ideal, such as bimodal distributions, may indicate
+that the query dataset contains additional, unaccounted-for cell types
+or subpopulations within that particular cell type. Such patterns can
+highlight the need for further investigation into the composition and
+quality of the query dataset, possibly revealing the presence of
+unexpected or mislabeled cells.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">nn_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateNearestNeighborProbabilities.html">calculateNearestNeighborProbabilities</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
+<span>                                                   reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>,</span>
+<span>                                                   query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
+<span>                                                   ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot output</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nn_output</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/nearest-Neighbor-Diagnostics-1.png" width="768"></p>
+<p>The nearest neighbor diagnostics for CD4+ T cells yield a bimodal
+probability distribution, this suggests that the query dataset contains
+distinct subpopulations or potentially mislabeled cells within the CD4+
+T cell category. Ideally, the probability distribution should center
+around 0.5, indicating an equal likelihood of belonging to either the
+reference or query dataset. A bimodal distribution, however, indicates
+that some CD4+ T cells in the query dataset are very similar to those in
+the reference, while others are distinctly different.</p>
+</div>
+<div class="section level3">
+<h3 id="isolation-forest-based-anomaly-detection-in-pca-space-for-single-cell-data">Isolation Forest-based Anomaly Detection in PCA Space for
+Single-Cell Data<a class="anchor" aria-label="anchor" href="#isolation-forest-based-anomaly-detection-in-pca-space-for-single-cell-data"></a>
+</h3>
+<p>The detectAnomaly function is designed to identify anomalies in
+single-cell RNA sequencing (scRNA-seq) data by leveraging principal
+component analysis (PCA) and the isolation forest algorithm. The main
+purpose of this function is to project both reference and query datasets
+onto a common PCA space, build an isolation forest on the reference
+data, and use it to detect anomalies in the query data based on their
+PCA projections. If a query dataset is not provided, the function
+computes anomaly scores for the reference data itself. This process
+helps in distinguishing cells that deviate significantly from the
+expected patterns within a given cell type, thereby highlighting
+potential errors, rare cell types, or other interesting biological
+variations.</p>
+<p>The function returns a comprehensive output, including anomaly scores
+for each cell, logical vectors indicating whether a cell is classified
+as an anomaly, and the PCA projections of both reference and query
+datasets. Additionally, it provides the proportion of variance explained
+by the retained principal components. To interpret the results, anomaly
+scores closer to the specified threshold (default 0.5) suggest cells
+that are considered borderline anomalies. Scores significantly above
+this threshold indicate strong anomalies. By examining these scores and
+their distributions, users can identify and investigate outlier cells,
+ensuring data quality and uncovering potential biological insights.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Store PCA anomaly data</span></span>
+<span><span class="va">anomaly_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/detectAnomaly.html">detectAnomaly</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
+<span>                                query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
+<span>                                ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
+<span>                                query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co"># Plot the anomaly output for a cell type</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">anomaly_output</span>, cell_type <span class="op">=</span> <span class="st">"CD4"</span>, pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>, data_type <span class="op">=</span> <span class="st">"query"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/detect-Anomaly-1.png" width="768"></p>
+<p>The high frequency of anomalies within CD4+ T cells could suggest the
+presence of annotation errors or rare CD4+ T cells sub-populations. This
+capability allows researchers to not only assess the quality of their
+datasets but also uncover potential biological insights that might
+otherwise go unnoticed.</p>
+</div>
+<div class="section level3">
+<h3 id="compute-sample-distances-between-reference-and-query-data">Compute Sample Distances Between Reference and Query Data<a class="anchor" aria-label="anchor" href="#compute-sample-distances-between-reference-and-query-data"></a>
+</h3>
+<p>The calculateSampleDistances function is designed to analyze the
+spatial relationships within and between single-cell RNA sequencing
+(scRNA-seq) datasets by computing distances within a reference dataset
+and from query samples to reference samples. Using PCA for
+dimensionality reduction and Euclidean distance for the actual distance
+calculations, this function helps in understanding how closely the query
+samples resemble the reference data in the reduced PCA space.</p>
+<p>When the resulting distance metrics are visualized, particularly if a
+significant spread or clustering of distances is observed, it can
+provide insights into the similarity or dissimilarity between the
+datasets. For instance, large distances from query samples to reference
+samples could indicate that the query data contains different or novel
+cell types not well-represented in the reference dataset. Conversely,
+small distances suggest that the query samples closely match the
+reference cell types, implying a good overlap between the datasets. This
+functionality is crucial for assessing annotation quality, quality
+control, identification of outliers, and further biological
+interpretation, particularly when analyzing heterogeneous cell
+populations.</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Compute sample distance data</span></span>
+<span><span class="va">distance_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateSampleDistances.html">calculateSampleDistances</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
+<span>                                          query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
+<span>                                          ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co"># Store top six anomalies for CD4</span></span>
+<span><span class="va">cd4_top6_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">anomaly_output</span><span class="op">$</span><span class="va">CD4</span><span class="op">$</span><span class="va">query_anomaly_scores</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot the densities of the distances for the anomalies</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">distance_data</span>, ref_cell_type <span class="op">=</span> <span class="st">"CD4"</span>, sample_names <span class="op">=</span> <span class="va">cd4_top6_anomalies</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/calculate-Sample-Distances-1.png" width="768"></p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plot the densities of the distances for the anomalies</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">distance_data</span>, ref_cell_type <span class="op">=</span> <span class="st">"CD8"</span>, sample_names <span class="op">=</span> <span class="va">cd4_top6_anomalies</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/calculate-Sample-Distances-CD8-1.png" width="768"></p>
+<p>When using the detectAnomaly function to identify the top 6 anomalies
+in CD4+ T cells, a subsequent analysis reveals that these anomalous
+cells exhibit minimal overlap with the reference CD4+ T cell data.
+Instead, they show a significantly larger overlap with the reference
+data for CD8+ T cells. This pattern suggests that the anomalous CD4+ T
+cells may possess characteristics more akin to CD8+ T cells, possibly
+indicating a misclassification or a transitional cell state. This
+finding could have important biological implications, such as uncovering
+a subset of CD4+ T cells undergoing differentiation into CD8+ T cells,
+or identifying a distinct cell population that shares features of both T
+cell types. Such insights are critical for understanding cell identity
+and plasticity in immune responses, highlighting the utility of anomaly
+detection in single-cell RNA sequencing data analysis.</p>
+</div>
+<div class="section level3">
+<h3 id="compute-bhattacharyya-coefficients-and-hellinger-distances-on-sample-distances">Compute Bhattacharyya Coefficients and Hellinger Distances on Sample
+Distances<a class="anchor" aria-label="anchor" href="#compute-bhattacharyya-coefficients-and-hellinger-distances-on-sample-distances"></a>
+</h3>
+<p>This function calculates Bhattacharyya coefficients and Hellinger
+distances to quantify the similarity between density distributions of
+query samples and reference data.</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get overlap measures</span></span>
+<span><span class="va">overlap_measures</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateSampleDistancesSimilarity.html">calculateSampleDistancesSimilarity</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
+<span>                                                       sample_names <span class="op">=</span> <span class="va">cd4_top6_anomalies</span>,</span>
+<span>                                                       query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
+<span>                                                       ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span><span class="op">)</span> </span>
+<span><span class="va">overlap_measures</span><span class="op">$</span><span class="va">bhattacharyya_coef</span></span>
+<span><span class="co">#&gt;               Sample B_and_plasma       CD8       CD4</span></span>
+<span><span class="co">#&gt; 1 AACTCCCAGTCCCACG-1    0.2838214 0.8965671 0.7743430</span></span>
+<span><span class="co">#&gt; 2 GGGACCTTCCCATTTA-1    0.3109462 0.9476774 0.7052183</span></span>
+<span><span class="co">#&gt; 3 CGTTGGGAGCTGAACG-1    0.2584233 0.9447935 0.5397216</span></span>
+<span><span class="co">#&gt; 4 CACCTTGGTTATGTGC-1    0.2541869 0.9914814 0.4618995</span></span>
+<span><span class="co">#&gt; 5 AAACGGGCACATGACT-1    0.2875195 0.9706078 0.4892946</span></span>
+<span><span class="co">#&gt; 6 ATTGGTGGTAACGCGA-1    0.4207154 0.4835584 0.5011162</span></span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">overlap_measures</span><span class="op">$</span><span class="va">hellinger_dist</span></span>
+<span><span class="co">#&gt;               Sample B_and_plasma        CD8       CD4</span></span>
+<span><span class="co">#&gt; 1 AACTCCCAGTCCCACG-1    0.8462733 0.32160979 0.4750337</span></span>
+<span><span class="co">#&gt; 2 GGGACCTTCCCATTTA-1    0.8300927 0.22874124 0.5429380</span></span>
+<span><span class="co">#&gt; 3 CGTTGGGAGCTGAACG-1    0.8611485 0.23496073 0.6784382</span></span>
+<span><span class="co">#&gt; 4 CACCTTGGTTATGTGC-1    0.8636047 0.09229603 0.7335533</span></span>
+<span><span class="co">#&gt; 5 AAACGGGCACATGACT-1    0.8440856 0.17144142 0.7146366</span></span>
+<span><span class="co">#&gt; 6 ATTGGTGGTAACGCGA-1    0.7611075 0.71863872 0.7063171</span></span></code></pre></div>
+<p>When employing the calculateSampleDistancesSimilarity function, the
+anomalous CD4+ T cells identified using detectAnomaly demonstrate
+intriguing patterns in their similarity measures. Specifically, these
+anomalous CD4+ T cells exhibit Bhattacharyya coefficients closest to 1
+when compared to the reference CD8+ T cells. This high Bhattacharyya
+coefficient indicates a significant similarity between the distribution
+of these anomalous CD4+ T cells and the reference CD8+ T cell
+population.</p>
+<p>Furthermore, the Hellinger distance for these anomalous CD4+ T cells,
+when measured against the CD8+ T cell reference data, is closest to 0.
+The low Hellinger distance reinforces the observation that these
+anomalous CD4+ T cells share a high degree of similarity with CD8+ T
+cells. Such findings suggest that these CD4+ T cells might be
+misclassified, potentially representing a transitional cell state or a
+subset with distinct characteristics that align more closely with CD8+ T
+cells. This nuanced analysis underscores the importance of combining
+anomaly detection with robust similarity measures to uncover hidden
+insights in single-cell RNA sequencing data.</p>
+</div>
+<div class="section level3">
+<h3 id="calculate-sample-similarity-to-pc-loadings">Calculate Sample Similarity to PC Loadings<a class="anchor" aria-label="anchor" href="#calculate-sample-similarity-to-pc-loadings"></a>
+</h3>
+<p>This function aims to compute the cosine similarity between samples
+based on the PCs obtained from PCA loadings. Anomalous cells, often
+identified through anomaly detection methods, may exhibit substantial
+effects on PCs with small eigenvalues. This function facilitates the
+examination of how anomalous samples align with principal components,
+potentially revealing aberrant expression patterns and aiding in the
+identification of outlier cells in scRNA-seq datasets.</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Store PCA anomaly data and plots</span></span>
+<span><span class="va">anomaly_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/detectAnomaly.html">detectAnomaly</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span>
+<span>                                query_data <span class="op">=</span> <span class="va">query_data_subset</span>,</span>
+<span>                                ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span>, </span>
+<span>                                query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span><span class="op">)</span> </span>
+<span><span class="va">top6_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">anomaly_output</span><span class="op">$</span><span class="va">Combined</span><span class="op">$</span><span class="va">reference_anomaly_scores</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Compute cosine similarity between anomalies and PCs</span></span>
+<span><span class="va">cosine_similarities</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateSampleSimilarityPCA.html">calculateSampleSimilarityPCA</a></span><span class="op">(</span><span class="va">ref_data_subset</span>, samples <span class="op">=</span> <span class="va">top6_anomalies</span>, </span>
+<span>                                                    pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">)</span>, n_top_vars <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
+<span><span class="co"># Plot similarities</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cosine_similarities</span>, pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span><span class="op">:</span><span class="fl">25</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/calculate-Sample-Similarity-PCA-1.png" width="768"></p>
+</div>
+<div class="section level3">
+<h3 id="project-query-data-onto-discriminant-space-of-reference-data">Project Query Data onto Discriminant Space of Reference Data<a class="anchor" aria-label="anchor" href="#project-query-data-onto-discriminant-space-of-reference-data"></a>
+</h3>
+<p>This function facilitates the projection of query single-cell RNA-seq
+data onto the discriminant space defined by reference data. By
+leveraging the discriminant space established using reference data, the
+function assesses the similarity between the query and reference data
+projections using cosine similarity and Mahalanobis distance.</p>
+<p>The process involves several steps for each pairwise combination of
+cell types:</p>
+<ul>
+<li>Identification of top important variables to distinguish between the
+two cell types from the reference data.</li>
+<li>Computation of the Ledoit-Wolf shrinkage estimate of the covariance
+matrix for each cell type using the top important genes.</li>
+<li>Construction of within-class and between-class scatter
+matrices.</li>
+<li>Solution of the generalized eigenvalue problem to obtain
+discriminant vectors.</li>
+<li>Projection of both reference and query data onto the discriminant
+space.</li>
+<li>Assessment of the similarity of the query data projection to the
+reference data using cosine similarity and Mahalanobis distance.</li>
+</ul>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">disc_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateDiscriminantSpace.html">calculateDiscriminantSpace</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>,</span>
+<span>                                          query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
+<span>                                          query_cell_type_col <span class="op">=</span> <span class="st">"labels"</span>, </span>
+<span>                                          ref_cell_type_col <span class="op">=</span> <span class="st">"reclustered.broad"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Generate scatterplot</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">disc_output</span>, plot_type <span class="op">=</span> <span class="st">"scatterplot"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/project-Discriminant-Space-1.png" width="768"></p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">disc_output</span>, cell_types <span class="op">=</span> <span class="st">"CD4-CD8"</span>, plot_type <span class="op">=</span> <span class="st">"boxplot"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/project-Discriminant-Space-Boxplot-1.png" width="768"></p>
+<p>The scatterplot provides compelling evidence of an overlap between
+CD4+ and CD8+ cells, indicating a potential misannotation. Furthermore,
+the boxplot reveals a noticeable incongruity between the query and
+reference data in the discriminant space specifically for CD4+ T
+cells.</p>
+</div>
+<div class="section level3">
+<h3 id="compare-pca-results-across-datasets">Compare PCA Results Across Datasets<a class="anchor" aria-label="anchor" href="#compare-pca-results-across-datasets"></a>
+</h3>
+<p>The <code>comparePCA</code> function is designed to compare the
+principal components (PCs) obtained from separate PCA analyses on
+reference and query datasets for a specific cell type. It allows users
+to assess the similarity between the PCs using either cosine similarity
+or correlation metrics.</p>
+<p>This function computes cosine similarities or correlations between
+the loadings of top variables for each pair of principal components from
+the reference and query datasets. It first extracts the PCA rotation
+matrices from both datasets and identifies the top variables with the
+highest loadings for each PC. Then, it computes the similarity values
+between the loadings of top variables for each pair of PCs. The
+resulting matrix contains similarity values, where rows represent
+reference PCs and columns represent query PCs.</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Selecting highly variable genes</span></span>
+<span><span class="va">ref_var</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scran/man/getTopHVGs.html" class="external-link">getTopHVGs</a></span><span class="op">(</span><span class="va">ref_data</span>, n <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
+<span><span class="va">query_var</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scran/man/getTopHVGs.html" class="external-link">getTopHVGs</a></span><span class="op">(</span><span class="va">query_data</span>, n <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Intersect the gene symbols to obtain common genes</span></span>
+<span><span class="va">common_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">ref_var</span>, <span class="va">query_var</span><span class="op">)</span></span>
+<span><span class="va">ref_data_subset</span> <span class="op">&lt;-</span> <span class="va">ref_data</span><span class="op">[</span><span class="va">common_genes</span>, <span class="op">]</span></span>
+<span><span class="va">query_data_subset</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[</span><span class="va">common_genes</span>, <span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Subset reference and query data for a specific cell type</span></span>
+<span><span class="va">ref_data_subset</span> <span class="op">&lt;-</span> <span class="va">ref_data_subset</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">ref_data_subset</span><span class="op">$</span><span class="va">reclustered.broad</span> <span class="op">==</span> <span class="st">"CD4"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">query_data_subset</span> <span class="op">&lt;-</span> <span class="va">query_data_subset</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">query_data_subset</span><span class="op">$</span><span class="va">reclustered.broad</span> <span class="op">==</span> <span class="st">"CD4"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Run PCA on the reference and query datasets separately</span></span>
+<span><span class="va">ref_data_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">ref_data_subset</span>, ncomponents <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
+<span><span class="va">query_data_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">query_data_subset</span>, ncomponents <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Call the PCA comparison function</span></span>
+<span><span class="va">similarity_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/comparePCA.html">comparePCA</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
+<span>                             pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,  </span>
+<span>                             n_top_vars <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>                             metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cosine"</span>, <span class="st">"correlation"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, </span>
+<span>                             correlation_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spearman"</span>, <span class="st">"pearson"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Create the heatmap</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">similarity_mat</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/compare-PCA-1.png" width="768"></p>
+<p>The comparePCA function provides insights into the consistency or
+discrepancy between the PCA results of reference and query datasets. By
+comparing the similarity matrix generated, users can discern patterns of
+similarity or dissimilarity in the principal components across datasets.
+This insight can help evaluate the quality of the reference dataset and
+the effectiveness of the PCA analysis in capturing similar structures in
+the query dataset.</p>
+</div>
+<div class="section level3">
+<h3 id="compare-subspaces-spanned-by-top-principal-components">Compare Subspaces Spanned by Top Principal Components<a class="anchor" aria-label="anchor" href="#compare-subspaces-spanned-by-top-principal-components"></a>
+</h3>
+<p>This function first computes the cosine similarity between the
+loadings of the top variables for each PC in both the reference and
+query datasets. It then selects the top cosine similarity scores and
+their corresponding PC indices. Additionally, the function calculates
+the average percentage of variance explained by the selected top PCs.
+Finally, it computes a weighted cosine similarity score based on the top
+cosine similarities and the average percentage of variance
+explained.</p>
+<p>The comparePCASubspace function provides insights into the similarity
+between the subspaces spanned by the top PCs of the reference and query
+datasets. By comparing the weighted cosine similarity score, users can
+assess how closely aligned the subspaces are. This insight is valuable
+for understanding the consistency of the principal components between
+datasets and can aid in assessing the quality of data integration or
+comparative analysis.</p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">subspace_comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/comparePCASubspace.html">comparePCASubspace</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
+<span>                                          pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot output for PCA subspace comparison</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">subspace_comparison</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/compare-PCA-Subspace-1.png" width="768"></p>
+</div>
+<div class="section level3">
+<h3 id="compare-subspaces-spanned-by-top-principal-components-using-canonical-correlation-analysis">Compare Subspaces Spanned by Top Principal Components Using
+Canonical Correlation Analysis<a class="anchor" aria-label="anchor" href="#compare-subspaces-spanned-by-top-principal-components-using-canonical-correlation-analysis"></a>
+</h3>
+<p>The compareCCA function is a versatile tool designed to compare the
+subspaces defined by the top principal components (PCs) in two distinct
+datasets using Canonical Correlation Analysis (CCA). Its primary
+functionality lies in assessing the similarity between the structures
+represented by these PCs, providing researchers with a quantitative
+measure of the concordance between high-dimensional datasets. By
+focusing on the top loading variables for each PC, the function allows
+for a targeted examination of the most informative features driving the
+observed variation, enhancing the interpretability of the comparative
+analysis.</p>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cca_comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareCCA.html">compareCCA</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span>
+<span>                             pc_subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Create a data frame for plotting</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cca_comparison</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scDiagnostics_files/figure-html/compare-CCA-1.png" width="768"></p>
 </div>
 </div>
 <div class="section level2">
@@ -832,98 +1234,95 @@ time zone: UTC
 tzcode source: system (glibc)
 
 attached base packages:
-[1] grid      stats4    stats     graphics  grDevices utils     datasets 
-[8] methods   base     
+[1] stats4    stats     graphics  grDevices utils     datasets  methods  
+[8] base     
 
 other attached packages:
- [1] ComplexHeatmap_2.20.0       SingleR_2.6.0              
- [3] RColorBrewer_1.1-3          AUCell_1.26.0              
- [5] scRNAseq_2.18.0             scran_1.32.0               
- [7] scater_1.32.0               ggplot2_3.5.1              
- [9] scuttle_1.14.0              SingleCellExperiment_1.26.0
-[11] corrplot_0.92               celldex_1.14.0             
-[13] SummarizedExperiment_1.34.0 Biobase_2.64.0             
-[15] GenomicRanges_1.56.0        GenomeInfoDb_1.40.1        
-[17] IRanges_2.38.0              S4Vectors_0.42.0           
-[19] BiocGenerics_0.50.0         MatrixGenerics_1.16.0      
-[21] matrixStats_1.3.0           scDiagnostics_0.99.0       
-[23] BiocStyle_2.32.0           
+ [1] celldex_1.14.0              AUCell_1.26.0              
+ [3] SingleR_2.6.0               scran_1.32.0               
+ [5] scater_1.32.0               ggplot2_3.5.1              
+ [7] scuttle_1.14.0              scRNAseq_2.18.0            
+ [9] SingleCellExperiment_1.26.0 SummarizedExperiment_1.34.0
+[11] Biobase_2.64.0              GenomicRanges_1.56.0       
+[13] GenomeInfoDb_1.40.1         IRanges_2.38.0             
+[15] S4Vectors_0.42.0            BiocGenerics_0.50.0        
+[17] MatrixGenerics_1.16.0       matrixStats_1.3.0          
+[19] scDiagnostics_0.99.0        BiocStyle_2.32.0           
 
 loaded via a namespace (and not attached):
   [1] BiocIO_1.14.0             bitops_1.0-7             
-  [3] filelock_1.0.3            R.oo_1.26.0              
-  [5] tibble_3.2.1              graph_1.82.0             
+  [3] filelock_1.0.3            tibble_3.2.1             
+  [5] R.oo_1.26.0               graph_1.82.0             
   [7] XML_3.99-0.16.1           lifecycle_1.0.4          
-  [9] httr2_1.0.1               doParallel_1.0.17        
- [11] edgeR_4.2.0               lattice_0.22-6           
+  [9] httr2_1.0.1               edgeR_4.2.0              
+ [11] isotree_0.6.1-1           lattice_0.22-6           
  [13] ensembldb_2.28.0          alabaster.base_1.4.1     
  [15] magrittr_2.0.3            limma_3.60.2             
  [17] sass_0.4.9                rmarkdown_2.27           
  [19] jquerylib_0.1.4           yaml_2.3.8               
- [21] metapod_1.12.0            DBI_1.2.3                
- [23] abind_1.4-5               zlibbioc_1.50.0          
- [25] purrr_1.0.2               R.utils_2.12.3           
- [27] AnnotationFilter_1.28.0   RCurl_1.98-1.14          
- [29] rappdirs_0.3.3            circlize_0.4.16          
+ [21] metapod_1.12.0            RColorBrewer_1.1-3       
+ [23] DBI_1.2.3                 abind_1.4-5              
+ [25] zlibbioc_1.50.0           purrr_1.0.2              
+ [27] R.utils_2.12.3            AnnotationFilter_1.28.0  
+ [29] RCurl_1.98-1.14           rappdirs_0.3.3           
  [31] GenomeInfoDbData_1.2.12   ggrepel_0.9.5            
  [33] irlba_2.3.5.1             alabaster.sce_1.4.0      
  [35] annotate_1.82.0           dqrng_0.4.1              
  [37] pkgdown_2.0.9             DelayedMatrixStats_1.26.0
  [39] codetools_0.2-20          DelayedArray_0.30.1      
- [41] shape_1.4.6.1             tidyselect_1.2.1         
- [43] farver_2.1.2              UCSC.utils_1.0.0         
- [45] ScaledMatrix_1.12.0       viridis_0.6.5            
- [47] BiocFileCache_2.12.0      GenomicAlignments_1.40.0 
- [49] jsonlite_1.8.8            GetoptLong_1.0.5         
- [51] BiocNeighbors_1.22.0      iterators_1.0.14         
- [53] systemfonts_1.1.0         foreach_1.5.2            
- [55] tools_4.4.0               ragg_1.3.2               
- [57] Rcpp_1.0.12               glue_1.7.0               
- [59] gridExtra_2.3             SparseArray_1.4.8        
- [61] xfun_0.44                 dplyr_1.1.4              
- [63] HDF5Array_1.32.0          gypsum_1.0.1             
- [65] withr_3.0.0               BiocManager_1.30.23      
- [67] fastmap_1.2.0             rhdf5filters_1.16.0      
- [69] bluster_1.14.0            fansi_1.0.6              
- [71] digest_0.6.35             rsvd_1.0.5               
- [73] R6_2.5.1                  textshaping_0.4.0        
- [75] colorspace_2.1-0          RSQLite_2.3.7            
- [77] R.methodsS3_1.8.2         utf8_1.2.4               
- [79] generics_0.1.3            data.table_1.15.4        
- [81] rtracklayer_1.64.0        httr_1.4.7               
- [83] htmlwidgets_1.6.4         S4Arrays_1.4.1           
- [85] pkgconfig_2.0.3           gtable_0.3.5             
- [87] blob_1.2.4                XVector_0.44.0           
- [89] htmltools_0.5.8.1         bookdown_0.39            
- [91] clue_0.3-65               GSEABase_1.66.0          
- [93] ProtGenerics_1.36.0       scales_1.3.0             
- [95] alabaster.matrix_1.4.0    png_0.1-8                
- [97] knitr_1.47                rjson_0.2.21             
- [99] curl_5.2.1                GlobalOptions_0.1.2      
-[101] cachem_1.1.0              rhdf5_2.48.0             
-[103] BiocVersion_3.19.1        parallel_4.4.0           
-[105] vipor_0.4.7               AnnotationDbi_1.66.0     
-[107] restfulr_0.0.15           desc_1.4.3               
-[109] pillar_1.9.0              alabaster.schemas_1.4.0  
-[111] vctrs_0.6.5               BiocSingular_1.20.0      
-[113] dbplyr_2.5.0              beachmat_2.20.0          
-[115] xtable_1.8-4              cluster_2.1.6            
-[117] beeswarm_0.4.0            evaluate_0.23            
-[119] GenomicFeatures_1.56.0    cli_3.6.2                
-[121] locfit_1.5-9.9            compiler_4.4.0           
-[123] Rsamtools_2.20.0          rlang_1.1.4              
-[125] crayon_1.5.2              labeling_0.4.3           
-[127] fs_1.6.4                  ggbeeswarm_0.7.2         
-[129] viridisLite_0.4.2         alabaster.se_1.4.1       
-[131] BiocParallel_1.38.0       munsell_0.5.1            
-[133] Biostrings_2.72.1         lazyeval_0.2.2           
-[135] Matrix_1.7-0              ExperimentHub_2.12.0     
-[137] sparseMatrixStats_1.16.0  bit64_4.0.5              
-[139] Rhdf5lib_1.26.0           KEGGREST_1.44.0          
-[141] statmod_1.5.0             highr_0.11               
-[143] alabaster.ranges_1.4.1    AnnotationHub_3.12.0     
-[145] igraph_2.0.3              memoise_2.0.1            
-[147] bslib_0.7.0               bit_4.0.5                </code></pre>
+ [41] tidyselect_1.2.1          farver_2.1.2             
+ [43] UCSC.utils_1.0.0          ScaledMatrix_1.12.0      
+ [45] viridis_0.6.5             BiocFileCache_2.12.0     
+ [47] GenomicAlignments_1.40.0  jsonlite_1.8.8           
+ [49] BiocNeighbors_1.22.0      systemfonts_1.1.0        
+ [51] tools_4.4.0               ragg_1.3.2               
+ [53] Rcpp_1.0.12               glue_1.7.0               
+ [55] gridExtra_2.3             SparseArray_1.4.8        
+ [57] ranger_0.16.0             xfun_0.44                
+ [59] dplyr_1.1.4               HDF5Array_1.32.0         
+ [61] gypsum_1.0.1              withr_3.0.0              
+ [63] BiocManager_1.30.23       fastmap_1.2.0            
+ [65] rhdf5filters_1.16.0       bluster_1.14.0           
+ [67] fansi_1.0.6               digest_0.6.35            
+ [69] rsvd_1.0.5                Hotelling_1.0-8          
+ [71] R6_2.5.1                  textshaping_0.4.0        
+ [73] colorspace_2.1-0          RSQLite_2.3.7            
+ [75] R.methodsS3_1.8.2         utf8_1.2.4               
+ [77] generics_0.1.3            corpcor_1.6.10           
+ [79] data.table_1.15.4         rtracklayer_1.64.0       
+ [81] httr_1.4.7                htmlwidgets_1.6.4        
+ [83] S4Arrays_1.4.1            pkgconfig_2.0.3          
+ [85] gtable_0.3.5              blob_1.2.4               
+ [87] XVector_0.44.0            htmltools_0.5.8.1        
+ [89] bookdown_0.39             GSEABase_1.66.0          
+ [91] ProtGenerics_1.36.0       scales_1.3.0             
+ [93] alabaster.matrix_1.4.0    png_0.1-8                
+ [95] knitr_1.47                rjson_0.2.21             
+ [97] curl_5.2.1                cachem_1.1.0             
+ [99] rhdf5_2.48.0              BiocVersion_3.19.1       
+[101] parallel_4.4.0            vipor_0.4.7              
+[103] AnnotationDbi_1.66.0      restfulr_0.0.15          
+[105] desc_1.4.3                pillar_1.9.0             
+[107] grid_4.4.0                alabaster.schemas_1.4.0  
+[109] vctrs_0.6.5               BiocSingular_1.20.0      
+[111] dbplyr_2.5.0              beachmat_2.20.0          
+[113] xtable_1.8-4              cluster_2.1.6            
+[115] beeswarm_0.4.0            evaluate_0.23            
+[117] GenomicFeatures_1.56.0    cli_3.6.2                
+[119] locfit_1.5-9.9            compiler_4.4.0           
+[121] Rsamtools_2.20.0          rlang_1.1.4              
+[123] crayon_1.5.2              labeling_0.4.3           
+[125] fs_1.6.4                  ggbeeswarm_0.7.2         
+[127] alabaster.se_1.4.1        viridisLite_0.4.2        
+[129] BiocParallel_1.38.0       munsell_0.5.1            
+[131] Biostrings_2.72.1         lazyeval_0.2.2           
+[133] Matrix_1.7-0              ExperimentHub_2.12.0     
+[135] sparseMatrixStats_1.16.0  bit64_4.0.5              
+[137] Rhdf5lib_1.26.0           KEGGREST_1.44.0          
+[139] statmod_1.5.0             highr_0.11               
+[141] alabaster.ranges_1.4.1    AnnotationHub_3.12.0     
+[143] igraph_2.0.3              memoise_2.0.1            
+[145] bslib_0.7.0               bit_4.0.5                </code></pre>
 </div>
 </div>
   </div>
