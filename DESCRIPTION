@@ -4,7 +4,8 @@ Title: Cell type annotation diagnostics
 Version: 0.99.0
 Authors@R: c(
     person("Anthony", "Christidis", role = c("aut", "cre"), 
-            email = "anthony-alexander_christidis@hms.harvard.edu"),
+            email = "anthony-alexander_christidis@hms.harvard.edu", 
+            comment = c(ORCID = "0000-0002-4565-6279")),
     person("Andrew", "Ghazi", role = "aut"),
     person("Smriti", "Chawla", role = "aut"),
     person("Nitesh", "Turaga", role = "ctb"),

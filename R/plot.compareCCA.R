@@ -39,8 +39,10 @@ plot.compareCCA <- function(x, ...){
                       x = "",
                       y = "Cosine Similarity of CC Coefficients",
                       size = "Correlation") +
-        ggplot2::theme_minimal() +
-        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, 
-                                                           size = 12, hjust = 1))
+        ggplot2::theme_bw() +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
+                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
+                       panel.grid.minor = ggplot2::element_blank(),
+                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"))
     return(cca_plot)
 }
