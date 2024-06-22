@@ -30,6 +30,9 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/ccb-hms/scDiagnostics/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
@@ -79,7 +82,7 @@ the PC matrix.</p></dd>
 
 
 <dt>indep.var</dt>
-<dd><p>character. Independent variable. A column name in the
+<dd><p>A character with the name of the independent variable. A column name in the
 <code>colData</code> of <code>sce</code> specifying the response variable.</p></dd>
 
 
@@ -88,8 +91,7 @@ the PC matrix.</p></dd>
 
 
 <dt>max_pc</dt>
-<dd><p>The maximum number of PCs to show on the plot. Set to 0 to show
-all.</p></dd>
+<dd><p>The maximum number of PCs to show on the plot. Set to 0 to show all.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -106,25 +108,26 @@ all.</p></dd>
 </ul></div>
     <div id="details">
     <h2>Details</h2>
-    <p>Principal component regression, derived from PCA, can be used to
-  quantify the variance explained by a covariate interest. Applications for
-  single-cell analysis include quantification of batch removal, assessing
-  clustering homogeneity, and evaluation of alignment of query and reference
-  datasets in cell type annotation settings.  Briefly, the R^2 is calculated
-  from a linear regression of the covariate B of interest onto each principal
-  component. The variance contribution of the covariate effect per principal
-  component is then calculated as the product of the variance explained by
-  the ith principal component (PC) and the corresponding R2(PCi|B). The sum
-  across all variance contributions by the covariate effects in all principal
-  components gives the total variance explained by the covariate as follows:</p>
-<p>Var(C|B) = sum_i=1^G Var(C|PC_i) * R^2 (PC_i | B)</p>
-<p>where, Var(C|PCi) is the variance of the data matrix C explained by the ith
-  principal component. See references.</p>
-<p>If the input is large (&gt;3e4 cells) and the independent variable is
-  categorical with &gt;10 categories, this function will use a stripped down
-  linear model function that is faster but doesn't return all the same
-  components. Namely, the <code>regression.summaries</code> component of the result
-  will contain only the R^2 values, nothing else.</p>
+    <p>Principal component regression, derived from PCA, can be used to quantify the 
+variance explained by a covariate of interest. Applications for single-cell 
+analysis include quantification of batch effects, assessing clustering 
+homogeneity, and evaluating alignment of query and reference datasets in cell 
+type annotation settings.</p>
+<p>Briefly, the \(R^2\) is calculated from a linear regression of the covariate B of 
+interest onto each principal component. The variance contribution of the 
+covariate effect per principal component is then calculated as the product of 
+the variance explained by the i-th principal component (PC) and the 
+corresponding \(R^2(PC_i | B)\). The sum across all variance contributions by the 
+covariate effects in all principal components gives the total variance 
+explained by the covariate as follows:</p>
+<p>$$Var(C|B) = \sum_{i=1}^G \text{Var}(C|PC_i) \times R^2(PC_i | B)$$</p>
+<p>where, \(\text{Var}(C \mid PC_i)\) is the variance of the data matrix \(C\) 
+explained by the i-th principal component. See references for details.</p>
+<p>If the input is large (&gt;3e4 cells) and the independent variable is categorical 
+with \(&gt;10\) categories, this function will use a stripped-down linear model 
+function that is faster but doesn't return all the same components. Namely, 
+the <code>regression.summaries</code> component of the result will contain only the 
+\(R^2\) values, nothing else.</p>
     </div>
     <div id="references">
     <h2>References</h2>
