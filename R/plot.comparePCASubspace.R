@@ -26,11 +26,11 @@
 plot.comparePCASubspace <- function(x, ...){
     
     # Create a data frame for plotting
-    x <- data.frame(PC = paste0("Ref PC", x$cosine_id[, 1],
-                                " - Query PC", x$cosine_id[, 2]),
-                    Cosine = x$cosine_similarity,
-                    VarianceExplained = subspace_comparison$var_explained_avg)
-    x$PC <- factor(x$PC, levels = x$PC)
+    x <- data.frame(PC = paste0("Ref PC", x[["cosine_id"]][, 1],
+                                " - Query PC", x[["cosine_id"]][, 2]),
+                    Cosine = x[["cosine_similarity"]],
+                    VarianceExplained = x[["var_explained_avg"]])
+    x[["PC"]] <- factor(x[["PC"]], levels = x[["PC"]])
     
     # Create plot
     pc_plot <- ggplot2::ggplot(x, ggplot2::aes(x = PC, y = Cosine, size = VarianceExplained)) +
@@ -40,8 +40,10 @@ plot.comparePCASubspace <- function(x, ...){
                       x = "",
                       y = "Cosine Similarity of Principal Angle",
                       size = "Variance Explained") +
-        ggplot2::theme_minimal() +
-        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, 
-                                                           size = 12, hjust = 1))
+        ggplot2::theme_bw() +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
+                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
+                       panel.grid.minor = ggplot2::element_blank(),
+                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"))
     return(pc_plot)
 }
