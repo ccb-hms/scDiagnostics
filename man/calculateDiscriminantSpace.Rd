@@ -14,6 +14,7 @@ calculateDiscriminantSpace(
   eigen_threshold = 0.1,
   n_tree = 500,
   n_top = 20,
+  calculate_metrics = FALSE,
   alpha = 0.01
 )
 
@@ -34,6 +35,8 @@ If NULL, only the projected reference data is returned. Default is NULL.}
 \item{n_tree}{An integer specifying the number of trees for the random forest used in variable importance calculation.}
 
 \item{n_top}{An integer specifying the number of top variables to select based on importance scores.}
+
+\item{calculate_metrics}{Parameter to determine if cosine similarity and Mahalanobis distance metrics should be computed. Default is FALSE.}
 
 \item{alpha}{A numeric value specifying the significance level for Mahalanobis distance cutoff.}
 
@@ -124,6 +127,7 @@ disc_output <- calculateDiscriminantSpace(reference_data = ref_data_subset,
                                         eigen_threshold  = 1e-1,
                                         n_tree = 500,
                                         n_top = 25,
+                                        calculate_metrics = TRUE,
                                         alpha = 0.01)
                                         
 # Generate scatter and boxplot
