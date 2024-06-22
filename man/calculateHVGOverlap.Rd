@@ -7,17 +7,16 @@
 calculateHVGOverlap(reference_genes, query_genes)
 }
 \arguments{
-\item{reference_genes}{character. A vector of highly variable genes from the reference dataset.}
+\item{reference_genes}{A character vector of highly variable genes from the reference dataset.}
 
-\item{query_genes}{character. A vector of highly variable genes from the query dataset.}
+\item{query_genes}{A character vector of highly variable genes from the query dataset.}
 }
 \value{
 Overlap coefficient, a value between 0 and 1, where 0 indicates no overlap 
-        and 1 indicates complete overlap of highly variable genes between datasets.
+and 1 indicates complete overlap of highly variable genes between datasets.
 }
 \description{
-Calculates the overlap coefficient between the sets of highly variable genes 
-from a reference dataset and a query dataset.
+Calculates the overlap coefficient between the sets of highly variable genes from a reference dataset and a query dataset.
 }
 \details{
 The overlap coefficient measures the similarity between two gene sets, indicating how well-aligned 
@@ -29,7 +28,8 @@ The coefficient is calculated using the formula:
 \deqn{Coefficient(X, Y) = \frac{|X \cap Y|}{min(|X|, |Y|)}}
 
 where X and Y are the sets of highly variable genes from the reference and query datasets, respectively,
-|X ∩ Y| is the number of genes common to both X and Y, and min(|X|, |Y|) is the size of the smaller set among X and Y.
+\eqn{|X \cap Y|} is the number of genes common to both \eqn{X} and \eqn{Y}, and \eqn{min(|X|, |Y|)} is the size of the 
+smaller set among \eqn{X} and \eqn{Y}.
 }
 \examples{
 library(scater)
@@ -61,6 +61,5 @@ overlap_coefficient
 
 }
 \references{
-Luecken et al. Benchmarking atlas-level data integration in
-single-cell genomics. Nature Methods, 19:41-50, 2022.
+Luecken et al. Benchmarking atlas-level data integration in single-cell genomics. Nature Methods, 19:41-50, 2022.
 }

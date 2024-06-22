@@ -54,7 +54,8 @@ plot.calculateDiscriminantSpace <- function(x, cell_types, plot_type = c("scatte
             # Create a new variable representing the combination of cell type and dataset
             plot_data[["cell_type_dataset"]] <- paste(plot_data[["data_type"]], plot_data[["cell_type"]], sep = " ")
             plot_data[["cell_type_combination"]] <- paste0(sort(unlist(strsplit(names(x)[comb_id], "-"))), collapse = "-")
-            full_data <- rbind(full_data, plot_data)
+            full_data <- rbind(full_data[, c("DV1", "DV2", "cell_type_dataset", "cell_type_combination")], 
+                               plot_data[, c("DV1", "DV2", "cell_type_dataset", "cell_type_combination")])
         }
         
         # Cell types 

@@ -1,50 +1,48 @@
-
-#' Principal component regression
+#' @title Principal component regression
 #'
+#' @description
 #' This function performs linear regression of a covariate of interest onto one
 #' or more principal components, based on the data in a SingleCellExperiment
 #' object.
 #'
-#' @details Principal component regression, derived from PCA, can be used to
-#'   quantify the variance explained by a covariate interest. Applications for
-#'   single-cell analysis include quantification of batch removal, assessing
-#'   clustering homogeneity, and evaluation of alignment of query and reference
-#'   datasets in cell type annotation settings.  Briefly, the R^2 is calculated
-#'   from a linear regression of the covariate B of interest onto each principal
-#'   component. The variance contribution of the covariate effect per principal
-#'   component is then calculated as the product of the variance explained by
-#'   the ith principal component (PC) and the corresponding R2(PCi|B). The sum
-#'   across all variance contributions by the covariate effects in all principal
-#'   components gives the total variance explained by the covariate as follows:
-#'
-#'   Var(C|B) = sum_{i=1}^G Var(C|PC_i) * R^2 (PC_i | B)
-#'
-#'   where, Var(C|PCi) is the variance of the data matrix C explained by the ith
-#'   principal component. See references.
-#'
-#'   If the input is large (>3e4 cells) and the independent variable is
-#'   categorical with >10 categories, this function will use a stripped down
-#'   linear model function that is faster but doesn't return all the same
-#'   components. Namely, the \code{regression.summaries} component of the result
-#'   will contain only the R^2 values, nothing else.
+#' @details 
+#' Principal component regression, derived from PCA, can be used to quantify the 
+#' variance explained by a covariate of interest. Applications for single-cell 
+#' analysis include quantification of batch effects, assessing clustering 
+#' homogeneity, and evaluating alignment of query and reference datasets in cell 
+#' type annotation settings. 
+#' 
+#' Briefly, the \eqn{R^2} is calculated from a linear regression of the covariate B of 
+#' interest onto each principal component. The variance contribution of the 
+#' covariate effect per principal component is then calculated as the product of 
+#' the variance explained by the i-th principal component (PC) and the 
+#' corresponding \eqn{R^2(PC_i | B)}. The sum across all variance contributions by the 
+#' covariate effects in all principal components gives the total variance 
+#' explained by the covariate as follows:
+#' 
+#' \deqn{Var(C|B) = \sum_{i=1}^G \text{Var}(C|PC_i) \times R^2(PC_i | B)}
+#' 
+#' where, \eqn{\text{Var}(C \mid PC_i)} is the variance of the data matrix \eqn{C} 
+#' explained by the i-th principal component. See references for details.
+#' 
+#' If the input is large (>3e4 cells) and the independent variable is categorical 
+#' with \eqn{>10} categories, this function will use a stripped-down linear model 
+#' function that is faster but doesn't return all the same components. Namely, 
+#' the \code{regression.summaries} component of the result will contain only the 
+#' \eqn{R^2} values, nothing else.
 #'
 #' @param sce An object of class \code{\linkS4class{SingleCellExperiment}}
-#'   containing the data for regression analysis.
-#'
+#' containing the data for regression analysis.
 #' @param dep.vars character. Dependent variable(s). Determines which principal
-#'   component(s) (e.g., "PC1", "PC2", etc.) are used as explanatory variables.
-#'   Principal components are expected to be stored in a PC matrix named
-#'   \code{"PCA"} in the \code{reducedDims} of \code{sce}. Defaults to
-#'   \code{NULL} which will then regress on each principal component present in
-#'   the PC matrix.
-#'
-#' @param indep.var character. Independent variable. A column name in the
-#'   \code{colData} of \code{sce} specifying the response variable.
-#'
+#' component(s) (e.g., "PC1", "PC2", etc.) are used as explanatory variables.
+#' Principal components are expected to be stored in a PC matrix named
+#' \code{"PCA"} in the \code{reducedDims} of \code{sce}. Defaults to
+#' \code{NULL} which will then regress on each principal component present in
+#' the PC matrix.
+#' @param indep.var A character with the name of the independent variable. A column name in the
+#' \code{colData} of \code{sce} specifying the response variable.
 #' @param regressPC_res a result from \code{\link{regressPC}}
-#'
-#' @param max_pc The maximum number of PCs to show on the plot. Set to 0 to show
-#'   all.
+#' @param max_pc The maximum number of PCs to show on the plot. Set to 0 to show all.
 #'
 #' @return A \code{list} containing \itemize{ \item summaries of the linear
 #'   regression models for each specified principal component, \item the
@@ -110,12 +108,9 @@
 #' @importFrom rlang .data
 #' @import SingleCellExperiment
 #' @export
-regressPC <-
-    function(
-        sce,
-        dep.vars = NULL,
-        indep.var) {
-        ## sanity checks
+regressPC <- function(sce, dep.vars = NULL, indep.var) {
+    
+        # Sanity checks
         stopifnot(is(sce, "SingleCellExperiment"))
         stopifnot("PCA" %in% reducedDimNames(sce))
 

@@ -3,18 +3,17 @@
 *.Rhistory
 *.RData
 *.Ruserdata
-.Rproj*
-.Rcheck/
+*.log
+*.pdf
+*.tex
+*.docx
 .Rcache/
 .R-environment
 .RData
 .Rhistory
 .Rproj*
 .Rcheck/
-*.log
-*.pdf
-*.tex
-*.docx
+scDiagnostics.Rproj
 
 # Build artifacts
 /NAMESPACE

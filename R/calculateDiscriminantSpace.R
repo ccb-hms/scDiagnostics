@@ -24,6 +24,7 @@
 #' @param eigen_threshold A numeric value specifying the threshold for retaining eigenvalues in discriminant analysis.
 #' @param n_tree An integer specifying the number of trees for the random forest used in variable importance calculation.
 #' @param n_top An integer specifying the number of top variables to select based on importance scores.
+#' @param calculate_metrics Parameter to determine if cosine similarity and Mahalanobis distance metrics should be computed. Default is FALSE.
 #' @param alpha A numeric value specifying the significance level for Mahalanobis distance cutoff.
 #'
 #' @return A list with the following components for each cell type combination:
@@ -85,6 +86,7 @@
 #'                                         eigen_threshold  = 1e-1,
 #'                                         n_tree = 500,
 #'                                         n_top = 25,
+#'                                         calculate_metrics = TRUE,
 #'                                         alpha = 0.01)
 #'                                         
 #' # Generate scatter and boxplot
@@ -101,6 +103,7 @@ calculateDiscriminantSpace <- function(reference_data, query_data = NULL,
                                        eigen_threshold  = 1e-1,
                                        n_tree = 500,
                                        n_top = 20,
+                                       calculate_metrics = FALSE,
                                        alpha = 0.01){
     
     # Input check for eigen_threshold
@@ -193,23 +196,26 @@ calculateDiscriminantSpace <- function(reference_data, query_data = NULL,
             colnames(query_proj) <- c(paste0("DV", 1:ncol(discriminant_eigenvectors)), "cell_type")
             discriminant_output[[combination_name]][["query_proj"]] <- query_proj
             
-            # Cosine similarity between mean vector of reference projection
-            # Mahalanobis distance between each query cell projected on reference discriminant space and reference data projected on reference discriminant space
-            cosine_similarity <- mahalanobis_dist <- numeric(nrow(query_proj))
-            mahalanobis_crit <- numeric(length(cell_types))
-            for(type in c(1:2)){
-                mahalanobis_dist[query_proj[, "cell_type"] == cell_types[type]] <- 
-                    mahalanobis(query_proj[query_proj[, "cell_type"] == cell_types[type], paste0("DV", 1:length(discriminant_eigenvalues))], 
-                                colMeans(ref_proj[ref_proj[, "cell_type"] == cell_types[type], paste0("DV", 1:length(discriminant_eigenvalues))]), 
-                                cov(ref_proj[ref_proj[, "cell_type"] == cell_types[type], paste0("DV", 1:length(discriminant_eigenvalues))]))
-                cosine_similarity[query_proj[, "cell_type"] == cell_types[type]] <- 
-                    apply(query_proj[query_proj[, "cell_type"] == cell_types[type], paste0("DV", 1:length(discriminant_eigenvalues))], 1, 
-                          function(x, y) return(sum(x * y) / (sqrt(sum(x^2)) * sqrt(sum(y^2)))), 
-                          y = colMeans(ref_proj[ref_proj[, "cell_type"] == cell_types[type], paste0("DV", 1:length(discriminant_eigenvalues))]))
+            if(calculate_metrics){
+                
+                # Cosine similarity between mean vector of reference projection
+                # Mahalanobis distance between each query cell projected on reference discriminant space and reference data projected on reference discriminant space
+                cosine_similarity <- mahalanobis_dist <- numeric(nrow(query_proj))
+                mahalanobis_crit <- numeric(length(cell_types))
+                for(type in c(1:2)){
+                    mahalanobis_dist[query_proj[, "cell_type"] == cell_types[type]] <- 
+                        mahalanobis(query_proj[query_proj[, "cell_type"] == cell_types[type], paste0("DV", 1:length(discriminant_eigenvalues))], 
+                                    colMeans(ref_proj[ref_proj[, "cell_type"] == cell_types[type], paste0("DV", 1:length(discriminant_eigenvalues))]), 
+                                    cov(ref_proj[ref_proj[, "cell_type"] == cell_types[type], paste0("DV", 1:length(discriminant_eigenvalues))]))
+                    cosine_similarity[query_proj[, "cell_type"] == cell_types[type]] <- 
+                        apply(query_proj[query_proj[, "cell_type"] == cell_types[type], paste0("DV", 1:length(discriminant_eigenvalues))], 1, 
+                              function(x, y) return(sum(x * y) / (sqrt(sum(x^2)) * sqrt(sum(y^2)))), 
+                              y = colMeans(ref_proj[ref_proj[, "cell_type"] == cell_types[type], paste0("DV", 1:length(discriminant_eigenvalues))]))
+                }
+                discriminant_output[[combination_name]][["query_mahalanobis_dist"]] <- mahalanobis_dist
+                discriminant_output[[combination_name]][["mahalanobis_crit"]] <- qchisq(1 - alpha, df = length(cell_types))
+                discriminant_output[[combination_name]][["query_cosine_similarity"]] <- cosine_similarity
             }
-            discriminant_output[[combination_name]][["query_mahalanobis_dist"]] <- mahalanobis_dist
-            discriminant_output[[combination_name]][["mahalanobis_crit"]] <- qchisq(1 - alpha, df = length(cell_types))
-            discriminant_output[[combination_name]][["query_cosine_similarity"]] <- cosine_similarity
         }
     }
     
