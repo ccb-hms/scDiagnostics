@@ -317,16 +317,21 @@ second principal component (Dimension 2). Each cell is represented as a
 point on the plot, and its color reflects the expression level of the
 gene "VPREB3," ranging from low (lighter color) to high (darker color).
 
-```{r plot-Gene-Expression-Dimred, warning=FALSE, message=FALSE}
+```{r plot-Gene-Expression-Dimred-1, warning=FALSE, message=FALSE}
 # Run PCA on the query data
 query_data <- runPCA(query_data)
+```
 
-# Generate dimension reduction plot color code by gene expression
-plotGeneExpressionDimred(se_object = query_data, 
-                         method = "PCA", 
-                         pc_subset = c(1:5), 
+```{r plot-Gene-Expression-Dimred-2, warning=FALSE, message=FALSE, eval=FALSE}
+# Generate dimension reduction plot color code by gene expression 
+plotGeneExpressionDimred(se_object = query_data,                           
+                         method = "PCA",                           
+                         pc_subset = c(1:5),                           
                          feature = "VPREB3")
 ```
+
+The dimensional reduction plot allows us to observe how the gene
+expression of VPREB3 is distributed
 
 The dimensional reduction plot allows us to observe how the gene
 expression of VPREB3 is distributed across the cells and whether any
