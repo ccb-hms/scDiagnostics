@@ -63,7 +63,7 @@ biocViews:
     Software,
     Transcriptomics
 Encoding: UTF-8
-LazyData: true
+LazyData: false
 LazyDataCompression: xz
 RoxygenNote: 7.3.1
 Config/testthat/edition: 3

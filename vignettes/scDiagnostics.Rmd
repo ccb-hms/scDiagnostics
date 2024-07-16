@@ -487,7 +487,7 @@ The rationale behind this function is to visually assess the alignment
 and relationships between cell types in the query and reference
 datasets.
 
-```{r visualize-Cell-Type-MDS, warning=FALSE, message=FALSE}
+```{r visualize-Cell-Type-MDS, warning=FALSE, message=FALSE, eval=FALSE}
 # Generate the MDS scatter plot with cell type coloring
 plotCellTypeMDS(query_data = query_data_subset, 
                 reference_data = ref_data_subset, 
