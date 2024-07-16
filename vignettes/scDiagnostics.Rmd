@@ -41,7 +41,7 @@ knitr::opts_chunk$set(
   fig.height = 3.3334,
   fig.align = "center",
   out.width = "100%",
-  pngquant = "--speed=1 --quality=10-30"
+  pngquant = "--speed=1 --quality=1-10"
 )
 ```
 
