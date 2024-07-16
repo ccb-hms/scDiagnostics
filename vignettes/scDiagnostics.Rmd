@@ -624,7 +624,7 @@ The function prints two diagnostic plots by default:
 
 ```{r regress-PC, warning=FALSE, message=FALSE}
 # Plot the PC data (no query data)
-regress_res <- regressPC(reference_data = ref_data,
+regress_res <- regressPC(reference_data = ref_data_subset,
                          ref_cell_type_col = "reclustered.broad", 
                          cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
                          pc_subset = 1:25)
