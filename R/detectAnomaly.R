@@ -1,8 +1,3 @@
-#' 
-#' @importFrom methods is
-#' @importFrom stats na.omit predict qnorm
-#' @importFrom utils tail
-#' 
 #' @title PCA Anomaly Scores via Isolation Forests with Visualization
 #'
 #' @description 
@@ -19,7 +14,9 @@
 #' If NULL, then the isolation forest anomaly scores are computed for the reference data. Default is NULL.
 #' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
 #' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
-#' @param n_components An integer specifying the number of principal components to use. Default is 10.
+#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
+#' @param pc_subset A numeric vector specifying which principal components to use in the analysis. Default is 1:10.
+#' If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.
 #' @param n_tree An integer specifying the number of trees for the isolation forest. Default is 500
 #' @param anomaly_treshold A numeric value specifying the threshold for identifying anomalies, Default is 0.5.
 #' @param ... Additional arguments passed to the `isolation.forest` function.
@@ -37,139 +34,136 @@
 #' 
 #' @seealso \code{\link{plot.detectAnomaly}}
 #' 
+#' @references
+#' \itemize{
+#'   \item Liu, F. T., Ting, K. M., & Zhou, Z. H. (2008). Isolation forest. In 2008 Eighth IEEE International Conference on Data Mining (pp. 413-422). IEEE.
+#'   \item \href{https://cran.r-project.org/web/packages/isotree/isotree.pdf}{isotree: Isolation-Based Outlier Detection}
+#' }
+#' 
 #' @examples
-#' # Load required libraries
-#' library(scRNAseq)
-#' library(scuttle)
-#' library(SingleR)
-#' library(scran)
-#' library(scater)
-#'
 #' # Load data
-#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+#' data("reference_data")
+#' data("query_data")
 #' 
-#' # Divide the data into reference and query datasets
-#' set.seed(100)
-#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-#' ref_data <- sce[, indices]
-#' query_data <- sce[, -indices]
-#' 
-#' # log transform datasets
-#' ref_data <- logNormCounts(ref_data)
-#' query_data <- logNormCounts(query_data)
-#' 
-#' # Get cell type scores using SingleR (or any other cell type annotation method)
-#' scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-#' 
-#' # Add labels to query object
-#' colData(query_data)$labels <- scores$labels
-#' 
-#' # Selecting highly variable genes (can be customized by the user)
-#' ref_var <- getTopHVGs(ref_data, n = 2000)
-#' query_var <- getTopHVGs(query_data, n = 2000)
-#' 
-#' # Intersect the gene symbols to obtain common genes
-#' common_genes <- intersect(ref_var, query_var)
-#' ref_data_subset <- ref_data[common_genes, ]
-#' query_data_subset <- query_data[common_genes, ]
-#' 
-#' # Run PCA on the reference data
-#' ref_data_subset <- runPCA(ref_data_subset)
-#' 
-#' # Store PCA anomaly data and plots
-#' anomaly_output <- detectAnomaly(ref_data_subset, query_data_subset,
-#'                                 ref_cell_type_col = "reclustered.broad", 
-#'                                 query_cell_type_col = "labels",
-#'                                 n_components = 10,
+#' # Store PCA anomaly data
+#' anomaly_output <- detectAnomaly(reference_data = reference_data, 
+#'                                 query_data = query_data, 
+#'                                 ref_cell_type_col = "expert_annotation", 
+#'                                 query_cell_type_col = "SingleR_annotation",
+#'                                 pc_subset = 1:10,
 #'                                 n_tree = 500,
 #'                                 anomaly_treshold = 0.5) 
 #' 
 #' # Plot the output for a cell type
-#' plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5), data_type = "query")
-#' 
+#' plot(anomaly_output, 
+#'      cell_type = "CD4", 
+#'      pc_subset = 1:5, 
+#'      data_type = "query")
+#'      
+#' @importFrom methods is
+#' @importFrom stats na.omit predict qnorm
+#' @importFrom utils tail
+#'       
 # Function to perform diagnostics using isolation forest with PCA and visualization
 detectAnomaly <- function(reference_data, 
                           query_data = NULL, 
                           ref_cell_type_col,
-                          query_cell_type_col, 
-                          n_components = 10,
+                          query_cell_type_col = NULL, 
+                          cell_types = NULL,
+                          pc_subset = 1:10,
                           n_tree = 500,
                           anomaly_treshold = 0.5,
                           ...) {
     
-    # Check whether the anlaysis is done only for one dataset
-  if (is.null(query_data)) {
-      include_query_in_output <- FALSE
-  } else{
-      if(is.null(query_cell_type_col))
-          stop("If \'query_data\' is not NULL, a value for \'query_cell_type_col\' must be provided.")
-      include_query_in_output <- TRUE
-  }
+    # Check standard input arguments
+    argumentCheck(query_data = query_data,
+                  reference_data = reference_data,
+                  query_cell_type_col = query_cell_type_col,
+                  ref_cell_type_col = ref_cell_type_col,
+                  cell_types = cell_types,
+                  pc_subset_ref = pc_subset)
     
-  if(!is.null(n_components)){
-      reference_mat <- reducedDim(reference_data, "PCA")[, 1:n_components]
-      if(include_query_in_output){
-          # Get PCA data from reference and query datasets (query data projected onto PCA space of reference dataset)
-          pca_output <- projectPCA(query_data = query_data, reference_data = reference_data, 
-                                   query_cell_type_col = query_cell_type_col, ref_cell_type_col = ref_cell_type_col,
-                                   n_components = n_components, return_value = "list")
-          query_mat <- pca_output$query[, paste0("PC", 1:n_components)]
-      }
-  } else{
-      reference_mat <- t(as.matrix(assay(reference_data, "logcounts")))
-      if(include_query_in_output){
-          query_mat <- t(as.matrix(assay(query_data, "logcounts")))
-      }
-  }
-  
-  # List to store output
-  output <- list()
-  
-  # Extract reference and query annotations
-  reference_labels <- reference_data[[ref_cell_type_col]]
-  if(!include_query_in_output){
-      cell_types <- c(as.list(na.omit(unique(reference_labels))),
-                      list(na.omit(unique(reference_labels))))
-  } else{
-      query_labels <- query_data[[query_cell_type_col]]
-      cell_types <- c(as.list(na.omit(intersect(unique(reference_labels), unique(query_labels)))),
-                      list(na.omit(intersect(unique(reference_labels), unique(query_labels)))))
-  }
-
-  for (cell_type in cell_types) {
-    
-    # Filter reference and query PCA data for the current cell type
-    reference_mat_subset <- na.omit(reference_mat[reference_labels %in% cell_type,])
-    
-    # Build isolation forest on reference PCA data for this cell type
-    isolation_forest <- isotree::isolation.forest(reference_mat_subset, ntree = n_tree, ...)
-      
-    # Calculate anomaly scores for query data (scaled by reference path length)
-    reference_anomaly_scores <- predict(isolation_forest, newdata = reference_mat_subset, type = "score")
-    if(include_query_in_output){
-        query_mat_subset <- na.omit(query_mat[query_labels %in% cell_type,])
-        query_anomaly_scores <- predict(isolation_forest, newdata = query_mat_subset, type = "score")
+    # Get common cell types if they are not specified by user
+    reference_labels <- reference_data[[ref_cell_type_col]]
+    if(is.null(cell_types)){
+        if(is.null(query_data)){
+            cell_types <- c(as.list(na.omit(unique(reference_labels))),
+                            list(na.omit(unique(reference_labels))))
+        } else{
+            query_labels <- query_data[[query_cell_type_col]]
+            cell_types <- c(as.list(na.omit(intersect(unique(reference_labels), unique(query_labels)))),
+                            list(na.omit(intersect(unique(reference_labels), unique(query_labels)))))
+        }
     }
-
-    # Store cell type anomaly scores and PCA data
-    list_name <- ifelse(length(cell_type) == 1, cell_type, "Combined")
-    output[[list_name]] <- list()
-    output[[list_name]]$reference_anomaly_scores <- reference_anomaly_scores
-    output[[list_name]]$reference_anomaly <- reference_anomaly_scores > anomaly_treshold
-    output[[list_name]]$reference_mat_subset <- reference_mat_subset
-    if(include_query_in_output){
-        output[[list_name]]$query_mat_subset <- query_mat_subset
-        output[[list_name]]$query_anomaly_scores <- query_anomaly_scores
-        output[[list_name]]$query_anomaly <- query_anomaly_scores > anomaly_treshold
+    
+    # Check if n_tree is a positive integer
+    if (!is.numeric(n_tree) || n_tree <= 0 || n_tree != as.integer(n_tree)) {
+        stop("\'n_tree\' must be a positive integer.")
     }
-    if(!is.null(n_components))
-        output[[list_name]]$var_explained <- (attributes(reducedDim(reference_data, "PCA"))$varExplained[1:n_components]) /
-        sum(attributes(reducedDim(reference_data, "PCA"))$varExplained) 
-  }
-  
-  # Set the class of the output
-  class(output) <- c(class(output), "detectAnomaly")
-  
-  # Return anomaly, PCA data and optional PCA anomaly plots for each cell type
-  return(output)
+    
+    # Input check for anomaly_treshold
+    if (!is.numeric(anomaly_treshold) || anomaly_treshold <= 0 || anomaly_treshold >= 1) {
+        stop("\'anomaly_treshold\' must be a positive number greater than 0 and less than 1.")
+    }
+    
+    # Get data from reference and query datasets
+    if(!is.null(pc_subset)){
+        reference_mat <- reducedDim(reference_data, "PCA")[, pc_subset]
+        if(!is.null(query_data)){
+            pca_output <- projectPCA(query_data = query_data, 
+                                     reference_data = reference_data, 
+                                     query_cell_type_col = query_cell_type_col, 
+                                     ref_cell_type_col = ref_cell_type_col,
+                                     pc_subset = pc_subset)
+            query_mat <- pca_output[pca_output[["dataset"]] == "Query", paste0("PC", pc_subset)]
+        }
+    } else{
+        reference_mat <- t(as.matrix(assay(reference_data, "logcounts")))
+        if(!is.null(query_data)){
+            query_mat <- t(as.matrix(assay(query_data, "logcounts")))
+        }
+    }
+    
+    # Extract reference and query labels
+    reference_labels <- reference_data[[ref_cell_type_col]]
+    query_labels <- query_data[[query_cell_type_col]]
+    
+    # List to store output
+    output <- list()
+    
+    for (cell_type in cell_types) {
+        
+        # Filter reference and query PCA data for the current cell type
+        reference_mat_subset <- na.omit(reference_mat[which(reference_labels %in% cell_type),])
+        
+        # Build isolation forest on reference PCA data for this cell type
+        isolation_forest <- isotree::isolation.forest(reference_mat_subset, ntree = n_tree, ...)
+        
+        # Calculate anomaly scores for query data (scaled by reference path length)
+        reference_anomaly_scores <- predict(isolation_forest, newdata = reference_mat_subset, type = "score")
+        if(!is.null(query_data)){
+            query_mat_subset <- na.omit(query_mat[which(query_labels %in% cell_type),])
+            query_anomaly_scores <- predict(isolation_forest, newdata = query_mat_subset, type = "score")
+        }
+        
+        # Store cell type anomaly scores and PCA data
+        list_name <- ifelse(length(cell_type) == 1, cell_type, "Combined")
+        output[[list_name]] <- list()
+        output[[list_name]][["reference_anomaly_scores"]] <- reference_anomaly_scores
+        output[[list_name]][["reference_anomaly"]] <- reference_anomaly_scores > anomaly_treshold
+        output[[list_name]][["reference_mat_subset"]] <- reference_mat_subset
+        if(!is.null(query_data)){
+            output[[list_name]][["query_mat_subset"]] <- query_mat_subset
+            output[[list_name]][["query_anomaly_scores"]] <- query_anomaly_scores
+            output[[list_name]][["query_anomaly"]] <- query_anomaly_scores > anomaly_treshold
+        }
+        if(!is.null(pc_subset))
+            output[[list_name]][["var_explained"]] <- attributes(reducedDim(reference_data, "PCA"))[["percentVar"]][pc_subset]
+    }
+    
+    # Set the class of the output
+    class(output) <- c(class(output), "detectAnomaly")
+    
+    # Return anomaly, PCA data and optional PCA anomaly plots for each cell type
+    return(output)
 }

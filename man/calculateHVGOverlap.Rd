@@ -32,31 +32,15 @@ where X and Y are the sets of highly variable genes from the reference and query
 smaller set among \eqn{X} and \eqn{Y}.
 }
 \examples{
-library(scater)
-library(scran)
-library(scRNAseq)
-library(SingleR)
-
 # Load data
-sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+data("reference_data")
+data("query_data")
 
-# Divide the data into reference and query datasets
-set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
-
-# log transform datasets
-ref_data <- logNormCounts(ref_data)
-query_data <- logNormCounts(query_data)
-
-# Selcting highly variable genes
-
-ref_var <- getTopHVGs(ref_data, n=2000)
-query_var <- getTopHVGs(query_data, n=2000)
-
+# Selecting highly variable genes
+ref_var <- scran::getTopHVGs(reference_data, n = 500)
+query_var <- scran::getTopHVGs(query_data, n = 500)
 overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var, 
-                                          query_genes = query_var)
+                                           query_genes = query_var)
 overlap_coefficient
 
 }

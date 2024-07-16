@@ -1,18 +1,20 @@
 #' @title Plot Visualization of Output from comparePCASubspace Function
 #' 
-#' @description This function generates a visualization of the output from the `comparePCASubspace` function.
+#' @description 
+#' The S3 plot method generates a visualization of the output from the \code{comparePCASubspace} function.
 #' The plot shows the cosine of principal angles between reference and query principal components,
 #' with point sizes representing the variance explained.
 #' 
-#' @details The function converts the input list into a data frame suitable for plotting with `ggplot2`.
+#' @details 
+#' The S3 plot method converts the input list into a data frame suitable for plotting with \code{ggplot2}.
 #' Each point in the scatter plot represents the cosine of a principal angle, with the size of the point
 #' indicating the average variance explained by the corresponding principal components.
 #' 
-#' @param x A numeric matrix output from the `comparePCA` function, representing 
+#' @param x A numeric matrix output from the \code{comparePCASubspace} function, representing 
 #' cosine similarities between query and reference principal components.
 #' @param ... Additional arguments passed to the plotting function.
 #'
-#' @return A ggplot object representing the heatmap of cosine similarities.
+#' @return The S3 plot method returns a \code{ggplot} object representing the heatmap of cosine similarities.
 #' 
 #' @export
 #' 
@@ -33,7 +35,8 @@ plot.comparePCASubspace <- function(x, ...){
     x[["PC"]] <- factor(x[["PC"]], levels = x[["PC"]])
     
     # Create plot
-    pc_plot <- ggplot2::ggplot(x, ggplot2::aes(x = PC, y = Cosine, size = VarianceExplained)) +
+    pc_plot <- ggplot2::ggplot(x, ggplot2::aes(x = .data[["PC"]], y = .data[["Cosine"]], 
+                                               size = .data[["VarianceExplained"]])) +
         ggplot2::geom_point() +
         ggplot2::scale_size_continuous(range = c(3, 10)) +
         ggplot2::labs(title = "Principal Angles Cosines with Variance Explained",

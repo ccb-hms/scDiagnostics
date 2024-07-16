@@ -9,113 +9,74 @@
 calculateNearestNeighborProbabilities(
   query_data,
   reference_data,
-  n_neighbor = 15,
-  n_components = 10,
-  pc_subset = c(1:10),
   query_cell_type_col,
-  ref_cell_type_col
+  ref_cell_type_col,
+  cell_types = NULL,
+  pc_subset = 1:5,
+  n_neighbor = 20
 )
 
-\method{plot}{calculateNearestNeighborProbabilities}(x, cell_types = NULL, prob_type = c("query", "reference")[1], ...)
+\method{plot}{calculateNearestNeighborProbabilities}(x, cell_types = NULL, ...)
 }
 \arguments{
 \item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
-\item{n_neighbor}{An integer specifying the number of nearest neighbors to consider. Default is 15.}
-
-\item{n_components}{An integer specifying the number of principal components to use for dimensionality reduction. Default is 10.}
-
-\item{pc_subset}{A vector specifying the subset of principal components to use in the analysis. Default is c(1:10).}
-
 \item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
 
 \item{ref_cell_type_col}{A character string specifying the column name in the reference dataset containing cell type annotations.}
 
-\item{x}{An object of class \code{nearestNeighbotDiagnostics} containing the probabilities calculated by the \code{\link{calculateNearestNeighborProbabilities}} function.}
-
 \item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types in \code{x} will be plotted. Default is NULL.}
 
-\item{prob_type}{A character string specifying the type of probability to plot. Must be either "query" or "reference". Default is "query".}
+\item{pc_subset}{A vector specifying the subset of principal components to use in the analysis. Default is 1:5}
+
+\item{n_neighbor}{An integer specifying the number of nearest neighbors to consider. Default is 20}
+
+\item{x}{An object of class \code{nearestNeighbotDiagnostics} containing the probabilities calculated by the \code{\link{calculateNearestNeighborProbabilities}} function.}
 
 \item{...}{Additional arguments to be passed to \code{\link[ggplot2]{geom_density}}.}
 }
 \value{
-A list where each element corresponds to a cell type and contains two vectors:
-\item{prob_ref}{The probabilities of each query sample belonging to the reference dataset.}
-\item{prob_query}{The probabilities of each query sample belonging to the query dataset.}
-The list is assigned the class \code{"nearestNeighbotDiagnostics"}.
+A list where each element corresponds to a cell type and contains:
+\item{n_neighbor}{The number of nearest neighbors considered.}
+\item{n_query}{The number of cells in the query dataset for each cell type.}
+\item{query_prob}{The average probability of each query cell belonging to the reference dataset.}
+The list is assigned the class \code{"calculateNearestNeighborProbabilities"}.
+Each element in the list is named after the respective cell type.
 
-A ggplot2 density plot.
+The S3 plot method returns a \code{ggplot} density plot.
 }
 \description{
-This function computes the probabilities for each sample of belonging to either the reference or query dataset for 
+This function computes the probabilities for each query cell of belonging to either the reference or query dataset for 
 each cell type using nearest neighbor analysis.
 
-This function generates a density plot showing the distribution of probabilities for each sample of belonging to 
+The S3 plot method generates a density plot showing the distribution of probabilities for each cell of belonging to 
 either the reference or query dataset for each cell type.
 }
 \details{
-This function performs a nearest neighbor search to calculate the probability of each sample in the query dataset 
-belonging to the reference dataset for each cell type. It uses principal component analysis (PCA) to reduce the dimensionality 
-of the data before performing the nearest neighbor search. The function balances the sample sizes between the reference and query 
-datasets by data augmentation if necessary.
+The function conducts PCA on both the query and reference datasets to reduce dimensionality. It then compares each query 
+cell to its nearest neighbors in the reference dataset to estimate the probability of membership in each cell type. Sample sizes 
+between datasets are balanced using data augmentation if necessary.
 
-This function creates a density plot to visualize the distribution of probabilities for each sample belonging to the 
+The S3 plot method creates a density plot to visualize the distribution of probabilities for each cell belonging to the 
 reference or query dataset for each cell type. It utilizes the ggplot2 package for plotting.
 }
 \examples{
-# Load necessary library
-library(scRNAseq)
-library(scuttle)
-library(scran)
-library(SingleR)
-library(scater)
-
 # Load data
-sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-
-# Divide the data into reference and query datasets
-set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
-
-# log transform datasets
-ref_data <- logNormCounts(ref_data)
-query_data <- logNormCounts(query_data)
-
-# Get cell type scores using SingleR (or any other cell type annotation method)
-scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-
-# Add labels to query object
-colData(query_data)$labels <- scores$labels
-
-# Selecting highly variable genes (can be customized by the user)
-ref_var <- getTopHVGs(ref_data, n = 500)
-query_var <- getTopHVGs(query_data, n = 500)
-
-# Intersect the gene symbols to obtain common genes
-common_genes <- intersect(ref_var, query_var)
-ref_data_subset <- ref_data[common_genes, ]
-query_data_subset <- query_data[common_genes, ]
-
-# Run PCA on the reference data
-ref_data_subset <- runPCA(ref_data_subset)
+data("reference_data")
+data("query_data")
 
 # Project the query data onto PCA space of reference
-nn_output <- calculateNearestNeighborProbabilities(query_data_subset, ref_data_subset,
-                                        n_neighbor = 15, 
-                                        n_components = 10,
-                                        pc_subset = c(1:10),
-                                        query_cell_type_col = "labels", 
-                                        ref_cell_type_col = "reclustered.broad")
+nn_output <- calculateNearestNeighborProbabilities(query_data = query_data, 
+                                                   reference_data = reference_data,
+                                                   query_cell_type_col = "SingleR_annotation", 
+                                                   ref_cell_type_col = "expert_annotation",
+                                                   pc_subset = 1:10,
+                                                   n_neighbor = 20)
 
 # Plot output
-plot(nn_output, cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-     prob_type = "query")
-
+plot(nn_output, cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"))
 
 }
 \seealso{

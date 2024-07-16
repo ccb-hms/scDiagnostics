@@ -1,10 +1,10 @@
 #' @title Plot Projected Data on Discriminant Spaces
 #'
 #' @description 
-#' This function plots the projected reference and query data on discriminant spaces.
+#' The S3 plot method plots the projected reference and query data on discriminant spaces.
 #'
 #' @details 
-#' This function generates either a scatterplot or a boxplot to visualize the projected data onto the discriminant spaces.
+#' The S3 plot method generates either a scatterplot or a boxplot to visualize the projected data onto the discriminant spaces.
 #' For scatterplot, each point represents a projected data point, and colors are used to differentiate between different cell types 
 #' and datasets. For boxplot, the distribution of the projected data values for each cell type is shown, separated by datasets.
 #'
@@ -14,7 +14,7 @@
 #' @param plot_type Type of plot to generate. Options are "scatterplot" and "boxplot". Default is "scatterplot".
 #' @param ... Additional arguments to be passed to the plotting functions.
 #'
-#' @return A ggplot object representing the scatterplot or boxplot of the projected data.
+#' @return The S3 plot method returns a \code{ggplot} object representing the scatterplot or boxplot of the projected data.
 #' 
 #' @export
 #' 
@@ -66,14 +66,14 @@ plot.calculateDiscriminantSpace <- function(x, cell_types, plot_type = c("scatte
                                     rep(sort(cell_types), each = 2))
         
         # Define the colors for cell types
-        color_mapping <- setNames(RColorBrewer::brewer.pal(length(order_combinations), "Paired"), order_combinations)
-        cell_type_colors <- color_mapping[order_combinations]
+        cell_type_colors <- generateColors(order_combinations, paired = TRUE)
         
         # Reorder the levels of cell type and dataset factor
         full_data[["cell_type_dataset"]] <- factor(full_data[["cell_type_dataset"]], levels = order_combinations)
 
         # Generate scatter plot
-        scatter_plot <- ggplot2::ggplot(full_data, ggplot2::aes(x = DV1, y = DV2, color = cell_type_dataset)) +
+        scatter_plot <- ggplot2::ggplot(full_data, ggplot2::aes(x = .data[["DV1"]], y = .data[["DV2"]], 
+                                                                color = .data[["cell_type_dataset"]])) +
             ggplot2::geom_point(alpha = 0.5, size = 1) +
             ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Types") + 
             ggplot2::facet_wrap(~ cell_type_combination, scales = "free") +
@@ -118,20 +118,21 @@ plot.calculateDiscriminantSpace <- function(x, cell_types, plot_type = c("scatte
         data_long[["cell_type_dataset"]] <- factor(data_long[["cell_type_dataset"]], levels = order_combinations)
 
         # Define the colors for cell types
-        color_mapping <- setNames(RColorBrewer::brewer.pal(length(order_combinations), "Paired"), order_combinations)
-        cell_type_colors <- color_mapping[order_combinations]
+        cell_type_colors <- generateColors(order_combinations, paired = TRUE)
         
         # Generate the boxplot
-        box_plot <- ggplot2::ggplot(data_long, ggplot2::aes(x = cell_type, y = value, fill = cell_type_dataset)) +
+        box_plot <- ggplot2::ggplot(data_long, ggplot2::aes(x = .data[["cell_type"]], y = .data[["value"]], 
+                                                            fill = .data[["cell_type_dataset"]])) +
             ggplot2::geom_boxplot(alpha = 0.7, outlier.shape = NA, width = 0.7) + 
-            ggplot2::facet_wrap(~ variable, scales = "free") +
+            ggplot2::facet_wrap(~ .data[["variable"]], scales = "free") +
             ggplot2::scale_fill_manual(values = cell_type_colors, name = "Cell Types") + 
             ggplot2::labs(x = "", y = "Value") +  
             ggplot2::theme_bw() +
             ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
                            panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
                            plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                           axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
+                           axis.title = ggplot2::element_text(size = 12), 
+                           axis.text = ggplot2::element_text(size = 10))
         return(box_plot)
     }
 }

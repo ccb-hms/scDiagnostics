@@ -5,22 +5,33 @@
 \alias{plot.compareCCA}
 \title{Compare Subspaces Spanned by Top Principal Components Using Canonical Correlation Analysis}
 \usage{
-compareCCA(reference_data, query_data, pc_subset = c(1:5), n_top_vars = 25)
+compareCCA(
+  query_data,
+  reference_data,
+  query_cell_type_col,
+  ref_cell_type_col,
+  pc_subset = 1:5,
+  n_top_vars = 25
+)
 
 \method{plot}{compareCCA}(x, ...)
 }
 \arguments{
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+
+\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
 
 \item{pc_subset}{A numeric vector specifying the subset of principal components (PCs) 
 to compare. Default is the first five PCs.}
 
 \item{n_top_vars}{An integer indicating the number of top loading variables to consider for each PC. Default is 25.}
 
-\item{x}{A list containing the output from the `compareCCA` function. 
-This list should include `cosine_similarity` and `correlations`.}
+\item{x}{A list containing the output from the \code{compareCCA} function. 
+This list should include \code{cosine_similarity} and \code{correlations}.}
 
 \item{...}{Additional arguments passed to the plotting function.}
 }
@@ -33,14 +44,14 @@ A list containing the following elements:
   \item{correlations}{Canonical correlations between the reference and query datasets.}
 }
 
-A ggplot object representing the scatter plot of cosine similarities of CCA coefficients and correlations.
+The S3 plot method returns a \code{ggplot} object representing the scatter plot of cosine similarities of CCA coefficients and correlations.
 }
 \description{
 This function compares the subspaces spanned by the top principal components (PCs) of the reference 
 and query datasets using canonical correlation analysis (CCA). It calculates the canonical variables, 
 correlations, and a similarity measure for the subspaces.
 
-This function generates a visualization of the output from the `compareCCA` function.
+The S3 plot method generates a visualization of the output from the `compareCCA` function.
 The plot shows the cosine similarities of canonical correlation analysis (CCA) coefficients,
 with point sizes representing the correlations.
 }
@@ -52,63 +63,51 @@ variables and their corresponding correlations. Additionally, it calculates a si
 canonical variables using cosine similarity. The output is a list containing the canonical coefficients 
 for both datasets, the cosine similarity values, and the canonical correlations.
 
-The function converts the input list into a data frame suitable for plotting with `ggplot2`.
+The S3 plot method converts the input list into a data frame suitable for plotting with \code{ggplot2}.
 Each point in the scatter plot represents the cosine similarity of CCA coefficients, with the size of the point
 indicating the correlation.
 }
 \examples{
-# Load necessary library
-library(scRNAseq)
-library(scuttle)
+# Load libraries
 library(scran)
-library(SingleR)
-library(ggplot2)
 library(scater)
 
 # Load data
-sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+data("reference_data")
+data("query_data")
 
-# Divide the data into reference and query datasets
-set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
-
-# Log transform datasets
-ref_data <- logNormCounts(ref_data)
-query_data <- logNormCounts(query_data)
-
-# Get cell type scores using SingleR (or any other cell type annotation method)
-scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-
-# Add labels to query object
-colData(query_data)$labels <- scores$labels
+# Extract CD4 cells
+ref_data_subset <- reference_data[, which(reference_data$expert_annotation == "CD4")]
+query_data_subset <- query_data[, which(query_data$expert_annotation == "CD4")]
 
 # Selecting highly variable genes (can be customized by the user)
-ref_var <- getTopHVGs(ref_data, n = 500)
-query_var <- getTopHVGs(query_data, n = 500)
+ref_top_genes <- getTopHVGs(ref_data_subset, n = 500)
+query_top_genes <- getTopHVGs(query_data_subset, n = 500)
 
 # Intersect the gene symbols to obtain common genes
-common_genes <- intersect(ref_var, query_var)
-ref_data_subset <- ref_data[common_genes, ]
-query_data_subset <- query_data[common_genes, ]
+common_genes <- intersect(ref_top_genes, query_top_genes)
+ref_data_subset <- ref_data_subset[common_genes,]
+query_data_subset <- query_data_subset[common_genes,]
 
-# Subset reference and query data for a specific cell type
-ref_data_subset <- ref_data_subset[, which(ref_data_subset$reclustered.broad == "CD8")]
-query_data_subset <- query_data_subset[, which(colData(query_data_subset)$labels == "CD8")]
-
-# Run PCA on the reference and query datasets
-ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
-query_data_subset <- runPCA(query_data_subset, ncomponents = 50)
+# Run PCA on datasets separately
+ref_data_subset <- runPCA(ref_data_subset)
+query_data_subset <- runPCA(query_data_subset)
 
 # Compare CCA
-cca_comparison <- compareCCA(query_data_subset, ref_data_subset, 
-                             pc_subset = c(1:5), n_top_vars = 25)
+cca_comparison <- compareCCA(query_data = query_data_subset, 
+                             reference_data = ref_data_subset, 
+                             query_cell_type_col = "expert_annotation", 
+                             ref_cell_type_col = "expert_annotation", 
+                             pc_subset = 1:5, 
+                             n_top_vars = 25)
 
 # Visualize output of CCA comparison
 plot(cca_comparison)
 
 
+}
+\references{
+Hotelling, H. (1936). "Relations between two sets of variates". *Biometrika*, 28(3/4), 321-377. doi:10.2307/2333955.
 }
 \seealso{
 \code{\link{plot.compareCCA}}

@@ -11,111 +11,47 @@
 #'
 #' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
-#' @param n_components An integer specifying the number of principal components to use for projection. Defaults to 10. 
-#' Must be less than or equal to the number of components available in the reference PCA.
 #' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data} 
 #' that identifies the cell types.
 #' @param ref_cell_type_col character. The column name in the \code{colData} of \code{reference_data} 
 #' that identifies the cell types.
-#' @param return_value A character string specifying the format of the returned data. Can be \code{data.frame} (combined reference 
-#' and query projections) or \code{list} (separate lists for reference and query projections) (default = \code{data.frame}).
+#' @param pc_subset A numeric vector specifying the subset of principal components (PCs) to compare. Default is 1:10.
 #'
-#' @return A \code{data.frame} containing the projected data in rows (reference and query data combined) or a \code{list} containing 
-#' separate matrices for reference and query projections, depending on the \code{return_value} argument.
+#' @return A \code{data.frame} containing the projected data in rows (reference and query data combined).
 #'
 #' @export
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
-#' # Load required libraries
-#' library(scRNAseq)
-#' library(scuttle)
-#' library(SingleR)
-#' library(scran)
-#' library(scater)
-#' library(RColorBrewer)
-#'
-#' # Load data (replace with your data loading)
-#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+#' # Load data
+#' data("reference_data")
+#' data("query_data")
 #' 
-#' # Divide the data into reference and query datasets
-#' set.seed(100)
-#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-#' ref_data <- sce[, indices]
-#' query_data <- sce[, -indices]
-#' 
-#' # log transform datasets
-#' ref_data <- scuttle::logNormCounts(ref_data)
-#' query_data <- scuttle::logNormCounts(query_data)
-#' 
-#' # Get cell type scores using SingleR (or any other cell type annotation method)
-#' scores <- SingleR::SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-#' 
-#' # Add labels to query object
-#' colData(query_data)$labels <- scores$labels
-#' 
-#' # Selecting highly variable genes (can be customized by the user)
-#' ref_var <- scran::getTopHVGs(ref_data, n = 2000)
-#' query_var <- scran::getTopHVGs(query_data, n = 2000)
-#' 
-#' # Intersect the gene symbols to obtain common genes
-#' common_genes <- intersect(ref_var, query_var)
-#' ref_data_subset <- ref_data[common_genes, ]
-#' query_data_subset <- query_data[common_genes, ]
-#'
-#' # Run PCA on the reference data (assumed to be prepared)
-#' ref_data_subset <- runPCA(ref_data_subset)
-#'
 #' # Project the query data onto PCA space of reference
-#' pca_output <- projectPCA(query_data_subset, ref_data_subset,
-#'                          n_components = 10,
-#'                          query_cell_type_col = "labels",
-#'                          ref_cell_type_col = "reclustered.broad",
-#'                          return_value = c("data.frame", "list")[1])
+#' pca_output <- projectPCA(query_data = query_data, 
+#'                          reference_data = reference_data,
+#'                          query_cell_type_col = "SingleR_annotation", 
+#'                          ref_cell_type_col = "expert_annotation", 
+#'                          pc_subset = 1:10)
 #'
 # Function to project query data onto PCA space of reference data
-projectPCA <- function(query_data, reference_data, 
-                       n_components = 10, 
-                       query_cell_type_col = NULL, 
-                       ref_cell_type_col = NULL, 
-                       return_value = c("data.frame", "list")[1]){
+projectPCA <- function(query_data, 
+                       reference_data, 
+                       query_cell_type_col, 
+                       ref_cell_type_col, 
+                       pc_subset = 1:10){
     
-    # Check if query_data is a SingleCellExperiment object
-    if (!is(query_data, "SingleCellExperiment")) {
-        stop("query_data must be a SingleCellExperiment object.")
-    }
-    
-    # Check if reference_data is a SingleCellExperiment object
-    if (!is(reference_data, "SingleCellExperiment")) {
-        stop("reference_data must be a SingleCellExperiment object.")
-    }
-    
-    # Check if "PCA" is present in reference's reduced dimensions
-    if (!"PCA" %in% names(reducedDims(reference_data))) {
-        stop("Reference data must have pre-computed PCA in \'reducedDims\'.")
-    }
-    
-    # Check if n_components is a positive integer
-    if (!inherits(n_components, "numeric")) {
-        stop("n_components should be numeric")
-    } else if (any(!n_components == floor(n_components), n_components < 1)) {
-        stop("n_components should be an integer, greater than zero.")
-    }
-    
-    # Check if requested number of components is within available components
-    if (ncol(reducedDim(reference_data, "PCA")) < n_components) {
-        stop("\'n_components\' is larger than number of available components in reference PCA.")
-    }
-    
-    # Returning output as single matrix or a list
-    if (!return_value %in% c("data.frame", "list")) {
-        stop("Invalid \'return_value\'. Must be 'data.frame' or \'list\'.")
-    }
-    
+    # Check standard input arguments
+    argumentCheck(query_data = query_data,
+                  reference_data = reference_data,
+                  query_cell_type_col = query_cell_type_col,
+                  ref_cell_type_col = ref_cell_type_col,
+                  pc_subset_ref = pc_subset)
+
     # Extract reference PCA components and rotation matrix
-    ref_mat <- reducedDim(reference_data, "PCA")[, 1:n_components]
-    rotation_mat <- attributes(reducedDim(reference_data, "PCA"))$rotation[, 1:n_components]
+    ref_mat <- reducedDim(reference_data, "PCA")[, pc_subset, drop = FALSE]
+    rotation_mat <- attributes(reducedDim(reference_data, "PCA"))[["rotation"]][, pc_subset, drop = FALSE]
     PCA_genes <- rownames(rotation_mat)
     
     # Check if genes used for PCA are available in query data
@@ -125,27 +61,16 @@ projectPCA <- function(query_data, reference_data,
     
     # Center and scale query data based on reference for projection
     centering_vec <- apply(t(as.matrix(assay(reference_data, "logcounts"))), 2, mean)[PCA_genes]
-    query_mat <- scale(t(as.matrix(assay(query_data, "logcounts")))[, PCA_genes], center = centering_vec, scale = FALSE) %*% 
+    query_mat <- scale(t(as.matrix(assay(query_data, "logcounts")))[, PCA_genes, drop = FALSE], center = centering_vec, scale = FALSE) %*% 
         rotation_mat
     
-    # Returning output as single matrix or a list
-    if (return_value == "data.frame") {
-        return(data.frame(rbind(ref_mat, query_mat), 
-                          dataset = c(rep("Reference", nrow(ref_mat)), rep("Query", nrow(query_mat))),
-                          cell_type = c(ifelse(rep(is.null(ref_cell_type_col), nrow(ref_mat)), 
-                                               rep(NA, nrow(ref_mat)), 
-                                               colData(reference_data)[[ref_cell_type_col]]),
-                                        ifelse(rep(is.null(query_cell_type_col), nrow(query_mat)), 
-                                               rep(NA, nrow(query_mat)), 
-                                               colData(query_data)[[query_cell_type_col]]))))
-    } else if (return_value == "list") {
-        return(list(ref = data.frame(ref_mat, 
-                                     cell_type = ifelse(rep(is.null(ref_cell_type_col), nrow(ref_mat)), 
-                                                        rep(NA, nrow(ref_mat)), 
-                                                        colData(reference_data)[[ref_cell_type_col]])), 
-                    query = data.frame(query_mat,
-                                       cell_type = ifelse(rep(is.null(query_cell_type_col), nrow(query_mat)), 
-                                                          rep(NA, nrow(query_mat)), 
-                                                          colData(query_data)[[query_cell_type_col]]))))
-    }
+    # Returning output as a dataframe
+    return(data.frame(rbind(ref_mat, query_mat), 
+                      dataset = c(rep("Reference", nrow(ref_mat)), rep("Query", nrow(query_mat))),
+                      cell_type = c(ifelse(rep(is.null(ref_cell_type_col), nrow(ref_mat)), 
+                                           rep(NA, nrow(ref_mat)), 
+                                           reference_data[[ref_cell_type_col]]),
+                                    ifelse(rep(is.null(query_cell_type_col), nrow(query_mat)), 
+                                           rep(NA, nrow(query_mat)), 
+                                           query_data[[query_cell_type_col]]))))
 }

@@ -11,9 +11,10 @@ calculateDiscriminantSpace(
   query_data = NULL,
   ref_cell_type_col,
   query_cell_type_col,
-  eigen_threshold = 0.1,
+  cell_types = NULL,
   n_tree = 500,
   n_top = 20,
+  eigen_threshold = 0.1,
   calculate_metrics = FALSE,
   alpha = 0.01
 )
@@ -30,11 +31,13 @@ If NULL, only the projected reference data is returned. Default is NULL.}
 
 \item{query_cell_type_col}{The column name in \code{query_data} indicating cell type labels.}
 
-\item{eigen_threshold}{A numeric value specifying the threshold for retaining eigenvalues in discriminant analysis.}
+\item{cell_types}{A character vector specifying the cell types to plot. If not provided, all cell types will be plotted.}
 
 \item{n_tree}{An integer specifying the number of trees for the random forest used in variable importance calculation.}
 
 \item{n_top}{An integer specifying the number of top variables to select based on importance scores.}
+
+\item{eigen_threshold}{A numeric value specifying the threshold for retaining eigenvalues in discriminant analysis.}
 
 \item{calculate_metrics}{Parameter to determine if cosine similarity and Mahalanobis distance metrics should be computed. Default is FALSE.}
 
@@ -42,8 +45,6 @@ If NULL, only the projected reference data is returned. Default is NULL.}
 
 \item{x}{An object of class \code{calculateDiscriminantSpace} containing the projected data on the discriminant space.. 
 Each element of the list represents a combination of cell types and datasets. Each element should contain 'ref_proj' and 'query_proj' data frames.}
-
-\item{cell_types}{A character vector specifying the cell types to plot. If not provided, all cell types will be plotted.}
 
 \item{plot_type}{Type of plot to generate. Options are "scatterplot" and "boxplot". Default is "scatterplot".}
 
@@ -59,14 +60,14 @@ A list with the following components for each cell type combination:
 \item{mahalanobis_crit}{Cutoff value for Mahalanobis distance significance.}
 \item{query_cosine_similarity}{Cosine similarity scores of query projections.}
 
-A ggplot object representing the scatterplot or boxplot of the projected data.
+The S3 plot method returns a \code{ggplot} object representing the scatterplot or boxplot of the projected data.
 }
 \description{
 This function projects query single-cell RNA-seq data onto the discriminant space defined by reference data. The reference data 
 is used to identify important variables and compute discriminant vectors, which are then used to project both reference and query 
 data. Similarity between the query and reference projections is assessed using cosine similarity and Mahalanobis distance.
 
-This function plots the projected reference and query data on discriminant spaces.
+The S3 plot method plots the projected reference and query data on discriminant spaces.
 }
 \details{
 The function performs the following steps for each pairwise combination of cell types:
@@ -79,61 +80,42 @@ The function performs the following steps for each pairwise combination of cell 
   \item Assesses similarity of the query data projection to the reference data using cosine similarity and Mahalanobis distance.
 }
 
-This function generates either a scatterplot or a boxplot to visualize the projected data onto the discriminant spaces.
+The S3 plot method generates either a scatterplot or a boxplot to visualize the projected data onto the discriminant spaces.
 For scatterplot, each point represents a projected data point, and colors are used to differentiate between different cell types 
 and datasets. For boxplot, the distribution of the projected data values for each cell type is shown, separated by datasets.
 }
 \examples{
-# Load necessary library
-library(scRNAseq)
-library(scuttle)
-library(SingleR)
-library(scran)
-
 # Load data
-sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+data("reference_data")
+data("query_data")
 
-# Divide the data into reference and query datasets
-set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
+# Compute important variables for all pairwise cell comparisons
+disc_output <- calculateDiscriminantSpace(reference_data = reference_data,
+                                          query_data = query_data, 
+                                          query_cell_type_col = "SingleR_annotation", 
+                                          ref_cell_type_col = "expert_annotation",
+                                          n_tree = 500,
+                                          n_top = 50,
+                                          eigen_threshold  = 1e-1,
+                                          calculate_metrics = FALSE,
+                                          alpha = 0.01)
 
-# log transform datasets
-ref_data <- logNormCounts(ref_data)
-query_data <- logNormCounts(query_data)
-
-# Get cell type scores using SingleR (or any other cell type annotation method)
-scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-
-# Add labels to query object
-colData(query_data)$labels <- scores$labels
-
-# Selecting highly variable genes (can be customized by the user)
-ref_var <- getTopHVGs(ref_data, n = 500)
-query_var <- getTopHVGs(query_data, n = 500)
-
-# Intersect the gene symbols to obtain common genes
-common_genes <- intersect(ref_var, query_var)
-ref_data_subset <- ref_data[common_genes, ]
-query_data_subset <- query_data[common_genes, ]
-
-# Project query data onto discriminant space of reference data 
-# for each pairwise combination of cell types
-disc_output <- calculateDiscriminantSpace(reference_data = ref_data_subset,
-                                        query_data = query_data_subset, 
-                                        query_cell_type_col = c("reclustered.broad", "labels")[1], 
-                                        ref_cell_type_col = "reclustered.broad",
-                                        eigen_threshold  = 1e-1,
-                                        n_tree = 500,
-                                        n_top = 25,
-                                        calculate_metrics = TRUE,
-                                        alpha = 0.01)
-                                        
 # Generate scatter and boxplot
 plot(disc_output, plot_type = "scatterplot")
 plot(disc_output, cell_types = "CD4-CD8", plot_type = "boxplot")
 
+# Check comparison
+table(Expert_Annotation = query_data$expert_annotation, SingleR = query_data$SingleR_annotation)
+
+}
+\references{
+\itemize{
+\item Fisher, R. A. (1936). "The Use of Multiple Measurements in Taxonomic Problems". *Annals of Eugenics*. 7 (2): 179–188. doi:10.1111/j.1469-1809.1936.tb02137.x.
+\item Hastie, T., Tibshirani, R., & Friedman, J. (2009). *The Elements of Statistical Learning: Data Mining, Inference, and Prediction*. Springer. Chapter 4: Linear Methods for Classification.
+\item Ledoit, O., & Wolf, M. (2004). "A well-conditioned estimator for large-dimensional covariance matrices". *Journal of Multivariate Analysis*. 88 (2): 365–411. doi:10.1016/S0047-259X(03)00096-4.
+\item De Maesschalck, R., Jouan-Rimbaud, D., & Massart, D. L. (2000). "The Mahalanobis distance". *Chemometrics and Intelligent Laboratory Systems*. 50 (1): 1–18. doi:10.1016/S0169-7439(99)00047-7.
+\item Breiman, L. (2001). "Random Forests". *Machine Learning*. 45 (1): 5–32. doi:10.1023/A:1010933404324.
+}
 }
 \seealso{
 \code{\link{plot.calculateDiscriminantSpace}}

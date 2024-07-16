@@ -7,13 +7,13 @@
 plotPairwiseDistancesDensity(
   query_data,
   reference_data,
-  n_components = 10,
   query_cell_type_col,
   ref_cell_type_col,
   cell_type_query,
-  cell_type_reference,
-  distance_metric,
-  correlation_method = "pearson"
+  cell_type_ref,
+  pc_subset = 1:5,
+  distance_metric = c("correlation", "euclidean"),
+  correlation_method = c("spearman", "pearson")
 )
 }
 \arguments{
@@ -23,18 +23,16 @@ expression data and metadata.}
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
 expression data and metadata.}
 
-\item{n_components}{The number of principal components to use for the dimensionality reduction of the data using PCA. Defaults to 10.
-If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.}
+\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
 
-\item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data} 
-that identifies the cell types.}
-
-\item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data} 
-that identifies the cell types.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
 
 \item{cell_type_query}{The query cell type for which distances or correlations are calculated.}
 
-\item{cell_type_reference}{The reference cell type for which distances or correlations are calculated.}
+\item{cell_type_ref}{The reference cell type for which distances or correlations are calculated.}
+
+\item{pc_subset}{A numeric vector specifying which principal components to use in the analysis. Default is 1:5.
+If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.}
 
 \item{distance_metric}{The distance metric to use for calculating pairwise distances, such as euclidean, manhattan etc.
 Set it to "correlation" for calculating correlation coefficients.}
@@ -56,52 +54,19 @@ computes pairwise distances or correlations, and visualizes these measurements u
 one can evaluate the consistency and reliability of annotated cell types within single-cell datasets.
 }
 \examples{
-library(scran)
-library(scRNAseq)
-library(SingleR)
-library(scater)
-
 # Load data
-sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-
-# Divide the data into reference and query datasets
-set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
-
-# log transform datasets
-ref_data <- logNormCounts(ref_data)
-query_data <- logNormCounts(query_data)
-
-# Get cell type scores using SingleR (or any other cell type annotation method)
-scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-
-# Add labels to query object
-colData(query_data)$labels <- scores$labels
-
-# Selecting highly variable genes (can be customized by the user)
-ref_var <- getTopHVGs(ref_data, n = 2000)
-query_var <- getTopHVGs(query_data, n = 2000)
-
-# Intersect the gene symbols to obtain common genes
-common_genes <- intersect(ref_var, query_var)
-
-ref_data_subset <- ref_data[common_genes, ]
-query_data_subset <- query_data[common_genes, ]
-
-# Run PCA on the reference data
-ref_data_subset <- runPCA(ref_data_subset)
+data("reference_data")
+data("query_data")
 
 # Example usage of the function
-plotPairwiseDistancesDensity(query_data = query_data_subset, 
-                             reference_data = ref_data_subset, 
-                             n_components = 10,
-                             query_cell_type_col = "labels", 
-                             ref_cell_type_col = "reclustered.broad", 
+plotPairwiseDistancesDensity(query_data = query_data, 
+                             reference_data = reference_data, 
+                             query_cell_type_col = "SingleR_annotation", 
+                             ref_cell_type_col = "expert_annotation", 
                              cell_type_query = "CD8", 
-                             cell_type_reference = "CD8", 
-                             distance_metric = "euclidean")
-
+                             cell_type_ref = "CD8", 
+                             pc_subset = 1:5,
+                             distance_metric = "euclidean", 
+                             correlation_method = "pearson")
 
 }

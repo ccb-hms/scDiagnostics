@@ -5,28 +5,28 @@
 \title{Histograms: QC Stats and Annotation Scores Visualization}
 \usage{
 histQCvsAnnotation(
-  query_data,
-  qc_col = qc_col,
-  label_col,
-  score_col,
-  label = NULL
+  se_object,
+  cell_type_col,
+  cell_types = NULL,
+  qc_col,
+  score_col
 )
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
+\item{se_object}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
 expression data and metadata.}
 
-\item{qc_col}{character. A column name in the \code{colData} of \code{query_data} that 
-contains the QC stats of interest.}
-
-\item{label_col}{character. The column name in the \code{colData} of \code{query_data} 
+\item{cell_type_col}{The column name in the \code{colData} of \code{se_object} 
 that contains the cell type labels.}
 
-\item{score_col}{numeric. The column name in the \code{colData} of \code{query_data} that 
-contains the cell type scores.}
-
-\item{label}{character. A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).
+\item{cell_types}{A vector of cell types to plot (e.g., c("T-cell", "B-cell")).
 Defaults to \code{NULL}, which will include all the cells.}
+
+\item{qc_col}{A column name in the \code{colData} of \code{se_object} that 
+contains the QC stats of interest.}
+
+\item{score_col}{The column name in the \code{colData} of \code{se_object} that 
+contains the cell type scores.}
 }
 \value{
 A object containing two histograms displayed side by side. 
@@ -43,49 +43,19 @@ where understanding the distribution of these metrics is crucial for quality ass
 interpretation of cell type annotations.
 }
 \examples{
-\donttest{
-library(scater)
-library(scran)
-library(scRNAseq)
-library(SingleR)
-
-# Load data
-sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-
-# Divide the data into reference and query datasets
-set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
-
-# Log-transform datasets
-ref_data <- logNormCounts(ref_data)
-query_data <- logNormCounts(query_data)
-
-# Get cell type scores using SingleR
-pred <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-
-# Assign labels to query data
-colData(query_data)$labels <- pred$labels
-
-# Get annotation scores
-scores <- apply(pred$scores, 1, max)
-
-# Assign scores to query data
-colData(query_data)$cell_scores <- scores
+data("query_data")
 
 # Generate histograms
-histQCvsAnnotation(query_data = query_data, 
-                  qc_col = "percent.mito", 
-                  label_col = "labels", 
-                  score_col = "cell_scores", 
-                  label = c("CD4", "CD8"))
-                  
-histQCvsAnnotation(query_data = query_data, 
-                   qc_col = "percent.mito", 
-                   label_col = "labels", 
-                   score_col = "cell_scores", 
-                   label = NULL)
-}
+histQCvsAnnotation(se_object = query_data, 
+                   cell_type_col = "SingleR_annotation", 
+                   cell_types = c("CD4", "CD8"),
+                   qc_col = "percent_mito", 
+                   score_col = "annotation_scores")
+
+histQCvsAnnotation(se_object = query_data, 
+                   cell_type_col = "SingleR_annotation", 
+                   cell_types = NULL,
+                   qc_col = "percent_mito", 
+                   score_col = "annotation_scores")
 
 }

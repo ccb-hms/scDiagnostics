@@ -4,23 +4,29 @@
 \alias{plotQCvsAnnotation}
 \title{Scatter plot: QC stats vs Cell Type Annotation Scores}
 \usage{
-plotQCvsAnnotation(query_data, qc_col, label_col, score_col, label = NULL)
+plotQCvsAnnotation(
+  se_object,
+  cell_type_col,
+  cell_types = NULL,
+  qc_col,
+  score_col
+)
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
+\item{se_object}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
 expression data and metadata.}
 
-\item{qc_col}{character. A column name in the \code{colData} of \code{query_data} that 
-contains the QC stats of interest.}
-
-\item{label_col}{character. The column name in the \code{colData} of \code{query_data} 
+\item{cell_type_col}{The column name in the \code{colData} of \code{se_object} 
 that contains the cell type labels.}
 
-\item{score_col}{character. The column name in the \code{colData} of \code{query_data} that 
-contains the cell type annotation scores.}
-
-\item{label}{character. A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).
+\item{cell_types}{A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).
 Defaults to \code{NULL}, which will include all the cells.}
+
+\item{qc_col}{A column name in the \code{colData} of \code{se_object} that 
+contains the QC stats of interest.}
+
+\item{score_col}{The column name in the \code{colData} of \code{se_object} that 
+contains the cell type annotation scores.}
 }
 \value{
 A ggplot object displaying a scatter plot of QC stats vs annotation scores, 
@@ -38,52 +44,14 @@ metrics, systematically influence the confidence in cell type annotations,
 which is essential for ensuring reliable cell type annotation.
 }
 \examples{
-\donttest{
-library(celldex)
-library(scater)
-library(scran)
-library(scRNAseq)
-library(SingleR)
-library(ggplot2)
+# Load data
+data("qc_data")
 
-# load reference dataset
-ref_data <- fetchReference("hpca", "2024-02-26")
-
-# Load query dataset (Bunis haematopoietic stem and progenitor cell data) from 
-# Bunis DG et al. (2021). Single-Cell Mapping of Progressive Fetal-to-Adult 
-# Transition in Human Naive T Cells Cell Rep. 34(1): 108573
-query_data <- BunisHSPCData()
-rownames(query_data) <- rowData(query_data)$Symbol
-
-# Add QC metrics to query data
-query_data <- addPerCellQCMetrics(query_data)
-
-# Log transform query dataset
-query_data <- logNormCounts(query_data)
-
-# Run SingleR to predict cell types
-
-pred <- SingleR(query_data, ref_data, labels = ref_data$label.main)
-
-# Assign predicted labels to query data
-colData(query_data)$pred.labels <- pred$labels
-
-# Get annotation scores
-scores <- apply(pred$scores, 1, max)
-
-# Assign scores to query data
-colData(query_data)$cell_scores <- scores
-
-# Create a scatter plot between library size and annotation scores
-
-p1 <- plotQCvsAnnotation(
-      query_data = query_data,
-      qc_col = "total",
-      label_col = "pred.labels",
-      score_col = "cell_scores",
-      label = NULL)
-p1 + xlab("Library Size")
-}
-
+p1 <- plotQCvsAnnotation(se_object = qc_data,
+                         cell_type_col = "SingleR_annotation",
+                         cell_types = NULL,
+                         qc_col = "total",
+                         score_col = "annotation_scores")
+p1 + ggplot2::xlab("Library Size")
                    
 }

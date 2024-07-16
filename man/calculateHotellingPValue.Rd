@@ -7,10 +7,11 @@
 calculateHotellingPValue(
   query_data,
   reference_data,
-  n_components = 10,
   query_cell_type_col,
   ref_cell_type_col,
-  pc_subset = c(1:5)
+  cell_types = NULL,
+  pc_subset = 1:5,
+  n_permutation = 500
 )
 }
 \arguments{
@@ -18,77 +19,46 @@ calculateHotellingPValue(
 
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
-\item{n_components}{An integer specifying the number of principal components to use for projection. Defaults to 10.}
-
 \item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data} 
 that identifies the cell types.}
 
 \item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data} 
 that identifies the cell types.}
 
+\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+
 \item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.}
+
+\item{n_permutation}{Number of permutations to perform for p-value calculation. Default is 500.}
 }
 \value{
 A named numeric vector of p-values from Hotelling's T-squared test for each cell type.
 }
 \description{
-This function performs Hotelling's T-squared test to assess the similarity between reference and query datasets 
-for each cell type based on their PCA scores.
+Computes Hotelling's T-squared test statistic and p-values for each specified cell type
+based on PCA-projected data from query and reference datasets.
 }
 \details{
-This function first performs PCA on the reference dataset and then projects the query dataset onto the PCA space 
-of the reference data. For each cell type, it computes pseudo-bulk signatures in the PCA space by averaging the principal 
-component scores of cells belonging to that cell type. Hotelling's T-squared test is then performed to compare the mean 
-vectors of the pseudo-bulk signatures between the reference and query datasets. The resulting p-values indicate the similarity 
-between the reference and query datasets for each cell type.
+This function calculates Hotelling's T-squared statistic for comparing multivariate means
+between reference and query datasets, projected onto a subset of principal components (PCs).
+It performs a permutation test to obtain p-values for each cell type specified.
 }
 \examples{
-# Load required libraries
-library(scRNAseq)
-library(scuttle)
-library(SingleR)
-library(scran)
-library(scater)
+# Load data
+data("reference_data")
+data("query_data")
 
-# Load data (replace with your data loading)
-sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-
-# Divide the data into reference and query datasets
-set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
-
-# log transform datasets
-ref_data <- scuttle::logNormCounts(ref_data)
-query_data <- scuttle::logNormCounts(query_data)
-
-# Get cell type scores using SingleR (or any other cell type annotation method)
-scores <- SingleR::SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-
-# Add labels to query object
-colData(query_data)$labels <- scores$labels
-
-# Selecting highly variable genes (can be customized by the user)
-ref_var <- scran::getTopHVGs(ref_data, n = 2000)
-query_var <- scran::getTopHVGs(query_data, n = 2000)
-
-# Intersect the gene symbols to obtain common genes
-common_genes <- intersect(ref_var, query_var)
-ref_data_subset <- ref_data[common_genes, ]
-query_data_subset <- query_data[common_genes, ]
-
-# Run PCA on the reference data
-ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
-
-# Get the p-values from the test
-p_values <- calculateHotellingPValue(query_data_subset, ref_data_subset, 
-                                     n_components = 10, 
-                                     query_cell_type_col = "labels", 
-                                     ref_cell_type_col = "reclustered.broad",
-                                     pc_subset = c(1:10)) 
+# Get the p-values
+p_values <- calculateHotellingPValue(query_data = query_data, 
+                                     reference_data = reference_data, 
+                                     query_cell_type_col = "SingleR_annotation", 
+                                     ref_cell_type_col = "expert_annotation",
+                                     pc_subset = 1:10) 
 round(p_values, 5)
                          
+}
+\references{
+Hotelling, H. (1931). "The generalization of Student's ratio". *Annals of Mathematical Statistics*. 2 (3): 360–378. doi:10.1214/aoms/1177732979.
 }
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
