@@ -92,7 +92,7 @@ calculateCramerPValue <- function(reference_data,
         cramer_test[[cell_type]] <- cramer::cramer.test(as.matrix(cell_list[[cell_type]][dataset_ind, pc_vars]),
                                                         as.matrix(cell_list[[cell_type]][!dataset_ind, pc_vars]), kernel = "phiBahr")
     }
-    p_values <- sapply(cramer_test, function(t) t[["p.value"]])
+    p_values <- unlist(lapply(cramer_test, function(t) t[["p.value"]]))
 
     # Return Cramer test output
     return(p_values)

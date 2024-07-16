@@ -35,6 +35,8 @@
 #' @param pc_subset_ref A numeric vector specifying the principal components to be used for the reference data. If `NULL`, no check is performed.
 #' @param common_rotation_genes If TRUE, check the rotation matrices of the reference and query data and ensure they have the same genes.
 #' Default is FALSE.
+#' 
+#' @return None.
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'

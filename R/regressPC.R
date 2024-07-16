@@ -33,7 +33,8 @@
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
 #'
-#' @return A \code{list} containing \itemize{ \item summaries of the linear
+#' @return 
+#' A \code{list} containing \itemize{ \item summaries of the linear
 #' regression models for each specified principal component, \item the
 #' corresponding R-squared (R2) values, \item the variance contributions for
 #' each principal component, and \item the total variance explained.}

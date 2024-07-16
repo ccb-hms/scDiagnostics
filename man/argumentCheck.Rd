@@ -50,6 +50,9 @@ Default is `FALSE`.}
 \item{common_rotation_genes}{If TRUE, check the rotation matrices of the reference and query data and ensure they have the same genes.
 Default is FALSE.}
 }
+\value{
+None.
+}
 \description{
 This function validates the input arguments for functions that analyze SingleCellExperiment objects. It checks that the inputs 
 are of the correct types and formats, and that required columns and cell types are present in the data.

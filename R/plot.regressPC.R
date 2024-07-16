@@ -95,7 +95,7 @@ plot.regressPC <- function(x, plot_type = c("r_squared", "p-value"), alpha = 0.0
             
             for(cell_type in unique(plot_data[["cell_type"]])){
                 plot_data[plot_data[["cell_type"]] == cell_type, "r_squared"] <- 
-                    sapply(seq_len(length(unique(plot_data[["PC"]]))), function(i) x[[cell_type]][[paste0("PC", i)]][["r_squared"]])
+                    unlist(lapply(seq_len(length(unique(plot_data[["PC"]]))), function(i) x[[cell_type]][[paste0("PC", i)]][["r_squared"]]))
             }
             
             plot_obj <- ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["PC"]], y = .data[["r_squared"]], 
@@ -120,8 +120,8 @@ plot.regressPC <- function(x, plot_type = c("r_squared", "p-value"), alpha = 0.0
             cell_type_colors <- generateColors(sort(unique(plot_data[["cell_type"]])), paired = FALSE)
             
             for(pc in unique(plot_data[["PC"]])){
-                plot_data[plot_data[["PC"]] == pc, "p_value"] <- sapply(unique(plot_data[["cell_type"]]), 
-                                                                        function(t) x[[t]][[pc]][["coefficients"]][2, "p.value"])
+                plot_data[plot_data[["PC"]] == pc, "p_value"] <- unlist(lapply(unique(plot_data[["cell_type"]]), 
+                                                                               function(t) x[[t]][[pc]][["coefficients"]][2, "p.value"]))
             }
             
             plot_obj <- ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["PC"]], y = -log10(.data[["p_value"]]), 

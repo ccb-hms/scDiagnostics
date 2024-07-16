@@ -44,5 +44,5 @@ plot.calculateAveragePairwiseCorrelation <- function(x, ...){
                        legend.title = ggplot2::element_text(face = "italic"))
     
     # Print the plot
-    print(heatmap_plot)
+    return(heatmap_plot)
 }

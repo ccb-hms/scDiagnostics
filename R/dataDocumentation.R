@@ -17,10 +17,10 @@
 #'   \item Performs Uniform Manifold Approximation and Projection (UMAP) on the reference dataset using the function \code{runUMAP} from the \code{scater} package.
 #' }
 #'
-#' @seealso
-#' Use \code{data("reference_data")} to load and access the resulting reference dataset.
+#' @seealso Use \code{data("reference_data")} to load and access the resulting reference dataset.
 #'
 #' @source The HeOrganAtlas dataset, available through the scRNAseq package.
+
 #' @references He, et al. (2020). HeOrganAtlas: a comprehensive human organ atlas based on single-cell RNA sequencing.
 #'
 #' @examples
