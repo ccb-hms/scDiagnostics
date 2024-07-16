@@ -1,111 +1,138 @@
 #' @title Perform Hotelling's T-squared Test on PCA Scores for Single-cell RNA-seq Data
 #'
-#' @description This function performs Hotelling's T-squared test to assess the similarity between reference and query datasets 
-#' for each cell type based on their PCA scores.
+#' @description 
+#' Computes Hotelling's T-squared test statistic and p-values for each specified cell type
+#' based on PCA-projected data from query and reference datasets.
 #'
-#' @details This function first performs PCA on the reference dataset and then projects the query dataset onto the PCA space 
-#' of the reference data. For each cell type, it computes pseudo-bulk signatures in the PCA space by averaging the principal 
-#' component scores of cells belonging to that cell type. Hotelling's T-squared test is then performed to compare the mean 
-#' vectors of the pseudo-bulk signatures between the reference and query datasets. The resulting p-values indicate the similarity 
-#' between the reference and query datasets for each cell type.
+#' @details 
+#' This function calculates Hotelling's T-squared statistic for comparing multivariate means
+#' between reference and query datasets, projected onto a subset of principal components (PCs).
+#' It performs a permutation test to obtain p-values for each cell type specified.
 #'
 #' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
-#' @param n_components An integer specifying the number of principal components to use for projection. Defaults to 10. 
 #' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data} 
 #' that identifies the cell types.
 #' @param ref_cell_type_col character. The column name in the \code{colData} of \code{reference_data} 
 #' that identifies the cell types.
+#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
+#' @param n_permutation Number of permutations to perform for p-value calculation. Default is 500.
 #'
 #' @return A named numeric vector of p-values from Hotelling's T-squared test for each cell type.
-#'
+#' 
+#' @references
+#' Hotelling, H. (1931). "The generalization of Student's ratio". *Annals of Mathematical Statistics*. 2 (3): 360–378. doi:10.1214/aoms/1177732979.
+#' 
 #' @export
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
-#' # Load required libraries
-#' library(scRNAseq)
-#' library(scuttle)
-#' library(SingleR)
-#' library(scran)
-#' library(scater)
-#'
-#' # Load data (replace with your data loading)
-#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+#' # Load data
+#' data("reference_data")
+#' data("query_data")
 #' 
-#' # Divide the data into reference and query datasets
-#' set.seed(100)
-#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-#' ref_data <- sce[, indices]
-#' query_data <- sce[, -indices]
-#' 
-#' # log transform datasets
-#' ref_data <- scuttle::logNormCounts(ref_data)
-#' query_data <- scuttle::logNormCounts(query_data)
-#' 
-#' # Get cell type scores using SingleR (or any other cell type annotation method)
-#' scores <- SingleR::SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-#' 
-#' # Add labels to query object
-#' colData(query_data)$labels <- scores$labels
-#' 
-#' # Selecting highly variable genes (can be customized by the user)
-#' ref_var <- scran::getTopHVGs(ref_data, n = 2000)
-#' query_var <- scran::getTopHVGs(query_data, n = 2000)
-#' 
-#' # Intersect the gene symbols to obtain common genes
-#' common_genes <- intersect(ref_var, query_var)
-#' ref_data_subset <- ref_data[common_genes, ]
-#' query_data_subset <- query_data[common_genes, ]
-#' 
-#' # Run PCA on the reference data
-#' ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
-#'
-#' # Get the p-values from the test
-#' p_values <- calculateHotellingPValue(query_data_subset, ref_data_subset, 
-#'                                      n_components = 10, 
-#'                                      query_cell_type_col = "labels", 
-#'                                      ref_cell_type_col = "reclustered.broad",
-#'                                      pc_subset = c(1:10)) 
+#' # Get the p-values
+#' p_values <- calculateHotellingPValue(query_data = query_data, 
+#'                                      reference_data = reference_data, 
+#'                                      query_cell_type_col = "SingleR_annotation", 
+#'                                      ref_cell_type_col = "expert_annotation",
+#'                                      pc_subset = 1:10) 
 #' round(p_values, 5)
 #'                          
 # Function to perform Hotelling T^2 test for each cell type
-# The test is performed on the PCA space of the reference data 
-# The query data projected onto PCA space of reference
-calculateHotellingPValue <- function(query_data, reference_data, 
-                                     n_components = 10, 
+# The test is performed on the PCA space of the reference data The query data projected onto PCA space of reference
+calculateHotellingPValue <- function(query_data, 
+                                     reference_data, 
                                      query_cell_type_col, 
                                      ref_cell_type_col,
-                                     pc_subset = c(1:5)) {
+                                     cell_types = NULL,
+                                     pc_subset = 1:5,
+                                     n_permutation = 500) {
+    
+    # Check standard input arguments
+    argumentCheck(query_data = query_data,
+                  reference_data = reference_data,
+                  query_cell_type_col = query_cell_type_col,
+                  ref_cell_type_col = ref_cell_type_col,
+                  cell_types = cell_types,
+                  pc_subset_ref = pc_subset)
+    
+    # Get common cell types if they are not specified by user
+    if(is.null(cell_types)){
+        cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
+                                       query_data[[query_cell_type_col]])))
+    }
     
     # Get the projected PCA data
-    pca_output <- projectPCA(query_data = query_data, reference_data = reference_data, 
-                             n_components = n_components, 
+    pca_output <- projectPCA(query_data = query_data, 
+                             reference_data = reference_data, 
+                             pc_subset = pc_subset, 
                              query_cell_type_col = query_cell_type_col, 
-                             ref_cell_type_col = ref_cell_type_col, 
-                             return_value = "list")
+                             ref_cell_type_col = ref_cell_type_col)
+    cell_list <- split(pca_output, pca_output[["cell_type"]])
     
-    # Get unique cell types
-    unique_cell_types <- na.omit(unique(c(colData(reference_data)[[ref_cell_type_col]],
-                                          colData(query_data)[[query_cell_type_col]])))
-    
-    # Create a list to store p-values for each cell type
-    p_values <- rep(NA, length(unique_cell_types))
-    names(p_values) <- unique_cell_types
-    
-    for (cell_type in unique_cell_types) {
+    # Perform permutation test with p-values
+    p_values <- numeric(length(cell_types))
+    names(p_values) <- cell_types
+    for (cell_type in cell_types) {
         
-        # Subset principal component scores for current cell type
-        ref_subset_scores <- pca_output$ref[which(cell_type == reference_data[[ref_cell_type_col]]), pc_subset]
-        query_subset_scores <- pca_output$query[which(cell_type == query_data[[query_cell_type_col]]), pc_subset]
-        # Calculate the p-value
-        hotelling_output <- Hotelling::hotelling.test(x = ref_subset_scores, y = query_subset_scores)
-        # Store the result
-        p_values[cell_type] <- hotelling_output$pval
+        ref_ind <- cell_list[[cell_type]][["dataset"]] == "Reference"
+        observed_t2 <- hotellingT2(as.matrix(cell_list[[cell_type]][ref_ind, paste0("PC", pc_subset)]),
+                                   as.matrix(cell_list[[cell_type]][!ref_ind, paste0("PC", pc_subset)]))
+        
+        perm_t2 <- numeric(n_permutation)
+        for(perm_id in seq_len(n_permutation)){
+            
+            ref_sample_id <- sample(seq_len(nrow(cell_list[[cell_type]])), sum(ref_ind), replace = FALSE)
+            perm_t2[perm_id] <- hotellingT2(as.matrix(cell_list[[cell_type]][ref_sample_id, paste0("PC", pc_subset)]),
+                                            as.matrix(cell_list[[cell_type]][-ref_sample_id, paste0("PC", pc_subset)]))
+        }
+        p_values[cell_type] <- mean(observed_t2 < perm_t2)
     }
     
     # Return p-values
     return(p_values)
 }
+
+#' @title Calculate Hotelling's T^2 Statistic
+#'
+#' @description
+#' Calculates the Hotelling's T^2 statistic for comparing means of multivariate data.
+#'
+#' @param sample1 A numeric matrix or data frame of multivariate observations for sample 1, where rows are observations and columns 
+#' are variables.
+#' @param sample2 A numeric matrix or data frame of multivariate observations for sample 2, with the same structure as sample 1.
+#' 
+#' @return The Hotelling's T^2 statistic.
+#'
+# Function to calculate hotelling T2 statistic between two groups
+hotellingT2 <- function(sample1, sample2) {
+    
+    # Number of observations in each sample
+    n1 <- nrow(sample1)
+    n2 <- nrow(sample2)
+    
+    # Number of variables (columns) in each sample
+    p <- ncol(sample1)
+    
+    # Compute mean vectors for each sample
+    mean1 <- colMeans(sample1)
+    mean2 <- colMeans(sample2)
+    
+    # Compute covariance matrices for each sample
+    cov1 <- cov(sample1)
+    cov2 <- cov(sample2)
+    
+    # Pooled covariance matrix
+    pooled_cov <- ((n1 - 1) * cov1 + (n2 - 1) * cov2) / (n1 + n2 - 2)
+    
+    # Compute Hotelling's T^2 statistic
+    # T^2 = n1 * n2 / (n1 + n2) * (mean1 - mean2)' * pooled_cov^-1 * (mean1 - mean2)
+    t2 <- n1 * n2 / (n1 + n2) * t(mean1 - mean2) %*% solve(pooled_cov) %*% (mean1 - mean2)
+    
+    # Return the computed T^2 statistic
+    return(as.numeric(t2))
+}
+

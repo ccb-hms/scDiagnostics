@@ -8,7 +8,8 @@ calculateVarImpOverlap(
   reference_data,
   query_data = NULL,
   ref_cell_type_col,
-  query_cell_type_col,
+  query_cell_type_col = NULL,
+  cell_types = NULL,
   n_tree = 500,
   n_top = 50
 )
@@ -22,6 +23,8 @@ If NULL, then the variable importance scores are only computed for the reference
 \item{ref_cell_type_col}{A character string specifying the column name in the reference dataset containing cell type annotations.}
 
 \item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
+
+\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
 
 \item{n_tree}{An integer specifying the number of trees to grow in the Random Forest. Default is 500.}
 
@@ -46,51 +49,24 @@ within both a reference dataset and a query dataset. The function then compares 
 the overlap in their importance scores.
 }
 \examples{
-# Load necessary library
-library(scRNAseq)
-library(scuttle)
-library(SingleR)
-library(scran)
-
 # Load data
-sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-
-# Divide the data into reference and query datasets
-set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
-
-# log transform datasets
-ref_data <- logNormCounts(ref_data)
-query_data <- logNormCounts(query_data)
-
-# Get cell type scores using SingleR (or any other cell type annotation method)
-scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-
-# Add labels to query object
-colData(query_data)$labels <- scores$labels
-
-# Selecting highly variable genes (can be customized by the user)
-ref_var <- getTopHVGs(ref_data, n = 500)
-query_var <- getTopHVGs(query_data, n = 500)
-
-# Intersect the gene symbols to obtain common genes
-common_genes <- intersect(ref_var, query_var)
-ref_data_subset <- ref_data[common_genes, ]
-query_data_subset <- query_data[common_genes, ]
+data("reference_data")
+data("query_data")
 
 # Compute important variables for all pairwise cell comparisons
-rf_output <- calculateVarImpOverlap(ref_data_subset, 
-                                    query_data_subset,
-                                    ref_cell_type_col = "reclustered.broad", 
-                                    query_cell_type_col = "labels", 
+rf_output <- calculateVarImpOverlap(reference_data = reference_data, 
+                                    query_data = query_data, 
+                                    query_cell_type_col = "SingleR_annotation", 
+                                    ref_cell_type_col = "expert_annotation", 
                                     n_tree = 500,
-                                    n_top = 20)
+                                    n_top = 50)
 
 # Comparison table
 rf_output$var_imp_comparison
 
+}
+\references{
+Breiman, L. (2001). "Random forests". *Machine Learning*, 45(1), 5-32. doi:10.1023/A:1010933404324.
 }
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}

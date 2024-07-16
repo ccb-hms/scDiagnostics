@@ -1,0 +1,72 @@
+# -------------------------------------------
+# Creation of Datasets - Multiple Cell Types
+# -------------------------------------------
+
+# Load data
+sce <- scRNAseq::HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+
+# Divide the data into reference and query datasets
+set.seed(100)
+indices <- sample(ncol(SummarizedExperiment::assay(sce)), 
+                  size = floor(0.7 * ncol(SummarizedExperiment::assay(sce))), 
+                  replace = FALSE)
+reference_data <- sce[, indices]
+query_data <- sce[, -indices]
+
+# log transform datasets
+reference_data <- scuttle::logNormCounts(reference_data)
+query_data <- scuttle::logNormCounts(query_data)
+
+# Select specific column (cell) data
+SummarizedExperiment::colData(reference_data) <- SummarizedExperiment::colData(reference_data)[, c("percent.mito", 
+                                                                                                   "reclustered.broad")]
+SummarizedExperiment::colData(query_data) <- SummarizedExperiment::colData(query_data)[, c("percent.mito", 
+                                                                                           "reclustered.broad")]
+names(SummarizedExperiment::colData(query_data))[1] <- names(SummarizedExperiment::colData(reference_data))[1] <-
+    "percent_mito"
+names(SummarizedExperiment::colData(query_data))[2] <- names(SummarizedExperiment::colData(reference_data))[2] <-
+    "expert_annotation"
+
+# Get cell type scores using SingleR (or any other cell type annotation method)
+scores <- SingleR::SingleR(query_data, reference_data, labels = reference_data$expert_annotation, )
+SummarizedExperiment::colData(query_data)$SingleR_annotation <- scores$labels
+SummarizedExperiment::colData(query_data)$annotation_scores <- apply(scores$scores, 1, max)
+
+# Compute AUC gene set scores using AUCell
+expression_matrix <- SummarizedExperiment::assay(query_data, "logcounts")
+cells_rankings <- AUCell::AUCell_buildRankings(expression_matrix, plotStats = FALSE)
+gene_set1 <- sample(rownames(expression_matrix), 10)
+gene_set2 <- sample(rownames(expression_matrix), 20)
+gene_sets <- list(geneSet1 = gene_set1, geneSet2 = gene_set2)
+cells_AUC <- AUCell::AUCell_calcAUC(gene_sets, cells_rankings)
+SummarizedExperiment::colData(query_data)$gene_set_scores <- SummarizedExperiment::assay(cells_AUC)["geneSet1", ] 
+
+# Selecting highly variable genes (can be customized by the user)
+ref_var <- scran::getTopHVGs(reference_data, n = 500)
+query_var <- scran::getTopHVGs(query_data, n = 500)
+
+# Intersect the gene symbols to obtain common genes
+common_genes <- intersect(ref_var, query_var)
+reference_data <- reference_data[common_genes, ]
+query_data <- query_data[common_genes, ]
+
+# Run dimension reduction on the reference data
+reference_data <- scater::runPCA(reference_data, ncomponents = 25)
+reference_data <- scater::runTSNE(reference_data)
+reference_data <- scater::runUMAP(reference_data)
+
+# Run dimension reduction on the query data
+query_data <- scater::runPCA(query_data, ncomponents = 25)
+query_data <- scater::runTSNE(query_data)
+query_data <- scater::runUMAP(query_data)
+
+# Remove counts assays
+SummarizedExperiment::assays(reference_data) <- 
+    SummarizedExperiment::assays(reference_data)[-which(names(SummarizedExperiment::assays(reference_data)) == "counts")]
+SummarizedExperiment::assays(query_data) <- 
+    SummarizedExperiment::assays(query_data)[-which(names(SummarizedExperiment::assays(query_data)) == "counts")]
+
+# Save datasets to data/ folder
+usethis::use_data(reference_data, compress = "xz", overwrite = TRUE)
+usethis::use_data(query_data, compress = "xz", overwrite = TRUE)
+

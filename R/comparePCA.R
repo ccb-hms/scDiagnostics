@@ -13,6 +13,8 @@
 #' 
 #' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
+#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
 #' @param pc_subset A numeric vector specifying the subset of principal components (PCs) to compare. Default is the first five PCs.
 #' @param n_top_vars An integer indicating the number of top loading variables to consider for each PC. Default is 50.
 #' @param metric The similarity metric to use. It can be either "cosine" or "correlation". Default is "cosine".
@@ -30,101 +32,87 @@
 #' @seealso \code{\link{plot.comparePCA}}
 #' 
 #' @examples
-#' # Load necessary library
-#' library(scRNAseq)
-#' library(scuttle)
+#' # Load libraries
 #' library(scran)
-#' library(SingleR)
 #' library(scater)
-#'
-#' # Load data
-#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 #' 
-#' # Divide the data into reference and query datasets
-#' set.seed(100)
-#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-#' ref_data <- sce[, indices]
-#' query_data <- sce[, -indices]
-#'
-#' # Log transform datasets
-#' ref_data <- logNormCounts(ref_data)
-#' query_data <- logNormCounts(query_data)
-#'
-#' # Get cell type scores using SingleR (or any other cell type annotation method)
-#' scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-#'
-#' # Add labels to query object
-#' colData(query_data)$labels <- scores$labels
-#'
+#' # Load data
+#' data("reference_data")
+#' data("query_data")
+#' 
+#' # Extract CD4 cells
+#' ref_data_subset <- reference_data[, which(reference_data$expert_annotation == "CD4")]
+#' query_data_subset <- query_data[, which(query_data$expert_annotation == "CD4")]
+#' 
 #' # Selecting highly variable genes (can be customized by the user)
-#' ref_var <- getTopHVGs(ref_data, n = 500)
-#' query_var <- getTopHVGs(query_data, n = 500)
-#'
+#' ref_top_genes <- getTopHVGs(ref_data_subset, n = 500)
+#' query_top_genes <- getTopHVGs(query_data_subset, n = 500)
+#' 
 #' # Intersect the gene symbols to obtain common genes
-#' common_genes <- intersect(ref_var, query_var)
-#' ref_data_subset <- ref_data[common_genes, ]
-#' query_data_subset <- query_data[common_genes, ]
-#'
-#' # Subset reference and query data for a specific cell type
-#' ref_data_subset <- ref_data_subset[, which(ref_data_subset$reclustered.broad == "CD8")]
-#' query_data_subset <- query_data_subset[, which(colData(query_data_subset)$labels == "CD8")]
-#'
-#' # Run PCA on the reference and query datasets
+#' common_genes <- intersect(ref_top_genes, query_top_genes)
+#' ref_data_subset <- ref_data_subset[common_genes,]
+#' query_data_subset <- query_data_subset[common_genes,]
+#' 
+#' # Run PCA on datasets separately
 #' ref_data_subset <- runPCA(ref_data_subset)
 #' query_data_subset <- runPCA(query_data_subset)
-#'
+#' 
 #' # Call the PCA comparison function
-#' similarity_mat <- comparePCA(query_data_subset, ref_data_subset, 
-#'                              pc_subset = c(1:5), 
+#' similarity_mat <- comparePCA(query_data = query_data_subset, 
+#'                              reference_data = ref_data_subset, 
+#'                              query_cell_type_col = "expert_annotation", 
+#'                              ref_cell_type_col = "expert_annotation", 
+#'                              pc_subset = 1:5,  
 #'                              n_top_vars = 50,
 #'                              metric = c("cosine", "correlation")[1], 
 #'                              correlation_method = c("spearman", "pearson")[1])
-#'
+#' 
 #' # Create the heatmap
 #' plot(similarity_mat)
 #' 
 # Compare PCA vectors of reference and query datasets for specific cell type.
-comparePCA <- function(reference_data, query_data, 
-                       pc_subset = c(1:5),
+comparePCA <- function(reference_data, 
+                       query_data, 
+                       query_cell_type_col, 
+                       ref_cell_type_col, 
+                       pc_subset = 1:5,
                        n_top_vars = 50,
-                       metric = c("cosine", "correlation")[1], 
-                       correlation_method = c("spearman", "pearson")[1]){
+                       metric = c("cosine", "correlation"), 
+                       correlation_method = c("spearman", "pearson")){
     
-    # Check if query_data is a SingleCellExperiment object
-    if (!is(query_data, "SingleCellExperiment")) {
-        stop("query_data must be a SingleCellExperiment object.")
+    # Check standard input arguments
+    argumentCheck(query_data = query_data,
+                  reference_data = reference_data,
+                  query_cell_type_col = query_cell_type_col,
+                  ref_cell_type_col = ref_cell_type_col,
+                  unique_cell_type = TRUE,
+                  pc_subset_query = pc_subset,
+                  pc_subset_ref = pc_subset, 
+                  common_rotation_genes = TRUE)
+    
+    # Check if n_top_vars is a positive integer
+    if (!is.numeric(n_top_vars) || n_top_vars <= 0 || n_top_vars != as.integer(n_top_vars)) {
+        stop("\'n_top_vars\' must be a positive integer.")
     }
-    
-    # Check if reference_data is a SingleCellExperiment object
-    if (!is(reference_data, "SingleCellExperiment")) {
-        stop("reference_data must be a SingleCellExperiment object.")
-    }
-    
-    # Check of genes in both datasets are the same
-    if(!all(rownames(attributes(reducedDim(query_data, "PCA"))$rotation) %in%
-            rownames(attributes(reducedDim(reference_data, "PCA"))$rotation)))
-        stop("The genes in the rotation matrices differ. Consider decreasing the number of genes used for PCA.")
-    
-    # Check input if PC subset is valid
-    if(!all(c(pc_subset %in% 1:ncol(reducedDim(reference_data, "PCA")), 
-              pc_subset %in% 1:ncol(reducedDim(query_data, "PCA")))))
-        stop("\'pc_subset\' is out of range.")
     
     # Check input for metric
+    metric <- match.arg(metric)
     if(!(metric %in% c("cosine", "correlation")))
         stop("\'metric\' should be one of \'cosine\' or \'correlation\'.")
     
     # Check input for correlation method
+    correlation_method <- match.arg(correlation_method)
     if(!(correlation_method %in% c("spearman", "pearson")))
         stop("\'correlation_method\' should be one of \'spearman\' or \'pearson\'.")
     
     # Extract PCA data from reference and query data
-    ref_rotation <- attributes(reducedDim(reference_data, "PCA"))$rotation[, pc_subset]
-    query_rotation <- attributes(reducedDim(query_data, "PCA"))$rotation[, pc_subset]
+    ref_rotation <- attributes(reducedDim(reference_data, "PCA"))[["rotation"]][, pc_subset]
+    query_rotation <- attributes(reducedDim(query_data, "PCA"))[["rotation"]][, pc_subset]
+    query_rotation <- query_rotation[match(rownames(ref_rotation), rownames(query_rotation)),]
     
     # Function to identify high-loading variables for each PC
     .getHighLoadingVars <- function(rotation_mat, n_top_vars) {
-        high_loading_vars <- lapply(1:ncol(rotation_mat), function(pc) {
+        high_loading_vars <- lapply(seq_len(ncol(rotation_mat)), function(pc) {
             abs_loadings <- abs(rotation_mat[, pc])
             top_vars <- names(sort(abs_loadings, decreasing = TRUE))[1:n_top_vars]
             return(top_vars)
@@ -135,7 +123,7 @@ comparePCA <- function(reference_data, query_data,
     # Get union of variables with highest loadings
     top_ref <- .getHighLoadingVars(ref_rotation, n_top_vars)
     top_query <- .getHighLoadingVars(query_rotation, n_top_vars)
-    top_union <- lapply(1:length(pc_subset), function(i) return(union(top_ref[[i]], top_query[[i]])))
+    top_union <- lapply(seq_len(length(pc_subset)), function(i) return(union(top_ref[[i]], top_query[[i]])))
 
     # Initialize a matrix to store cosine similarities
     similarity_matrix <- matrix(NA, nrow = length(pc_subset), ncol = length(pc_subset))
@@ -147,18 +135,20 @@ comparePCA <- function(reference_data, query_data,
         }
         
         # Loop over each pair of columns and compute cosine similarity
-        for (i in 1:length(pc_subset)) {
-            for (j in 1:length(pc_subset)) {
+        for (i in seq_len(length(pc_subset))) {
+            for (j in seq_len(length(pc_subset))) {
                 combination_union <- union(top_union[[i]], top_union[[j]])
-                similarity_matrix[i, j] <- .cosine_similarity(ref_rotation[combination_union, i], query_rotation[combination_union, j])
+                similarity_matrix[i, j] <- .cosine_similarity(ref_rotation[combination_union, i], 
+                                                              query_rotation[combination_union, j])
             }
         }
     } else if(metric == "correlation"){
         # Loop over each pair of columns and compute cosine similarity
-        for (i in 1:length(pc_subset)) {
-            for (j in 1:length(pc_subset)) {
+        for (i in seq_len(length(pc_subset))) {
+            for (j in seq_len(length(pc_subset))) {
                 combination_union <- union(top_union[[i]], top_union[[j]])
-                similarity_matrix[i, j] <- cor(ref_rotation[combination_union, i], query_rotation[combination_union, j], 
+                similarity_matrix[i, j] <- cor(ref_rotation[combination_union, i], 
+                                               query_rotation[combination_union, j], 
                                                method = correlation_method)
             }
         }
@@ -166,13 +156,9 @@ comparePCA <- function(reference_data, query_data,
     
     # Add rownames and colnames with % of variance explained for each PC of each dataset 
     rownames(similarity_matrix) <- paste0("Ref PC", pc_subset, " (", 
-                                          round(attributes(reducedDim(reference_data, "PCA"))$varExplained[pc_subset] / 
-                                                    sum(attributes(reducedDim(reference_data, "PCA"))$varExplained[pc_subset]) *
-                                                            100, 1), "%)")
+                                          round(attributes(reducedDim(reference_data, "PCA"))[["percentVar"]][pc_subset], 1), "%)")
     colnames(similarity_matrix) <- paste0("Query PC", pc_subset, " (", 
-                                          round(attributes(reducedDim(query_data, "PCA"))$varExplained[pc_subset] / 
-                                                    sum(attributes(reducedDim(query_data, "PCA"))$varExplained[pc_subset]) *
-                                                    100, 1), "%)")
+                                          round(attributes(reducedDim(query_data, "PCA"))[["percentVar"]][pc_subset], 1), "%)")
     
     # Update class of return output
     class(similarity_matrix) <- c(class(similarity_matrix), "comparePCA")

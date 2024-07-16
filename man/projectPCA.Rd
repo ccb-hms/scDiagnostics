@@ -7,10 +7,9 @@
 projectPCA(
   query_data,
   reference_data,
-  n_components = 10,
-  query_cell_type_col = NULL,
-  ref_cell_type_col = NULL,
-  return_value = c("data.frame", "list")[1]
+  query_cell_type_col,
+  ref_cell_type_col,
+  pc_subset = 1:10
 )
 }
 \arguments{
@@ -18,21 +17,16 @@ projectPCA(
 
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
-\item{n_components}{An integer specifying the number of principal components to use for projection. Defaults to 10. 
-Must be less than or equal to the number of components available in the reference PCA.}
-
 \item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data} 
 that identifies the cell types.}
 
 \item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data} 
 that identifies the cell types.}
 
-\item{return_value}{A character string specifying the format of the returned data. Can be \code{data.frame} (combined reference 
-and query projections) or \code{list} (separate lists for reference and query projections) (default = \code{data.frame}).}
+\item{pc_subset}{A numeric vector specifying the subset of principal components (PCs) to compare. Default is 1:10.}
 }
 \value{
-A \code{data.frame} containing the projected data in rows (reference and query data combined) or a \code{list} containing 
-separate matrices for reference and query projections, depending on the \code{return_value} argument.
+A \code{data.frame} containing the projected data in rows (reference and query data combined).
 }
 \description{
 This function projects a query singleCellExperiment object onto the PCA space of a reference 
@@ -44,51 +38,16 @@ This function assumes that the "PCA" element exists within the \code{reducedDims
 It performs centering and scaling of the query data based on the reference data before projection.
 }
 \examples{
-# Load required libraries
-library(scRNAseq)
-library(scuttle)
-library(SingleR)
-library(scran)
-library(scater)
-library(RColorBrewer)
-
-# Load data (replace with your data loading)
-sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-
-# Divide the data into reference and query datasets
-set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
-
-# log transform datasets
-ref_data <- scuttle::logNormCounts(ref_data)
-query_data <- scuttle::logNormCounts(query_data)
-
-# Get cell type scores using SingleR (or any other cell type annotation method)
-scores <- SingleR::SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-
-# Add labels to query object
-colData(query_data)$labels <- scores$labels
-
-# Selecting highly variable genes (can be customized by the user)
-ref_var <- scran::getTopHVGs(ref_data, n = 2000)
-query_var <- scran::getTopHVGs(query_data, n = 2000)
-
-# Intersect the gene symbols to obtain common genes
-common_genes <- intersect(ref_var, query_var)
-ref_data_subset <- ref_data[common_genes, ]
-query_data_subset <- query_data[common_genes, ]
-
-# Run PCA on the reference data (assumed to be prepared)
-ref_data_subset <- runPCA(ref_data_subset)
+# Load data
+data("reference_data")
+data("query_data")
 
 # Project the query data onto PCA space of reference
-pca_output <- projectPCA(query_data_subset, ref_data_subset,
-                         n_components = 10,
-                         query_cell_type_col = "labels",
-                         ref_cell_type_col = "reclustered.broad",
-                         return_value = c("data.frame", "list")[1])
+pca_output <- projectPCA(query_data = query_data, 
+                         reference_data = reference_data,
+                         query_cell_type_col = "SingleR_annotation", 
+                         ref_cell_type_col = "expert_annotation", 
+                         pc_subset = 1:10)
 
 }
 \author{

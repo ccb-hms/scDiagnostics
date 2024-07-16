@@ -4,18 +4,23 @@
 \alias{plotGeneSetScores}
 \title{Visualization of gene sets or pathway scores on dimensional reduction plot}
 \usage{
-plotGeneSetScores(se_object, method, feature, pc_subset = c(1:5))
+plotGeneSetScores(
+  se_object,
+  method = c("PCA", "TSNE", "UMAP"),
+  score_col,
+  pc_subset = 1:5
+)
 }
 \arguments{
-\item{se_object}{An object of class "SingleCellExperiment" containing numeric expression matrix and other metadata.
+\item{se_object}{An object of class \code{\linkS4class{SingleCellExperiment}} containing numeric expression matrix and other metadata.
 It can be either a reference or query dataset.}
 
 \item{method}{A character string indicating the method for visualization ("PCA", "TSNE", or "UMAP").}
 
-\item{feature}{A character string representing the name of the feature (score) in the colData(query_data) to plot.}
+\item{score_col}{A character string representing the name of the score_col (score) in the colData(se_object) to plot.}
 
 \item{pc_subset}{An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA". 
-Default is c(1:5).}
+Default is 1:5.}
 }
 \value{
 A ggplot2 object representing the gene set scores plotted on the specified reduced dimensions.
@@ -31,48 +36,16 @@ For PCA, the function automatically includes the percentage of variance explaine
 in the plot's legend.
 }
 \examples{
-library(scater)
-library(scran)
-library(scRNAseq)
-library(AUCell)
-
 # Load data
-sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-
-# Divide the data into reference and query datasets
-set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
-
-## log transform datasets
-ref_data <- logNormCounts(ref_data)
-query_data <- logNormCounts(query_data)
-
-# Run PCA on the query data
-query_data <- runPCA(query_data)
-
-# Compute scores using AUCell
-expression_matrix <- assay(query_data, "logcounts")
-cells_rankings <- AUCell_buildRankings(expression_matrix, plotStats = FALSE)
-# Generate gene sets
-gene_set1 <- sample(rownames(expression_matrix), 10)
-gene_set2 <- sample(rownames(expression_matrix), 20)
-gene_sets <- list(geneSet1 = gene_set1, geneSet2 = gene_set2)
-
-# Calculate AUC scores for gene sets
-cells_AUC <- AUCell_calcAUC(gene_sets, cells_rankings)
-
-# Assign scores to colData (users should ensure that the scores are present in the colData)
-colData(query_data)$geneSetScores <- assay(cells_AUC)["geneSet1", ] 
+data("query_data")
 
 # Plot gene set scores on PCA
 plotGeneSetScores(se_object = query_data, 
                   method = "PCA", 
-                  feature = "geneSetScores",
-                  pc_subset = c(1:5))
-
+                  score_col = "gene_set_scores",
+                  pc_subset = 1:5)
+                  
 # Note: Users can provide their own gene set scores in the colData of the 'se_object' object, 
-# using any method of their choice.
+# using any dimension reduction of their choice.
 
 }

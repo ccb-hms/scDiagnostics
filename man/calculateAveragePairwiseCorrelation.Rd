@@ -9,32 +9,28 @@
 calculateAveragePairwiseCorrelation(
   query_data,
   reference_data,
-  n_components = 10,
   query_cell_type_col,
   ref_cell_type_col,
-  cell_types,
-  correlation_method
+  cell_types = NULL,
+  pc_subset = 1:10,
+  correlation_method = c("spearman", "pearson")
 )
 
 \method{plot}{calculateAveragePairwiseCorrelation}(x, ...)
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
-expression data and metadata.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
-expression data and metadata.}
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
-\item{n_components}{The number of principal components to use for the dimensionality reduction of the data using PCA. Defaults to 10.
+\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+
+\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+
+\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+
+\item{pc_subset}{A numeric vector specifying which principal components to use in the analysis. Default is 1:10.
 If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.}
-
-\item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data} 
-that identifies the cell types.}
-
-\item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data} 
-that identifies the cell types.}
-
-\item{cell_types}{A character vector specifying the cell types to be analysed consider.}
 
 \item{correlation_method}{The correlation method to use for calculating pairwise correlations.}
 
@@ -48,13 +44,13 @@ A matrix containing the average pairwise correlation values.
         in the matrix represents the average correlation between a pair 
         of cell types.
 
-A ggplot2 object representing the heatmap plot.
+The S3 plot method returns a \code{ggplot} object representing the heatmap plot.
 }
 \description{
 Computes the average pairwise correlations between specified cell types 
 in single-cell gene expression data.
 
-This function takes the output of the calculateAveragePairwiseCorrelation function,
+The S3 plot method takes the output of the calculateAveragePairwiseCorrelation function,
 which should be a matrix of pairwise correlations, and plots it as a heatmap.
 }
 \details{
@@ -64,68 +60,25 @@ reference cells using a specified correlation method, then averages these correl
 cell type pair. This function aids in assessing the similarity between cells in reference and query datasets, 
 providing insights into the reliability of cell type annotations in single-cell gene expression data.
 
-This function converts the correlation matrix into a dataframe, creates a heatmap using ggplot2,
+The S3 plot method converts the correlation matrix into a dataframe, creates a heatmap using ggplot2,
 and customizes the appearance of the heatmap with updated colors and improved aesthetics.
 }
 \examples{
-library(scater)
-library(scran)
-library(scRNAseq)
-library(SingleR)
-
 # Load data
-sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-
-# Divide the data into reference and query datasets
-set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
-
-# log transform datasets
-ref_data <- logNormCounts(ref_data)
-query_data <- logNormCounts(query_data)
-
-# Get cell type scores using SingleR
-scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-
-# Add labels to query object
-colData(query_data)$labels <- scores$labels
-
-# Compute Pairwise Correlations
-# Note: The selection of highly variable genes and desired cell types may vary 
-# based on user preference. 
-# The cell type annotation method used in this example is SingleR. 
-# User can use any other method for cell type annotation and provide 
-# the corresponding labels in the metadata.
-
-# Selecting highly variable genes
-ref_var <- getTopHVGs(ref_data, n = 2000)
-query_var <- getTopHVGs(query_data, n = 2000)
-
-# Intersect the gene symbols to obtain common genes
-common_genes <- intersect(ref_var, query_var)
-
-# Select desired cell types
-selected_cell_types <- c("CD4", "CD8", "B_and_plasma")
-ref_data_subset <- ref_data[common_genes, ref_data$reclustered.broad \%in\% selected_cell_types]
-query_data_subset <- query_data[common_genes, query_data$reclustered.broad \%in\% selected_cell_types]
-
-# Run PCA on the reference data
-ref_data_subset <- runPCA(ref_data_subset)
+data("reference_data")
+data("query_data")
 
 # Compute pairwise correlations
-cor_matrix_avg <- calculateAveragePairwiseCorrelation(query_data = query_data_subset, 
-                                                      reference_data = ref_data_subset, 
-                                                      n_components = 10,
-                                                      query_cell_type_col = "labels", 
-                                                      ref_cell_type_col = "reclustered.broad", 
-                                                      cell_types = selected_cell_types, 
+cor_matrix_avg <- calculateAveragePairwiseCorrelation(query_data = query_data, 
+                                                      reference_data = reference_data, 
+                                                      query_cell_type_col = "SingleR_annotation", 
+                                                      ref_cell_type_col = "expert_annotation", 
+                                                      cell_types = c("CD4", "CD8", "B_and_plasma"), 
+                                                      pc_subset = 1:10,
                                                       correlation_method = "spearman")
 
-# Visualize the results
+# Visualize correlation output
 plot(cor_matrix_avg)
-
 
 }
 \seealso{

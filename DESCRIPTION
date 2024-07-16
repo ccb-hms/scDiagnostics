@@ -31,10 +31,11 @@ Imports:
     methods,
     isotree,
     ggplot2,
-    RColorBrewer,
     SummarizedExperiment,
     ranger,
-    Hotelling,
+    transport,
+    speedglm,
+    cramer,
     rlang
 Suggests:
     AUCell,
@@ -48,6 +49,7 @@ Suggests:
     celldex,
     scuttle,
     scater,
+    dplyr,
     testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
@@ -61,6 +63,7 @@ biocViews:
     Software,
     Transcriptomics
 Encoding: UTF-8
-LazyData: true
+LazyData: false
+LazyDataCompression: xz
 RoxygenNote: 7.3.1
 Config/testthat/edition: 3

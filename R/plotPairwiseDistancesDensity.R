@@ -13,14 +13,12 @@
 #' expression data and metadata.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
 #' expression data and metadata.
-#' @param n_components The number of principal components to use for the dimensionality reduction of the data using PCA. Defaults to 10.
-#' If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.
-#' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data} 
-#' that identifies the cell types.
-#' @param ref_cell_type_col character. The column name in the \code{colData} of \code{reference_data} 
-#' that identifies the cell types.
+#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
 #' @param cell_type_query The query cell type for which distances or correlations are calculated.
-#' @param cell_type_reference The reference cell type for which distances or correlations are calculated.
+#' @param cell_type_ref The reference cell type for which distances or correlations are calculated.
+#' @param pc_subset A numeric vector specifying which principal components to use in the analysis. Default is 1:5.
+#' If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.
 #' @param distance_metric The distance metric to use for calculating pairwise distances, such as euclidean, manhattan etc.
 #'                        Set it to "correlation" for calculating correlation coefficients.
 #' @param correlation_method The correlation method to use when distance_metric is "correlation".
@@ -30,53 +28,20 @@
 #'         calculated distances or correlations.
 #'
 #' @examples
-#' library(scran)
-#' library(scRNAseq)
-#' library(SingleR)
-#' library(scater)
-#'
 #' # Load data
-#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-#'
-#' # Divide the data into reference and query datasets
-#' set.seed(100)
-#' indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-#' ref_data <- sce[, indices]
-#' query_data <- sce[, -indices]
-#'
-#' # log transform datasets
-#' ref_data <- logNormCounts(ref_data)
-#' query_data <- logNormCounts(query_data)
-#'
-#' # Get cell type scores using SingleR (or any other cell type annotation method)
-#' scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-#'
-#' # Add labels to query object
-#' colData(query_data)$labels <- scores$labels
-#'
-#' # Selecting highly variable genes (can be customized by the user)
-#' ref_var <- getTopHVGs(ref_data, n = 2000)
-#' query_var <- getTopHVGs(query_data, n = 2000)
-#'
-#' # Intersect the gene symbols to obtain common genes
-#' common_genes <- intersect(ref_var, query_var)
-#'
-#' ref_data_subset <- ref_data[common_genes, ]
-#' query_data_subset <- query_data[common_genes, ]
+#' data("reference_data")
+#' data("query_data")
 #' 
-#' # Run PCA on the reference data
-#' ref_data_subset <- runPCA(ref_data_subset)
-#'
 #' # Example usage of the function
-#' plotPairwiseDistancesDensity(query_data = query_data_subset, 
-#'                              reference_data = ref_data_subset, 
-#'                              n_components = 10,
-#'                              query_cell_type_col = "labels", 
-#'                              ref_cell_type_col = "reclustered.broad", 
+#' plotPairwiseDistancesDensity(query_data = query_data, 
+#'                              reference_data = reference_data, 
+#'                              query_cell_type_col = "SingleR_annotation", 
+#'                              ref_cell_type_col = "expert_annotation", 
 #'                              cell_type_query = "CD8", 
-#'                              cell_type_reference = "CD8", 
-#'                              distance_metric = "euclidean")
-#' 
+#'                              cell_type_ref = "CD8", 
+#'                              pc_subset = 1:5,
+#'                              distance_metric = "euclidean", 
+#'                              correlation_method = "pearson")
 #' 
 #' @importFrom stats cor dist
 #' @import SingleCellExperiment
@@ -85,89 +50,103 @@
 #' 
 plotPairwiseDistancesDensity <- function(query_data, 
                                          reference_data, 
-                                         n_components = 10,
                                          query_cell_type_col, 
                                          ref_cell_type_col, 
                                          cell_type_query, 
-                                         cell_type_reference, 
-                                         distance_metric, 
-                                         correlation_method = "pearson") {
-  
-  # Sanity checks
-  # Check if query_data is a SingleCellExperiment object
-  if (!is(query_data, "SingleCellExperiment")) {
-    stop("query_data must be a SingleCellExperiment object.")
-  }
-
-  # Check if reference_data is a SingleCellExperiment object
-  if (!is(reference_data, "SingleCellExperiment")) {
-    stop("reference_data must be a SingleCellExperiment object.")
-  }
-
-  # Convert to matrix and potentially applied PCA dimensionality reduction
-  if(!is.null(n_components)){
-      # Project query data onto PCA space of reference data
-      pca_output <- projectPCA(query_data = query_data, reference_data = reference_data, 
-                               n_components = n_components, return_value = "list")
-      ref_mat <- pca_output$ref[which(reference_data[[ref_cell_type_col]] == cell_type_reference), paste0("PC", 1:n_components)]
-      query_mat <- pca_output$query[which(query_data[[query_cell_type_col]] == cell_type_query), paste0("PC", 1:n_components)]
-  } else{
-      
-      # Subset query data to the specified cell type
-      query_data_subset <- query_data[, !is.na(query_data[[query_cell_type_col]]) & query_data[[query_cell_type_col]] == cell_type_query]
-      query_mat <- t(as.matrix(assay(query_data_subset, "logcounts")))
-      ref_mat <- t(as.matrix(assay(ref_data_subset, "logcounts")))
-  }
-
-  # Combine query and reference matrices
-  combined_mat <- rbind(query_mat, ref_mat)
-
-  # Calculate pairwise distances or correlations for all comparisons
-  if (distance_metric == "correlation") {
-    if (correlation_method == "pearson") {
-      dist_matrix <- cor(t(combined_mat), method = "pearson")
-    } else if (correlation_method == "spearman") {
-      dist_matrix <- cor(t(combined_mat), method = "spearman")
-    } else {
-      stop("Invalid correlation method. Available options: 'pearson', 'spearman'")
+                                         cell_type_ref, 
+                                         pc_subset = 1:5,
+                                         distance_metric = c("correlation", "euclidean"), 
+                                         correlation_method = c("spearman", "pearson")) {
+    
+    # Check standard input arguments
+    argumentCheck(query_data = query_data,
+                  reference_data = reference_data,
+                  query_cell_type_col = query_cell_type_col,
+                  ref_cell_type_col = ref_cell_type_col,
+                  cell_types = c(cell_type_query, cell_type_ref),
+                  pc_subset_ref = pc_subset)
+    
+    # Check distance_metric method
+    distance_metric <- match.arg(distance_metric)
+    if(!(distance_metric %in% c("correlation", "euclidean"))){
+        stop("The \'distance_metric\' specified is not available.")
     }
-  } else {
-    dist_matrix <- dist(combined_mat, method = distance_metric)
-  }
-
-  # Convert dist_matrix to a square matrix
-  dist_matrix <- as.matrix(dist_matrix)
-
-  # Extract the distances or correlations for the different pairwise comparisons
-  num_query_cells <- nrow(query_mat)
-  num_ref_cells <- nrow(ref_mat)
-  dist_query_query <- dist_matrix[1:num_query_cells, 1:num_query_cells]
-  dist_ref_ref <- dist_matrix[(num_query_cells+1):(num_query_cells+num_ref_cells), 
-                              (num_query_cells+1):(num_query_cells+num_ref_cells)]
-  dist_query_ref <- dist_matrix[1:num_query_cells, (num_query_cells+1):(num_query_cells+num_ref_cells)]
-
-  # Create data frame for plotting
-  dist_df <- data.frame(
-    Comparison = c(rep("Query vs Query", length(dist_query_query)),
-                   rep("Reference vs Reference", length(dist_ref_ref)),
-                   rep("Query vs Reference", length(dist_query_ref))),
-    Distance = c(as.vector(dist_query_query),
-                 as.vector(dist_ref_ref),
-                 as.vector(dist_query_ref))
-  )
-
-  # Plot density plots with improved aesthetics
-  ggplot2::ggplot(dist_df, ggplot2::aes(x = Distance, color = Comparison, fill = Comparison)) +
-      ggplot2::geom_density(alpha = 0.5, linewidth = 1) +  # Updated: linewidth instead of size
-      ggplot2::scale_color_manual(values = c("#D9534F", "#BA55D3", "#5DADE2")) +
-      ggplot2::scale_fill_manual(values = c("#D9534F", "#BA55D3", "#5DADE2")) +
-      ggplot2::labs(x = ifelse(distance_metric == "correlation", 
-                               ifelse(correlation_method == "spearman", "Spearman Correlation", "Pearson Correlation"), 
-                               "Distance"), y = "Density", 
-                    title = "Pairwise Distance Analysis and Density Visualization") +
-      ggplot2::theme_bw() +
-      ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                     panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                     plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                     axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
+    
+    # Check correlation method
+    correlation_method <- match.arg(correlation_method)
+    if(!(correlation_method %in% c("spearman", "pearson"))){
+        stop("The \'correlation_method\' specified is not available.")
+    }
+    
+    # Convert to matrix and potentially applied PCA dimensionality reduction
+    if(!is.null(pc_subset)){
+        # Project query data onto PCA space of reference data
+        pca_output <- projectPCA(query_data = query_data, 
+                                 reference_data = reference_data, 
+                                 query_cell_type_col = query_cell_type_col,
+                                 ref_cell_type_col = ref_cell_type_col,
+                                 pc_subset = pc_subset)
+        ref_mat <- pca_output[which(pca_output[["dataset"]] == "Reference" &
+                              pca_output[["cell_type"]] == cell_type_ref), paste0("PC", pc_subset)]
+        query_mat <- pca_output[which(pca_output[["dataset"]] == "Query" &
+                                pca_output[["cell_type"]] == cell_type_query), paste0("PC", pc_subset)]
+    } else{
+        
+        # Subset query data to the specified cell type
+        query_data_subset <- query_data[, !is.na(query_data[[query_cell_type_col]]) & 
+                                            query_data[[query_cell_type_col]] == cell_type_query]
+        query_mat <- t(as.matrix(assay(query_data_subset, "logcounts")))
+        ref_mat <- t(as.matrix(assay(reference_data, "logcounts")))
+    }
+    
+    # Combine query and reference matrices
+    combined_mat <- rbind(query_mat, ref_mat)
+    
+    # Calculate pairwise distances or correlations for all comparisons
+    if (distance_metric == "correlation") {
+        if (correlation_method == "pearson") {
+            dist_matrix <- cor(t(combined_mat), method = "pearson")
+        } else if (correlation_method == "spearman") {
+            dist_matrix <- cor(t(combined_mat), method = "spearman")
+        } else {
+            stop("Invalid correlation method. Available options: 'pearson', 'spearman'")
+        }
+    } else {
+        dist_matrix <- dist(combined_mat, method = distance_metric)
+    }
+    
+    # Convert dist_matrix to a square matrix
+    dist_matrix <- as.matrix(dist_matrix)
+    
+    # Extract the distances or correlations for the different pairwise comparisons
+    num_query_cells <- nrow(query_mat)
+    num_ref_cells <- nrow(ref_mat)
+    dist_query_query <- dist_matrix[1:num_query_cells, 1:num_query_cells]
+    dist_ref_ref <- dist_matrix[(num_query_cells+1):(num_query_cells+num_ref_cells), 
+                                (num_query_cells+1):(num_query_cells+num_ref_cells)]
+    dist_query_ref <- dist_matrix[1:num_query_cells, (num_query_cells+1):(num_query_cells+num_ref_cells)]
+    
+    # Create data frame for plotting
+    dist_df <- data.frame(
+        Comparison = c(rep("Query vs Query", length(dist_query_query)),
+                       rep("Reference vs Reference", length(dist_ref_ref)),
+                       rep("Query vs Reference", length(dist_query_ref))),
+        Distance = c(as.vector(dist_query_query),
+                     as.vector(dist_ref_ref),
+                     as.vector(dist_query_ref))
+    )
+    
+    # Plot density plots with improved aesthetics
+    ggplot2::ggplot(dist_df, ggplot2::aes(x = .data[["Distance"]], color = .data[["Comparison"]])) +
+        ggplot2::geom_density(alpha = 0.5, linewidth = 0.5, adjust = 2) +  
+        ggplot2::scale_color_manual(values = c("#D9534F", "#BA55D3", "#5DADE2")) +
+        ggplot2::labs(x = ifelse(distance_metric == "correlation", 
+                                 ifelse(correlation_method == "spearman", "Spearman Correlation", "Pearson Correlation"), 
+                                 "Distance"), y = "Density", 
+                      title = "Pairwise Distance Analysis and Density Visualization") +
+        ggplot2::theme_bw() +
+        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
 }

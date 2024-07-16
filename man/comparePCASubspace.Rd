@@ -9,7 +9,9 @@
 comparePCASubspace(
   reference_data,
   query_data,
-  pc_subset = c(1:5),
+  query_cell_type_col,
+  ref_cell_type_col,
+  pc_subset = 1:5,
   n_top_vars = 50
 )
 
@@ -20,11 +22,15 @@ comparePCASubspace(
 
 \item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
+\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+
+\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+
 \item{pc_subset}{A numeric vector specifying the subset of principal components (PCs) to compare. Default is the first five PCs.}
 
 \item{n_top_vars}{An integer indicating the number of top loading variables to consider for each PC. Default is 50.}
 
-\item{x}{A numeric matrix output from the `comparePCA` function, representing 
+\item{x}{A numeric matrix output from the \code{comparePCASubspace} function, representing 
 cosine similarities between query and reference principal components.}
 
 \item{...}{Additional arguments passed to the plotting function.}
@@ -35,14 +41,14 @@ A list containing the following components:
   \item{average_variance_explained}{A numeric vector of average variance explained by each PC.}
   \item{weighted_cosine_similarity}{A numeric value representing the weighted cosine similarity.}
 
-A ggplot object representing the heatmap of cosine similarities.
+The S3 plot method returns a \code{ggplot} object representing the heatmap of cosine similarities.
 }
 \description{
 This function compares the subspace spanned by the top principal components (PCs) in a reference dataset to that 
 in a query dataset. It computes the cosine similarity between the loadings of the top variables for each PC in 
 both datasets and provides a weighted cosine similarity score.
 
-This function generates a visualization of the output from the `comparePCASubspace` function.
+The S3 plot method generates a visualization of the output from the \code{comparePCASubspace} function.
 The plot shows the cosine of principal angles between reference and query principal components,
 with point sizes representing the variance explained.
 }
@@ -54,60 +60,45 @@ indices are stored. Additionally, the function calculates the average percentage
 selected top PCs. Finally, it computes a weighted cosine similarity score based on the top cosine similarities 
 and the average percentage of variance explained.
 
-The function converts the input list into a data frame suitable for plotting with `ggplot2`.
+The S3 plot method converts the input list into a data frame suitable for plotting with \code{ggplot2}.
 Each point in the scatter plot represents the cosine of a principal angle, with the size of the point
 indicating the average variance explained by the corresponding principal components.
 }
 \examples{
-# Load necessary library
-library(scRNAseq)
-library(scuttle)
+# Load libraries
 library(scran)
-library(SingleR)
-library(ggplot2)
 library(scater)
 
 # Load data
-sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+data("reference_data")
+data("query_data")
 
-# Divide the data into reference and query datasets
-set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
-
-# Log transform datasets
-ref_data <- logNormCounts(ref_data)
-query_data <- logNormCounts(query_data)
-
-# Get cell type scores using SingleR (or any other cell type annotation method)
-scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-
-# Add labels to query object
-colData(query_data)$labels <- scores$labels
+# Extract CD4 cells
+ref_data_subset <- reference_data[, which(reference_data$expert_annotation == "CD4")]
+query_data_subset <- query_data[, which(query_data$expert_annotation == "CD4")]
 
 # Selecting highly variable genes (can be customized by the user)
-ref_var <- getTopHVGs(ref_data, n = 500)
-query_var <- getTopHVGs(query_data, n = 500)
+ref_top_genes <- getTopHVGs(ref_data_subset, n = 500)
+query_top_genes <- getTopHVGs(query_data_subset, n = 500)
 
 # Intersect the gene symbols to obtain common genes
-common_genes <- intersect(ref_var, query_var)
-ref_data_subset <- ref_data[common_genes, ]
-query_data_subset <- query_data[common_genes, ]
+common_genes <- intersect(ref_top_genes, query_top_genes)
+ref_data_subset <- ref_data_subset[common_genes,]
+query_data_subset <- query_data_subset[common_genes,]
 
-# Subset reference and query data for a specific cell type
-ref_data_subset <- ref_data_subset[, which(ref_data_subset$reclustered.broad == "CD8")]
-query_data_subset <- query_data_subset[, which(colData(query_data_subset)$labels == "CD8")]
-
-# Run PCA on the reference and query datasets
-ref_data_subset <- runPCA(ref_data_subset, ncomponents = 50)
-query_data_subset <- runPCA(query_data_subset, ncomponents = 50)
+# Run PCA on datasets separately
+ref_data_subset <- runPCA(ref_data_subset)
+query_data_subset <- runPCA(query_data_subset)
 
 # Compare PCA subspaces
-subspace_comparison <- comparePCASubspace(query_data_subset, ref_data_subset, 
-                                          pc_subset = c(1:5), n_top_vars = 50)
+subspace_comparison <- comparePCASubspace(query_data = query_data_subset,
+                                          reference_data = ref_data_subset, 
+                                          query_cell_type_col = "expert_annotation", 
+                                          ref_cell_type_col = "expert_annotation", 
+                                          n_top_vars = 50,
+                                          pc_subset = 1:5)
 
-# Create a data frame for plotting
+# Plot output for PCA subspace comparison
 plot(subspace_comparison)
 
 }

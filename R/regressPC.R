@@ -1,8 +1,8 @@
-#' @title Principal component regression
+#' @title Principal Component Regression
 #'
 #' @description
 #' This function performs linear regression of a covariate of interest onto one
-#' or more principal components, based on the data in a SingleCellExperiment
+#' or more principal components, based on the data in a \code{\linkS4class{SingleCellExperiment}}
 #' object.
 #'
 #' @details 
@@ -12,7 +12,7 @@
 #' homogeneity, and evaluating alignment of query and reference datasets in cell 
 #' type annotation settings. 
 #' 
-#' Briefly, the \eqn{R^2} is calculated from a linear regression of the covariate B of 
+#' Briefly, the \eqn{R^2} is calculated from a linear regression of the covariate \eqn{B} of 
 #' interest onto each principal component. The variance contribution of the 
 #' covariate effect per principal component is then calculated as the product of 
 #' the variance explained by the i-th principal component (PC) and the 
@@ -25,244 +25,154 @@
 #' where, \eqn{\text{Var}(C \mid PC_i)} is the variance of the data matrix \eqn{C} 
 #' explained by the i-th principal component. See references for details.
 #' 
-#' If the input is large (>3e4 cells) and the independent variable is categorical 
-#' with \eqn{>10} categories, this function will use a stripped-down linear model 
-#' function that is faster but doesn't return all the same components. Namely, 
-#' the \code{regression.summaries} component of the result will contain only the 
-#' \eqn{R^2} values, nothing else.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' If NULL, the PC scores are regressed against the cell types of the reference data.
+#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
+#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
+#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
+#' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
 #'
-#' @param sce An object of class \code{\linkS4class{SingleCellExperiment}}
-#' containing the data for regression analysis.
-#' @param dep.vars character. Dependent variable(s). Determines which principal
-#' component(s) (e.g., "PC1", "PC2", etc.) are used as explanatory variables.
-#' Principal components are expected to be stored in a PC matrix named
-#' \code{"PCA"} in the \code{reducedDims} of \code{sce}. Defaults to
-#' \code{NULL} which will then regress on each principal component present in
-#' the PC matrix.
-#' @param indep.var A character with the name of the independent variable. A column name in the
-#' \code{colData} of \code{sce} specifying the response variable.
-#' @param regressPC_res a result from \code{\link{regressPC}}
-#' @param max_pc The maximum number of PCs to show on the plot. Set to 0 to show all.
-#'
-#' @return A \code{list} containing \itemize{ \item summaries of the linear
-#'   regression models for each specified principal component, \item the
-#'   corresponding R-squared (R2) values, \item the variance contributions for
-#'   each principal component, and \item the total variance explained.}
+#' @return 
+#' A \code{list} containing \itemize{ \item summaries of the linear
+#' regression models for each specified principal component, \item the
+#' corresponding R-squared (R2) values, \item the variance contributions for
+#' each principal component, and \item the total variance explained.}
 #'
 #' @references Luecken et al. Benchmarking atlas-level data integration in
-#'   single-cell genomics. Nature Methods, 19:41-50, 2022.
+#' single-cell genomics. Nature Methods, 19:41-50, 2022.
+#'   
+#' @export
+#' 
+#' @seealso \code{\link{plot.regressPC}}
 #'
 #' @examples
-#' library(scater)
-#' library(scran)
-#' library(scRNAseq)
-#' library(SingleR)
-#'
 #' # Load data
-#' sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+#' data("reference_data")
+#' data("query_data")
 #'
-#' # Divide the data into reference and query datasets
-#' set.seed(100)
-#' indices <- sample(ncol(sce),
-#'     size = floor(0.7 * ncol(sce)),
-#'     replace = FALSE
-#' )
-#' ref <- sce[, indices]
-#' query <- sce[, -indices]
+#' # Plot the PC data (no query data)
+#' regress_res <- regressPC(reference_data = reference_data,
+#'                          ref_cell_type_col = "expert_annotation", 
+#'                          cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+#'                          pc_subset = 1:25)
+#' # Plot results
+#' plot(regress_res, plot_type = "r_squared")
+#' plot(regress_res, plot_type = "p-value")
 #'
-#' # log transform datasets
-#' ref <- logNormCounts(ref)
-#' query <- logNormCounts(query)
+#' # Plot the PC data (with query data)
+#' regress_res <- regressPC(reference_data = reference_data,
+#'                          query_data = query_data,
+#'                          ref_cell_type_col = "expert_annotation", 
+#'                          query_cell_type_col = "SingleR_annotation",
+#'                          cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+#'                          pc_subset = 1:25)
+#' # Plot results
+#' plot(regress_res, plot_type = "r_squared")
+#' plot(regress_res, plot_type = "p-value")
 #'
-#' # Run PCA
-#' query <- runPCA(query)
-#'
-#' # Get cell type scores using SingleR
-#' # Note: replace when using cell type annotation scores from other methods
-#' scores <- SingleR(query, ref, labels = ref$reclustered.broad)
-#'
-#' # Add labels to query object
-#' query$labels <- scores$labels
-#'
-#' # Specify the dependent variables (principal components) and
-#' # independent variable (e.g., "labels")
-#' dep.vars <- paste0("PC", 1:3)
-#' indep.var <- "labels"
-#'
-#' # Perform linear regression on multiple principal components
-#' res <- regressPC(
-#'     sce = query,
-#'     dep.vars = dep.vars,
-#'     indep.var = indep.var
-#' )
-#'
-#' # Obtain linear regression summaries and R-squared values
-#' res$regression.summaries
-#' res$rsquared
-#' 
-#'
-#' plotPCRegression(query, res, dep.vars, indep.var)
-#'
-#' @importFrom stats lm
-#' @importFrom utils tail
 #' @importFrom rlang .data
 #' @import SingleCellExperiment
-#' @export
-regressPC <- function(sce, dep.vars = NULL, indep.var) {
+#' 
+regressPC <- function(reference_data,
+                      query_data = NULL, 
+                      ref_cell_type_col, 
+                      query_cell_type_col = NULL, 
+                      cell_types = NULL,
+                      pc_subset = 1:10) {
     
-        # Sanity checks
-        stopifnot(is(sce, "SingleCellExperiment"))
-        stopifnot("PCA" %in% reducedDimNames(sce))
-
-        if (!is.null(dep.vars)) {
-            stopifnot(all(dep.vars %in% colnames(reducedDim(sce, "PCA"))))
+    # Check standard input arguments
+    argumentCheck(query_data = query_data,
+                  reference_data = reference_data,
+                  query_cell_type_col = query_cell_type_col,
+                  ref_cell_type_col = ref_cell_type_col,
+                  cell_types = cell_types,
+                  pc_subset_ref = pc_subset)
+    
+    # Get common cell types if they are not specified by user
+    if(is.null(cell_types)){
+        if(is.null(query_data)){
+            cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]])))
+        } else{
+            cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
+                                           query_data[[query_cell_type_col]])))
         }
-
-        stopifnot(indep.var %in% colnames(colData(sce)))
-
-        ## regress against all PCs if not instructed otherwise
-        if (is.null(dep.vars)) {
-            dep.vars <- colnames(reducedDim(sce, "PCA"))
-        }
-
-        ## create a data frame with the dependent and independent variables
-        df <- data.frame(
-            Independent = sce[[indep.var]],
-            reducedDim(sce, "PCA")[, dep.vars]
-        )
-
-        ## perform linear regression for each principal component
-        .regress <- function(pc, df) {
-            f <- paste0(pc, " ~ Independent")
-            model <- lm(f, data = df)
-            s <- summary(model)
-            return(s)
-        }
-
-        .regress_fast <- function(df) {
-            # This does the lms for large, categorical independent variables in
-            # one sweep.
-            ssts <- vapply(
-                df[, dep.vars],
-                \(x) sum((x - mean(x, na.rm = TRUE))^2,
-                    na.rm = TRUE
-                ),
-                1.0
-            )
-
-            indp_list <- split(
-                df,
-                df$Independent
-            )
-
-            .get_sses <- function(x) {
-                vapply(
-                    x[, dep.vars],
-                    \(z) sum((z - mean(z, na.rm = TRUE))^2,
-                        na.rm = TRUE
-                    ),
-                    1.0
-                )
-            }
-
-            sses <- rowSums(vapply(
-                indp_list,
-                .get_sses,
-                rep(1, length(dep.vars))
-            ))
-
-            s <- mapply(
-                \(err, tot) {
-                    list(
-                        "r.squared" = 1 - err / tot,
-                        "regression.summaries" = NA
-                    )
-                },
-                sses, ssts,
-                SIMPLIFY = FALSE
-            )
-
-            return(s)
-        }
-
-        needs_fastlm <- (nrow(df) > 3e4) &&
-            (is.character(df$Independent) || is.factor(df$Independent)) &&
-            (length(unique(df$Independent)) > 10)
-
-        if (needs_fastlm) {
-            summaries <- .regress_fast(df)
-        } else {
-            summaries <- lapply(dep.vars, .regress, df = df)
-        }
-        names(summaries) <- dep.vars
-
-        ## calculate R-squared values
-        rsq <- vapply(summaries, `[[`, numeric(1), x = "r.squared")
-
-        ## calculate variance contributions by principal component
-        ind <- match(dep.vars, colnames(reducedDim(sce, "PCA")))
-        var.expl <- attr(reducedDim(sce, "PCA"), "percentVar")[ind]
-        var.contr <- var.expl * rsq
-
-        ## calculate total variance explained by summing the variance contributions
-        total.var.expl <- sum(var.contr)
-
-        ## return the summaries of the linear regression models,
-        ## R-squared values, and variance contributions
-        res <- list(
-            regression.summaries = summaries,
-            rsquared = rsq,
-            var.contributions = var.contr,
-            total.variance.explained = total.var.expl
-        )
-
-        res
     }
-
-#' @rdname regressPC
-#' @export
-plotPCRegression <- function(
-        sce,
-        regressPC_res,
-        dep.vars = NULL,
-        indep.var,
-        max_pc = 20) {
-
-    stopifnot(is(sce, "SingleCellExperiment"))
-    stopifnot("PCA" %in% reducedDimNames(sce))
-    if (!is.null(dep.vars)) {
-        stopifnot(all(dep.vars %in% colnames(reducedDim(sce, "PCA"))))
+    
+    # Perform linear regression for each principal component
+    .regressFast <- function(pc, indep_var, df) {
+        regression_formula <- paste(pc, "~", indep_var)
+        model <- do.call(speedglm::speedlm, list(formula = paste(pc, " ~ ", indep_var), data = df))
+        model_summary <- list(coefficients = summary(model)[["coefficients"]],
+                              r_squared = summary(model)[["r.squared"]])
+        return(model_summary)
     }
-    stopifnot(indep.var %in% colnames(colData(sce)))
+    
+    # Set dependent variables
+    dep_vars <- paste0("PC", pc_subset)
+    
+    # Regress PCs against cell types
+    if(is.null(query_data)){
+        
+        # Create a data frame with the dependent and independent variables
+        reference_labels <- reference_data[[ref_cell_type_col]]
+        regress_data <- data.frame(reducedDim(reference_data, "PCA")[, dep_vars], 
+                                   Cell_Type_ = reference_data[[ref_cell_type_col]])
+        regress_data <- regress_data[reference_labels %in% cell_types,]
+        
+        # Regress PCs
+        summaries <- lapply(dep_vars, .regressFast, indep_var = "Cell_Type_", df = regress_data)
+        names(summaries) <- dep_vars
+        
+        # Adjust cell types for the summaries
+        for(pc in seq_len(length(summaries))){
+            rownames(summaries[[pc]][["coefficients"]]) <- sort(cell_types)
+        }
+        
+        # Calculate variance contributions by principal component
+        r_squared <- vapply(summaries, `[[`, numeric(1), x = "r_squared")
+        var_expl <- attr(reducedDim(reference_data, "PCA"), "percentVar")[pc_subset]
+        var_contr <- var_expl * r_squared
+        
+        # Calculate total variance explained by summing the variance contributions
+        total_var_expl <- sum(var_contr)
+        
+        # Return the summaries of the linear regression models, R-squared values, and variance contributions
+        regress_res <- list(regression_summaries = summaries,
+                            r_squared = r_squared,
+                            var_contributions = var_contr,
+                            total_variance_explained = total_var_expl,
+                            indep_var = "cell_type")
 
-    if (is.null(dep.vars)) {
-        dep.vars <- colnames(reducedDim(sce, "PCA"))
+    } else {
+        
+        # Get the projected PCA data
+        pca_output <- projectPCA(query_data = query_data, 
+                                 reference_data = reference_data, 
+                                 query_cell_type_col = query_cell_type_col, 
+                                 ref_cell_type_col = ref_cell_type_col,
+                                 pc_subset = pc_subset)
+        pca_output <- pca_output[pca_output[["cell_type"]] %in% cell_types,]
+        pca_output[["dataset"]] <- factor(pca_output[["dataset"]], levels = c("Reference", "Query"))
+        
+        # Set dependent variables
+        dep_vars <- paste0("PC", pc_subset)
+        
+        # Set independent variables
+        indep_list <- split(pca_output, pca_output[["cell_type"]])
+        
+        # Adding regression summaries for each cell type
+        regress_res <- vector("list", length = length(indep_list))
+        names(regress_res) <- cell_types
+        for(cell_type in cell_types){
+            
+            regress_res[[cell_type]] <- lapply(dep_vars, .regressFast, indep_var = "dataset", df = indep_list[[cell_type]])
+            names(regress_res[[cell_type]]) <- dep_vars
+        }
+        regress_res[["indep_var"]] <- "dataset"
     }
-
-    if (max_pc == 0) max_pc <- length(dep.vars)
-
-    p2_input <- data.frame(
-        x = dep.vars[1:max_pc],
-        i = seq_along(dep.vars[1:max_pc]),
-        r2 = regressPC_res$rsquared[1:max_pc]
-    )
-
-    p2 <- ggplot2::ggplot(p2_input, aes(.data$i, .data$r2)) +
-        ggplot2::geom_point() +
-        ggplot2::geom_line() +
-        ggplot2::theme_bw() +
-        ggplot2::ylim(c(0, 1)) +
-        ggplot2::labs(
-            y = bquote(R^2 ~ of ~ "PC ~ " ~ .(indep.var))
-        ) +
-        ggplot2::scale_x_continuous(
-            breaks = p2_input$i,
-            labels = p2_input$x
-        ) +
-        ggplot2::theme(
-            axis.title.x = ggplot2::element_blank(),
-            panel.grid.minor = ggplot2::element_blank()
-        )
-
-    return(p2)
+    
+    # Return regression output
+    class(regress_res) <- c(class(regress_res), "regressPC")
+    return(regress_res)
 }

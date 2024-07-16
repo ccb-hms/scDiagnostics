@@ -9,8 +9,9 @@ detectAnomaly(
   reference_data,
   query_data = NULL,
   ref_cell_type_col,
-  query_cell_type_col,
-  n_components = 10,
+  query_cell_type_col = NULL,
+  cell_types = NULL,
+  pc_subset = 1:10,
   n_tree = 500,
   anomaly_treshold = 0.5,
   ...
@@ -34,7 +35,10 @@ If NULL, then the isolation forest anomaly scores are computed for the reference
 
 \item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
 
-\item{n_components}{An integer specifying the number of principal components to use. Default is 10.}
+\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+
+\item{pc_subset}{A numeric vector specifying the indices of the PCs to be included in the plots. If NULL, all PCs
+in \code{reference_mat_subset} will be included.}
 
 \item{n_tree}{An integer specifying the number of trees for the isolation forest. Default is 500}
 
@@ -49,9 +53,6 @@ Each element of the list should correspond to a cell type and contain \code{refe
 \item{cell_type}{A character string specifying the cell type for which the plots should be generated. This should
 be a name present in \code{x}. If NULL, the "Combined" cell type will be plotted. Default is NULL.}
 
-\item{pc_subset}{A numeric vector specifying the indices of the PCs to be included in the plots. If NULL, all PCs
-in \code{reference_mat_subset} will be included.}
-
 \item{data_type}{A character string specifying whether to plot the "query" data or the "reference" data. Default is "query".}
 }
 \value{
@@ -62,13 +63,13 @@ A list containing the following components for each cell type and the combined d
 \item{query_mat_subset}{PCA projections of the query data (if provided).}
 \item{var_explained}{Proportion of variance explained by the retained principal components.}
 
-A ggplot2 object representing the PCA plots with anomalies highlighted.
+The S3 plot method returns a \code{ggplot} object representing the PCA plots with anomalies highlighted.
 }
 \description{
 This function detects anomalies in single-cell data by projecting the data onto a PCA space and using an isolation forest 
 algorithm to identify anomalies.
 
-This function generates faceted scatter plots for specified principal component (PC) combinations
+The S3 plot method generates faceted scatter plots for specified principal component (PC) combinations
 within an anomaly detection object. It allows visualization of the relationship between specified
 PCs and highlights anomalies detected by the Isolation Forest algorithm.
 }
@@ -78,60 +79,36 @@ reference data to identify anomalies in the query data based on their PCA projec
 the anomaly scores are computed on the reference data itself. Anomaly scores for the data with all combined cell types are also
 provided as part of the output.
 
-The function extracts the specified PCs from the given anomaly detection object and generates
+The S3 plot method extracts the specified PCs from the given anomaly detection object and generates
 scatter plots for each pair of PCs. It uses \code{ggplot2} to create a faceted plot where each facet represents
 a pair of PCs. Anomalies are highlighted in red, while normal points are shown in black.
 }
 \examples{
-# Load required libraries
-library(scRNAseq)
-library(scuttle)
-library(SingleR)
-library(scran)
-library(scater)
-
 # Load data
-sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
+data("reference_data")
+data("query_data")
 
-# Divide the data into reference and query datasets
-set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
-
-# log transform datasets
-ref_data <- logNormCounts(ref_data)
-query_data <- logNormCounts(query_data)
-
-# Get cell type scores using SingleR (or any other cell type annotation method)
-scores <- SingleR(query_data, ref_data, labels = ref_data$reclustered.broad)
-
-# Add labels to query object
-colData(query_data)$labels <- scores$labels
-
-# Selecting highly variable genes (can be customized by the user)
-ref_var <- getTopHVGs(ref_data, n = 2000)
-query_var <- getTopHVGs(query_data, n = 2000)
-
-# Intersect the gene symbols to obtain common genes
-common_genes <- intersect(ref_var, query_var)
-ref_data_subset <- ref_data[common_genes, ]
-query_data_subset <- query_data[common_genes, ]
-
-# Run PCA on the reference data
-ref_data_subset <- runPCA(ref_data_subset)
-
-# Store PCA anomaly data and plots
-anomaly_output <- detectAnomaly(ref_data_subset, query_data_subset,
-                                ref_cell_type_col = "reclustered.broad", 
-                                query_cell_type_col = "labels",
-                                n_components = 10,
+# Store PCA anomaly data
+anomaly_output <- detectAnomaly(reference_data = reference_data, 
+                                query_data = query_data, 
+                                ref_cell_type_col = "expert_annotation", 
+                                query_cell_type_col = "SingleR_annotation",
+                                pc_subset = 1:10,
                                 n_tree = 500,
                                 anomaly_treshold = 0.5) 
 
 # Plot the output for a cell type
-plot(anomaly_output, cell_type = "CD8", pc_subset = c(1:5), data_type = "query")
-
+plot(anomaly_output, 
+     cell_type = "CD4", 
+     pc_subset = 1:5, 
+     data_type = "query")
+     
+}
+\references{
+\itemize{
+  \item Liu, F. T., Ting, K. M., & Zhou, Z. H. (2008). Isolation forest. In 2008 Eighth IEEE International Conference on Data Mining (pp. 413-422). IEEE.
+  \item \href{https://cran.r-project.org/web/packages/isotree/isotree.pdf}{isotree: Isolation-Based Outlier Detection}
+}
 }
 \seealso{
 \code{\link{plot.detectAnomaly}}

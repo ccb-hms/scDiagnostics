@@ -9,126 +9,85 @@
 #' metrics, systematically influence the confidence in cell type annotations, 
 #' which is essential for ensuring reliable cell type annotation.
 #' 
-#' @param query_data A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
+#' @param se_object A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
 #' expression data and metadata.
-#' @param qc_col character. A column name in the \code{colData} of \code{query_data} that 
-#' contains the QC stats of interest.
-#' @param label_col character. The column name in the \code{colData} of \code{query_data} 
+#' @param cell_type_col The column name in the \code{colData} of \code{se_object} 
 #' that contains the cell type labels.
-#' @param score_col character. The column name in the \code{colData} of \code{query_data} that 
-#' contains the cell type annotation scores.
-#' @param label character. A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).  
+#' @param cell_types A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).  
 #' Defaults to \code{NULL}, which will include all the cells.
+#' @param qc_col A column name in the \code{colData} of \code{se_object} that 
+#' contains the QC stats of interest.
+#' @param score_col The column name in the \code{colData} of \code{se_object} that 
+#' contains the cell type annotation scores.
 #'
 #' @return A ggplot object displaying a scatter plot of QC stats vs annotation scores, 
 #'         where each point represents a cell, color-coded by its cell type.
 #'
 #' @examples
-#' \donttest{
-#' library(celldex)
-#' library(scater)
-#' library(scran)
-#' library(scRNAseq)
-#' library(SingleR)
-#' library(ggplot2)
-#'
-#' # load reference dataset
-#' ref_data <- fetchReference("hpca", "2024-02-26")
+#' # Load data
+#' data("qc_data")
 #' 
-#' # Load query dataset (Bunis haematopoietic stem and progenitor cell data) from 
-#' # Bunis DG et al. (2021). Single-Cell Mapping of Progressive Fetal-to-Adult 
-#' # Transition in Human Naive T Cells Cell Rep. 34(1): 108573
-#' query_data <- BunisHSPCData()
-#' rownames(query_data) <- rowData(query_data)$Symbol
-#' 
-#' # Add QC metrics to query data
-#' query_data <- addPerCellQCMetrics(query_data)
-#' 
-#' # Log transform query dataset
-#' query_data <- logNormCounts(query_data)
-#' 
-#' # Run SingleR to predict cell types
-#' 
-#' pred <- SingleR(query_data, ref_data, labels = ref_data$label.main)
-#' 
-#' # Assign predicted labels to query data
-#' colData(query_data)$pred.labels <- pred$labels
-#' 
-#' # Get annotation scores
-#' scores <- apply(pred$scores, 1, max)
-#' 
-#' # Assign scores to query data
-#' colData(query_data)$cell_scores <- scores
-#' 
-#' # Create a scatter plot between library size and annotation scores
-#' 
-#' p1 <- plotQCvsAnnotation(
-#'       query_data = query_data,
-#'       qc_col = "total",
-#'       label_col = "pred.labels",
-#'       score_col = "cell_scores",
-#'       label = NULL)
-#' p1 + xlab("Library Size")
-#' }
-#' 
+# Create a scatter plot between library size and annotation scores
+#' p1 <- plotQCvsAnnotation(se_object = qc_data,
+#'                          cell_type_col = "SingleR_annotation",
+#'                          cell_types = NULL,
+#'                          qc_col = "total",
+#'                          score_col = "annotation_scores")
+#'p1 + ggplot2::xlab("Library Size")
 #'                    
 #' @export
 #'
-plotQCvsAnnotation <- function(query_data, 
-                               qc_col, 
-                               label_col, 
-                               score_col, 
-                               label = NULL) {
-  
-  # Sanity checks
-  
-  # Check if query_data is a SingleCellExperiment object
-  if (!is(query_data, "SingleCellExperiment")) {
-    stop("query_data must be a SingleCellExperiment object.")
-  }
-  
-  # Check if qc_col is a valid column name in query_data
-  if (!qc_col %in% colnames(colData(query_data))) {
-    stop("qc_col: '", qc_col, "' is not a valid column name in query_data.")
-  }
-  
-  # Check if label_col is a valid column name in query_data
-  if (!label_col %in% colnames(colData(query_data))) {
-    stop("label_col: '", label_col, "' is not a valid column name in query_data.")
-  }
-  
-  # Check if score_col is a valid column name in query_data
-  if (!score_col %in% colnames(colData(query_data))) {
-    stop("score_col: '", score_col, "' is not a valid column name in query_data.")
-  }
-  
-  # Filter cells based on label if specified
-  if (!is.null(label)) {
-    index <- which(colData(query_data)[[label_col]] %in% label)
-    query_data <- query_data[, index]
-  }
-  
-  # Extract QC stats, scores, and labels
-  qc_stats <- colData(query_data)[, qc_col]
-  cell_type_scores <- colData(query_data)[, score_col]
-  cell_labels <- colData(query_data)[[label_col]]
-  
-  # Combine QC stats, scores, and labels into a data frame
-  data <- data.frame(QCStats = qc_stats, 
-                     Scores = cell_type_scores, 
-                     CellType = cell_labels)
-  
-  # Create a scatter plot with color-coded points based on cell types or labels
-  plot <- ggplot2::ggplot(data, ggplot2::aes(x = QCStats, y = Scores, color = CellType)) +
-      ggplot2::geom_point() +
-      ggplot2::xlab("QC stats") +
-      ggplot2::ylab("Annotation Scores") +
-      ggplot2::labs(color = "Cell Type") +
-      ggplot2::theme_bw() +
-      ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                     panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                     plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                     axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
-  
-  return(plot)
+plotQCvsAnnotation <- function(se_object, 
+                               cell_type_col, 
+                               cell_types = NULL,
+                               qc_col,
+                               score_col) {
+    
+    # Check standard input arguments
+    argumentCheck(query_data = se_object,
+                  query_cell_type_col = cell_type_col,
+                  cell_types = cell_types)
+    
+    # Check if qc_col is a valid column name in se_object
+    if (!qc_col %in% names(colData(se_object))) {
+        stop("qc_col: '", qc_col, "' is not a valid column name in se_object.")
+    }
+    
+    # Check if score_col is a valid column name in se_object
+    if (!score_col %in% names(colData(se_object))) {
+        stop("score_col: '", score_col, "' is not a valid column name in se_object.")
+    }
+    
+    # Filter cells based on cell_types if specified
+    if (!is.null(cell_types)) {
+        se_object <- se_object[, which(se_object[[cell_type_col]] %in% cell_types)]
+    }
+    
+    # Extract QC stats, scores, and cell_typess
+    qc_stats <- se_object[[qc_col]]
+    cell_types_scores <- se_object[[score_col]]
+    cell_labels <- se_object[[cell_type_col]]
+    
+    # Combine QC stats, scores, and labels into a data frame
+    data <- data.frame(QCStats = qc_stats, 
+                       Scores = cell_types_scores, 
+                       cell_type = cell_labels)
+    
+    # Define the colors for cell types
+    cell_type_colors <- generateColors(sort(unique(cell_labels)), paired = FALSE)
+    
+    # Create a scatter plot with color-coded points based on cell types or labels
+    qc_plot <- ggplot2::ggplot(data, ggplot2::aes(x = .data[["QCStats"]], y = .data[["Scores"]], color = .data[["cell_type"]])) +
+        ggplot2::geom_point() +
+        ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Type") + 
+        ggplot2::xlab("QC stats") +
+        ggplot2::ylab("Annotation Scores") +
+        ggplot2::labs(color = "Cell Type") +
+        ggplot2::theme_bw() +
+        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
+    
+    return(qc_plot)
 }

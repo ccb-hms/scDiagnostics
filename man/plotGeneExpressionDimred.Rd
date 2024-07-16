@@ -4,16 +4,21 @@
 \alias{plotGeneExpressionDimred}
 \title{Visualize gene expression on a dimensional reduction plot}
 \usage{
-plotGeneExpressionDimred(se_object, method, pc_subset = c(1:5), feature)
+plotGeneExpressionDimred(
+  se_object,
+  method = c("TSNE", "UMAP", "PCA"),
+  pc_subset = 1:5,
+  feature
+)
 }
 \arguments{
-\item{se_object}{An object of class "SingleCellExperiment" containing log-transformed expression matrix and other metadata.
+\item{se_object}{An object of class \code{\linkS4class{SingleCellExperiment}} containing log-transformed expression matrix and other metadata.
 It can be either a reference or query dataset.}
 
 \item{method}{The reduction method to use for visualization. It should be one of the supported methods: "TSNE", "UMAP", or "PCA".}
 
 \item{pc_subset}{An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA". 
-Default is c(1:5).}
+Default is 1:5.}
 
 \item{feature}{A character string representing the name of the gene or feature to be visualized.}
 }
@@ -24,29 +29,13 @@ A ggplot object representing the dimensional reduction plot with gene expression
 This function plots gene expression on a dimensional reduction plot using methods like t-SNE, UMAP, or PCA. Each single cell is color-coded based on the expression of a specific gene or feature.
 }
 \examples{
-library(scater)
-library(scran)
-library(scRNAseq)
-
 # Load data
-sce <- HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
-
-# Divide the data into reference and query datasets
-set.seed(100)
-indices <- sample(ncol(assay(sce)), size = floor(0.7 * ncol(assay(sce))), replace = FALSE)
-ref_data <- sce[, indices]
-query_data <- sce[, -indices]
-
-# Log transform datasets
-query_data <- logNormCounts(query_data)
-
-# Run PCA
-query_data <- runPCA(query_data)
+data("query_data")
 
 # Plot gene expression on PCA plot
 plotGeneExpressionDimred(se_object = query_data, 
                          method = "PCA", 
-                         pc_subset = c(1:5), 
+                         pc_subset = 1:5, 
                          feature = "VPREB3")
 
 }
