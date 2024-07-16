@@ -1,7 +1,6 @@
 pandoc: 3.1.11
-pkgdown: 2.0.9
+pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
   scDiagnostics: scDiagnostics.html
-last_built: 2024-06-23T20:06Z
-
+last_built: 2024-07-16T22:21Z

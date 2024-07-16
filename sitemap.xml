@@ -1,99 +1,44 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/scDiagnostics.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/boxplotPCA.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculateAveragePairwiseCorrelation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculateCategorizationEntropy.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculateDiscriminantSpace.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculateHVGOverlap.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculateHotellingPValue.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculateNearestNeighborProbabilities.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculateSampleDistances.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculateSampleDistancesSimilarity.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculateSampleSimilarityPCA.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculateVarImpOverlap.html</loc>
-  </url>
-  <url>
-    <loc>/reference/compareCCA.html</loc>
-  </url>
-  <url>
-    <loc>/reference/comparePCA.html</loc>
-  </url>
-  <url>
-    <loc>/reference/comparePCASubspace.html</loc>
-  </url>
-  <url>
-    <loc>/reference/detectAnomaly.html</loc>
-  </url>
-  <url>
-    <loc>/reference/histQCvsAnnotation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotGeneExpressionDimred.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotGeneSetScores.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotMarkerExpression.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotPairwiseDistancesDensity.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotQCvsAnnotation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/projectPCA.html</loc>
-  </url>
-  <url>
-    <loc>/reference/regressPC.html</loc>
-  </url>
-  <url>
-    <loc>/reference/visualizeCellTypeMDS.html</loc>
-  </url>
-  <url>
-    <loc>/reference/visualizeCellTypePCA.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/scDiagnostics.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/argumentCheck.html</loc></url>
+<url><loc>/reference/boxplotPCA.html</loc></url>
+<url><loc>/reference/calculateAveragePairwiseCorrelation.html</loc></url>
+<url><loc>/reference/calculateCategorizationEntropy.html</loc></url>
+<url><loc>/reference/calculateCellDistances.html</loc></url>
+<url><loc>/reference/calculateCellDistancesSimilarity.html</loc></url>
+<url><loc>/reference/calculateCellSimilarityPCA.html</loc></url>
+<url><loc>/reference/calculateCramerPValue.html</loc></url>
+<url><loc>/reference/calculateDiscriminantSpace.html</loc></url>
+<url><loc>/reference/calculateHVGOverlap.html</loc></url>
+<url><loc>/reference/calculateHotellingPValue.html</loc></url>
+<url><loc>/reference/calculateNearestNeighborProbabilities.html</loc></url>
+<url><loc>/reference/calculateVarImpOverlap.html</loc></url>
+<url><loc>/reference/compareCCA.html</loc></url>
+<url><loc>/reference/comparePCA.html</loc></url>
+<url><loc>/reference/comparePCASubspace.html</loc></url>
+<url><loc>/reference/detectAnomaly.html</loc></url>
+<url><loc>/reference/generateColors.html</loc></url>
+<url><loc>/reference/histQCvsAnnotation.html</loc></url>
+<url><loc>/reference/hotellingT2.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/ledoitWolf.html</loc></url>
+<url><loc>/reference/plotCellTypeMDS.html</loc></url>
+<url><loc>/reference/plotCellTypePCA.html</loc></url>
+<url><loc>/reference/plotGeneExpressionDimred.html</loc></url>
+<url><loc>/reference/plotGeneSetScores.html</loc></url>
+<url><loc>/reference/plotMarkerExpression.html</loc></url>
+<url><loc>/reference/plotPairwiseDistancesDensity.html</loc></url>
+<url><loc>/reference/plotQCvsAnnotation.html</loc></url>
+<url><loc>/reference/plotWassersteinDistance.html</loc></url>
+<url><loc>/reference/projectPCA.html</loc></url>
+<url><loc>/reference/qc_data.html</loc></url>
+<url><loc>/reference/query_data.html</loc></url>
+<url><loc>/reference/reference_data.html</loc></url>
+<url><loc>/reference/regressPC.html</loc></url>
 </urlset>
+
