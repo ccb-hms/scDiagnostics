@@ -18,6 +18,7 @@
 <url><loc>/reference/calculateHotellingPValue.html</loc></url>
 <url><loc>/reference/calculateNearestNeighborProbabilities.html</loc></url>
 <url><loc>/reference/calculateVarImpOverlap.html</loc></url>
+<url><loc>/reference/calculate_entropy.html</loc></url>
 <url><loc>/reference/compareCCA.html</loc></url>
 <url><loc>/reference/comparePCA.html</loc></url>
 <url><loc>/reference/comparePCASubspace.html</loc></url>
@@ -26,7 +27,9 @@
 <url><loc>/reference/histQCvsAnnotation.html</loc></url>
 <url><loc>/reference/hotellingT2.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/inverse_normal_trans.html</loc></url>
 <url><loc>/reference/ledoitWolf.html</loc></url>
+<url><loc>/reference/n_elements.html</loc></url>
 <url><loc>/reference/plotCellTypeMDS.html</loc></url>
 <url><loc>/reference/plotCellTypePCA.html</loc></url>
 <url><loc>/reference/plotGeneExpressionDimred.html</loc></url>
@@ -40,5 +43,6 @@
 <url><loc>/reference/query_data.html</loc></url>
 <url><loc>/reference/reference_data.html</loc></url>
 <url><loc>/reference/regressPC.html</loc></url>
+<url><loc>/reference/scDiagnostics-package.html</loc></url>
 </urlset>
 
