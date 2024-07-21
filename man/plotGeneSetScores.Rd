@@ -49,3 +49,6 @@ plotGeneSetScores(se_object = query_data,
 # using any dimension reduction of their choice.
 
 }
+\author{
+Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+}

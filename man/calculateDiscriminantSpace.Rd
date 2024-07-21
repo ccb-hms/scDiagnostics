@@ -10,7 +10,7 @@ calculateDiscriminantSpace(
   reference_data,
   query_data = NULL,
   ref_cell_type_col,
-  query_cell_type_col,
+  query_cell_type_col = NULL,
   cell_types = NULL,
   n_tree = 500,
   n_top = 20,

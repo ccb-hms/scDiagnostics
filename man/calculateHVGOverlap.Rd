@@ -47,3 +47,6 @@ overlap_coefficient
 \references{
 Luecken et al. Benchmarking atlas-level data integration in single-cell genomics. Nature Methods, 19:41-50, 2022.
 }
+\author{
+Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+}

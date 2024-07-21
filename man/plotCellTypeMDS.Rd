@@ -60,3 +60,6 @@ mds_plot
 \item Borg, I., & Groenen, P. J. F. (2005). *Modern multidimensional scaling: Theory and applications* (2nd ed.). Springer Science & Business Media. doi:10.1007/978-0-387-25975-1.
 }
 }
+\author{
+Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+}

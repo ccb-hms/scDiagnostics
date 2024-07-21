@@ -83,7 +83,7 @@
 calculateDiscriminantSpace <- function(reference_data, 
                                        query_data = NULL,
                                        ref_cell_type_col, 
-                                       query_cell_type_col,
+                                       query_cell_type_col = NULL,
                                        cell_types = NULL,
                                        n_tree = 500,
                                        n_top = 20,
@@ -167,8 +167,8 @@ calculateDiscriminantSpace <- function(reference_data,
         # Solve generalized eigenvalue problem
         eig <- eigen(solve(sw) %*% sb)
         # Sort eigenvectors by eigenvalues
-        discriminant_eigenvalues <- Re(eig$values[which(Re(eig$values) > eigen_threshold)])
-        discriminant_eigenvectors <- Re(eig$vectors[, which(Re(eig$values) > eigen_threshold)])
+        discriminant_eigenvalues <- Re(eig$values[which(Re(eig$values) > eigen_threshold), drop = FALSE])
+        discriminant_eigenvectors <- Re(eig$vectors[, which(Re(eig$values) > eigen_threshold), drop = FALSE])
         rownames(discriminant_eigenvectors) <- top_genes
         colnames(discriminant_eigenvectors) <- paste0("DV", seq_len(ncol(discriminant_eigenvectors)))
         # Compute projected data

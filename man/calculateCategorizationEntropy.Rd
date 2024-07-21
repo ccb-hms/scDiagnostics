@@ -57,3 +57,6 @@ X[1, 1:250] <- X[1, 1:250] + 5 # Make the first category highly scored in the fi
 # entropy_scores <- calculateCategorizationEntropy(X)
 
 }
+\author{
+Andrew Ghazi, \email{andrew_ghazi@hms.harvard.edu}
+}

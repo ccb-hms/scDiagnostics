@@ -14,7 +14,10 @@
 #' @import SingleCellExperiment
 #'
 #' @return A ggplot object representing the dimensional reduction plot with gene expression.
+#' 
 #' @export
+#' 
+#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
 #' # Load data

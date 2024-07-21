@@ -27,6 +27,8 @@
 #'         
 #' @seealso \code{\link{plot.calculateAveragePairwiseCorrelation}}
 #' 
+#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' 
 #' @examples
 #' # Load data
 #' data("reference_data")

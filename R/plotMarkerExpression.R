@@ -26,6 +26,8 @@
 #'         and the second plot displays the cell type-specific expression 
 #'         distribution.
 #'         
+#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#'         
 #' @examples
 #' # Load data
 #' data("reference_data")

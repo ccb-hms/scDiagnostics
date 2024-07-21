@@ -23,7 +23,7 @@ The accurate annotation of cell types is a critical step in single-cell RNA-sequ
 To install the development version of the package from GitHub use the following command:
 
 ``` r
-BiocManager::install("scDiagnostics")
+devtools::install_github("ccb-hms/scDiagnostics")
 ```
 
 NOTE: you will need the [remotes](https://cran.r-project.org/web/packages/remotes/index.html) package to install from GitHub.
@@ -31,9 +31,9 @@ NOTE: you will need the [remotes](https://cran.r-project.org/web/packages/remote
 To build the package vignettes upon installation use:
 
 ``` r
-BiocManager::install("scDiagnostics",
-                     build_vignettes = TRUE,
-                     dependencies = TRUE)
+devtools::install_github("ccb-hms/scDiagnostics",
+                         build_vignettes = TRUE,
+                         dependencies = TRUE)
 ```
 
 # Usage

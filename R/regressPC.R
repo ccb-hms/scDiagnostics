@@ -100,9 +100,13 @@ regressPC <- function(reference_data,
     }
     
     # Perform linear regression for each principal component
-    .regressFast <- function(pc, indep_var, df) {
+    .regressFast <- function(pc, indep_var, df, reference_category) {
         regression_formula <- paste(pc, "~", indep_var)
-        model <- do.call(speedglm::speedlm, list(formula = paste(pc, " ~ ", indep_var), data = df))
+        if(isTRUE(reference_category)){
+            model <- do.call(speedglm::speedlm, list(formula = paste(pc, " ~ ", indep_var), data = df))
+        } else{
+            model <- do.call(speedglm::speedlm, list(formula = paste(pc, " ~ ", indep_var, " - 1"), data = df))
+        }
         model_summary <- list(coefficients = summary(model)[["coefficients"]],
                               r_squared = summary(model)[["r.squared"]])
         return(model_summary)
@@ -121,7 +125,8 @@ regressPC <- function(reference_data,
         regress_data <- regress_data[reference_labels %in% cell_types,]
         
         # Regress PCs
-        summaries <- lapply(dep_vars, .regressFast, indep_var = "Cell_Type_", df = regress_data)
+        summaries <- lapply(dep_vars, .regressFast, indep_var = "Cell_Type_", df = regress_data, 
+                            reference_category = TRUE)
         names(summaries) <- dep_vars
         
         # Adjust cell types for the summaries
@@ -143,7 +148,7 @@ regressPC <- function(reference_data,
                             var_contributions = var_contr,
                             total_variance_explained = total_var_expl,
                             indep_var = "cell_type")
-
+        
     } else {
         
         # Get the projected PCA data
@@ -166,7 +171,8 @@ regressPC <- function(reference_data,
         names(regress_res) <- cell_types
         for(cell_type in cell_types){
             
-            regress_res[[cell_type]] <- lapply(dep_vars, .regressFast, indep_var = "dataset", df = indep_list[[cell_type]])
+            regress_res[[cell_type]] <- lapply(dep_vars, .regressFast, indep_var = "dataset", df = indep_list[[cell_type]],
+                                               reference_category = TRUE)
             names(regress_res[[cell_type]]) <- dep_vars
         }
         regress_res[["indep_var"]] <- "dataset"

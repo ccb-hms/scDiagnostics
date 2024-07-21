@@ -70,3 +70,6 @@ plotPairwiseDistancesDensity(query_data = query_data,
                              correlation_method = "pearson")
 
 }
+\author{
+Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+}
