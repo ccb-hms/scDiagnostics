@@ -2,18 +2,18 @@
 title: "scDiagnostics: diagnostic functions to assess the quality of cell type annotations in single-cell RNA-seq data"
 author:
     - name: Anthony Christidis
-      affiliation: Center for Computational Biomedicine, Harvard Medical School
+      affiliation: Core for Computational Biomedicine, Harvard Medical School
       email: anthony-alexander_christidis@hms.harvard.edu
     - name: Andrew Ghazi
-      affiliation: Center for Computational Biomedicine, Harvard Medical School
+      affiliation: Core for Computational Biomedicine, Harvard Medical School
     - name: Smriti Chawla
-      affiliation: Center for Computational Biomedicine, Harvard Medical School
+      affiliation: Core for Computational Biomedicine, Harvard Medical School
     - name: Nitesh Turaga
-      affiliation: Center for Computational Biomedicine, Harvard Medical School
+      affiliation: Core for Computational Biomedicine, Harvard Medical School
     - name: Ludwig Geistlinger
-      affiliation: Center for Computational Biomedicine, Harvard Medical School
+      affiliation: Core for Computational Biomedicine, Harvard Medical School
     - name: Robert Gentleman
-      affiliation: Center for Computational Biomedicine, Harvard Medical School
+      affiliation: Core for Computational Biomedicine, Harvard Medical School
 package: scDiagnostics
 output: 
   BiocStyle::html_document:
