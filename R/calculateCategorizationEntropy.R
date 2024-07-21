@@ -32,6 +32,8 @@
 #'
 #' @export
 #' 
+#' @author Andrew Ghazi, \email{andrew_ghazi@hms.harvard.edu}
+#' 
 #' @examples
 #' # Simulate 500 cells with scores on 4 possible cell types
 #' X <- rnorm(500 * 4) |> matrix(nrow = 4)
@@ -110,18 +112,61 @@ calculateCategorizationEntropy <- function(X,
     return(entropies)
 }
 
+#' @title Calculate Entropy
+#'
+#' @description
+#' This function calculates the entropy of a probability distribution.
+#' 
+#' @details 
+#' The entropy is calculated using the formula \eqn{-\sum p \log(p)}, where the sum is over all non-zero elements of \code{p}.
+#'
+#' @param p A numeric vector representing a probability distribution. The elements should sum to 1.
+#' 
+#' @return A numeric value representing the entropy of the probability distribution.
+#' 
+# Function to calculate entropy
 calculate_entropy <- function(p) {
-    # p is one column of X, a vector of probabilities summing to 1.
-    
+
     nonzeros <- p != 0
     
     -sum(p[nonzeros] * log(p[nonzeros]))
 }
 
+#' @title Number of Elements
+#'
+#' @description
+#' This function returns the number of elements in a matrix or vector.
+#' 
+#' @details If \code{X} is a matrix, the function returns the product of its dimensions. If \code{X} is a vector, the function returns
+#' its length.
+#'
+#' @param X A matrix or vector.
+#' 
+#' @return An integer representing the number of elements in \code{X}.
+#' 
+#' @author Andrew Ghazi, \email{andrew_ghazi@hms.harvard.edu}
+#'
+# Function to return the number of elements
 n_elements <- function(X){
     return(ifelse(is.matrix(X), prod(dim(X)), length(X)))
 } 
 
+#' @title Inverse Normal Transformation
+#' 
+#' @description
+#' This function performs an inverse normal transformation on a matrix or vector.
+#' 
+#' @details 
+#' The function ranks the elements of \code{X} and then applies the inverse normal transformation using the formula \eqn{qnorm((rank - constant) / (n - 2 * constant + 1))}.
+#'
+#' @param X A numeric matrix or vector.
+#' @param constant A numeric value used in the transformation. Default is \code{3 / 8}.
+#' 
+#' @author Andrew Ghazi, \email{andrew_ghazi@hms.harvard.edu}
+#' 
+#' @return A matrix or vector with the same dimensions as \code{X}, with values transformed using the inverse normal transformation.
+#'
+# Function to compute the inverse normal rank transformation
 inverse_normal_trans <- function(X, constant = 3 / 8) {
     
     n <- n_elements(X)

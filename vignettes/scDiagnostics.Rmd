@@ -72,7 +72,7 @@ To install the development version of the package from Github, use the
 following command:
 
 ```{r dev_version_install, eval = FALSE}
-BiocManager::install("ccb-hms/scDiagnostics")
+devtools::install_github("ccb-hms/scDiagnostics")
 ```
 
 NOTE: you will need the
@@ -82,9 +82,9 @@ package to install from GitHub.
 To build the package vignettes upon installation use:
 
 ```{r build_vignettes, eval=FALSE}
-BiocManager::install("ccb-hms/scDiagnostics",
-                     build_vignettes = TRUE,
-                     dependencies = TRUE)
+devtools::install_github("ccb-hms/scDiagnostics",
+                         build_vignettes = TRUE,
+                         dependencies = TRUE)
 ```
 
 # Usage

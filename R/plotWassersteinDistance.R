@@ -56,7 +56,7 @@
 #'                                             query_cell_type_col = "expert_annotation", 
 #'                                             ref_cell_type_col = "expert_annotation", 
 #'                                             pc_subset = 1:5,
-#'                                             n_resamples = 300,
+#'                                             n_resamples = 100,
 #'                                             alpha = 0.05)
 #' wasserstein_plot
 #'  

@@ -18,7 +18,10 @@
 #'        Default is 1:5.
 #'
 #' @return A ggplot2 object representing the gene set scores plotted on the specified reduced dimensions.
+#' 
 #' @export
+#' 
+#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
 #' # Load data

@@ -14,7 +14,7 @@
 #' @return The S3 plot method returns a \code{ggplot} object representing the heatmap plot.
 #' 
 #' @export
-#'         
+#' 
 #' @seealso \code{\link{calculateAveragePairwiseCorrelation}}
 #' 
 #' @rdname calculateAveragePairwiseCorrelation

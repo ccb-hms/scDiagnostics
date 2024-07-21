@@ -20,7 +20,7 @@ Description: The scDiagnostics package provides diagnostic plots to
     cell types in query and reference datasets allowing users to
     detect potential misalignments between reference and query
     datasets. The package also provides visualization capabilities for
-    diagnositics purposes.    
+    diagnostics purposes.    
 License: Artistic-2.0
 URL: https://github.com/ccb-hms/scDiagnostics
 BugReports: https://github.com/ccb-hms/scDiagnostics/issues
@@ -63,7 +63,7 @@ biocViews:
     Software,
     Transcriptomics
 Encoding: UTF-8
-LazyData: false
+LazyData: true
 LazyDataCompression: xz
 RoxygenNote: 7.3.1
 Config/testthat/edition: 3

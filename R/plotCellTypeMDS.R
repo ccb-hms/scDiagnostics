@@ -29,6 +29,8 @@
 #' }
 #'
 #' @export
+#' 
+#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
 #' # Load data

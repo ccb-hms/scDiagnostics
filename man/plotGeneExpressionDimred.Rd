@@ -39,3 +39,6 @@ plotGeneExpressionDimred(se_object = query_data,
                          feature = "VPREB3")
 
 }
+\author{
+Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+}

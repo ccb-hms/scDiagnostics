@@ -86,3 +86,6 @@ plot(cor_matrix_avg)
 
 \code{\link{calculateAveragePairwiseCorrelation}}
 }
+\author{
+Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+}

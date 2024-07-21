@@ -138,7 +138,7 @@ plot.regressPC <- function(x, plot_type = c("r_squared", "p-value"), alpha = 0.0
                                panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"))
         }
     }
-        
+    
     # Return plot object
     return(plot_obj)
 }

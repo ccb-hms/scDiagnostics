@@ -60,3 +60,6 @@ plotMarkerExpression(reference_data = reference_data,
                      cell_type = "B_and_plasma")
 
 }
+\author{
+Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+}
