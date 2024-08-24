@@ -72,7 +72,7 @@ PCs and highlights anomalies detected by the Isolation Forest algorithm.</p>
 <span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
 <span>  n_tree <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>  anomaly_treshold <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  anomaly_treshold <span class="op">=</span> <span class="fl">0.6</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -121,7 +121,7 @@ in <code>reference_mat_subset</code> will be included.</p></dd>
 
 
 <dt id="arg-anomaly-treshold">anomaly_treshold<a class="anchor" aria-label="anchor" href="#arg-anomaly-treshold"></a></dt>
-<dd><p>A numeric value specifying the threshold for identifying anomalies, Default is 0.5.</p></dd>
+<dd><p>A numeric value specifying the threshold for identifying anomalies, Default is 0.6.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -203,7 +203,7 @@ a pair of PCs. Anomalies are highlighted in red, while normal points are shown i
 <span class="r-in"><span>                                query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
 <span class="r-in"><span>                                pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span></span>
 <span class="r-in"><span>                                n_tree <span class="op">=</span> <span class="fl">500</span>,</span></span>
-<span class="r-in"><span>                                anomaly_treshold <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> </span></span>
+<span class="r-in"><span>                                anomaly_treshold <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> </span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot the output for a cell type</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">anomaly_output</span>, </span></span>
