@@ -1,6 +1,6 @@
 # scDiagnostics: diagnostic functions to assess the quality of cell type annotations in single-cell RNA-seq data
 
-# Overview
+# Overview 
 
 The accurate annotation of cell types is a critical step in single-cell RNA-sequencing (scRNA-seq) analysis. While annotation transfer from a reference dataset offers a convenient and automated approach, it can also introduce biases and errors if not performed carefully.
 
