@@ -13,7 +13,7 @@ detectAnomaly(
   cell_types = NULL,
   pc_subset = 1:10,
   n_tree = 500,
-  anomaly_treshold = 0.5,
+  anomaly_treshold = 0.6,
   ...
 )
 
@@ -42,7 +42,7 @@ in \code{reference_mat_subset} will be included.}
 
 \item{n_tree}{An integer specifying the number of trees for the isolation forest. Default is 500}
 
-\item{anomaly_treshold}{A numeric value specifying the threshold for identifying anomalies, Default is 0.5.}
+\item{anomaly_treshold}{A numeric value specifying the threshold for identifying anomalies, Default is 0.6.}
 
 \item{...}{Additional arguments.}
 
@@ -95,7 +95,7 @@ anomaly_output <- detectAnomaly(reference_data = reference_data,
                                 query_cell_type_col = "SingleR_annotation",
                                 pc_subset = 1:10,
                                 n_tree = 500,
-                                anomaly_treshold = 0.5) 
+                                anomaly_treshold = 0.6) 
 
 # Plot the output for a cell type
 plot(anomaly_output, 

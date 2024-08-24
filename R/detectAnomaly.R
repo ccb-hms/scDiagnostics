@@ -18,7 +18,7 @@
 #' @param pc_subset A numeric vector specifying which principal components to use in the analysis. Default is 1:10.
 #' If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.
 #' @param n_tree An integer specifying the number of trees for the isolation forest. Default is 500
-#' @param anomaly_treshold A numeric value specifying the threshold for identifying anomalies, Default is 0.5.
+#' @param anomaly_treshold A numeric value specifying the threshold for identifying anomalies, Default is 0.6.
 #' @param ... Additional arguments passed to the `isolation.forest` function.
 #' 
 #' @return A list containing the following components for each cell type and the combined data:
@@ -52,7 +52,7 @@
 #'                                 query_cell_type_col = "SingleR_annotation",
 #'                                 pc_subset = 1:10,
 #'                                 n_tree = 500,
-#'                                 anomaly_treshold = 0.5) 
+#'                                 anomaly_treshold = 0.6) 
 #' 
 #' # Plot the output for a cell type
 #' plot(anomaly_output, 
@@ -72,7 +72,7 @@ detectAnomaly <- function(reference_data,
                           cell_types = NULL,
                           pc_subset = 1:10,
                           n_tree = 500,
-                          anomaly_treshold = 0.5,
+                          anomaly_treshold = 0.6,
                           ...) {
     
     # Check standard input arguments
