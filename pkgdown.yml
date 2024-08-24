@@ -1,9 +1,17 @@
+title: "scDiagnostics"
+
+url: https://ccb-hms.github.io/scDiagnostics/
+
 pandoc: 3.1.11
 pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
   scDiagnostics: scDiagnostics.html
 last_built: 2024-08-24T18:56Z
+
+template:
+  params:
+    bootswatch: flatly
 
 reference:
   - title: Visualization of Cell Type Annotation
@@ -15,3 +23,29 @@ reference:
   - title: Anomaly Detection
     contents:
       - detectAnomaly 
+
+navbar:
+  title: ~
+  type: default
+  left:
+    - text: Vignettes
+      menu:
+      - text: Get Started
+        href: articles/scDiagnostics.html
+    - text: Reference
+      href: reference/index.html
+
+reference:
+  - title: Visualization of Cell Type Annotation
+    contents:
+      - boxplotPCA
+      - calculateDiscriminantSpace
+      - plotCellTypeMDS
+      - plotCellTypePCA
+  - title: Anomaly Detection
+    contents:
+      - detectAnomaly 
+
+right:
+  - icon: fa-github
+    href: https://github.com/ccb-hms/scDiagnostics
