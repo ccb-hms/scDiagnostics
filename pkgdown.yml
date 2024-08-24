@@ -23,7 +23,7 @@ reference:
   - title: Anomaly Detection
     contents:
       - detectAnomaly 
-
+ 
 navbar:
   title: ~
   type: default
