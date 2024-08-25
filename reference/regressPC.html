@@ -27,11 +27,18 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
-  <a href="../articles/scDiagnostics.html">Get started</a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Articles
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/GetStarted.html">scDiagnostics: diagnostic functions to assess the quality of cell type annotations in single-cell RNA-seq data</a>
+    </li>
+  </ul></li>
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
@@ -181,7 +188,7 @@ single-cell genomics. Nature Methods, 19:41-50, 2022.</p>
 <span class="r-in"><span><span class="va">regress_res</span> <span class="op">&lt;-</span> <span class="fu">regressPC</span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
 <span class="r-in"><span>                         ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span></span>
 <span class="r-in"><span>                         cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                         pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">25</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                         pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Plot results</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="regressPC-1.png" alt="" width="700" height="433"></span>
@@ -194,7 +201,7 @@ single-cell genomics. Nature Methods, 19:41-50, 2022.</p>
 <span class="r-in"><span>                         ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span></span>
 <span class="r-in"><span>                         query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
 <span class="r-in"><span>                         cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                         pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">25</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                         pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Plot results</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="regressPC-3.png" alt="" width="700" height="433"></span>
