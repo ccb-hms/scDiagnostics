@@ -102,7 +102,7 @@ plot.regressPC <- function(x, plot_type = c("r_squared", "p-value"), alpha = 0.0
                                                                 color = .data[["cell_type"]], group = .data[["cell_type"]])) +
                 ggplot2::geom_line() + ggplot2::geom_point() +
                 ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Type") + 
-                ggplot2::labs(title = bquote(R^2 ~ of ~ "PC ~ " ~ "Dataset (Query Vs. Reference)"), x = NULL, y = bquote(R^2)) +
+                ggplot2::labs(title = bquote(R^2 ~ of ~ "PC ~ " ~ "Dataset (Query vs. Reference)"), x = NULL, y = bquote(R^2)) +
                 ggplot2::theme_bw() +
                 ggplot2::theme(axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
                                panel.grid.minor = ggplot2::element_blank(),

@@ -32,8 +32,8 @@ To build the package vignettes upon installation use:
 
 ``` r
 devtools::install_github("ccb-hms/scDiagnostics",
-                         build_vignettes = TRUE,
-                         dependencies = TRUE)
+                          build_vignettes = TRUE,
+                          dependencies = TRUE)
 ```
 
 # Usage

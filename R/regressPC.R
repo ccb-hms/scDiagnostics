@@ -55,7 +55,7 @@
 #' regress_res <- regressPC(reference_data = reference_data,
 #'                          ref_cell_type_col = "expert_annotation", 
 #'                          cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-#'                          pc_subset = 1:25)
+#'                          pc_subset = 1:15)
 #' # Plot results
 #' plot(regress_res, plot_type = "r_squared")
 #' plot(regress_res, plot_type = "p-value")
@@ -66,7 +66,7 @@
 #'                          ref_cell_type_col = "expert_annotation", 
 #'                          query_cell_type_col = "SingleR_annotation",
 #'                          cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-#'                          pc_subset = 1:25)
+#'                          pc_subset = 1:15)
 #' # Plot results
 #' plot(regress_res, plot_type = "r_squared")
 #' plot(regress_res, plot_type = "p-value")

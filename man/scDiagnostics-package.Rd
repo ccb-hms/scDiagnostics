@@ -11,7 +11,7 @@
 \details{
 The package includes the following key functionalities, organized by their specific purposes:
 }
-\section{Visualization of Query Vs. Reference (Multiple Cell Types)}{
+\section{Visualization of Query vs. Reference (Multiple Cell Types)}{
 
 Functions for visualizing differences between query and reference datasets across multiple cell types.
 \itemize{
@@ -22,7 +22,7 @@ Functions for visualizing differences between query and reference datasets acros
 }
 }
 
-\section{Visualization of Query Vs. Reference (One Cell Type)}{
+\section{Visualization of Query vs. Reference (One Cell Type)}{
 
 Functions for visualizing differences between query and reference datasets for a specific cell type.
 \itemize{
@@ -30,6 +30,25 @@ Functions for visualizing differences between query and reference datasets for a
   \item \code{\link{comparePCA}}: Compares PCA results, with a plot method for visualization.
   \item \code{\link{comparePCASubspace}}: Compares PCA subspace, with a plot method for visualization.
   \item \code{\link{plotWassersteinDistance}}: Plots Wasserstein distance for different cell types.
+}
+}
+
+\section{Visualization of Marker Expressions}{
+
+Functions for to visualize and compare the expression of markers between a reference and a query dataset.
+\itemize{
+  \item \code{\link{plotGeneExpressionDimred}}: Plots gene expression in a dimensionality reduction space.
+  \item \code{\link{plotMarkerExpression}}: Plots marker expression levels.
+}
+}
+
+\section{Visualization of Annotation Scores}{
+
+Functions for visualizing quality control (QC) metrics or other characteristics of the data.
+\itemize{
+  \item \code{\link{histQCvsAnnotation}}: Plots histograms of QC metrics versus annotations.
+  \item \code{\link{plotGeneSetScores}}: Plots scores of gene sets.
+  \item \code{\link{plotQCvsAnnotation}}: Plots QC metrics versus annotations.
 }
 }
 
@@ -42,14 +61,23 @@ Functions for calculating correlations and distances between different cell type
 }
 }
 
-\section{Calculation of Statistical Tests to Compare Two Groups}{
+\section{Calculation of Statistical Tests to Compare Two Datasets}{
 
-Functions for performing statistical tests to compare two groups.
+Functions for performing statistical tests to compare two datasets.
 \itemize{
   \item \code{\link{calculateCramerPValue}}: Calculates the p-value using Cramer's V.
   \item \code{\link{calculateHotellingPValue}}: Calculates the p-value using Hotelling's T-squared test.
   \item \code{\link{calculateNearestNeighborProbabilities}}: Calculates nearest neighbor probabilities, with a plot method for visualization.
   \item \code{\link{regressPC}}: Performs regression on principal components, with a plot method for visualization.
+}
+}
+
+\section{Calculation of Overlap Measures (Genes) Between Two Datasets}{
+
+Functions for calculating overlap measures of genes between two datasets.
+\itemize{
+  \item \code{\link{calculateHVGOverlap}}: Calculates overlap of highly variable genes (HVG) between datasets.
+  \item \code{\link{calculateVarImpOverlap}}: Calculates overlap of variable importance measures between datasets.
 }
 }
 
@@ -62,33 +90,12 @@ Functions for detecting anomalies at both the global and cell type-specific leve
 }
 }
 
-\section{Calculation of Overlap Measures (Genes) Between Two Groups}{
-
-Functions for calculating overlap measures of genes between two groups.
-\itemize{
-  \item \code{\link{calculateHVGOverlap}}: Calculates overlap of highly variable genes (HVG) between groups.
-  \item \code{\link{calculateVarImpOverlap}}: Calculates overlap of variable importance measures between groups.
-}
-}
-
 \section{Calculation of Distances Between Specific Cells and Cell Types}{
 
 Functions for calculating distances between specific cells and cell types.
 \itemize{
   \item \code{\link{calculateCellDistances}}: Calculates distances between cells, with a plot method for visualization.
   \item \code{\link{calculateCellDistancesSimilarity}}: Calculates similarity based on cell distances, with a plot method for visualization.
-}
-}
-
-\section{Visualization of QC or Other Characteristics}{
-
-Functions for visualizing quality control (QC) metrics or other characteristics of the data.
-\itemize{
-  \item \code{\link{histQCvsAnnotation}}: Plots histograms of QC metrics versus annotations.
-  \item \code{\link{plotGeneExpressionDimred}}: Plots gene expression in a dimensionality reduction space.
-  \item \code{\link{plotGeneSetScores}}: Plots scores of gene sets.
-  \item \code{\link{plotMarkerExpression}}: Plots marker expression levels.
-  \item \code{\link{plotQCvsAnnotation}}: Plots QC metrics versus annotations.
 }
 }
 
