@@ -1,48 +1,159 @@
-<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
-<url><loc>/404.html</loc></url>
-<url><loc>/articles/GetStarted.html</loc></url>
-<url><loc>/articles/index.html</loc></url>
-<url><loc>/authors.html</loc></url>
-<url><loc>/index.html</loc></url>
-<url><loc>/news/index.html</loc></url>
-<url><loc>/reference/argumentCheck.html</loc></url>
-<url><loc>/reference/boxplotPCA.html</loc></url>
-<url><loc>/reference/calculateAveragePairwiseCorrelation.html</loc></url>
-<url><loc>/reference/calculateCategorizationEntropy.html</loc></url>
-<url><loc>/reference/calculateCellDistances.html</loc></url>
-<url><loc>/reference/calculateCellDistancesSimilarity.html</loc></url>
-<url><loc>/reference/calculateCellSimilarityPCA.html</loc></url>
-<url><loc>/reference/calculateCramerPValue.html</loc></url>
-<url><loc>/reference/calculateDiscriminantSpace.html</loc></url>
-<url><loc>/reference/calculateHVGOverlap.html</loc></url>
-<url><loc>/reference/calculateHotellingPValue.html</loc></url>
-<url><loc>/reference/calculateNearestNeighborProbabilities.html</loc></url>
-<url><loc>/reference/calculateVarImpOverlap.html</loc></url>
-<url><loc>/reference/calculate_entropy.html</loc></url>
-<url><loc>/reference/compareCCA.html</loc></url>
-<url><loc>/reference/comparePCA.html</loc></url>
-<url><loc>/reference/comparePCASubspace.html</loc></url>
-<url><loc>/reference/detectAnomaly.html</loc></url>
-<url><loc>/reference/generateColors.html</loc></url>
-<url><loc>/reference/histQCvsAnnotation.html</loc></url>
-<url><loc>/reference/hotellingT2.html</loc></url>
-<url><loc>/reference/index.html</loc></url>
-<url><loc>/reference/inverse_normal_trans.html</loc></url>
-<url><loc>/reference/ledoitWolf.html</loc></url>
-<url><loc>/reference/n_elements.html</loc></url>
-<url><loc>/reference/plotCellTypeMDS.html</loc></url>
-<url><loc>/reference/plotCellTypePCA.html</loc></url>
-<url><loc>/reference/plotGeneExpressionDimred.html</loc></url>
-<url><loc>/reference/plotGeneSetScores.html</loc></url>
-<url><loc>/reference/plotMarkerExpression.html</loc></url>
-<url><loc>/reference/plotPairwiseDistancesDensity.html</loc></url>
-<url><loc>/reference/plotQCvsAnnotation.html</loc></url>
-<url><loc>/reference/plotWassersteinDistance.html</loc></url>
-<url><loc>/reference/projectPCA.html</loc></url>
-<url><loc>/reference/qc_data.html</loc></url>
-<url><loc>/reference/query_data.html</loc></url>
-<url><loc>/reference/reference_data.html</loc></url>
-<url><loc>/reference/regressPC.html</loc></url>
-<url><loc>/reference/scDiagnostics-package.html</loc></url>
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/404.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/articles/AnnotationAnomalies.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/articles/CellDistancesDiagnostics.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/articles/DatasetAlignment.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/articles/DatasetMarkerGeneAlignment.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/articles/QCandAnnotationScores.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/articles/scDiagnostics.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/articles/StatisticalMeasures.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/articles/VisualizationTools.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/authors.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/index.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/news/index.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/argumentCheck.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/boxplotPCA.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateAveragePairwiseCorrelation.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateCategorizationEntropy.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateCellDistances.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateCellDistancesSimilarity.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateCellSimilarityPCA.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateCramerPValue.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateDiscriminantSpace.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateHotellingPValue.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateHVGOverlap.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateNearestNeighborProbabilities.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateVarImpOverlap.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/calculate_entropy.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/compareCCA.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/comparePCA.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/comparePCASubspace.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/detectAnomaly.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/generateColors.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/histQCvsAnnotation.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/hotellingT2.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/inverse_normal_trans.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/ledoitWolf.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/n_elements.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/plotCellTypeMDS.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/plotCellTypePCA.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/plotGeneExpressionDimred.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/plotGeneSetScores.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/plotMarkerExpression.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/plotPairwiseDistancesDensity.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/plotQCvsAnnotation.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/plotWassersteinDistance.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/projectPCA.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/qc_data.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/query_data.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/reference_data.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/regressPC.html</loc>
+  </url>
+  <url>
+    <loc>https://ccb-hms.github.io/scDiagnostics/reference/scDiagnostics-package.html</loc>
+  </url>
 </urlset>
-
