@@ -23,3 +23,4 @@ The function ranks the elements of \code{X} and then applies the inverse normal 
 \author{
 Andrew Ghazi, \email{andrew_ghazi@hms.harvard.edu}
 }
+\keyword{internal}

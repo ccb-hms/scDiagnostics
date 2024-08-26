@@ -87,3 +87,4 @@ plot(nn_output, cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"))
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 }
+\keyword{internal}

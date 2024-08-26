@@ -63,7 +63,7 @@
 #' @importFrom methods is
 #' @importFrom stats na.omit predict qnorm
 #' @importFrom utils tail
-#'       
+#' 
 # Function to perform diagnostics using isolation forest with PCA and visualization
 detectAnomaly <- function(reference_data, 
                           query_data = NULL, 

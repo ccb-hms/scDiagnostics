@@ -230,6 +230,8 @@ calculateDiscriminantSpace <- function(reference_data,
 #'
 #' @param class_data A numeric matrix or data frame containing the data for covariance estimation,
 #' where rows represent observations and columns represent variables.
+#' 
+#' @keywords internal
 #'
 #' @return A numeric matrix representing the Ledoit-Wolf estimated covariance matrix.
 #'

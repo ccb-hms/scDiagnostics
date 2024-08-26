@@ -15,6 +15,8 @@
 #' @param plot_type Type of plot to generate. Options are "r_squared" and "p-value". Default is "r-squared".
 #' @param alpha Significance threshold p-values of coefficients. Default is 0.05.
 #' @param ... Additional arguments to be passed to the plotting functions.
+#' 
+#' @keywords internal
 #'
 #' @return The S3 plot method returns a \code{ggplot} object representing the specified plot type.
 #' 

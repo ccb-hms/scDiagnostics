@@ -1,0 +1,16 @@
+pandoc: 3.1.11
+pkgdown: 2.0.9
+pkgdown_sha: ~
+articles:
+  AnnotationAnomalies: AnnotationAnomalies.html
+  CellDistancesDiagnostics: CellDistancesDiagnostics.html
+  DatasetMarkerGeneAlignment: DatasetMarkerGeneAlignment.html
+  QCandAnnotationScores: QCandAnnotationScores.html
+  scDiagnostics: scDiagnostics.html
+  StatisticalMeasures: StatisticalMeasures.html
+  VisualizationTools: VisualizationTools.html
+last_built: 2024-08-26T05:05Z
+urls:
+  reference: https://ccb-hms.github.io/scDiagnostics/reference
+  article: https://ccb-hms.github.io/scDiagnostics/articles
+

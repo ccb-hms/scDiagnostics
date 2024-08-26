@@ -16,6 +16,8 @@
 #' @param ref_cell_type A string specifying the reference cell type.
 #' @param cell_names A string specifying the query cell name for which to plot the distances.
 #' @param ... Additional arguments passed to the plotting function.
+#' 
+#' @keywords internal
 #'
 #' @return The S3 plot method returns a \code{ggplot} density plot comparing the reference distances and the distances from the specified cell to the reference cells.
 #'

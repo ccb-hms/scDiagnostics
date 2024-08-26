@@ -42,9 +42,4 @@ Bunis DG et al. (2021). Single-Cell Mapping of Progressive Fetal-to-Adult Transi
 \seealso{
 Use \code{data("qc_data")} to load and access the resulting quality control dataset.
 }
-\keyword{QC}
-\keyword{RNA-seq}
-\keyword{SingleR}
-\keyword{log-normalization}
-\keyword{metrics}
-\keyword{single-cell}
+\keyword{internal}

@@ -1,0 +1,142 @@
+---
+title: "Visualization of QC and Annotation Scores"
+author:
+    - name: Anthony Christidis
+      affiliation: Core for Computational Biomedicine, Harvard Medical School
+      email: anthony-alexander_christidis@hms.harvard.edu
+    - name: Andrew Ghazi
+      affiliation: Core for Computational Biomedicine, Harvard Medical School
+    - name: Smriti Chawla
+      affiliation: Core for Computational Biomedicine, Harvard Medical School
+    - name: Nitesh Turaga
+      affiliation: Core for Computational Biomedicine, Harvard Medical School
+    - name: Ludwig Geistlinger
+      affiliation: Core for Computational Biomedicine, Harvard Medical School
+    - name: Robert Gentleman
+      affiliation: Core for Computational Biomedicine, Harvard Medical School
+package: scDiagnostics
+output: 
+  BiocStyle::html_document:
+    toc: true
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{Visualization of QC and Annotation Scores}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include = FALSE}
+knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
+
+knitr::opts_chunk$set(
+collapse = TRUE,
+comment = "#>",
+dev = "ragg_png",
+dpi = 72,
+fig.retina = 2,
+fig.align = "center",
+out.width = "100%",
+pngquant = "--speed=1 --quality=1-5"
+)
+```
+
+# Introduction
+In this vignette, we will demonstrate how to use functions for visualizing various aspects of single-cell RNA sequencing data. We will cover:
+
+- **Scatter Plot of QC Stats vs Cell Type Annotation Scores**
+- **Histograms of QC Stats and Annotation Scores**
+- **Gene Set Scores on Dimensional Reduction Plots**
+
+#  Datasets
+
+We will use two datasets in this vignette: `query_data`, and `qc_data.` Each dataset has been preprocessed to include log-normalized counts, specific metadata columns, PCA, t-SNE, and UMAP results.
+
+## Query Data
+The `query_data` is another dataset from HeOrganAtlas, but it serves as a query set for comparison. It contains:
+
+- **Log-Normalized Counts and Metadata**: Similar to the reference data.
+- **SingleR Annotations**: Predictions of cell types using SingleR, including `SingleR_annotation` and `annotation_scores.`
+- **Gene Set Scores**: Scores calculated for gene sets or pathways, providing insights into gene activities across cells.
+
+## QC Data
+The `qc_data` originates from the Bunis et al. study focusing on haematopoietic stem and progenitor cells. This dataset includes:
+
+- **QC Metrics**: Metrics such as total library size and mitochondrial gene content.
+- **SingleR Predictions**: Predicted cell types based on SingleR annotations.
+- **Annotation Scores**: Scores reflecting the confidence in cell type predictions.
+
+```{r, message=FALSE}
+# Load library
+library(scDiagnostics)
+
+# Load datasets
+data("qc_data")
+data("query_data")
+
+# Set seed for reproducibility
+set.seed(0)
+```
+
+
+# QC Scores
+
+## Scatter Plot: QC Stats vs Cell Type Annotation Scores
+
+The scatter plot visualizes the relationship between QC statistics (e.g., total library size or percentage of mitochondrial genes) and cell type annotation scores. This plot helps in understanding how QC metrics influence or correlate with the predicted cell types.
+
+
+```{r, fig.height=6, fig.width=12}
+# Generate scatter plot
+p1 <- plotQCvsAnnotation(se_object = qc_data,
+                         cell_type_col = "SingleR_annotation",
+                         qc_col = "total",
+                         score_col = "annotation_scores")
+p1 + ggplot2::xlab("Library Size")
+```
+A scatter plot can reveal patterns such as whether cells with higher library sizes or mitochondrial content tend to be associated with specific annotations. For instance, cells with unusually high mitochondrial content might be identified as low-quality or stressed, potentially affecting their annotations.
+
+## Histograms: QC Stats and Annotation Scores Visualization
+
+Histograms provide a distribution view of QC metrics and annotation scores. They help in evaluating the range, central tendency, and spread of these variables across cells.
+
+
+
+```{r, fig.height=6, fig.width=12}
+# Generate histograms
+histQCvsAnnotation(se_object = query_data, 
+                   cell_type_col = "SingleR_annotation", 
+                   qc_col = "percent_mito", 
+                   score_col = "annotation_scores")
+```
+Histograms are useful for assessing the overall distribution of QC metrics and annotation scores. For example, if the majority of cells have high percent_mito, it might indicate that many cells are stressed or dying, which could impact the quality of the data.
+
+# Visualization of Gene Sets or Pathway Scores on Dimensional Reduction Plots
+
+Dimensional reduction plots (PCA, t-SNE, UMAP) are used to visualize the relationships between cells in reduced dimensions. Overlaying gene set scores on these plots provides insights into how specific gene activities are distributed across cell clusters.
+```{r, fig.height=6, fig.width=12}
+# Plot gene set scores on PCA
+plotGeneSetScores(se_object = query_data, 
+                  method = "PCA", 
+                  score_col = "gene_set_scores", 
+                  pc_subset = 1:5)
+```
+By visualizing gene set scores on PCA or UMAP plots, one can identify clusters of cells with high or low gene set activities. This can help in understanding the biological relevance of different gene sets or pathways in various cell states or types.
+
+
+
+# Conclusion 
+
+This vignette illustrates how to visualize and interpret QC statistics, cell type annotation scores, and gene set scores using single-cell RNA sequencing data. These visualizations are crucial for assessing data quality, understanding cell type annotations, and exploring gene activities, ultimately aiding in the comprehensive analysis of single-cell datasets.
+
+
+------------------------------------------------------------------------
+
+# R Session Info
+
+```{r SessionInfo, echo=FALSE, message=FALSE, warning=FALSE, comment=NA}
+options(width = 80) 
+sessionInfo()
+```

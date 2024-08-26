@@ -11,6 +11,8 @@
 #' @param x An object of class \code{nearestNeighbotDiagnostics} containing the probabilities calculated by the \code{\link{calculateNearestNeighborProbabilities}} function.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types in \code{x} will be plotted. Default is NULL.
 #' @param ... Additional arguments to be passed to \code{\link[ggplot2]{geom_density}}.
+#' 
+#' @keywords internal
 #'
 #' @return The S3 plot method returns a \code{ggplot} density plot.
 #' 

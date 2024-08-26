@@ -122,6 +122,8 @@ calculateCategorizationEntropy <- function(X,
 #'
 #' @param p A numeric vector representing a probability distribution. The elements should sum to 1.
 #' 
+#' @keywords internal
+#' 
 #' @return A numeric value representing the entropy of the probability distribution.
 #' 
 # Function to calculate entropy
@@ -142,6 +144,8 @@ calculate_entropy <- function(p) {
 #'
 #' @param X A matrix or vector.
 #' 
+#' @keywords internal
+#' 
 #' @return An integer representing the number of elements in \code{X}.
 #' 
 #' @author Andrew Ghazi, \email{andrew_ghazi@hms.harvard.edu}
@@ -161,6 +165,8 @@ n_elements <- function(X){
 #'
 #' @param X A numeric matrix or vector.
 #' @param constant A numeric value used in the transformation. Default is \code{3 / 8}.
+#' 
+#' @keywords internal
 #' 
 #' @author Andrew Ghazi, \email{andrew_ghazi@hms.harvard.edu}
 #' 

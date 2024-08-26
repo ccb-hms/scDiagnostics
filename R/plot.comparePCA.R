@@ -14,6 +14,8 @@
 #' @param x A numeric matrix output from the \code{comparePCA} function, representing 
 #' cosine similarities between query and reference principal components.
 #' @param ... Additional arguments passed to the plotting function.
+#' 
+#' @keywords internal
 #'
 #' @return The S3 plot method returns a \code{ggplot} object representing the heatmap of cosine similarities.
 #' 

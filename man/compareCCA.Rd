@@ -117,3 +117,4 @@ Hotelling, H. (1936). "Relations between two sets of variates". *Biometrika*, 28
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 }
+\keyword{internal}

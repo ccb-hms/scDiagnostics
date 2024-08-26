@@ -105,6 +105,8 @@ calculateHotellingPValue <- function(query_data,
 #' are variables.
 #' @param sample2 A numeric matrix or data frame of multivariate observations for sample 2, with the same structure as sample 1.
 #' 
+#' @keywords internal
+#' 
 #' @return The Hotelling's T^2 statistic.
 #'
 # Function to calculate hotelling T2 statistic between two groups

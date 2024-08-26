@@ -10,6 +10,8 @@
 #'
 #' @param x Output matrix from calculateAveragePairwiseCorrelation function.
 #' @param ... Additional arguments to be passed to the plotting function.
+#' 
+#' @keywords internal
 #'
 #' @return The S3 plot method returns a \code{ggplot} object representing the heatmap plot.
 #' 

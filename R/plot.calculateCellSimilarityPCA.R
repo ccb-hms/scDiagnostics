@@ -12,6 +12,8 @@
 #' between cells and PCs.
 #' @param pc_subset A numeric vector specifying the subset of principal components to include in the plot (default: 1:5).
 #' @param ... Additional arguments passed to the plotting function.
+#' 
+#' @keywords internal
 #'
 #' @return The S3 plot method returns a \code{ggplot} object representing the cosine similarity heatmap.
 #'

@@ -41,9 +41,4 @@ He, et al. (2020). HeOrganAtlas: a comprehensive human organ atlas based on sing
 \seealso{
 Use \code{data("reference_data")} to load and access the resulting reference dataset.
 }
-\keyword{HeOrganAtlas}
-\keyword{PCA}
-\keyword{RNA-seq}
-\keyword{SingleR}
-\keyword{log-normalization}
-\keyword{single-cell}
+\keyword{internal}

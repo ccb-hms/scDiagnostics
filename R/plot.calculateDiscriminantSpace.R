@@ -13,6 +13,8 @@
 #' @param cell_types A character vector specifying the cell types to plot. If not provided, all cell types will be plotted.
 #' @param plot_type Type of plot to generate. Options are "scatterplot" and "boxplot". Default is "scatterplot".
 #' @param ... Additional arguments to be passed to the plotting functions.
+#' 
+#' @keywords internal
 #'
 #' @return The S3 plot method returns a \code{ggplot} object representing the scatterplot or boxplot of the projected data.
 #' 

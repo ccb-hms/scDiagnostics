@@ -10,7 +10,7 @@
 #'   \item Loads the HeOrganAtlas dataset specifically for Marrow tissue from the \code{scRNAseq} package.
 #'   \item Divides the loaded dataset into a reference dataset used for downstream analysis.
 #'   \item Performs log normalization on the reference dataset using the function \code{logNormCounts} from the \code{scuttle} package.
-#'   \item Selects specific columns (\code{percent_mito}, \code{expert_annotation}) from the cell metadata for downstream analysis.
+#'   \item Selects the column \code{expert_annotation}) from the cell metadata for downstream analysis.
 #'   \item Selects highly variable genes (HVGs) using the function \code{getTopHVGs} from the \code{scran} package on the reference dataset.
 #'   \item Performs Principal Component Analysis (PCA) on the reference dataset using the function \code{runPCA} from the \code{scater} package.
 #'   \item Performs t-Distributed Stochastic Neighbor Embedding (t-SNE) on the reference dataset using the function \code{runTSNE} from the \code{scater} package.
@@ -27,7 +27,7 @@
 #' # Load and explore the reference dataset
 #' data("reference_data")
 #'
-#' @keywords single-cell RNA-seq HeOrganAtlas log-normalization SingleR PCA
+#' @keywords internal
 #'
 "reference_data"
 
@@ -65,7 +65,7 @@
 #' # Load and explore the query dataset
 #' data("query_data")
 #'
-#' @keywords single-cell RNA-seq HeOrganAtlas log-normalization SingleR HVGs
+#' @keywords internal
 #'
 "query_data"
 
@@ -99,6 +99,6 @@
 #' # Load and explore the quality control dataset
 #' data("qc_data")
 #'
-#' @keywords single-cell RNA-seq QC metrics SingleR log-normalization
+#' @keywords internal
 #'
 "qc_data"

@@ -36,6 +36,8 @@
 #' @param common_rotation_genes If TRUE, check the rotation matrices of the reference and query data and ensure they have the same genes.
 #' Default is FALSE.
 #' 
+#' @keywords internal
+#' 
 #' @return None.
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}

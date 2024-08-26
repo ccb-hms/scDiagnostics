@@ -87,5 +87,5 @@
 #'
 #' @name scDiagnostics-package
 #' @aliases scDiagnostics
-#' @keywords package
+#' @keywords package internal
 "_PACKAGE"
