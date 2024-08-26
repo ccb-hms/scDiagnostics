@@ -14,7 +14,7 @@ test_that("calculateCellDistancesSimilarity computes similarity measures correct
                                                          reference_data = reference_data,
                                                          query_cell_type_col = "SingleR_annotation",
                                                          ref_cell_type_col = "expert_annotation",
-                                                         cell_names = c("AAACGGGCACATGACT-1", "ATTGGTGGTAACGCGA-1", "ATTGGACCATACTACG-1"),
+                                                         cell_names = colnames(query_data)[1:5],
                                                          pc_subset = 1:10)
     
     # Check if the result is a list
@@ -32,7 +32,7 @@ test_that("calculateCellDistancesSimilarity handles NULL cell_types gracefully",
                                                          reference_data = reference_data,
                                                          query_cell_type_col = "SingleR_annotation",
                                                          ref_cell_type_col = "expert_annotation",
-                                                         cell_names = c("AAACGGGCACATGACT-1", "ATTGGTGGTAACGCGA-1", "ATTGGACCATACTACG-1"),
+                                                         cell_names = colnames(query_data)[1:5],
                                                          pc_subset = 1:10)
     
     # Check if the result is a list
@@ -54,7 +54,7 @@ test_that("calculateCellDistancesSimilarity handles single cell names gracefully
                                                          reference_data = reference_data,
                                                          query_cell_type_col = "SingleR_annotation",
                                                          ref_cell_type_col = "expert_annotation",
-                                                         cell_names = "AAACGGGCACATGACT-1",
+                                                         cell_names = colnames(query_data)[1:5],
                                                          pc_subset = 1:10)
     
     # Check if the result is a list
