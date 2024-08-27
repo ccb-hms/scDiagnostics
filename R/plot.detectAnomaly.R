@@ -20,6 +20,8 @@
 #' @param data_type A character string specifying whether to plot the "query" data or the "reference" data. Default is "query".
 #' @param ... Additional arguments.
 #' 
+#' @keywords internal
+#' 
 #' @return The S3 plot method returns a \code{ggplot} object representing the PCA plots with anomalies highlighted.
 #' 
 #' @export

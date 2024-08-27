@@ -8,9 +8,10 @@ sce <- scRNAseq::HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 # Divide the data into reference and query datasets
 set.seed(100)
 indices <- sample(ncol(SummarizedExperiment::assay(sce)), 
-                  size = floor(0.7 * ncol(SummarizedExperiment::assay(sce))), 
+                  size = floor(0.8 * ncol(SummarizedExperiment::assay(sce))), 
                   replace = FALSE)
-reference_data <- sce[, indices]
+ref_indices <- sample(indices, 0.7*length(indices))
+reference_data <- sce[, sample(indices, 1500)]
 query_data <- sce[, -indices]
 
 # log transform datasets
@@ -18,14 +19,13 @@ reference_data <- scuttle::logNormCounts(reference_data)
 query_data <- scuttle::logNormCounts(query_data)
 
 # Select specific column (cell) data
-SummarizedExperiment::colData(reference_data) <- SummarizedExperiment::colData(reference_data)[, c("percent.mito", 
-                                                                                                   "reclustered.broad")]
+SummarizedExperiment::colData(reference_data) <- SummarizedExperiment::colData(reference_data)[, c("reclustered.broad"), 
+                                                                                               drop = FALSE]
 SummarizedExperiment::colData(query_data) <- SummarizedExperiment::colData(query_data)[, c("percent.mito", 
                                                                                            "reclustered.broad")]
-names(SummarizedExperiment::colData(query_data))[1] <- names(SummarizedExperiment::colData(reference_data))[1] <-
-    "percent_mito"
-names(SummarizedExperiment::colData(query_data))[2] <- names(SummarizedExperiment::colData(reference_data))[2] <-
-    "expert_annotation"
+names(SummarizedExperiment::colData(reference_data))[1] <- "expert_annotation"
+names(SummarizedExperiment::colData(query_data))[1] <- "percent_mito"
+names(SummarizedExperiment::colData(query_data))[2]  <- "expert_annotation"
 
 # Get cell type scores using SingleR (or any other cell type annotation method)
 scores <- SingleR::SingleR(query_data, reference_data, labels = reference_data$expert_annotation, )

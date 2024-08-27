@@ -5,7 +5,7 @@
 \alias{reference_data}
 \title{Reference Single-Cell RNA-Seq Dataset}
 \format{
-An object of class \code{SingleCellExperiment} with 421 rows and 2261 columns.
+An object of class \code{SingleCellExperiment} with 423 rows and 1500 columns.
 }
 \source{
 The HeOrganAtlas dataset, available through the scRNAseq package.
@@ -23,7 +23,7 @@ This dataset underwent the following steps:
   \item Loads the HeOrganAtlas dataset specifically for Marrow tissue from the \code{scRNAseq} package.
   \item Divides the loaded dataset into a reference dataset used for downstream analysis.
   \item Performs log normalization on the reference dataset using the function \code{logNormCounts} from the \code{scuttle} package.
-  \item Selects specific columns (\code{percent_mito}, \code{expert_annotation}) from the cell metadata for downstream analysis.
+  \item Selects the column \code{expert_annotation}) from the cell metadata for downstream analysis.
   \item Selects highly variable genes (HVGs) using the function \code{getTopHVGs} from the \code{scran} package on the reference dataset.
   \item Performs Principal Component Analysis (PCA) on the reference dataset using the function \code{runPCA} from the \code{scater} package.
   \item Performs t-Distributed Stochastic Neighbor Embedding (t-SNE) on the reference dataset using the function \code{runTSNE} from the \code{scater} package.
@@ -41,9 +41,4 @@ He, et al. (2020). HeOrganAtlas: a comprehensive human organ atlas based on sing
 \seealso{
 Use \code{data("reference_data")} to load and access the resulting reference dataset.
 }
-\keyword{HeOrganAtlas}
-\keyword{PCA}
-\keyword{RNA-seq}
-\keyword{SingleR}
-\keyword{log-normalization}
-\keyword{single-cell}
+\keyword{internal}

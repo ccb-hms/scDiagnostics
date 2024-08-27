@@ -73,3 +73,4 @@ The function performs a series of checks to ensure that:
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 }
+\keyword{internal}

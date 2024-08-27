@@ -5,7 +5,7 @@
 \alias{query_data}
 \title{Query Single-Cell RNA-Seq Dataset}
 \format{
-An object of class \code{SingleCellExperiment} with 421 rows and 969 columns.
+An object of class \code{SingleCellExperiment} with 423 rows and 646 columns.
 }
 \source{
 The HeOrganAtlas dataset, available through the scRNAseq package.
@@ -46,9 +46,4 @@ He, et al. (2020). HeOrganAtlas: a comprehensive human organ atlas based on sing
 Use \code{data("query_data")} to load and access the resulting query dataset and the
 \code{data("reference_data")} for comparison with the reference dataset.
 }
-\keyword{HVGs}
-\keyword{HeOrganAtlas}
-\keyword{RNA-seq}
-\keyword{SingleR}
-\keyword{log-normalization}
-\keyword{single-cell}
+\keyword{internal}

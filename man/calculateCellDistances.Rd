@@ -103,3 +103,4 @@ plot(distance_data, ref_cell_type = "CD8", cell_names = cd4_top6_anomalies)
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 }
+\keyword{internal}

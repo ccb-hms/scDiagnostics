@@ -18,3 +18,4 @@ The Hotelling's T^2 statistic.
 \description{
 Calculates the Hotelling's T^2 statistic for comparing means of multivariate data.
 }
+\keyword{internal}

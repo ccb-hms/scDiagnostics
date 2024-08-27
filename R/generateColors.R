@@ -11,6 +11,8 @@
 #'
 #' @param cell_type_names A character vector of cell type names that need to be assigned colors.
 #' @param paired If TRUE, the colored returned should be paired. Default is FALSE.
+#' 
+#' @keywords internal
 #'
 #' @return A named character vector where the names are the original cell type names, and the values are the assigned colors.
 #'

@@ -11,7 +11,7 @@ test_that("calculateCellSimilarityPCA computes cosine similarity correctly", {
     
     # Test with typical input
     cosine_similarities <- calculateCellSimilarityPCA(se_object = reference_data, 
-                                                      cell_names = c("AGGGATGAGGCCCGTT-1", "GCGACCAAGTTAACGA-1", "TGGTTAGTCCCGACTT-1"),
+                                                      cell_names = colnames(reference_data)[1:5],
                                                       pc_subset = 1:5,
                                                       n_top_vars = 50)
     
@@ -19,7 +19,7 @@ test_that("calculateCellSimilarityPCA computes cosine similarity correctly", {
     expect_type(cosine_similarities, "double")
     
     # Check dimensions of the result
-    expect_equal(nrow(cosine_similarities), length(c("AGGGATGAGGCCCGTT-1", "GCGACCAAGTTAACGA-1", "TGGTTAGTCCCGACTT-1")))
+    expect_equal(nrow(cosine_similarities), length(colnames(reference_data)[1:5]))
     expect_equal(ncol(cosine_similarities), 5)  # Check against pc_subset
     
     # Check if column names correspond to PCs
@@ -34,7 +34,7 @@ test_that("calculateCellSimilarityPCA handles NULL n_top_vars gracefully.", {
     
     expect_error(cosine_similarities <- 
                      calculateCellSimilarityPCA(se_object = reference_data,
-                                                cell_names = c("AGGGATGAGGCCCGTT-1", "GCGACCAAGTTAACGA-1", "TGGTTAGTCCCGACTT-1"),
+                                                cell_names = rownames(reference_data)[1:5],
                                                 pc_subset = 1:5,
                                                 n_top_vars = NULL))
     

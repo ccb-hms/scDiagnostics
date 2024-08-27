@@ -36,3 +36,4 @@ scDiagnostics.Rproj
 *.~lock.*
 /Meta/
 sandbox
+/doc/

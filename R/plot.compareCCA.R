@@ -13,6 +13,8 @@
 #' @param x A list containing the output from the \code{compareCCA} function. 
 #' This list should include \code{cosine_similarity} and \code{correlations}.
 #' @param ... Additional arguments passed to the plotting function.
+#' 
+#' @keywords internal
 #'
 #' @return The S3 plot method returns a \code{ggplot} object representing the scatter plot of cosine similarities of CCA coefficients and correlations.
 #'

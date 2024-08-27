@@ -18,3 +18,4 @@ This function calculates the entropy of a probability distribution.
 \details{
 The entropy is calculated using the formula \eqn{-\sum p \log(p)}, where the sum is over all non-zero elements of \code{p}.
 }
+\keyword{internal}
