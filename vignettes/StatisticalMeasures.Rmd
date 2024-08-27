@@ -20,15 +20,15 @@ output:
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{Statistical Measures to Assess Dataset Alignment}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{5. Statistical Measures to Assess Dataset Alignment, fig.show='hide'}
+  %\VignetteEncoding{UTF-8, fig.show='hide'}
+  %\VignetteEngine{knitr::rmarkdown, fig.show='hide'}
 editor_options: 
   markdown: 
     wrap: 72
 ---
 
-```{r setup, include = FALSE}
+```{r setup, include = FALSE, fig.show='hide'}
 knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
 
 knitr::opts_chunk$set(
@@ -73,7 +73,7 @@ In the context of the `scDiagnostics` package, this vignette demonstrates how to
 
 
 
-```{r, message=FALSE}
+```{r, message=FALSE, fig.show='hide'}
 # Load library
 library(scDiagnostics)
 
@@ -96,7 +96,7 @@ The function performs the following steps: it first projects the data into PCA s
 
 Here's an example of how to use the `calculateCramerPValue` function:
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Perform Cramer test for the specified cell types and principal components
 cramer_test <- calculateCramerPValue(reference_data = reference_data,
                                      query_data = query_data,
@@ -122,7 +122,7 @@ The function works by first projecting the data into PCA space and then performi
 
 Here is an example of how to use the `calculateHotellingPValue` function:
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Calculate Hotelling's T-squared test p-values
 p_values <- calculateHotellingPValue(query_data = query_data, 
                                      reference_data = reference_data, 
@@ -148,7 +148,7 @@ Here is a detailed explanation of how to use the `calculateNearestNeighborProbab
 
 2. **Function Call**: The function `calculateNearestNeighborProbabilities` is called with several parameters including the query and reference datasets, the names of the columns containing cell type annotations, the subset of principal components to use, and the number of nearest neighbors to consider.
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Compute nearest-neighbor probabilities
 nn_output <- calculateNearestNeighborProbabilities(
   query_data = query_data, 
@@ -168,7 +168,7 @@ nn_output <- calculateNearestNeighborProbabilities(
 
 4. **Plotting the Results**: To visualize the results, you can use the `plot` function provided for objects of class `calculateNearestNeighborProbabilities.`
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot the results
 plot(nn_output, cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"))
 ```
@@ -182,7 +182,7 @@ The `calculateAveragePairwiseCorrelation` function is designed to compute the av
 To use the `calculateAveragePairwiseCorrelation` function, you need to supply it with two `SingleCellExperiment` objects: one for the query cells and one for the reference cells. The function also requires column names specifying cell type annotations in both datasets, and optionally a vector of cell types to include in the analysis. Additionally, you can specify a subset of principal components to use, or use the raw data directly if `pc_subset` is set to `NULL`. The correlation method can be either "spearman" or "pearson".
 
 Here's an example of how to use this function:
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Compute pairwise correlations between specified cell types
 cor_matrix_avg <- calculateAveragePairwiseCorrelation(
   query_data = query_data, 
@@ -212,7 +212,7 @@ The `regressPC` function performs linear regression of a covariate of interest o
 The function calculates the R-squared value from the linear regression of the covariate onto each principal component. The variance contribution of the covariate effect per principal component is computed as the product of the variance explained by the principal component and the R-squared value. The total variance explained by the covariate is obtained by summing these contributions across all principal components.
 
 Here is how you can use the `regressPC` function:
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Perform regression analysis using only reference data
 regress_res <- regressPC(reference_data = reference_data,
                          ref_cell_type_col = "expert_annotation",
@@ -228,7 +228,7 @@ plot(regress_res, plot_type = "p-value")
 In this example, `regressPC` is used to perform regression analysis on principal components 1 to 15 from the reference dataset. The results are then visualized using plots showing the R-squared values and p-values.
 
 If you also have a query dataset and want to compare it with the reference dataset, you can include it in the analysis:
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Perform regression analysis using both reference and query data
 regress_res <- regressPC(reference_data = reference_data,
                          query_data = query_data,
@@ -259,7 +259,7 @@ Together, these functions enable a comprehensive approach to single-cell data an
 
 # R Session Info
 
-```{r SessionInfo, echo=FALSE, message=FALSE, warning=FALSE, comment=NA}
+```{r SessionInfo, echo=FALSE, message=FALSE, warning=FALSE, comment=NA, fig.show='hide'}
 options(width = 80) 
 sessionInfo()
 ```

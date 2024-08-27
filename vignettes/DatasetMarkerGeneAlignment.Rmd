@@ -20,15 +20,15 @@ output:
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{Evaluation of Dataset and Marker Gene Alignment}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{4. Evaluation of Dataset and Marker Gene Alignment, fig.show='hide'}
+  %\VignetteEncoding{UTF-8, fig.show='hide'}
+  %\VignetteEngine{knitr::rmarkdown, fig.show='hide'}
 editor_options: 
   markdown: 
     wrap: 72
 ---
 
-```{r setup, include = FALSE}
+```{r setup, include = FALSE, fig.show='hide'}
 knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
 
 knitr::opts_chunk$set(
@@ -84,7 +84,7 @@ In the context of the `scDiagnostics` package, this vignette demonstrates how to
 - `query_data`: This dataset contains cell type annotations from both expert assessments and those generated using the `SingleR` package. By comparing these annotations with those from the reference dataset, you can identify discrepancies between manual and automated results, highlighting potential inconsistencies or areas requiring further investigation.
 
 
-```{r, message=FALSE}
+```{r, message=FALSE, fig.show='hide'}
 # Load library
 library(scDiagnostics)
 
@@ -97,7 +97,7 @@ set.seed(0)
 ```
 
 Some functions in the vignette are designed to work with `SingleCellExperiment` objects that contain data from only one cell type. We will create separate `SingleCellExperiment` objects that only CD4 cells, to ensure compatibility with these functions.
-```{r, message=FALSE}
+```{r, message=FALSE, fig.show='hide'}
 # Load library
 library(scran)
 library(scater)
@@ -133,7 +133,7 @@ The `compareCCA` function evaluates how well cell types from the query dataset a
 - **Correlation Analysis**: The function then calculates the correlation between canonical variables of the query and reference datasets to determine how well they match.
 - **Annotation Assignment**: Based on the highest correlations, the function assigns the most similar reference cell type to each query cell. This helps in transferring annotations from the reference dataset to the query dataset.
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Perform CCA 
 cca_comparison <- compareCCA(query_data = query_data_cd4, 
                              reference_data = ref_data_cd4, 
@@ -154,7 +154,7 @@ The `comparePCA` function compares the PCA subspaces between the query and refer
 - **Distance Metrics**: It uses distance metrics based on principal angles to quantify the similarity between the datasets.
 
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Perform PCA 
 pca_comparison <- comparePCA(query_data = query_data_cd4, 
                              reference_data = ref_data_cd4, 
@@ -162,8 +162,11 @@ pca_comparison <- comparePCA(query_data = query_data_cd4,
                              ref_cell_type_col = "expert_annotation", 
                              pc_subset = 1:5, 
                              metric = "cosine")
-plot(pca_comparison)
+print(pca_comparison)
 ```
+
+Note that there is also a plot method for the object return for `comparePCA`. See reference manual for details.
+
 
 ## `comparePCASubspace`
 
@@ -178,7 +181,7 @@ In single-cell RNA-seq analysis, it is essential to assess the similarity betwee
 - **Weighted Cosine Similarity Score**: Finally, the function computes a weighted cosine similarity score based on the top cosine similarities and the average percentage of variance explained. This score provides an overall measure of subspace alignment between the datasets.
 
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Compare PCA subspaces between query and reference data
 subspace_comparison <- comparePCASubspace(query_data = query_data_cd4,
                                           reference_data = ref_data_cd4, 
@@ -227,7 +230,7 @@ By examining these density curves, users can assess the similarity of cells with
 
 This visual approach offers an intuitive way to diagnose potential discrepancies in cell type annotations, identify outliers, or confirm the reliability of the cell type assignments.
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Example usage of the function
 plotPairwiseDistancesDensity(query_data = query_data, 
                              reference_data = reference_data, 
@@ -277,7 +280,7 @@ The `plotWassersteinDistance` function creates a density plot to compare the Was
 
 ### Code Example
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Generate the Wasserstein distance density plot
 plotWassersteinDistance(query_data = query_data_cd4,
                         reference_data = ref_data_cd4, 
@@ -310,7 +313,7 @@ The overlap coefficient quantifies the extent to which the HVGs in the reference
 
 ### Code Example
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Load library to get top HVGs
 library(scran)
 
@@ -341,7 +344,7 @@ To use the function, you need to provide a reference dataset containing expressi
 Let’s say you have a reference dataset (`reference_data`) and a query dataset (`query_data`). Both datasets contain expression data and cell type annotations, stored in columns named "expert_annotation" and "SingleR_annotation", respectively. You want to calculate the importance of genes using 500 trees and compare the top 50 genes between the datasets.
 
 Here’s how you would use the function:
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # RF function to compare (between datasets) which genes are best at differentiating cell types
 rf_output <- calculateVarImpOverlap(reference_data = reference_data, 
                                     query_data = query_data, 
@@ -373,7 +376,7 @@ Together, these functions form a robust toolkit for single-cell genomics analysi
 
 # R Session Info
 
-```{r SessionInfo, echo=FALSE, message=FALSE, warning=FALSE, comment=NA}
+```{r SessionInfo, echo=FALSE, message=FALSE, warning=FALSE, comment=NA, fig.show='hide'}
 options(width = 80) 
 sessionInfo()
 ```

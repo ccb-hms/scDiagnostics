@@ -20,15 +20,15 @@ output:
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{Visualization of QC and Annotation Scores}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{3. Visualization of QC and Annotation Scores, fig.show='hide'}
+  %\VignetteEncoding{UTF-8, fig.show='hide'}
+  %\VignetteEngine{knitr::rmarkdown, fig.show='hide'}
 editor_options: 
   markdown: 
     wrap: 72
 ---
 
-```{r setup, include = FALSE}
+```{r setup, include = FALSE, fig.show='hide'}
 knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
 
 knitr::opts_chunk$set(
@@ -68,7 +68,7 @@ The `qc_data` originates from the Bunis et al. study focusing on haematopoietic 
 - **SingleR Predictions**: Predicted cell types based on SingleR annotations.
 - **Annotation Scores**: Scores reflecting the confidence in cell type predictions.
 
-```{r, message=FALSE}
+```{r, message=FALSE, fig.show='hide'}
 # Load library
 library(scDiagnostics)
 
@@ -88,7 +88,7 @@ set.seed(0)
 The scatter plot visualizes the relationship between QC statistics (e.g., total library size or percentage of mitochondrial genes) and cell type annotation scores. This plot helps in understanding how QC metrics influence or correlate with the predicted cell types.
 
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Generate scatter plot
 p1 <- plotQCvsAnnotation(se_object = qc_data,
                          cell_type_col = "SingleR_annotation",
@@ -104,7 +104,7 @@ Histograms provide a distribution view of QC metrics and annotation scores. They
 
 
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Generate histograms
 histQCvsAnnotation(se_object = query_data, 
                    cell_type_col = "SingleR_annotation", 
@@ -116,7 +116,7 @@ Histograms are useful for assessing the overall distribution of QC metrics and a
 # Visualization of Gene Sets or Pathway Scores on Dimensional Reduction Plots
 
 Dimensional reduction plots (PCA, t-SNE, UMAP) are used to visualize the relationships between cells in reduced dimensions. Overlaying gene set scores on these plots provides insights into how specific gene activities are distributed across cell clusters.
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot gene set scores on PCA
 plotGeneSetScores(se_object = query_data, 
                   method = "PCA", 
@@ -136,7 +136,7 @@ This vignette illustrates how to visualize and interpret QC statistics, cell typ
 
 # R Session Info
 
-```{r SessionInfo, echo=FALSE, message=FALSE, warning=FALSE, comment=NA}
+```{r SessionInfo, echo=FALSE, message=FALSE, warning=FALSE, comment=NA, fig.show='hide'}
 options(width = 80) 
 sessionInfo()
 ```
