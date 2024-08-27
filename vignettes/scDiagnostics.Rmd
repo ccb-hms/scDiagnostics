@@ -138,7 +138,7 @@ For a detailed example of all possible functions to visualize reference and quer
 ## `plotCellTypePCA`
 
 The `plotCellTypePCA` function provides a visual comparison of principal components (PCs) for different cell types across query and reference datasets. By projecting the query data onto the PCA space of the reference dataset, it creates informative plots to help you understand how various cell types are distributed in the principal component space.
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Plot PCA data
 pc_plot <- plotCellTypePCA(query_data = query_data, 
                            reference_data = reference_data,
@@ -163,7 +163,7 @@ disc_output <- calculateDiscriminantSpace(reference_data = reference_data,
                                           query_cell_type_col = "SingleR_annotation")
 ```
 The function returns a comprehensive output that includes discriminant eigenvalues and eigenvectors, which represent the variance explained by each discriminant axis and are used to project the data. It also provides the projections of the reference and query data onto the discriminant space. The Mahalanobis distances between the query and reference cell types are calculated, offering insights into how close the query projections are to the reference. The cosine similarity scores provide another metric to assess the similarity between the datasets.
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 plot(disc_output, plot_type = "scatterplot")
 ```
 Alternatively, you can create a boxplot comparing query and reference projections for a specific cell type. See the reference manual for an example.
@@ -172,7 +172,7 @@ Alternatively, you can create a boxplot comparing query and reference projection
 
 Visualizing gene expression distributions is crucial for understanding dataset similarity and cell type-specific expression patterns. The `plotMarkerExpression` function allows you to compare the expression levels of a specific gene between a reference dataset and a query dataset, both overall and within a specified cell type. This comparison is done using density plots, which help in assessing the alignment and potential discrepancies between datasets.
 
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 plotMarkerExpression(reference_data = reference_data, 
                      query_data = query_data, 
                      ref_cell_type_col = "expert_annotation", 
@@ -188,7 +188,7 @@ For a detailed example of all possible functions to visualize quality control an
 
 The scatter plot illustrates the relationship between key QC metrics (e.g., total library size, percentage of mitochondrial genes) and cell type annotation scores. This visualization aids in assessing how QC factors might influence or correlate with the assigned cell type annotations.
 
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Generate scatter plot
 library(ggplot2)
 p1 <- plotQCvsAnnotation(se_object = qc_data,
@@ -208,7 +208,7 @@ For a detailed example of all possible functions to assess the alignment of data
 ## `compareCCA`
 
 The `compareCCA` function is designed to compare the subspaces spanned by the top principal components (PCs) of two datasets using Canonical Correlation Analysis (CCA). The function calculates canonical variables, correlations, and a similarity measure between the subspaces of the reference and query datasets. This can be useful in determining the similarity of cell populations or other high-dimensional data structures across different conditions or datasets.
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Perform CCA comparison
 cca_comparison <- compareCCA(query_data = query_data_cd4, 
                              reference_data = ref_data_cd4, 
@@ -227,7 +227,7 @@ This function is useful for identifying similarities and differences in cellular
 The code below illustrates how to use the `plotWassersteinDistance` function to compare the Wasserstein distances between CD4 cells in the reference and query datasets. The resulting plot provides insight into whether the differences between the datasets are statistically significant.
 
 
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Generate the Wasserstein distance density plot
 plotWassersteinDistance(query_data = query_data_cd4,
                         reference_data = ref_data_cd4, 
@@ -244,7 +244,7 @@ plotWassersteinDistance(query_data = query_data_cd4,
 Imagine you have two sets of data: one called reference_data and another called query_data. Both sets include information about gene expression and cell types, with columns named `expert_annotation` for the reference data and `SingleR_annotation` for the query data. You want to find out which genes are most important for each dataset and then compare them.
 
 Here’s how you can do it with the function:
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # RF function to compare (between datasets) which genes are best at differentiating cell types
 rf_output <- calculateVarImpOverlap(reference_data = reference_data, 
                                     query_data = query_data, 
@@ -266,21 +266,23 @@ For a detailed example of all possible functions that implement statistical meth
 ## `calculateAveragePairwiseCorrelation`
 
 The `calculateAveragePairwiseCorrelation` function computes the average pairwise correlations between specified cell types in single-cell gene expression data. It calculates pairwise correlations between query and reference cells using a specified correlation method, and then averages these correlations for each cell type pair. This approach helps assess the similarity between cells in reference and query datasets and provides insights into the reliability of cell type annotations.
-```{r, fig.height=6, fig.width=12}
-# Compute the average pairwise correlations
+```{r, fig.height=5, fig.width=10}
+# Compute pairwise correlations between specified cell types
 cor_matrix_avg <- calculateAveragePairwiseCorrelation(
-  query_data = query_data,
-  reference_data = reference_data,
-  query_cell_type_col = "expert_annotation",
-  ref_cell_type_col = "expert_annotation",
-  cell_types = c("CD4", "CD8", "B_and_plasma"),
-  )
-# Visualize the correlation matrix
-plot(cor_matrix_avg)
+  query_data = query_data, 
+  reference_data = reference_data, 
+  query_cell_type_col = "SingleR_annotation", 
+  ref_cell_type_col = "expert_annotation", 
+  cell_types = c("CD4", "CD8", "B_and_plasma"), 
+  pc_subset = 1:5,
+  correlation_method = "spearman"
+)
+
+# Visualize the average pairwise correlation matrix
+round(cor_matrix_avg, 2)
 ```
-The displays a heatmap where each cell type pair is represented with a color indicating the average correlation value between them. This visualization helps in assessing the similarity between cell types across the query and reference datasets.
 
-
+Note that the object returned by `calculateAveragePairwiseCorrelation` includes a plot method, similar to most functions in this package. For more details, please refer to the reference manual.
 
 
 # Detection of Annotation Anomalies
@@ -290,7 +292,7 @@ For a detailed example of all possible functions that implement statistical meth
 The `detectAnomaly` function is designed to identify anomalies in single-cell data by leveraging PCA projections and the Isolation Forest algorithm. This method is useful for detecting anomalies or unusual patterns in single-cell datasets, whether you're analyzing a reference dataset or comparing a query dataset against it.
 
 The function projects single-cell data onto a PCA space and builds an Isolation Forest model on this PCA space to detect anomalies. If a query dataset is provided, the function computes anomaly scores for the query data based on its PCA projections relative to the reference data. If no query data is provided, it computes anomaly scores for the reference data itself.
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Perform anomaly detection
 anomaly_output <- detectAnomaly(reference_data = reference_data, 
                                 query_data = query_data, 
@@ -314,7 +316,7 @@ The `calculateCellDistances` function computes distances both within a reference
 
 To identify anomalous cells within the query data, we first use the `detectAnomaly` function, focusing specifically on the CD4 cell type. This function will compute anomaly scores for each CD4 cell in the query dataset based on their projection in the PCA space of the reference data. Next, we will plot the distance distributions for the top 6 CD4 cells with the highest anomaly scores. These distances, computed using the `calculateCellDistances` function, will illustrate how these anomalous cells differ from the reference cells, providing insight into their potential outlier status and helping to visualize patterns within the data.
 
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Identify outliers for CD4
 cd4_anomalies <- detectAnomaly(reference_data = reference_data, 
                                query_data = query_data, 

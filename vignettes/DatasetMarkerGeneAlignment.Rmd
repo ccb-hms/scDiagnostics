@@ -133,7 +133,7 @@ The `compareCCA` function evaluates how well cell types from the query dataset a
 - **Correlation Analysis**: The function then calculates the correlation between canonical variables of the query and reference datasets to determine how well they match.
 - **Annotation Assignment**: Based on the highest correlations, the function assigns the most similar reference cell type to each query cell. This helps in transferring annotations from the reference dataset to the query dataset.
 
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Perform CCA 
 cca_comparison <- compareCCA(query_data = query_data_cd4, 
                              reference_data = ref_data_cd4, 
@@ -154,7 +154,7 @@ The `comparePCA` function compares the PCA subspaces between the query and refer
 - **Distance Metrics**: It uses distance metrics based on principal angles to quantify the similarity between the datasets.
 
 
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Perform PCA 
 pca_comparison <- comparePCA(query_data = query_data_cd4, 
                              reference_data = ref_data_cd4, 
@@ -178,7 +178,7 @@ In single-cell RNA-seq analysis, it is essential to assess the similarity betwee
 - **Weighted Cosine Similarity Score**: Finally, the function computes a weighted cosine similarity score based on the top cosine similarities and the average percentage of variance explained. This score provides an overall measure of subspace alignment between the datasets.
 
 
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Compare PCA subspaces between query and reference data
 subspace_comparison <- comparePCASubspace(query_data = query_data_cd4,
                                           reference_data = ref_data_cd4, 
@@ -227,7 +227,7 @@ By examining these density curves, users can assess the similarity of cells with
 
 This visual approach offers an intuitive way to diagnose potential discrepancies in cell type annotations, identify outliers, or confirm the reliability of the cell type assignments.
 
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Example usage of the function
 plotPairwiseDistancesDensity(query_data = query_data, 
                              reference_data = reference_data, 
@@ -277,7 +277,7 @@ The `plotWassersteinDistance` function creates a density plot to compare the Was
 
 ### Code Example
 
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Generate the Wasserstein distance density plot
 plotWassersteinDistance(query_data = query_data_cd4,
                         reference_data = ref_data_cd4, 
@@ -310,7 +310,7 @@ The overlap coefficient quantifies the extent to which the HVGs in the reference
 
 ### Code Example
 
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Load library to get top HVGs
 library(scran)
 
@@ -341,7 +341,7 @@ To use the function, you need to provide a reference dataset containing expressi
 Let’s say you have a reference dataset (`reference_data`) and a query dataset (`query_data`). Both datasets contain expression data and cell type annotations, stored in columns named "expert_annotation" and "SingleR_annotation", respectively. You want to calculate the importance of genes using 500 trees and compare the top 50 genes between the datasets.
 
 Here’s how you would use the function:
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # RF function to compare (between datasets) which genes are best at differentiating cell types
 rf_output <- calculateVarImpOverlap(reference_data = reference_data, 
                                     query_data = query_data, 

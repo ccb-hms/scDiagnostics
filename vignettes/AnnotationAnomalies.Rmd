@@ -115,7 +115,7 @@ In this example, we analyze anomalies specifically for the "CD4" cell type. The 
 
 
 
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Perform anomaly detection
 anomaly_output <- detectAnomaly(reference_data = reference_data, 
                                 query_data = query_data, 
@@ -139,7 +139,7 @@ In this example, we analyze anomalies specifically for the "CD4" cell type. The 
 #### Example 2: Global Anomaly Detection
 Here, we perform global anomaly detection by setting `cell_type = NULL`. In this case, the isolation forest is trained on PCA projections of all cells in the reference data combined. The global anomaly scores are then computed for both reference and query datasets.
 
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Perform anomaly detection
 anomaly_output <- detectAnomaly(reference_data = reference_data, 
                                 query_data = query_data, 
@@ -165,7 +165,7 @@ Note that if you do not provide a query dataset to the `detectAnomaly` function,
 # Integrating Anomaly Detection with Cell Similarity Analysis Using PCA Loadings
 
 The `detectAnomaly` function identifies anomalous cells in a dataset by detecting outliers based on PCA results. Once anomalies are detected, `calculateCellSimilarityPCA` evaluates how these outliers influence principal component directions. This analysis helps determine if anomalous cells significantly impact later PCs, which capture finer variations in the data. By combining these functions, you can both pinpoint anomalies and understand their effect on PCA directions, providing deeper insights into the data structure.
-```{r, fig.height=6, fig.width=12}
+```{r, fig.height=5, fig.width=10}
 # Detect anomalies and select top anomalies for further analysis
 anomaly_output <- detectAnomaly(reference_data = reference_data, 
                                 query_data = query_data,
@@ -186,9 +186,10 @@ cosine_similarities <- calculateCellSimilarityPCA(reference_data,
                                                   n_top_vars = 50)
 
 # Plot the cosine similarities across PCs
-plot(cosine_similarities, pc_subset = 15:25)
+round(cosine_similarities[, paste0("PC", 15:25)], 2)
 ```
 
+Note that there is also a plot method for the object return for `calculateCellSimilarityPCA`. See reference manual for details.
 
 # Conclusion 
 
