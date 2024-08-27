@@ -7,4 +7,4 @@
 ^pkgdown$
 sandbox
 ^data-raw$
-^inst
+^inst/extdata
