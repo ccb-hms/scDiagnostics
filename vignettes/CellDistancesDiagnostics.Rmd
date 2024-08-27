@@ -20,9 +20,9 @@ output:
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{7. Calculation of Distances Between Specific Cells and Cell Populations, fig.show='hide'}
-  %\VignetteEncoding{UTF-8, fig.show='hide'}
-  %\VignetteEngine{knitr::rmarkdown, fig.show='hide'}
+  %\VignetteIndexEntry{7. Calculation of Distances Between Specific Cells and Cell Populations}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
   markdown: 
     wrap: 72

@@ -20,9 +20,9 @@ output:
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{4. Evaluation of Dataset and Marker Gene Alignment, fig.show='hide'}
-  %\VignetteEncoding{UTF-8, fig.show='hide'}
-  %\VignetteEngine{knitr::rmarkdown, fig.show='hide'}
+  %\VignetteIndexEntry{4. Evaluation of Dataset and Marker Gene Alignment}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
   markdown: 
     wrap: 72
