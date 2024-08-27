@@ -144,7 +144,8 @@ pc_plot <- plotCellTypePCA(query_data = query_data,
                            reference_data = reference_data,
                            cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
                            query_cell_type_col = "expert_annotation", 
-                           ref_cell_type_col = "expert_annotation")
+                           ref_cell_type_col = "expert_annotation",
+                           pc_subset = 1:3)
 # Display plot
 pc_plot
 ```
@@ -165,10 +166,7 @@ The function returns a comprehensive output that includes discriminant eigenvalu
 ```{r, fig.height=6, fig.width=12}
 plot(disc_output, plot_type = "scatterplot")
 ```
-Alternatively, you can create a boxplot comparing query and reference projections for a specific cell type:
-```{r, fig.height=6, fig.width=12}
-plot(disc_output, cell_types = "CD4-CD8", plot_type = "boxplot")
-```
+Alternatively, you can create a boxplot comparing query and reference projections for a specific cell type. See the reference manual for an example.
 
 ## Visualization of Marker Expressions
 
@@ -302,7 +300,7 @@ anomaly_output <- detectAnomaly(reference_data = reference_data,
 plot(anomaly_output, 
      cell_type = "CD4", 
      data_type = "query",
-     pc_subset = 1:5)
+     pc_subset = 1:3)
 ```
 
 
@@ -333,8 +331,6 @@ distance_data <- calculateCellDistances(query_data = query_data,
 # Plot the densities of the distances
 plot(distance_data, ref_cell_type = "CD4", cell_names = cd4_top6_anomalies)
 ```
-
-
 
 # Conclusion
 

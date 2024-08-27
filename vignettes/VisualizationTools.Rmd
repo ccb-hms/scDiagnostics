@@ -100,7 +100,7 @@ plotCellTypePCA(query_data = query_data,
                 cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
                 query_cell_type_col = "SingleR_annotation", 
                 ref_cell_type_col = "expert_annotation", 
-                pc_subset = 1:5)
+                pc_subset = 1:3)
 ```
 Here, `plotCellTypePCA` projects the query data into the PCA space of the reference data and plots the specified principal components. The `pc_subset` argument allows you to select which principal components to display.
 
@@ -108,14 +108,14 @@ Here, `plotCellTypePCA` projects the query data into the PCA space of the refere
 ## Plot Principal Components as Boxplots
 
 The `boxplotPCA` function provides a boxplot visualization of principal components for different cell types across query and reference datasets. This function helps in comparing the distributions of PCA scores for specified cell types and datasets.
-```{r, fig.height=10, fig.width=12}
+```{r, fig.height=6, fig.width=12}
 # Plot the PCA data as boxplots
 boxplotPCA(query_data = query_data, 
            reference_data = reference_data,
            cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
            query_cell_type_col = "SingleR_annotation", 
            ref_cell_type_col = "expert_annotation", 
-           pc_subset = 1:6)
+           pc_subset = 1:3)
 ```
 In this example, `boxplotPCA` generates boxplots for the specified principal components, showing the distribution of PCA scores for different cell types and datasets.
 
@@ -147,7 +147,6 @@ disc_output <- calculateDiscriminantSpace(
 
 # Generate scatter and boxplot
 plot(disc_output, plot_type = "scatterplot")
-plot(disc_output, cell_types = "CD4-CD8", plot_type = "boxplot")
 ```
 
 
@@ -160,7 +159,7 @@ discriminant_results <- calculateDiscriminantSpace(
   reference_data = reference_data,
   query_data = query_data,
   ref_cell_type_col = "expert_annotation",
-  query_cell_type_col = "SingleR_annotation", 
+  query_cell_type_col = "SingleR_annotation",
   calculate_metrics = TRUE,  # Compute Mahalanobis distance and cosine similarity
   alpha = 0.01  # Significance level for Mahalanobis distance cutoff
 )
@@ -211,23 +210,14 @@ Let's visualize the expression of the gene **VPREB3** on a PCA plot:
 # Visualize VPREB3 gene on a PCA plot
 plotGeneExpressionDimred(se_object = query_data, 
                          method = "PCA", 
-                         pc_subset = 1:5, 
+                         pc_subset = 1:3, 
                          feature = "VPREB3")
 ```
 In this example, we visualize the expression of the **VPREB3** gene on a PCA plot derived from the `query_data` dataset. The `method` argument specifies the dimensional reduction technique, which in this case is "PCA." The `pc_subset` argument allows us to focus on specific principal components (PCs), here selecting the first five. The `feature` argument is the name of the gene we want to visualize.
 
 When executed, this function generates a scatter plot with cells colored by their expression levels of **VPREB3**. The resulting plot can help identify clusters of cells with similar expression patterns or highlight how expression varies across the dataset.
 
-You can also visualize gene expression using other dimensional reduction methods, such as t-SNE:
-```{r, fig.height=6, fig.width=12}
-# Visualize VPREB3 gene on a PCA plot
-plotGeneExpressionDimred(se_object = query_data, 
-                         method = "TSNE", 
-                         pc_subset = 1:5, 
-                         feature = "VPREB3")
-```
-
-This command generates a t-SNE plot where cells are color-coded by their expression of the **VPREB3** gene. The t-SNE method often reveals more distinct clusters in data with complex relationships, which can be particularly useful for identifying subpopulations of cells with unique expression profiles.
+You can also visualize gene expression using other dimensional reduction methods, such as t-SNE or UMAP.
 
 
 ## Plotting Gene Expression Distribution
