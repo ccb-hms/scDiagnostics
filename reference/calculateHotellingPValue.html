@@ -4,7 +4,7 @@ based on PCA-projected data from query and reference datasets."><!-- mathjax -->
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -26,7 +26,7 @@ based on PCA-projected data from query and reference datasets."><!-- mathjax -->
       <ul class="nav navbar-nav"><li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -60,20 +60,20 @@ based on PCA-projected data from query and reference datasets."><!-- mathjax -->
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/ccb-hms/scDiagnostics/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Perform Hotelling's T-squared Test on PCA Scores for Single-cell RNA-seq Data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/HEAD/R/calculateHotellingPValue.R" class="external-link"><code>R/calculateHotellingPValue.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/calculateHotellingPValue.R" class="external-link"><code>R/calculateHotellingPValue.R</code></a></small>
     <div class="hidden name"><code>calculateHotellingPValue.Rd</code></div>
     </div>
 
@@ -96,41 +96,41 @@ based on PCA-projected data from query and reference datasets.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>query_data</dt>
+
+
+<dl><dt id="arg-query-data">query_data<a class="anchor" aria-label="anchor" href="#arg-query-data"></a></dt>
 <dd><p>A <code>SingleCellExperiment</code> object containing numeric expression matrix for the query cells.</p></dd>
 
 
-<dt>reference_data</dt>
+<dt id="arg-reference-data">reference_data<a class="anchor" aria-label="anchor" href="#arg-reference-data"></a></dt>
 <dd><p>A <code>SingleCellExperiment</code> object containing numeric expression matrix for the reference cells.</p></dd>
 
 
-<dt>query_cell_type_col</dt>
-<dd><p>character. The column name in the <code>colData</code> of <code>query_data</code> 
+<dt id="arg-query-cell-type-col">query_cell_type_col<a class="anchor" aria-label="anchor" href="#arg-query-cell-type-col"></a></dt>
+<dd><p>character. The column name in the <code>colData</code> of <code>query_data</code>
 that identifies the cell types.</p></dd>
 
 
-<dt>ref_cell_type_col</dt>
-<dd><p>character. The column name in the <code>colData</code> of <code>reference_data</code> 
+<dt id="arg-ref-cell-type-col">ref_cell_type_col<a class="anchor" aria-label="anchor" href="#arg-ref-cell-type-col"></a></dt>
+<dd><p>character. The column name in the <code>colData</code> of <code>reference_data</code>
 that identifies the cell types.</p></dd>
 
 
-<dt>cell_types</dt>
+<dt id="arg-cell-types">cell_types<a class="anchor" aria-label="anchor" href="#arg-cell-types"></a></dt>
 <dd><p>A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.</p></dd>
 
 
-<dt>pc_subset</dt>
+<dt id="arg-pc-subset">pc_subset<a class="anchor" aria-label="anchor" href="#arg-pc-subset"></a></dt>
 <dd><p>A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.</p></dd>
 
 
-<dt>n_permutation</dt>
+<dt id="arg-n-permutation">n_permutation<a class="anchor" aria-label="anchor" href="#arg-n-permutation"></a></dt>
 <dd><p>Number of permutations to perform for p-value calculation. Default is 500.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>A named numeric vector of p-values from Hotelling's T-squared test for each cell type.</p>
+    <p>A named numeric vector of p-values from Hotelling's T-squared test for each cell type.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -177,15 +177,15 @@ It performs a permutation test to obtain p-values for each cell type specified.<
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

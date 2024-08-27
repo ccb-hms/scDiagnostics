@@ -13,14 +13,13 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Visualization of QC and Annotation Scores">
-<meta property="og:description" content="scDiagnostics">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -43,7 +42,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -81,7 +80,7 @@
 <li>
   <a href="https://github.com/ccb-hms/scDiagnostics/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -92,7 +91,7 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
@@ -124,7 +123,7 @@ School<br><h4 data-toc-skip class="author">Robert
 Gentleman</h4>
             <address class="author_afil">
       Core for Computational Biomedicine, Harvard Medical
-School<br><small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/HEAD/vignettes/QCandAnnotationScores.Rmd" class="external-link"><code>vignettes/QCandAnnotationScores.Rmd</code></a></small>
+School<br><small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/vignettes/QCandAnnotationScores.Rmd" class="external-link"><code>vignettes/QCandAnnotationScores.Rmd</code></a></small>
       <div class="hidden name"><code>QCandAnnotationScores.Rmd</code></div>
 
     </address>
@@ -221,8 +220,7 @@ influence or correlate with the predicted cell types.</p>
 <span>                         qc_col <span class="op">=</span> <span class="st">"total"</span>,</span>
 <span>                         score_col <span class="op">=</span> <span class="st">"annotation_scores"</span><span class="op">)</span></span>
 <span><span class="va">p1</span> <span class="op">+</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Library Size"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="QCandAnnotationScores_files/figure-html/unnamed-chunk-2-1.png" width="100%" style="display: block; margin: auto;">
-A scatter plot can reveal patterns such as whether cells with higher
+<p>A scatter plot can reveal patterns such as whether cells with higher
 library sizes or mitochondrial content tend to be associated with
 specific annotations. For instance, cells with unusually high
 mitochondrial content might be identified as low-quality or stressed,
@@ -240,8 +238,7 @@ of these variables across cells.</p>
 <span>                   cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span>
 <span>                   qc_col <span class="op">=</span> <span class="st">"percent_mito"</span>, </span>
 <span>                   score_col <span class="op">=</span> <span class="st">"annotation_scores"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="QCandAnnotationScores_files/figure-html/unnamed-chunk-3-1.png" width="100%" style="display: block; margin: auto;">
-Histograms are useful for assessing the overall distribution of QC
+<p>Histograms are useful for assessing the overall distribution of QC
 metrics and annotation scores. For example, if the majority of cells
 have high percent_mito, it might indicate that many cells are stressed
 or dying, which could impact the quality of the data.</p>
@@ -260,9 +257,8 @@ activities are distributed across cell clusters.</p>
 <span><span class="fu"><a href="../reference/plotGeneSetScores.html">plotGeneSetScores</a></span><span class="op">(</span>se_object <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                  method <span class="op">=</span> <span class="st">"PCA"</span>, </span>
 <span>                  score_col <span class="op">=</span> <span class="st">"gene_set_scores"</span>, </span>
-<span>                  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<p><img src="QCandAnnotationScores_files/figure-html/unnamed-chunk-4-1.png" width="100%" style="display: block; margin: auto;">
-By visualizing gene set scores on PCA or UMAP plots, one can identify
+<span>                  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<p>By visualizing gene set scores on PCA or UMAP plots, one can identify
 clusters of cells with high or low gene set activities. This can help in
 understanding the biological relevance of different gene sets or
 pathways in various cell states or types.</p>
@@ -281,76 +277,72 @@ analysis of single-cell datasets.</p>
 <div class="section level2">
 <h2 id="r-session-info">R Session Info<a class="anchor" aria-label="anchor" href="#r-session-info"></a>
 </h2>
-<pre><code>R version 4.4.0 (2024-04-24 ucrt)
-Platform: x86_64-w64-mingw32/x64
-Running under: Windows 11 x64 (build 22631)
+<pre><code>R version 4.4.1 (2024-06-14)
+Platform: x86_64-pc-linux-gnu
+Running under: Ubuntu 22.04.4 LTS
 
 Matrix products: default
-
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0
 
 locale:
-[1] LC_COLLATE=English_United States.utf8 
-[2] LC_CTYPE=English_United States.utf8   
-[3] LC_MONETARY=English_United States.utf8
-[4] LC_NUMERIC=C                          
-[5] LC_TIME=English_United States.utf8    
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+ [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
 
-time zone: America/New_York
-tzcode source: internal
+time zone: UTC
+tzcode source: system (glibc)
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] scDiagnostics_0.99.6 BiocStyle_2.32.0    
+[1] scDiagnostics_0.99.6 BiocStyle_2.32.1    
 
 loaded via a namespace (and not attached):
  [1] SummarizedExperiment_1.34.0 gtable_0.3.5               
- [3] xfun_0.44                   bslib_0.7.0                
+ [3] xfun_0.47                   bslib_0.8.0                
  [5] ggplot2_3.5.1               htmlwidgets_1.6.4          
  [7] Biobase_2.64.0              lattice_0.22-6             
- [9] generics_0.1.3              vctrs_0.6.5                
-[11] tools_4.4.0                 stats4_4.4.0               
+ [9] vctrs_0.6.5                 tools_4.4.1                
+[11] generics_0.1.3              stats4_4.4.1               
 [13] tibble_3.2.1                fansi_1.0.6                
-[15] highr_0.11                  pkgconfig_2.0.3            
-[17] Matrix_1.7-0                desc_1.4.3                 
-[19] S4Vectors_0.42.0            lifecycle_1.0.4            
-[21] GenomeInfoDbData_1.2.12     farver_2.1.2               
-[23] compiler_4.4.0              textshaping_0.4.0          
-[25] munsell_0.5.1               GenomeInfoDb_1.40.1        
-[27] htmltools_0.5.8.1           sass_0.4.9                 
-[29] yaml_2.3.8                  pkgdown_2.0.9              
-[31] pillar_1.9.0                crayon_1.5.2               
-[33] jquerylib_0.1.4             SingleCellExperiment_1.26.0
-[35] cachem_1.1.0                DelayedArray_0.30.1        
-[37] abind_1.4-5                 tidyselect_1.2.1           
-[39] digest_0.6.35               dplyr_1.1.4                
-[41] purrr_1.0.2                 bookdown_0.39              
-[43] labeling_0.4.3              fastmap_1.2.0              
-[45] grid_4.4.0                  colorspace_2.1-0           
-[47] cli_3.6.2                   SparseArray_1.4.8          
-[49] magrittr_2.0.3              S4Arrays_1.4.1             
-[51] utf8_1.2.4                  withr_3.0.0                
-[53] UCSC.utils_1.0.0            scales_1.3.0               
-[55] rmarkdown_2.27              XVector_0.44.0             
-[57] httr_1.4.7                  matrixStats_1.3.0          
-[59] ragg_1.3.2                  memoise_2.0.1              
-[61] evaluate_0.23               knitr_1.46                 
-[63] GenomicRanges_1.56.0        IRanges_2.38.0             
-[65] rlang_1.1.3                 glue_1.7.0                 
-[67] BiocManager_1.30.23         BiocGenerics_0.50.0        
-[69] rstudioapi_0.16.0           jsonlite_1.8.8             
-[71] R6_2.5.1                    MatrixGenerics_1.16.0      
-[73] systemfonts_1.1.0           fs_1.6.4                   
-[75] zlibbioc_1.50.0            </code></pre>
+[15] pkgconfig_2.0.3             Matrix_1.7-0               
+[17] desc_1.4.3                  S4Vectors_0.42.1           
+[19] lifecycle_1.0.4             GenomeInfoDbData_1.2.12    
+[21] farver_2.1.2                compiler_4.4.1             
+[23] textshaping_0.4.0           munsell_0.5.1              
+[25] GenomeInfoDb_1.40.1         htmltools_0.5.8.1          
+[27] sass_0.4.9                  yaml_2.3.10                
+[29] pkgdown_2.1.0               pillar_1.9.0               
+[31] crayon_1.5.3                jquerylib_0.1.4            
+[33] SingleCellExperiment_1.26.0 DelayedArray_0.30.1        
+[35] cachem_1.1.0                abind_1.4-5                
+[37] tidyselect_1.2.1            digest_0.6.37              
+[39] dplyr_1.1.4                 bookdown_0.40              
+[41] labeling_0.4.3              fastmap_1.2.0              
+[43] grid_4.4.1                  colorspace_2.1-1           
+[45] cli_3.6.3                   SparseArray_1.4.8          
+[47] magrittr_2.0.3              S4Arrays_1.4.1             
+[49] utf8_1.2.4                  withr_3.0.1                
+[51] UCSC.utils_1.0.0            scales_1.3.0               
+[53] rmarkdown_2.28              XVector_0.44.0             
+[55] httr_1.4.7                  matrixStats_1.3.0          
+[57] ragg_1.3.2                  evaluate_0.24.0            
+[59] knitr_1.48                  GenomicRanges_1.56.1       
+[61] IRanges_2.38.1              rlang_1.1.4                
+[63] glue_1.7.0                  BiocManager_1.30.24        
+[65] BiocGenerics_0.50.0         jsonlite_1.8.8             
+[67] R6_2.5.1                    MatrixGenerics_1.16.0      
+[69] systemfonts_1.1.0           fs_1.6.4                   
+[71] zlibbioc_1.50.0            </code></pre>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
+      </div>
 
 </div>
 
@@ -363,16 +355,16 @@ loaded via a namespace (and not attached):
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>

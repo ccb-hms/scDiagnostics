@@ -13,14 +13,13 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Visualization of Cell Type Annotations">
-<meta property="og:description" content="scDiagnostics">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -43,7 +42,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -81,7 +80,7 @@
 <li>
   <a href="https://github.com/ccb-hms/scDiagnostics/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -92,7 +91,7 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
@@ -124,7 +123,7 @@ School<br><h4 data-toc-skip class="author">Robert
 Gentleman</h4>
             <address class="author_afil">
       Core for Computational Biomedicine, Harvard Medical
-School<br><small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/HEAD/vignettes/VisualizationTools.Rmd" class="external-link"><code>vignettes/VisualizationTools.Rmd</code></a></small>
+School<br><small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/vignettes/VisualizationTools.Rmd" class="external-link"><code>vignettes/VisualizationTools.Rmd</code></a></small>
       <div class="hidden name"><code>VisualizationTools.Rmd</code></div>
 
     </address>
@@ -199,17 +198,6 @@ dissimilarity matrix calculated from a specified gene set.</p>
 <span>                cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span>
 <span>                query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span>
 <span>                ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="VisualizationTools_files/figure-html/unnamed-chunk-2-1.png" width="100%" style="display: block; margin: auto;"></p>
-<p>Notice how much more aligned the cell types are when using the expert
-annotation</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Plot the PCA data</span></span>
-<span><span class="fu"><a href="../reference/plotCellTypeMDS.html">plotCellTypeMDS</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
-<span>                reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
-<span>                cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span>
-<span>                query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
-<span>                ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="VisualizationTools_files/figure-html/unnamed-chunk-3-1.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="plot-principal-components-for-different-cell-types">Plot Principal Components for Different Cell Types<a class="anchor" aria-label="anchor" href="#plot-principal-components-for-different-cell-types"></a>
@@ -218,17 +206,16 @@ annotation</p>
 onto the PCA space of the reference dataset. It then plots specified
 principal components for different cell types, allowing comparison of
 PCA results between query and reference datasets.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate the MDS scatter plot with cell type coloring</span></span>
 <span><span class="fu"><a href="../reference/plotCellTypePCA.html">plotCellTypePCA</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
 <span>                cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span>
 <span>                query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span>
 <span>                ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
-<span>                pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<p><img src="VisualizationTools_files/figure-html/unnamed-chunk-4-1.png" width="100%" style="display: block; margin: auto;">
-Here, <code>plotCellTypePCA</code> projects the query data into the PCA
-space of the reference data and plots the specified principal
+<span>                pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<p>Here, <code>plotCellTypePCA</code> projects the query data into the
+PCA space of the reference data and plots the specified principal
 components. The <code>pc_subset</code> argument allows you to select
 which principal components to display.</p>
 </div>
@@ -239,16 +226,15 @@ which principal components to display.</p>
 of principal components for different cell types across query and
 reference datasets. This function helps in comparing the distributions
 of PCA scores for specified cell types and datasets.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the PCA data as boxplots</span></span>
 <span><span class="fu"><a href="../reference/boxplotPCA.html">boxplotPCA</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>           reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
 <span>           cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span>
 <span>           query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span>
 <span>           ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
-<span>           pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span></span></code></pre></div>
-<p><img src="VisualizationTools_files/figure-html/unnamed-chunk-5-1.png" width="100%" style="display: block; margin: auto;">
-In this example, <code>boxplotPCA</code> generates boxplots for the
+<span>           pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<p>In this example, <code>boxplotPCA</code> generates boxplots for the
 specified principal components, showing the distribution of PCA scores
 for different cell types and datasets.</p>
 </div>
@@ -296,7 +282,7 @@ similarity and Mahalanobis distance.</li>
 </h4>
 <p>First, applying the function to the <code>SingleR</code>
 annotation.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute important variables for all pairwise cell comparisons</span></span>
 <span><span class="va">disc_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateDiscriminantSpace.html">calculateDiscriminantSpace</a></span><span class="op">(</span></span>
 <span>  reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
@@ -306,20 +292,6 @@ annotation.</p>
 <span></span>
 <span><span class="co"># Generate scatter and boxplot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">disc_output</span>, plot_type <span class="op">=</span> <span class="st">"scatterplot"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="VisualizationTools_files/figure-html/unnamed-chunk-6-1.png" width="100%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">disc_output</span>, cell_types <span class="op">=</span> <span class="st">"CD4-CD8"</span>, plot_type <span class="op">=</span> <span class="st">"boxplot"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="VisualizationTools_files/figure-html/unnamed-chunk-6-2.png" width="100%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Check comparison</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span>Expert_Annotation <span class="op">=</span> <span class="va">query_data</span><span class="op">$</span><span class="va">expert_annotation</span>, SingleR <span class="op">=</span> <span class="va">query_data</span><span class="op">$</span><span class="va">SingleR_annotation</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                  SingleR</span></span>
-<span><span class="co">#&gt; Expert_Annotation B_and_plasma CD4 CD8 Myeloid</span></span>
-<span><span class="co">#&gt;      B_and_plasma           94   0   0       4</span></span>
-<span><span class="co">#&gt;      CD4                     0 126   0       4</span></span>
-<span><span class="co">#&gt;      CD8                     2  90 127      12</span></span>
-<span><span class="co">#&gt;      Myeloid                 0   0   0      30</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="using-mahalanobis-distance-for-anomaly-detection-in-single-cell-rna-seq-data">Using Mahalanobis Distance for Anomaly Detection in Single-Cell
@@ -330,20 +302,20 @@ within established reference cell types or if there are cells exhibiting
 unusual characteristics. We will use the Mahalanobis distance calculated
 by the <code>calculateDiscriminantSpace</code> function to achieve
 this.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Perform discriminant analysis and projection</span></span>
 <span><span class="va">discriminant_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateDiscriminantSpace.html">calculateDiscriminantSpace</a></span><span class="op">(</span></span>
 <span>  reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
 <span>  query_data <span class="op">=</span> <span class="va">query_data</span>,</span>
 <span>  ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span>
-<span>  query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span>
+<span>  query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span>
 <span>  calculate_metrics <span class="op">=</span> <span class="cn">TRUE</span>,  <span class="co"># Compute Mahalanobis distance and cosine similarity</span></span>
 <span>  alpha <span class="op">=</span> <span class="fl">0.01</span>  <span class="co"># Significance level for Mahalanobis distance cutoff</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>You can extract and analyze the Mahalanobis distances of query cells
 relative to reference cell types. High Mahalanobis distances may
 indicate potential anomalies or novel cell states.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract Mahalanobis distances</span></span>
 <span><span class="va">mahalanobis_distances</span> <span class="op">&lt;-</span> <span class="va">discriminant_results</span><span class="op">$</span><span class="va">`CD4-CD8`</span><span class="op">$</span><span class="va">query_mahalanobis_dist</span></span>
 <span></span>
@@ -352,7 +324,7 @@ indicate potential anomalies or novel cell states.</p>
 <span><span class="va">anomalies</span> <span class="op">&lt;-</span> <span class="va">mahalanobis_distances</span><span class="op">[</span><span class="va">mahalanobis_distances</span> <span class="op">&gt;</span> <span class="va">threshold</span><span class="op">]</span></span></code></pre></div>
 <p>You can now create visualizations to illustrate the distribution of
 Mahalanobis distances and highlight potential anomalies.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load ggplot2 for visualization</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
@@ -367,7 +339,6 @@ Mahalanobis distances and highlight potential anomalies.</p>
 <span>       x <span class="op">=</span> <span class="st">"Mahalanobis Distance"</span>,</span>
 <span>       y <span class="op">=</span> <span class="st">"Frequency"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="VisualizationTools_files/figure-html/unnamed-chunk-9-1.png" width="100%" style="display: block; margin: auto;"></p>
 <ul>
 <li><p><strong>Low Mahalanobis Distances</strong>: These query cells
 align well with the reference cell types, suggesting they are similar to
@@ -394,14 +365,13 @@ t-SNE, or UMAP. Each point on the plot represents a single cell,
 color-coded according to the expression level of the specified gene.</p>
 <p>Let’s visualize the expression of the gene <strong>VPREB3</strong> on
 a PCA plot:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Visualize VPREB3 gene on a PCA plot</span></span>
 <span><span class="fu"><a href="../reference/plotGeneExpressionDimred.html">plotGeneExpressionDimred</a></span><span class="op">(</span>se_object <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                         method <span class="op">=</span> <span class="st">"PCA"</span>, </span>
-<span>                         pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, </span>
+<span>                         pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, </span>
 <span>                         feature <span class="op">=</span> <span class="st">"VPREB3"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="VisualizationTools_files/figure-html/unnamed-chunk-10-1.png" width="100%" style="display: block; margin: auto;">
-In this example, we visualize the expression of the
+<p>In this example, we visualize the expression of the
 <strong>VPREB3</strong> gene on a PCA plot derived from the
 <code>query_data</code> dataset. The <code>method</code> argument
 specifies the dimensional reduction technique, which in this case is
@@ -415,19 +385,7 @@ resulting plot can help identify clusters of cells with similar
 expression patterns or highlight how expression varies across the
 dataset.</p>
 <p>You can also visualize gene expression using other dimensional
-reduction methods, such as t-SNE:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Visualize VPREB3 gene on a PCA plot</span></span>
-<span><span class="fu"><a href="../reference/plotGeneExpressionDimred.html">plotGeneExpressionDimred</a></span><span class="op">(</span>se_object <span class="op">=</span> <span class="va">query_data</span>, </span>
-<span>                         method <span class="op">=</span> <span class="st">"TSNE"</span>, </span>
-<span>                         pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, </span>
-<span>                         feature <span class="op">=</span> <span class="st">"VPREB3"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="VisualizationTools_files/figure-html/unnamed-chunk-11-1.png" width="100%" style="display: block; margin: auto;"></p>
-<p>This command generates a t-SNE plot where cells are color-coded by
-their expression of the <strong>VPREB3</strong> gene. The t-SNE method
-often reveals more distinct clusters in data with complex relationships,
-which can be particularly useful for identifying subpopulations of cells
-with unique expression profiles.</p>
+reduction methods, such as t-SNE or UMAP.</p>
 </div>
 <div class="section level3">
 <h3 id="plotting-gene-expression-distribution">Plotting Gene Expression Distribution<a class="anchor" aria-label="anchor" href="#plotting-gene-expression-distribution"></a>
@@ -439,7 +397,7 @@ these distributions, providing a graphical means of assessing the
 similarity between reference and query datasets. The function also
 applies a z-rank normalization to make expression values comparable
 between datasets.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotMarkerExpression.html">plotMarkerExpression</a></span><span class="op">(</span></span>
 <span>  reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
 <span>  query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -448,8 +406,7 @@ between datasets.</p>
 <span>  gene_name <span class="op">=</span> <span class="st">"VPREB3"</span>, </span>
 <span>  cell_type <span class="op">=</span> <span class="st">"B_and_plasma"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="VisualizationTools_files/figure-html/unnamed-chunk-12-1.png" width="100%" style="display: block; margin: auto;">
-In this example, the function compares the expression distribution of
+<p>In this example, the function compares the expression distribution of
 the <strong>VPREB3</strong> gene between the reference and query
 datasets. The <code>ref_cell_type_col</code> and
 <code>query_cell_type_col</code> arguments specify the columns in
@@ -509,76 +466,72 @@ your single-cell analyses.</p>
 <div class="section level2">
 <h2 id="r-session-info">R Session Info<a class="anchor" aria-label="anchor" href="#r-session-info"></a>
 </h2>
-<pre><code>R version 4.4.0 (2024-04-24 ucrt)
-Platform: x86_64-w64-mingw32/x64
-Running under: Windows 11 x64 (build 22631)
+<pre><code>R version 4.4.1 (2024-06-14)
+Platform: x86_64-pc-linux-gnu
+Running under: Ubuntu 22.04.4 LTS
 
 Matrix products: default
-
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0
 
 locale:
-[1] LC_COLLATE=English_United States.utf8 
-[2] LC_CTYPE=English_United States.utf8   
-[3] LC_MONETARY=English_United States.utf8
-[4] LC_NUMERIC=C                          
-[5] LC_TIME=English_United States.utf8    
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+ [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
 
-time zone: America/New_York
-tzcode source: internal
+time zone: UTC
+tzcode source: system (glibc)
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ggplot2_3.5.1        scDiagnostics_0.99.6 BiocStyle_2.32.0    
+[1] ggplot2_3.5.1        scDiagnostics_0.99.6 BiocStyle_2.32.1    
 
 loaded via a namespace (and not attached):
  [1] SummarizedExperiment_1.34.0 gtable_0.3.5               
- [3] xfun_0.44                   bslib_0.7.0                
+ [3] xfun_0.47                   bslib_0.8.0                
  [5] htmlwidgets_1.6.4           Biobase_2.64.0             
- [7] lattice_0.22-6              generics_0.1.3             
- [9] vctrs_0.6.5                 tools_4.4.0                
-[11] stats4_4.4.0                tibble_3.2.1               
-[13] fansi_1.0.6                 highr_0.11                 
-[15] pkgconfig_2.0.3             Matrix_1.7-0               
-[17] desc_1.4.3                  S4Vectors_0.42.0           
-[19] lifecycle_1.0.4             GenomeInfoDbData_1.2.12    
-[21] farver_2.1.2                compiler_4.4.0             
-[23] textshaping_0.4.0           munsell_0.5.1              
-[25] GenomeInfoDb_1.40.1         htmltools_0.5.8.1          
-[27] sass_0.4.9                  yaml_2.3.8                 
-[29] pkgdown_2.0.9               pillar_1.9.0               
-[31] crayon_1.5.2                jquerylib_0.1.4            
-[33] SingleCellExperiment_1.26.0 cachem_1.1.0               
-[35] DelayedArray_0.30.1         abind_1.4-5                
-[37] tidyselect_1.2.1            digest_0.6.35              
-[39] dplyr_1.1.4                 purrr_1.0.2                
-[41] bookdown_0.39               labeling_0.4.3             
-[43] fastmap_1.2.0               grid_4.4.0                 
-[45] colorspace_2.1-0            cli_3.6.2                  
-[47] SparseArray_1.4.8           magrittr_2.0.3             
-[49] S4Arrays_1.4.1              utf8_1.2.4                 
-[51] withr_3.0.0                 UCSC.utils_1.0.0           
-[53] scales_1.3.0                rmarkdown_2.27             
-[55] XVector_0.44.0              httr_1.4.7                 
-[57] matrixStats_1.3.0           ranger_0.16.0              
-[59] ragg_1.3.2                  memoise_2.0.1              
-[61] evaluate_0.23               knitr_1.46                 
-[63] GenomicRanges_1.56.0        IRanges_2.38.0             
-[65] rlang_1.1.3                 Rcpp_1.0.12                
-[67] glue_1.7.0                  BiocManager_1.30.23        
-[69] BiocGenerics_0.50.0         rstudioapi_0.16.0          
-[71] jsonlite_1.8.8              R6_2.5.1                   
-[73] MatrixGenerics_1.16.0       systemfonts_1.1.0          
-[75] fs_1.6.4                    zlibbioc_1.50.0            </code></pre>
+ [7] lattice_0.22-6              vctrs_0.6.5                
+ [9] tools_4.4.1                 generics_0.1.3             
+[11] stats4_4.4.1                tibble_3.2.1               
+[13] fansi_1.0.6                 pkgconfig_2.0.3            
+[15] Matrix_1.7-0                desc_1.4.3                 
+[17] S4Vectors_0.42.1            lifecycle_1.0.4            
+[19] GenomeInfoDbData_1.2.12     farver_2.1.2               
+[21] compiler_4.4.1              textshaping_0.4.0          
+[23] munsell_0.5.1               GenomeInfoDb_1.40.1        
+[25] htmltools_0.5.8.1           sass_0.4.9                 
+[27] yaml_2.3.10                 pkgdown_2.1.0              
+[29] pillar_1.9.0                crayon_1.5.3               
+[31] jquerylib_0.1.4             SingleCellExperiment_1.26.0
+[33] DelayedArray_0.30.1         cachem_1.1.0               
+[35] abind_1.4-5                 tidyselect_1.2.1           
+[37] digest_0.6.37               dplyr_1.1.4                
+[39] bookdown_0.40               labeling_0.4.3             
+[41] fastmap_1.2.0               grid_4.4.1                 
+[43] colorspace_2.1-1            cli_3.6.3                  
+[45] SparseArray_1.4.8           magrittr_2.0.3             
+[47] S4Arrays_1.4.1              utf8_1.2.4                 
+[49] withr_3.0.1                 UCSC.utils_1.0.0           
+[51] scales_1.3.0                rmarkdown_2.28             
+[53] XVector_0.44.0              httr_1.4.7                 
+[55] matrixStats_1.3.0           ranger_0.16.0              
+[57] ragg_1.3.2                  evaluate_0.24.0            
+[59] knitr_1.48                  GenomicRanges_1.56.1       
+[61] IRanges_2.38.1              rlang_1.1.4                
+[63] Rcpp_1.0.13                 glue_1.7.0                 
+[65] BiocManager_1.30.24         BiocGenerics_0.50.0        
+[67] jsonlite_1.8.8              R6_2.5.1                   
+[69] MatrixGenerics_1.16.0       systemfonts_1.1.0          
+[71] fs_1.6.4                    zlibbioc_1.50.0            </code></pre>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
+      </div>
 
 </div>
 
@@ -591,16 +544,16 @@ loaded via a namespace (and not attached):
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>

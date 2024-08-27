@@ -20,7 +20,7 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -43,7 +43,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -81,7 +81,7 @@
 <li>
   <a href="https://github.com/ccb-hms/scDiagnostics/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -92,20 +92,30 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="contents col-md-9">
 
 <div class="section level1">
-<div class="page-header"><h1 id="scdiagnostics-diagnostic-functions-to-assess-the-quality-of-cell-type-annotations-in-single-cell-rna-seq-data">scDiagnostics: diagnostic functions to assess the quality of cell type annotations in single-cell RNA-seq data<a class="anchor" aria-label="anchor" href="#scdiagnostics-diagnostic-functions-to-assess-the-quality-of-cell-type-annotations-in-single-cell-rna-seq-data"></a>
+<div class="page-header"><h1 id="scdiagnostics-diagnostic-functions-to-assess-the-quality-of-cell-type-annotations-in-single-cell-rna-seq-data">
+<code>scDiagnostics</code>: diagnostic functions to assess the quality of cell type annotations in single-cell RNA-seq data<a class="anchor" aria-label="anchor" href="#scdiagnostics-diagnostic-functions-to-assess-the-quality-of-cell-type-annotations-in-single-cell-rna-seq-data"></a>
 </h1></div>
 </div>
 <div class="section level1">
 <h1 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h1>
 <p>The accurate annotation of cell types is a critical step in single-cell RNA-sequencing (scRNA-seq) analysis. While annotation transfer from a reference dataset offers a convenient and automated approach, it can also introduce biases and errors if not performed carefully.</p>
-<p>scDiagnostics is an R package designed to address this challenge by providing a comprehensive set of diagnostic tools for evaluating the quality of cell type annotations in scRNA-seq data. With scDiagnostics, researchers can systematically assess the compatibility and accuracy of annotations, ensuring reliable and reproducible results in their scRNA-seq analysis workflow.</p>
+<p><code>scDiagnostics</code> is an R package designed to address this challenge by providing a comprehensive set of diagnostic tools for evaluating the quality of cell type annotations in scRNA-seq data. With <code>scDiagnostics</code>, researchers can systematically assess the compatibility and accuracy of annotations, ensuring reliable and reproducible results in their scRNA-seq analysis workflow.</p>
+</div>
+<div class="section level1">
+<h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h1>
+<p>To install the development version of the package from GitHub use the following command:</p>
+<p><code>{r} devtools::install_github("ccb-hms/scDiagnostics")</code></p>
+<p>NOTE: you will need the <a href="https://cran.r-project.org/web/packages/remotes/index.html" class="external-link">remotes</a> package to install from GitHub.</p>
+<p>To build the package vignettes upon installation use:</p>
+<p><code>{r} devtools::install_github("ccb-hms/scDiagnostics",                           build_vignettes = TRUE,                           dependencies = TRUE)</code></p>
 </div>
 <div class="section level1">
 <h1 id="key-features">Key Features<a class="anchor" aria-label="anchor" href="#key-features"></a>
@@ -118,15 +128,6 @@
 <li><p><strong>Detection of Annotation Anomalies</strong>: Focuses on identifying inconsistencies or anomalies in cell type annotations between the query and reference datasets. This involves comparing expert-generated annotations with those produced by automated methods. By highlighting potential errors or discrepancies, this feature aids in refining and improving the accuracy of cell type classifications, ensuring that annotation results are reliable and accurate.</p></li>
 <li><p><strong>Analysis of Distances Between Specific Cells and Cell Populations</strong>: Calculates distances or similarities between individual cells and predefined cell types in both the query and reference datasets. This analysis helps determine how closely each cell in the query dataset matches the cell types defined in the reference dataset. By providing insights into cell type classification accuracy and identifying potential mismatches, this functionality supports more precise annotation and aids in detecting areas that may require further investigation or refinement.</p></li>
 </ul>
-</div>
-<div class="section level1">
-<h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h1>
-<p>To install the development version of the package from GitHub use the following command:</p>
-<p><code>{r} devtools::install_github("ccb-hms/scDiagnostics")</code></p>
-<p>NOTE: you will need the <a href="https://cran.r-project.org/web/packages/remotes/index.html" class="external-link">remotes</a> package to install from GitHub.</p>
-<p>To build the package vignettes upon installation use:</p>
-<p><code>{r} devtools::install_github("ccb-hms/scDiagnostics",                           build_vignettes = TRUE,                           dependencies = TRUE)</code></p>
 </div>
 <div class="section level1">
 <h1 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
@@ -186,16 +187,16 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>

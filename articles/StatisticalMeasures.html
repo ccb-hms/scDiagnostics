@@ -13,14 +13,13 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Statistical Measures to Assess Dataset Alignment">
-<meta property="og:description" content="scDiagnostics">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -43,7 +42,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -81,7 +80,7 @@
 <li>
   <a href="https://github.com/ccb-hms/scDiagnostics/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -92,7 +91,7 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
@@ -125,7 +124,7 @@ School<br><h4 data-toc-skip class="author">Robert
 Gentleman</h4>
             <address class="author_afil">
       Core for Computational Biomedicine, Harvard Medical
-School<br><small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/HEAD/vignettes/StatisticalMeasures.Rmd" class="external-link"><code>vignettes/StatisticalMeasures.Rmd</code></a></small>
+School<br><small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/vignettes/StatisticalMeasures.Rmd" class="external-link"><code>vignettes/StatisticalMeasures.Rmd</code></a></small>
       <div class="hidden name"><code>StatisticalMeasures.Rmd</code></div>
 
     </address>
@@ -379,7 +378,6 @@ can use the <code>plot</code> function provided for objects of class
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nn_output</span>, cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="StatisticalMeasures_files/figure-html/unnamed-chunk-5-1.png" width="100%" style="display: block; margin: auto;"></p>
 <p>In summary, the <code>calculateNearestNeighborProbabilities</code>
 function provides a robust method for classifying query cells based on
 nearest neighbor analysis in PCA space. This can be particularly useful
@@ -418,13 +416,19 @@ to use, or use the raw data directly if <code>pc_subset</code> is set to
 <span>  query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span>
 <span>  ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
 <span>  cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span><span class="op">)</span>, </span>
-<span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
+<span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  correlation_method <span class="op">=</span> <span class="st">"spearman"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Visualize the average pairwise correlation matrix</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cor_matrix_avg</span><span class="op">)</span></span></code></pre></div>
-<p><img src="StatisticalMeasures_files/figure-html/unnamed-chunk-6-1.png" width="100%" style="display: block; margin: auto;"></p>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">cor_matrix_avg</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                    Ref-CD4 Ref-CD8 Ref-B_and_plasma</span></span>
+<span><span class="co">#&gt; Query-CD4             0.44    0.20            -0.39</span></span>
+<span><span class="co">#&gt; Query-CD8            -0.23    0.36            -0.31</span></span>
+<span><span class="co">#&gt; Query-B_and_plasma   -0.23   -0.28             0.80</span></span>
+<span><span class="co">#&gt; attr(,"class")</span></span>
+<span><span class="co">#&gt; [1] "matrix"                              "array"                              </span></span>
+<span><span class="co">#&gt; [3] "calculateAveragePairwiseCorrelation"</span></span></code></pre></div>
 <p>In this example, <code>calculateAveragePairwiseCorrelation</code>
 computes the average pairwise correlations for the cell types “CD4”,
 “CD8”, and “B_and_plasma”. The resulting correlation matrix,
@@ -434,6 +438,9 @@ correlation values between the specified cell types.</p>
 relationships between different cell types in your single-cell datasets
 and evaluating how well cell types in the query data correspond to those
 in the reference data.</p>
+<p>Note that there is also a plot method for the object return for
+<code>calculateAveragePairwiseCorrelation.</code>. See reference manual
+for details.</p>
 </div>
 <div class="section level2">
 <h2 id="regresspc">
@@ -462,20 +469,17 @@ components.</p>
 <span>                         pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot results showing R-squared values</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="StatisticalMeasures_files/figure-html/unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Plot results showing p-values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"p-value"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="StatisticalMeasures_files/figure-html/unnamed-chunk-7-2.png" width="100%" style="display: block; margin: auto;">
-In this example, <code>regressPC</code> is used to perform regression
+<p>In this example, <code>regressPC</code> is used to perform regression
 analysis on principal components 1 to 15 from the reference dataset. The
 results are then visualized using plots showing the R-squared values and
 p-values.</p>
 <p>If you also have a query dataset and want to compare it with the
 reference dataset, you can include it in the analysis:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Perform regression analysis using both reference and query data</span></span>
 <span><span class="va">regress_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/regressPC.html">regressPC</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
 <span>                         query_data <span class="op">=</span> <span class="va">query_data</span>,</span>
@@ -485,13 +489,10 @@ reference dataset, you can include it in the analysis:</p>
 <span>                         pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot results showing R-squared values</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="StatisticalMeasures_files/figure-html/unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Plot results showing p-values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"p-value"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="StatisticalMeasures_files/figure-html/unnamed-chunk-8-2.png" width="100%" style="display: block; margin: auto;"></p>
 <p>In this case, the function projects the query data onto the principal
 components of the reference data and performs regression analysis. The
 results are visualized in the same way, providing insights into how well
@@ -527,79 +528,75 @@ data interpretations in single-cell genomics.</p>
 <div class="section level2">
 <h2 id="r-session-info">R Session Info<a class="anchor" aria-label="anchor" href="#r-session-info"></a>
 </h2>
-<pre><code>R version 4.4.0 (2024-04-24 ucrt)
-Platform: x86_64-w64-mingw32/x64
-Running under: Windows 11 x64 (build 22631)
+<pre><code>R version 4.4.1 (2024-06-14)
+Platform: x86_64-pc-linux-gnu
+Running under: Ubuntu 22.04.4 LTS
 
 Matrix products: default
-
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0
 
 locale:
-[1] LC_COLLATE=English_United States.utf8 
-[2] LC_CTYPE=English_United States.utf8   
-[3] LC_MONETARY=English_United States.utf8
-[4] LC_NUMERIC=C                          
-[5] LC_TIME=English_United States.utf8    
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+ [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
 
-time zone: America/New_York
-tzcode source: internal
+time zone: UTC
+tzcode source: system (glibc)
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] scDiagnostics_0.99.6 BiocStyle_2.32.0    
+[1] scDiagnostics_0.99.6 BiocStyle_2.32.1    
 
 loaded via a namespace (and not attached):
  [1] SummarizedExperiment_1.34.0 biglm_0.9-3                
- [3] gtable_0.3.5                xfun_0.44                  
- [5] bslib_0.7.0                 ggplot2_3.5.1              
+ [3] gtable_0.3.5                xfun_0.47                  
+ [5] bslib_0.8.0                 ggplot2_3.5.1              
  [7] htmlwidgets_1.6.4           Biobase_2.64.0             
  [9] lattice_0.22-6              generics_0.1.3             
-[11] vctrs_0.6.5                 tools_4.4.0                
-[13] stats4_4.4.0                tibble_3.2.1               
-[15] fansi_1.0.6                 highr_0.11                 
-[17] pkgconfig_2.0.3             Matrix_1.7-0               
-[19] desc_1.4.3                  S4Vectors_0.42.0           
-[21] lifecycle_1.0.4             GenomeInfoDbData_1.2.12    
-[23] farver_2.1.2                compiler_4.4.0             
-[25] textshaping_0.4.0           munsell_0.5.1              
-[27] GenomeInfoDb_1.40.1         htmltools_0.5.8.1          
-[29] sass_0.4.9                  yaml_2.3.8                 
-[31] pkgdown_2.0.9               pillar_1.9.0               
-[33] crayon_1.5.2                jquerylib_0.1.4            
-[35] MASS_7.3-60.2               SingleCellExperiment_1.26.0
-[37] cachem_1.1.0                DelayedArray_0.30.1        
-[39] boot_1.3-30                 abind_1.4-5                
-[41] tidyselect_1.2.1            digest_0.6.35              
-[43] dplyr_1.1.4                 purrr_1.0.2                
-[45] bookdown_0.39               labeling_0.4.3             
-[47] fastmap_1.2.0               grid_4.4.0                 
-[49] colorspace_2.1-0            cli_3.6.2                  
-[51] SparseArray_1.4.8           magrittr_2.0.3             
-[53] S4Arrays_1.4.1              utf8_1.2.4                 
-[55] withr_3.0.0                 UCSC.utils_1.0.0           
-[57] scales_1.3.0                rmarkdown_2.27             
-[59] XVector_0.44.0              httr_1.4.7                 
-[61] matrixStats_1.3.0           ragg_1.3.2                 
-[63] memoise_2.0.1               evaluate_0.23              
-[65] knitr_1.46                  GenomicRanges_1.56.0       
-[67] IRanges_2.38.0              rlang_1.1.3                
-[69] Rcpp_1.0.12                 DBI_1.2.2                  
-[71] glue_1.7.0                  BiocManager_1.30.23        
-[73] cramer_0.9-4                BiocGenerics_0.50.0        
-[75] speedglm_0.3-5              rstudioapi_0.16.0          
-[77] jsonlite_1.8.8              R6_2.5.1                   
-[79] MatrixGenerics_1.16.0       systemfonts_1.1.0          
-[81] fs_1.6.4                    zlibbioc_1.50.0            </code></pre>
+[11] vctrs_0.6.5                 tools_4.4.1                
+[13] stats4_4.4.1                tibble_3.2.1               
+[15] fansi_1.0.6                 pkgconfig_2.0.3            
+[17] Matrix_1.7-0                desc_1.4.3                 
+[19] S4Vectors_0.42.1            lifecycle_1.0.4            
+[21] GenomeInfoDbData_1.2.12     farver_2.1.2               
+[23] compiler_4.4.1              textshaping_0.4.0          
+[25] munsell_0.5.1               GenomeInfoDb_1.40.1        
+[27] htmltools_0.5.8.1           sass_0.4.9                 
+[29] yaml_2.3.10                 pkgdown_2.1.0              
+[31] pillar_1.9.0                crayon_1.5.3               
+[33] jquerylib_0.1.4             MASS_7.3-60.2              
+[35] SingleCellExperiment_1.26.0 DelayedArray_0.30.1        
+[37] cachem_1.1.0                boot_1.3-30                
+[39] abind_1.4-5                 tidyselect_1.2.1           
+[41] digest_0.6.37               dplyr_1.1.4                
+[43] bookdown_0.40               labeling_0.4.3             
+[45] fastmap_1.2.0               grid_4.4.1                 
+[47] colorspace_2.1-1            cli_3.6.3                  
+[49] SparseArray_1.4.8           magrittr_2.0.3             
+[51] S4Arrays_1.4.1              utf8_1.2.4                 
+[53] withr_3.0.1                 UCSC.utils_1.0.0           
+[55] scales_1.3.0                rmarkdown_2.28             
+[57] XVector_0.44.0              httr_1.4.7                 
+[59] matrixStats_1.3.0           ragg_1.3.2                 
+[61] evaluate_0.24.0             knitr_1.48                 
+[63] GenomicRanges_1.56.1        IRanges_2.38.1             
+[65] rlang_1.1.4                 Rcpp_1.0.13                
+[67] DBI_1.2.3                   glue_1.7.0                 
+[69] BiocManager_1.30.24         cramer_0.9-4               
+[71] BiocGenerics_0.50.0         speedglm_0.3-5             
+[73] jsonlite_1.8.8              R6_2.5.1                   
+[75] MatrixGenerics_1.16.0       systemfonts_1.1.0          
+[77] fs_1.6.4                    zlibbioc_1.50.0            </code></pre>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
+      </div>
 
 </div>
 
@@ -612,16 +609,16 @@ loaded via a namespace (and not attached):
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>

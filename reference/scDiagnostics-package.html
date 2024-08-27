@@ -3,7 +3,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -25,7 +25,7 @@
       <ul class="nav navbar-nav"><li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -59,20 +59,20 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/ccb-hms/scDiagnostics/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>scDiagnostics: Single-Cell Diagnostics Package</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/HEAD/R/scDiagnostics-package.R" class="external-link"><code>R/scDiagnostics-package.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/scDiagnostics-package.R" class="external-link"><code>R/scDiagnostics-package.R</code></a></small>
     <div class="hidden name"><code>scDiagnostics-package.Rd</code></div>
     </div>
 
@@ -87,7 +87,7 @@
     </div>
     <div id="visualization-of-query-vs-reference-multiple-cell-types-">
     <h2>Visualization of Query vs. Reference (Multiple Cell Types)</h2>
-    
+
 
 <p>Functions for visualizing differences between query and reference datasets across multiple cell types.</p><ul><li><p><code><a href="boxplotPCA.html">boxplotPCA</a></code>: Boxplots of PCA scores for cell types.</p></li>
 <li><p><code><a href="calculateDiscriminantSpace.html">calculateDiscriminantSpace</a></code>: Calculates discriminant space, with a plot method for visualization.</p></li>
@@ -96,7 +96,7 @@
 </ul></div>
     <div id="visualization-of-query-vs-reference-one-cell-type-">
     <h2>Visualization of Query vs. Reference (One Cell Type)</h2>
-    
+
 
 <p>Functions for visualizing differences between query and reference datasets for a specific cell type.</p><ul><li><p><code><a href="compareCCA.html">compareCCA</a></code>: Compares CCA results, with a plot method for visualization.</p></li>
 <li><p><code><a href="comparePCA.html">comparePCA</a></code>: Compares PCA results, with a plot method for visualization.</p></li>
@@ -105,14 +105,14 @@
 </ul></div>
     <div id="visualization-of-marker-expressions">
     <h2>Visualization of Marker Expressions</h2>
-    
+
 
 <p>Functions for to visualize and compare the expression of markers between a reference and a query dataset.</p><ul><li><p><code><a href="plotGeneExpressionDimred.html">plotGeneExpressionDimred</a></code>: Plots gene expression in a dimensionality reduction space.</p></li>
 <li><p><code><a href="plotMarkerExpression.html">plotMarkerExpression</a></code>: Plots marker expression levels.</p></li>
 </ul></div>
     <div id="visualization-of-annotation-scores">
     <h2>Visualization of Annotation Scores</h2>
-    
+
 
 <p>Functions for visualizing quality control (QC) metrics or other characteristics of the data.</p><ul><li><p><code><a href="histQCvsAnnotation.html">histQCvsAnnotation</a></code>: Plots histograms of QC metrics versus annotations.</p></li>
 <li><p><code><a href="plotGeneSetScores.html">plotGeneSetScores</a></code>: Plots scores of gene sets.</p></li>
@@ -120,14 +120,14 @@
 </ul></div>
     <div id="calculation-of-correlation-distance-between-cell-types">
     <h2>Calculation of Correlation/Distance Between Cell Types</h2>
-    
+
 
 <p>Functions for calculating correlations and distances between different cell types.</p><ul><li><p><code><a href="calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation</a></code>: Calculates average pairwise correlation, with a plot method for visualization.</p></li>
 <li><p><code><a href="plotPairwiseDistancesDensity.html">plotPairwiseDistancesDensity</a></code>: Plots the density of pairwise distances.</p></li>
 </ul></div>
     <div id="calculation-of-statistical-tests-to-compare-two-datasets">
     <h2>Calculation of Statistical Tests to Compare Two Datasets</h2>
-    
+
 
 <p>Functions for performing statistical tests to compare two datasets.</p><ul><li><p><code><a href="calculateCramerPValue.html">calculateCramerPValue</a></code>: Calculates the p-value using Cramer's V.</p></li>
 <li><p><code><a href="calculateHotellingPValue.html">calculateHotellingPValue</a></code>: Calculates the p-value using Hotelling's T-squared test.</p></li>
@@ -136,28 +136,28 @@
 </ul></div>
     <div id="calculation-of-overlap-measures-genes-between-two-datasets">
     <h2>Calculation of Overlap Measures (Genes) Between Two Datasets</h2>
-    
+
 
 <p>Functions for calculating overlap measures of genes between two datasets.</p><ul><li><p><code><a href="calculateHVGOverlap.html">calculateHVGOverlap</a></code>: Calculates overlap of highly variable genes (HVG) between datasets.</p></li>
 <li><p><code><a href="calculateVarImpOverlap.html">calculateVarImpOverlap</a></code>: Calculates overlap of variable importance measures between datasets.</p></li>
 </ul></div>
     <div id="anomaly-detection-global-and-cell-type-specific-">
     <h2>Anomaly Detection (Global and Cell Type-Specific)</h2>
-    
+
 
 <p>Functions for detecting anomalies at both the global and cell type-specific levels.</p><ul><li><p><code><a href="detectAnomaly.html">detectAnomaly</a></code>: Detects anomalies in the data, with a plot method for visualization.</p></li>
 <li><p><code><a href="calculateCellSimilarityPCA.html">calculateCellSimilarityPCA</a></code>: Calculates cell similarity in PCA space, with a plot method for visualization.</p></li>
 </ul></div>
     <div id="calculation-of-distances-between-specific-cells-and-cell-types">
     <h2>Calculation of Distances Between Specific Cells and Cell Types</h2>
-    
+
 
 <p>Functions for calculating distances between specific cells and cell types.</p><ul><li><p><code><a href="calculateCellDistances.html">calculateCellDistances</a></code>: Calculates distances between cells, with a plot method for visualization.</p></li>
 <li><p><code><a href="calculateCellDistancesSimilarity.html">calculateCellDistancesSimilarity</a></code>: Calculates similarity based on cell distances, with a plot method for visualization.</p></li>
 </ul></div>
     <div id="misc">
     <h2>Misc</h2>
-    
+
 
 <p>Miscellaneous functions for various tasks.</p><ul><li><p><code><a href="projectPCA.html">projectPCA</a></code>: Projects new data into PCA space.</p></li>
 <li><p><code><a href="calculateCategorizationEntropy.html">calculateCategorizationEntropy</a></code>: Calculates categorization entropy for clusters.</p></li>
@@ -191,15 +191,15 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 
