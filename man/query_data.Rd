@@ -5,7 +5,7 @@
 \alias{query_data}
 \title{Query Single-Cell RNA-Seq Dataset}
 \format{
-An object of class \code{SingleCellExperiment} with 421 rows and 969 columns.
+An object of class \code{SingleCellExperiment} with 423 rows and 646 columns.
 }
 \source{
 The HeOrganAtlas dataset, available through the scRNAseq package.

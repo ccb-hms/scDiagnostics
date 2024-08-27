@@ -51,7 +51,7 @@ pc_plot <- boxplotPCA(query_data = query_data,
                       cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
                       query_cell_type_col = "SingleR_annotation", 
                       ref_cell_type_col = "expert_annotation", 
-                      pc_subset = 1:9)
+                      pc_subset = 1:3)
 pc_plot
 
 }

@@ -133,24 +133,6 @@ plot(anomaly_output,
 ```
 In this example, we analyze anomalies specifically for the "CD4" cell type. The anomaly scores are trained on the PCA projections of the "CD4" cells from the reference dataset. If query data is provided, anomaly scores for the query data are predicted based on the PCA projections of the query data onto the reference PCA space for the "CD4" cell type.
 
-Notice that if we use the expert_annotation column in the query_data, there are far less cells deemed to be anomalies based on the isolation forest model.
-
-```{r, fig.height=6, fig.width=12}
-# Perform anomaly detection
-anomaly_output <- detectAnomaly(reference_data = reference_data, 
-                                query_data = query_data, 
-                                ref_cell_type_col = "expert_annotation", 
-                                query_cell_type_col = "expert_annotation",
-                                pc_subset = 1:5,
-                                n_tree = 500,
-                                anomaly_treshold = 0.6)
-
-# Plot the output for the "CD4" cell type
-plot(anomaly_output, 
-     cell_type = "CD4", 
-     pc_subset = 1:5, 
-     data_type = "query")
-```
 
 
 
@@ -175,50 +157,10 @@ plot(anomaly_output,
 ```
 Setting `cell_type = NULL` means that the anomaly detection is done globally. The isolation forest is trained on PCA projections of all cells from the reference dataset. Anomaly scores are then predicted for the query data based on these global PCA projections. The plot provides a comprehensive view of anomalies across all cell types in the query dataset.
 
+#### Anomaly Detection on Reference Data
 
+Note that if you do not provide a query dataset to the `detectAnomaly` function, the function will only return the anomaly output data on the reference data.
 
-### Anomaly Detection with Reference Data Only
-This section demonstrates how to use the detectAnomaly function when only the reference dataset is provided. It includes both cell-type specific and global anomaly detection within the reference data itself.
-
-#### Example 3: Cell-Type Specific Anomaly Detection in Reference Data
-In this example, we analyze anomalies for the "CD4" cell type within the reference data. The isolation forest is trained on the PCA projections of the "CD4" cells, and the anomaly scores are computed for these cells.
-
-```{r, fig.height=6, fig.width=12}
-# Perform anomaly detection on reference data
-anomaly_output_ref_only <- detectAnomaly(reference_data = reference_data, 
-                                         ref_cell_type_col = "expert_annotation", 
-                                         pc_subset = 1:10,
-                                         n_tree = 500,
-                                         anomaly_treshold = 0.6)
-
-# Plot the output for the "CD4" cell type in the reference data
-plot(anomaly_output_ref_only, 
-     cell_type = "CD4", 
-     pc_subset = 1:5, 
-     data_type = "reference")
-```
-For the "CD4" cell type, anomaly scores are trained on the PCA projections of the "CD4" cells within the reference dataset. The plot visualizes these anomaly scores specifically for "CD4" cells in the reference data.
-
-#### Example 4: Global Anomaly Detection in Reference Data
-Here, we perform global anomaly detection using only the reference dataset. The isolation forest is trained on PCA projections of all cells combined from the reference data to identify global outliers.
-
-
-```{r, fig.height=6, fig.width=12}
-# Perform global anomaly detection on reference data only
-anomaly_output_ref_only_global <- detectAnomaly(reference_data = reference_data, 
-                                                ref_cell_type_col = "expert_annotation", 
-                                                cell_types = NULL,  # Global analysis
-                                                pc_subset = 1:10,
-                                                n_tree = 500,
-                                                anomaly_treshold = 0.6)
-
-# Plot the global anomaly scores for the reference data
-plot(anomaly_output_ref_only_global, 
-     cell_type = NULL,  # Plot all cell types
-     pc_subset = 1:5, 
-     data_type = "reference")
-```
-Setting `cell_type = NULL` in the reference data analysis results in global anomaly detection. The isolation forest is trained on PCA projections of all cells from the reference data combined. Anomalies are then identified across all cell types, and the plot provides a global view of these anomalies within the reference dataset.
 
 # Integrating Anomaly Detection with Cell Similarity Analysis Using PCA Loadings
 

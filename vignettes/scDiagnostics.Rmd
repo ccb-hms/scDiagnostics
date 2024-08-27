@@ -188,13 +188,18 @@ plotMarkerExpression(reference_data = reference_data,
 For a detailed example of all possible functions to visualize quality control and annotation score metrics, please refer to the "**Visualization of QC and Annotation Scores**" vignette.
 
 
-Visualizing gene set scores on dimensional reduction plots helps in understanding how gene set or pathway activity varies across single cells in reduced dimensional spaces such as PCA, t-SNE, or UMAP. The `plotGeneSetScores` function allows you to plot these scores on the specified reduced dimensions, offering insights into the spatial distribution of gene set activities in the context of single-cell data.
+The scatter plot illustrates the relationship between key QC metrics (e.g., total library size, percentage of mitochondrial genes) and cell type annotation scores. This visualization aids in assessing how QC factors might influence or correlate with the assigned cell type annotations.
+
 ```{r, fig.height=6, fig.width=12}
-plotGeneSetScores(se_object = query_data, 
-                  method = "PCA", 
-                  score_col = "gene_set_scores")
+# Generate scatter plot
+library(ggplot2)
+p1 <- plotQCvsAnnotation(se_object = qc_data,
+                         cell_type_col = "SingleR_annotation",
+                         qc_col = "total",
+                         score_col = "annotation_scores")
+p1 + xlab("Library Size")
 ```
-The function returns a `ggplot` object displaying scatter plots of gene set or pathway scores on the specified reduced dimensions. For PCA, the plot includes the percentage of variance explained for each principal component in the legend.
+This scatter plot can uncover patterns, such as whether cells with larger library sizes or higher mitochondrial content are linked to specific annotations. For example, cells exhibiting unusually high mitochondrial content may be flagged as low-quality or stressed, which could impact their annotation accuracy.
 
 
 
@@ -218,20 +223,6 @@ This function is useful for identifying similarities and differences in cellular
 
 
 
-## `comparePCA`
-
-The comparePCA function allows for the comparison of principal components (PCs) obtained from separate PCA analyses on reference and query datasets for a specific cell type. This comparison can be performed using either cosine similarity or correlation metrics, offering insights into the relationship between the subspaces spanned by the PCs of the two datasets.
-```{r, fig.height=6, fig.width=12}
-# Perform CCA comparison
-similarity_matrix <- comparePCA(
-    query_data = query_data_cd4,
-    reference_data = ref_data_cd4,
-    query_cell_type_col = "expert_annotation",
-    ref_cell_type_col = "expert_annotation")
-# Visualize the similarity matrix as a heatmap
-plot(similarity_matrix)
-```
-The resulting similarity matrix can be visualized as a heatmap using the plot function. This heatmap provides a clear graphical representation of how similar or different the PCs of the reference and query datasets are, based on the chosen metric.
 
 ## `plotWassersteinDistance`
 
@@ -292,24 +283,6 @@ plot(cor_matrix_avg)
 The displays a heatmap where each cell type pair is represented with a color indicating the average correlation value between them. This visualization helps in assessing the similarity between cell types across the query and reference datasets.
 
 
-## `regressPC`
-
-The `regressPC` function performs linear regression of a covariate of interest onto one or more principal components (PCs) based on the data contained within a `SingleCellExperiment` object. This method is useful for quantifying the variance explained by a covariate, which can be applied to various aspects of single-cell analysis, such as evaluating batch effects, clustering homogeneity, or aligning query and reference datasets in cell type annotations.
-```{r, fig.height=6, fig.width=12}
-# Perform PC regression with query data
-regress_res <- regressPC(reference_data = reference_data,
-                         query_data = query_data,
-                         ref_cell_type_col = "expert_annotation",
-                         query_cell_type_col = "SingleR_annotation",
-                         cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                         pc_subset = 1:15)
-# Plot the results
-plot(regress_res, plot_type = "r_squared")
-plot(regress_res, plot_type = "p-value")
-```
-
-
-The function calculates how much variance in the data matrix is explained by a covariate through principal component regression. It computes the R-squared value for each principal component and derives the variance contribution of the covariate for each principal component.
 
 
 # Detection of Annotation Anomalies

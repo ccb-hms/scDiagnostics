@@ -79,7 +79,7 @@ set.seed(0)
 
 The `plotCellTypeMDS` function creates a scatter plot using Multidimensional Scaling (MDS) to visualize the similarity between cell types in query and reference datasets. This function generates a MDS plot that colors cells according to their types based on a dissimilarity matrix calculated from a specified gene set.
 
-```{r, fig.height=10, fig.width=16}
+```{r, fig.height=6, fig.width=12}
 # Generate the MDS scatter plot with cell type coloring
 plotCellTypeMDS(query_data = query_data, 
                 reference_data = reference_data, 
@@ -88,21 +88,12 @@ plotCellTypeMDS(query_data = query_data,
                 ref_cell_type_col = "expert_annotation")
 ```
 
-Notice how much more aligned the cell types are when using the expert annotation
-```{r, fig.height=10, fig.width=16}
-# Plot the PCA data
-plotCellTypeMDS(query_data = query_data, 
-                reference_data = reference_data,
-                cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                query_cell_type_col = "expert_annotation", 
-                ref_cell_type_col = "expert_annotation")
-```
 
 ## Plot Principal Components for Different Cell Types
 
 The `plotCellTypePCA` function projects the query dataset onto the PCA space of the reference dataset. It then plots specified principal components for different cell types, allowing comparison of PCA results between query and reference datasets.
 
-```{r, fig.height=10, fig.width=16}
+```{r, fig.height=6, fig.width=12}
 # Generate the MDS scatter plot with cell type coloring
 plotCellTypePCA(query_data = query_data, 
                 reference_data = reference_data,
@@ -117,14 +108,14 @@ Here, `plotCellTypePCA` projects the query data into the PCA space of the refere
 ## Plot Principal Components as Boxplots
 
 The `boxplotPCA` function provides a boxplot visualization of principal components for different cell types across query and reference datasets. This function helps in comparing the distributions of PCA scores for specified cell types and datasets.
-```{r, fig.height=20, fig.width=16}
+```{r, fig.height=10, fig.width=12}
 # Plot the PCA data as boxplots
 boxplotPCA(query_data = query_data, 
            reference_data = reference_data,
            cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
            query_cell_type_col = "SingleR_annotation", 
            ref_cell_type_col = "expert_annotation", 
-           pc_subset = 1:9)
+           pc_subset = 1:6)
 ```
 In this example, `boxplotPCA` generates boxplots for the specified principal components, showing the distribution of PCA scores for different cell types and datasets.
 
@@ -146,7 +137,7 @@ The function performs the following steps for each pairwise combination of cell 
 ### Example Application
 
 First, applying the function to the `SingleR` annotation.
-```{r, fig.height=10, fig.width=16}
+```{r, fig.height=6, fig.width=12}
 # Compute important variables for all pairwise cell comparisons
 disc_output <- calculateDiscriminantSpace(
   reference_data = reference_data,
@@ -157,16 +148,13 @@ disc_output <- calculateDiscriminantSpace(
 # Generate scatter and boxplot
 plot(disc_output, plot_type = "scatterplot")
 plot(disc_output, cell_types = "CD4-CD8", plot_type = "boxplot")
-
-# Check comparison
-table(Expert_Annotation = query_data$expert_annotation, SingleR = query_data$SingleR_annotation)
 ```
 
 
 ### Using Mahalanobis Distance for Anomaly Detection in Single-Cell RNA-Seq Data
 
 We aim to evaluate whether a new batch of query cells fits well within established reference cell types or if there are cells exhibiting unusual characteristics. We will use the Mahalanobis distance calculated by the `calculateDiscriminantSpace` function to achieve this.
-```{r, fig.height=10, fig.width=16}
+```{r, fig.height=6, fig.width=12}
 # Perform discriminant analysis and projection
 discriminant_results <- calculateDiscriminantSpace(
   reference_data = reference_data,
@@ -179,7 +167,7 @@ discriminant_results <- calculateDiscriminantSpace(
 ```
 
 You can extract and analyze the Mahalanobis distances of query cells relative to reference cell types. High Mahalanobis distances may indicate potential anomalies or novel cell states.
-```{r, fig.height=10, fig.width=16}
+```{r, fig.height=6, fig.width=12}
 # Extract Mahalanobis distances
 mahalanobis_distances <- discriminant_results$`CD4-CD8`$query_mahalanobis_dist
 
@@ -189,7 +177,7 @@ anomalies <- mahalanobis_distances[mahalanobis_distances > threshold]
 ```
 
 You can now create visualizations to illustrate the distribution of Mahalanobis distances and highlight potential anomalies.
-```{r, fig.height=10, fig.width=16}
+```{r, fig.height=6, fig.width=12}
 # Load ggplot2 for visualization
 library(ggplot2)
 
@@ -219,7 +207,7 @@ The `plotGeneExpressionDimred` function plots the expression of a specific gene 
 
 
 Let's visualize the expression of the gene **VPREB3** on a PCA plot:
-```{r, fig.height=10, fig.width=16}
+```{r, fig.height=6, fig.width=12}
 # Visualize VPREB3 gene on a PCA plot
 plotGeneExpressionDimred(se_object = query_data, 
                          method = "PCA", 
@@ -231,7 +219,7 @@ In this example, we visualize the expression of the **VPREB3** gene on a PCA plo
 When executed, this function generates a scatter plot with cells colored by their expression levels of **VPREB3**. The resulting plot can help identify clusters of cells with similar expression patterns or highlight how expression varies across the dataset.
 
 You can also visualize gene expression using other dimensional reduction methods, such as t-SNE:
-```{r, fig.height=10, fig.width=16}
+```{r, fig.height=6, fig.width=12}
 # Visualize VPREB3 gene on a PCA plot
 plotGeneExpressionDimred(se_object = query_data, 
                          method = "TSNE", 
@@ -245,7 +233,7 @@ This command generates a t-SNE plot where cells are color-coded by their express
 ## Plotting Gene Expression Distribution
 
 The `plotMarkerExpression` function compares the distribution of a specific gene's expression across an overall dataset and within specific cell types. It generates density plots to visualize these distributions, providing a graphical means of assessing the similarity between reference and query datasets. The function also applies a z-rank normalization to make expression values comparable between datasets.
-```{r, fig.height=10, fig.width=16}
+```{r, fig.height=6, fig.width=12}
 plotMarkerExpression(
   reference_data = reference_data, 
   query_data = query_data, 
