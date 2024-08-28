@@ -220,6 +220,7 @@ influence or correlate with the predicted cell types.</p>
 <span>                         qc_col <span class="op">=</span> <span class="st">"total"</span>,</span>
 <span>                         score_col <span class="op">=</span> <span class="st">"annotation_scores"</span><span class="op">)</span></span>
 <span><span class="va">p1</span> <span class="op">+</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Library Size"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/QCandAnnotationScores/plotQCvsAnnotation.png"></p>
 <p>A scatter plot can reveal patterns such as whether cells with higher
 library sizes or mitochondrial content tend to be associated with
 specific annotations. For instance, cells with unusually high
@@ -238,6 +239,7 @@ of these variables across cells.</p>
 <span>                   cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span>
 <span>                   qc_col <span class="op">=</span> <span class="st">"percent_mito"</span>, </span>
 <span>                   score_col <span class="op">=</span> <span class="st">"annotation_scores"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/QCandAnnotationScores/histQCvsAnnotation.png"></p>
 <p>Histograms are useful for assessing the overall distribution of QC
 metrics and annotation scores. For example, if the majority of cells
 have high percent_mito, it might indicate that many cells are stressed
@@ -258,6 +260,7 @@ activities are distributed across cell clusters.</p>
 <span>                  method <span class="op">=</span> <span class="st">"PCA"</span>, </span>
 <span>                  score_col <span class="op">=</span> <span class="st">"gene_set_scores"</span>, </span>
 <span>                  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/QCandAnnotationScores/plotGeneSetScores.png"></p>
 <p>By visualizing gene set scores on PCA or UMAP plots, one can identify
 clusters of cells with high or low gene set activities. This can help in
 understanding the biological relevance of different gene sets or

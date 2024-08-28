@@ -242,6 +242,7 @@ terms of their proximity to different reference populations.</p>
 <span></span>
 <span><span class="co"># Plot distances for CD4 and CD8 cells</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">distance_data</span>, ref_cell_type <span class="op">=</span> <span class="st">"CD4"</span>, cell_names <span class="op">=</span> <span class="va">cd4_top6_anomalies</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/CellDistancesDiagnostics/calculateCellDistances1.png"></p>
 <p>For CD4 cells, you might observe that the query cells are located
 much further away from the reference cells, indicating a significant
 divergence in their density distributions. This suggests that the CD4
@@ -257,6 +258,7 @@ identifying cell types with notable differences or similarities.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot distances for CD8 cells</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">distance_data</span>, ref_cell_type <span class="op">=</span> <span class="st">"CD8"</span>, cell_names <span class="op">=</span> <span class="va">cd4_top6_anomalies</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/CellDistancesDiagnostics/calculateCellDistances2.png"></p>
 </div>
 </div>
 <div class="section level2">

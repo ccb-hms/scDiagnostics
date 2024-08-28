@@ -296,6 +296,7 @@ the query data onto the reference PCA space for the “CD4” cell type.</p>
 <span>     cell_type <span class="op">=</span> <span class="st">"CD4"</span>, </span>
 <span>     pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, </span>
 <span>     data_type <span class="op">=</span> <span class="st">"query"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/AnnotationAnomalies/detectAnomaly1.png"></p>
 <p>In this example, we analyze anomalies specifically for the “CD4” cell
 type. The anomaly scores are trained on the PCA projections of the “CD4”
 cells from the reference dataset. If query data is provided, anomaly
@@ -325,6 +326,7 @@ datasets.</p>
 <span>     cell_type <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># Plot all cell types</span></span>
 <span>     pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, </span>
 <span>     data_type <span class="op">=</span> <span class="st">"query"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/AnnotationAnomalies/detectAnomaly2.png"></p>
 <p>Setting <code>cell_type = NULL</code> means that the anomaly
 detection is done globally. The isolation forest is trained on PCA
 projections of all cells from the reference dataset. Anomaly scores are
