@@ -41,7 +41,7 @@ navbar:
   right:
   - icon: fa-github
     href: https://github.com/ccb-hms/scDiagnostics
-  right: lightswitch
+  - lightswitch
 
 reference:
   - title: Visualization of Cell Type Annotations
