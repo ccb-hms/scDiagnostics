@@ -38,10 +38,6 @@ navbar:
       href: reference/index.html
     - text: News
       href: news/index.html
-  right:
-  - icon: fa-github
-    href: https://github.com/ccb-hms/scDiagnostics
-  - lightswitch
 
 reference:
   - title: Visualization of Cell Type Annotations
@@ -89,3 +85,8 @@ reference:
     contents:
       - projectPCA 
       - calculateCategorizationEntropy     
+
+ right:
+  - icon: fa-github
+    href: https://github.com/ccb-hms/scDiagnostics
+  - lightswitch
