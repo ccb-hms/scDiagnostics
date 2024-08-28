@@ -38,6 +38,9 @@ navbar:
       href: reference/index.html
     - text: News
       href: news/index.html
+  right:
+  - icon: fa-github
+    href: https://github.com/ccb-hms/scDiagnostics
   right: lightswitch
 
 reference:
@@ -86,7 +89,3 @@ reference:
     contents:
       - projectPCA 
       - calculateCategorizationEntropy     
-
-right:
-  - icon: fa-github
-    href: https://github.com/ccb-hms/scDiagnostics
