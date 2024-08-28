@@ -96,6 +96,8 @@ p1 <- plotQCvsAnnotation(se_object = qc_data,
                          score_col = "annotation_scores")
 p1 + ggplot2::xlab("Library Size")
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/QCandAnnotationScores/plotQCvsAnnotation.png)
+
 A scatter plot can reveal patterns such as whether cells with higher library sizes or mitochondrial content tend to be associated with specific annotations. For instance, cells with unusually high mitochondrial content might be identified as low-quality or stressed, potentially affecting their annotations.
 
 ## Histograms: QC Stats and Annotation Scores Visualization
@@ -111,6 +113,8 @@ histQCvsAnnotation(se_object = query_data,
                    qc_col = "percent_mito", 
                    score_col = "annotation_scores")
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/QCandAnnotationScores/histQCvsAnnotation.png)
+
 Histograms are useful for assessing the overall distribution of QC metrics and annotation scores. For example, if the majority of cells have high percent_mito, it might indicate that many cells are stressed or dying, which could impact the quality of the data.
 
 # Visualization of Gene Sets or Pathway Scores on Dimensional Reduction Plots
@@ -123,6 +127,8 @@ plotGeneSetScores(se_object = query_data,
                   score_col = "gene_set_scores", 
                   pc_subset = 1:3)
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/QCandAnnotationScores/plotGeneSetScores.png)
+
 By visualizing gene set scores on PCA or UMAP plots, one can identify clusters of cells with high or low gene set activities. This can help in understanding the biological relevance of different gene sets or pathways in various cell states or types.
 
 

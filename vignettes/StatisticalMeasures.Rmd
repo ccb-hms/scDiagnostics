@@ -172,6 +172,7 @@ nn_output <- calculateNearestNeighborProbabilities(
 # Plot the results
 plot(nn_output, cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"))
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/StatisticalMeasures/calculateNearestNeighborProbabilities.png)
 
 In summary, the `calculateNearestNeighborProbabilities` function provides a robust method for classifying query cells based on nearest neighbor analysis in PCA space. This can be particularly useful for understanding how query cells relate to known reference datasets and for visualizing these relationships across different cell types.
 
@@ -221,10 +222,14 @@ regress_res <- regressPC(reference_data = reference_data,
 
 # Plot results showing R-squared values
 plot(regress_res, plot_type = "r_squared")
-
+```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/StatisticalMeasures/regressPC1.png)
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot results showing p-values
 plot(regress_res, plot_type = "p-value")
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/StatisticalMeasures/regressPC2.png)
+
 In this example, `regressPC` is used to perform regression analysis on principal components 1 to 15 from the reference dataset. The results are then visualized using plots showing the R-squared values and p-values.
 
 If you also have a query dataset and want to compare it with the reference dataset, you can include it in the analysis:
@@ -239,10 +244,14 @@ regress_res <- regressPC(reference_data = reference_data,
 
 # Plot results showing R-squared values
 plot(regress_res, plot_type = "r_squared")
+```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/StatisticalMeasures/regressPC3.png)
 
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot results showing p-values
 plot(regress_res, plot_type = "p-value")
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/StatisticalMeasures/regressPC4.png)
 
 In this case, the function projects the query data onto the principal components of the reference data and performs regression analysis. The results are visualized in the same way, providing insights into how well the principal components from the query data align with those from the reference data.
 

@@ -87,7 +87,7 @@ plotCellTypeMDS(query_data = query_data,
                 query_cell_type_col = "SingleR_annotation", 
                 ref_cell_type_col = "expert_annotation")
 ```
-
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/VisualizationTools/plotCellTypeMDS.png)
 
 ## Plot Principal Components for Different Cell Types
 
@@ -102,13 +102,15 @@ plotCellTypePCA(query_data = query_data,
                 ref_cell_type_col = "expert_annotation", 
                 pc_subset = 1:3)
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/VisualizationTools/plotCellTypePCA.png)
+
 Here, `plotCellTypePCA` projects the query data into the PCA space of the reference data and plots the specified principal components. The `pc_subset` argument allows you to select which principal components to display.
 
 
 ## Plot Principal Components as Boxplots
 
 The `boxplotPCA` function provides a boxplot visualization of principal components for different cell types across query and reference datasets. This function helps in comparing the distributions of PCA scores for specified cell types and datasets.
-```{r, fig.height=5, fig.width=10, fig.show='hide'}
+```{r, fig.height=5, fig.width=10}
 # Plot the PCA data as boxplots
 boxplotPCA(query_data = query_data, 
            reference_data = reference_data,
@@ -117,6 +119,8 @@ boxplotPCA(query_data = query_data,
            ref_cell_type_col = "expert_annotation", 
            pc_subset = 1:3)
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/VisualizationTools/boxplotPCA.png)
+
 In this example, `boxplotPCA` generates boxplots for the specified principal components, showing the distribution of PCA scores for different cell types and datasets.
 
 
@@ -148,7 +152,7 @@ disc_output <- calculateDiscriminantSpace(
 # Generate scatter and boxplot
 plot(disc_output, plot_type = "scatterplot")
 ```
-
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/VisualizationTools/calculateDiscriminantSpace1.png)
 
 ### Using Mahalanobis Distance for Anomaly Detection in Single-Cell RNA-Seq Data
 
@@ -192,6 +196,7 @@ ggplot(distances_df, aes(x = Distance, fill = Anomaly)) +
        y = "Frequency") +
   theme_bw()
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/VisualizationTools/calculateDiscriminantSpace2.png)
 
 - **Low Mahalanobis Distances**: These query cells align well with the reference cell types, suggesting they are similar to the established cell types.
 
@@ -213,6 +218,8 @@ plotGeneExpressionDimred(se_object = query_data,
                          pc_subset = 1:3, 
                          feature = "VPREB3")
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/VisualizationTools/plotGeneExpressionDimred.png)
+
 In this example, we visualize the expression of the **VPREB3** gene on a PCA plot derived from the `query_data` dataset. The `method` argument specifies the dimensional reduction technique, which in this case is "PCA." The `pc_subset` argument allows us to focus on specific principal components (PCs), here selecting the first five. The `feature` argument is the name of the gene we want to visualize.
 
 When executed, this function generates a scatter plot with cells colored by their expression levels of **VPREB3**. The resulting plot can help identify clusters of cells with similar expression patterns or highlight how expression varies across the dataset.
@@ -233,6 +240,8 @@ plotMarkerExpression(
   cell_type = "B_and_plasma"
 )
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/VisualizationTools/plotMarkerExpression.png)
+
 In this example, the function compares the expression distribution of the **VPREB3** gene between the reference and query datasets. The `ref_cell_type_col` and `query_cell_type_col` arguments specify the columns in `colData` that identify the cell types in the reference and query datasets, respectively. The `cell_type` argument specifies the cell type of interest, and `gene_name` is the gene whose expression distribution we wish to compare.
 
 When executed, this function generates two density plots: one showing the overall gene expression distribution across all cells and another focusing on the specified cell type. These plots help identify whether the gene's expression levels are similar between the reference and query datasets, providing insight into dataset alignment.

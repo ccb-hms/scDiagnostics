@@ -142,6 +142,7 @@ cca_comparison <- compareCCA(query_data = query_data_cd4,
                              pc_subset = 1:5)
 plot(cca_comparison)
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/compareCCA.png)
 
 ## `comparePCA`
 
@@ -164,6 +165,7 @@ pca_comparison <- comparePCA(query_data = query_data_cd4,
                              metric = "cosine")
 print(pca_comparison)
 ```
+
 
 Note that there is also a plot method for the object return for `comparePCA`. See reference manual for details.
 
@@ -195,6 +197,7 @@ subspace_comparison$weighted_cosine_similarity
 # Plot output for PCA subspace comparison (if a plot method is available)
 plot(subspace_comparison)
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/comparePCASubspace.png)
 
 In the results: 
 
@@ -242,6 +245,8 @@ plotPairwiseDistancesDensity(query_data = query_data,
                              distance_metric = "euclidean", 
                              correlation_method = "spearman")
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/plotPairwiseDistancesDensity.png)
+
 This example demonstrates how to compare CD4 cells between a query and reference dataset, with PCA applied to the first five principal components and pairwise Euclidean distances calculated. The output is a density plot that helps visualize the distribution of these distances, aiding in the interpretation of the similarity between the two datasets.
 
 
@@ -289,6 +294,7 @@ plotWassersteinDistance(query_data = query_data_cd4,
                         pc_subset = 1:5,
                         alpha = 0.05)
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/plotWassersteinDistance.png)
 
 This example demonstrates how to use the `plotWassersteinDistance` function to compare Wasserstein distances between CD4 cells in the reference and query datasets. The resulting plot helps determine whether the difference between the datasets is statistically significant.
 
