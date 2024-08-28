@@ -26,11 +26,9 @@ devtools::install_github("ccb-hms/scDiagnostics",
 
 # Usage
 
-`scDiagnostics` is designed to be user-friendly and integrates seamlessly into any scRNA-seq analysis workflow. By providing robust diagnostic tools, the package helps ensure the accuracy and reliability of cell type annotations, leading to more meaningful and reproducible results.
-
 You may browse the [scDiagnostics website](https://ccb-hms.github.io/scDiagnostics/) website for an overview of the functionality of the package. The complete documentation of each available function in `scDiagnostics`, which includes implementation details and working examples, is available in the [reference tab](https://ccb-hms.github.io/scDiagnostics/reference/index.html).
 
-# Key Features
+## Key Features
 
 To get an overview of the main functionality of the scDiagnostics package, refer to the [Getting Started with scDiagnostics](https://ccb-hms.github.io/scDiagnostics/articles/scDiagnostics.html) vignette. The links below direct you to vignettes that explore functions organized around a common theme or purpose, highlighting how they interact or complement each other in specific contexts.
 
