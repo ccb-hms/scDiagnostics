@@ -215,9 +215,10 @@ enhancing the accuracy and reliability of your analyses.</p>
 <p>The <code>detectAnomaly</code> function integrates dimensionality
 reduction via PCA with the isolation forest algorithm to detect
 anomalies in single-cell data. By projecting both reference and query
-datasets (if available) onto a PCA space, the function leverages the
-isolation forest method to pinpoint outliers or deviations in the data.
-This approach is highly versatile:</p>
+datasets (if available) onto the PCA space of the reference data, the
+function trains an isolation forest model on reference data in PCA space
+to pinpoint anomalies in the reference or query data. This approach is
+highly versatile:</p>
 <ul>
 <li>
 <strong>Reference Only</strong>: Compute anomaly scores solely for
@@ -237,17 +238,17 @@ statistical outputs to help you interpret the anomalies detected.</li>
 <div class="section level4">
 <h4 id="parameters">Parameters<a class="anchor" aria-label="anchor" href="#parameters"></a>
 </h4>
-<p>The function takes a <strong>SingleCellExperiment</strong> object as
-<strong>reference_data</strong> to build a PCA space and train an
-isolation forest model, with an optional <strong>query_data</strong> for
-projecting onto this PCA space for anomaly detection. You can specify
-cell type annotations through <strong>ref_cell_type_col</strong> and
-<strong>query_cell_type_col</strong>, and limit the analysis to certain
-cell types using the <strong>cell_types</strong> parameter. The function
-allows you to select specific principal components via
-<strong>pc_subset</strong>, adjust the number of trees with
-<strong>n_tree</strong>, and set an <strong>anomaly_threshold</strong>
-for classifying anomalies.</p>
+<p>The function takes a <code>SingleCellExperiment</code> object as
+<code>reference_data</code> and trains an isolation forest model on the
+reference PCA-projected data, with an optional <code>query_data</code>
+for projecting onto this PCA space for anomaly detection. You can
+specify cell type annotations through <code>ref_cell_type_col</code> and
+<code>query_cell_type_col</code>, and limit the analysis to certain cell
+types using the <code>cell_types</code> parameter. The function allows
+you to select specific principal components to use to train the
+isolation forest via <code>pc_subset</code>, adjust the number of trees
+with <code>n_tree</code>, and set an <code>anomaly_threshold</code> for
+classifying anomalies.</p>
 </div>
 <div class="section level4">
 <h4 id="return-value">Return Value<a class="anchor" aria-label="anchor" href="#return-value"></a>
