@@ -116,6 +116,8 @@ cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, decreas
 # Plot distances for CD4 and CD8 cells
 plot(distance_data, ref_cell_type = "CD4", cell_names = cd4_top6_anomalies)
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/CellDistancesDiagnostics/calculateCellDistances1.png)
+
 For CD4 cells, you might observe that the query cells are located much further away from the reference cells, indicating a significant divergence in their density distributions. This suggests that the CD4 query cells are less similar to the CD4 reference cells, showing greater variation or potential anomalies.
 
 
@@ -125,6 +127,7 @@ In contrast, for CD8 cells, the plots might reveal more overlap between the dens
 # Plot distances for CD8 cells
 plot(distance_data, ref_cell_type = "CD8", cell_names = cd4_top6_anomalies)
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/CellDistancesDiagnostics/calculateCellDistances2.png)
 
 # Calculating Similarity Measures
 

@@ -128,11 +128,11 @@ query_data_cd4 <- runPCA(query_data_cd4)
 
 **The functions introduced in this section represent just a subset of the functions available in the `scDiagnostics` package.** 
 
-For a complete overview and detailed demonstrations of all the functions included in the package, please refer to the designated vignettes. Each vignette is designed to address specific aspects of `scDiagnostics`, and this vignette highlights key functionalities to illustrate their applications. These vignettes provide in-depth guidance and examples for each function, helping users fully leverage the capabilities of `scDiagnostics` in their single-cell analyses. 
+For a complete overview and detailed demonstrations of all the functions included in the package, please refer to the designated vignettes which you may browse from the [pkgdown site for `scDiagnostics`](https://ccb-hms.github.io/scDiagnostics/). Each vignette is designed to address specific aspects of `scDiagnostics`, and this vignette highlights key functionalities to illustrate their applications. These vignettes provide in-depth guidance and examples for each function, helping users fully leverage the capabilities of `scDiagnostics` in their single-cell analyses. 
 
 # Visualization of Query vs. Reference Datasets
 
-For a detailed example of all possible functions to visualize reference and query datasets, please refer to the "**Visualization of Cell Type Annotations**" vignette.
+For a detailed example of all possible functions to visualize reference and query datasets, please refer to the [Visualization of Cell Type Annotations](https://ccb-hms.github.io/scDiagnostics/articles/VisualizationTools.html) vignette.
 
 
 ## `plotCellTypePCA`
@@ -149,6 +149,9 @@ pc_plot <- plotCellTypePCA(query_data = query_data,
 # Display plot
 pc_plot
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/plotCellTypePCA.png)
+
+
 The function returns a `ggplot` object featuring pairwise scatter plots of the selected principal components. Each plot compares how different cell types from the query and reference datasets project onto the PCA space. This visualization aids in identifying how cell types distribute across PCs and facilitates comparisons between datasets.
 
 The `reference_data` argument contains the reference cell data, which serves as the foundation for defining the PC space. The `query_data` parameter includes the query cell data that will be projected. The function uses the `ref_cell_type_col` and `query_cell_type_col` to identify the relevant cell type annotations in the reference and query datasets.
@@ -162,10 +165,14 @@ disc_output <- calculateDiscriminantSpace(reference_data = reference_data,
                                           ref_cell_type_col = "expert_annotation",
                                           query_cell_type_col = "SingleR_annotation")
 ```
+
+
 The function returns a comprehensive output that includes discriminant eigenvalues and eigenvectors, which represent the variance explained by each discriminant axis and are used to project the data. It also provides the projections of the reference and query data onto the discriminant space. The Mahalanobis distances between the query and reference cell types are calculated, offering insights into how close the query projections are to the reference. The cosine similarity scores provide another metric to assess the similarity between the datasets.
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 plot(disc_output, plot_type = "scatterplot")
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/calculateDiscriminantSpace.png)
+
 Alternatively, you can create a boxplot comparing query and reference projections for a specific cell type. See the reference manual for an example.
 
 ## Visualization of Marker Expressions
@@ -180,10 +187,10 @@ plotMarkerExpression(reference_data = reference_data,
                      gene_name = "VPREB3", 
                      cell_type = "B_and_plasma")
 ```
-
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/plotMarkerExpression.png)
 # Visualization of QC and Annotation Scores
 
-For a detailed example of all possible functions to visualize quality control and annotation score metrics, please refer to the "**Visualization of QC and Annotation Scores**" vignette.
+For a detailed example of all possible functions to visualize quality control and annotation score metrics, please refer to the [Visualization of QC and Annotation Scores](https://ccb-hms.github.io/scDiagnostics/articles/VisualizationTools.html) vignette.
 
 
 The scatter plot illustrates the relationship between key QC metrics (e.g., total library size, percentage of mitochondrial genes) and cell type annotation scores. This visualization aids in assessing how QC factors might influence or correlate with the assigned cell type annotations.
@@ -197,13 +204,15 @@ p1 <- plotQCvsAnnotation(se_object = qc_data,
                          score_col = "annotation_scores")
 p1 + xlab("Library Size")
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/plotQCvsAnnotation.png)
+
 This scatter plot can uncover patterns, such as whether cells with larger library sizes or higher mitochondrial content are linked to specific annotations. For example, cells exhibiting unusually high mitochondrial content may be flagged as low-quality or stressed, which could impact their annotation accuracy.
 
 
 
 # Evaluation of Dataset and Marker Gene Alignment
 
-For a detailed example of all possible functions to assess the alignment of datasets and marker genes, please refer to the "**Evaluation of Dataset and Marker Gene Alignment**" vignette.
+For a detailed example of all possible functions to assess the alignment of datasets and marker genes, please refer to the [Evaluation of Dataset and Marker Gene Alignment](https://ccb-hms.github.io/scDiagnostics/articles/https://ccb-hms.github.io/scDiagnostics/articles/DatasetAlignment.html) vignette.
 
 ## `compareCCA`
 
@@ -217,6 +226,8 @@ cca_comparison <- compareCCA(query_data = query_data_cd4,
 # Visualize results
 plot(cca_comparison)
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/compareCCA.png)
+
 This function is useful for identifying similarities and differences in cellular subpopulations or other high-dimensional datasets across different conditions. The combination of CCA with PCA provides a reliable framework for subspace comparison.
 
 
@@ -236,7 +247,7 @@ plotWassersteinDistance(query_data = query_data_cd4,
                         pc_subset = 1:5,
                         alpha = 0.05)
 ```
-
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/plotWassersteinDistance.png)
 
 
 ## `calculateVarImpOverlap`
@@ -260,7 +271,7 @@ rf_output$var_imp_comparison
 
 # Statistical Measures to Assess Dataset Alignment
 
-For a detailed example of all possible functions that implement statistical methods to assess cell type annotation, please refer to the "**Statistical Measures to Assess Dataset Alignment**" vignette.
+For a detailed example of all possible functions that implement statistical methods to assess cell type annotation, please refer to the [Statistical Measures to Assess Dataset Alignment](https://ccb-hms.github.io/scDiagnostics/articles/StatisticalMeasures.html) vignette.
 
 
 ## `calculateAveragePairwiseCorrelation`
@@ -287,7 +298,7 @@ Note that the object returned by `calculateAveragePairwiseCorrelation` includes 
 
 # Detection of Annotation Anomalies
 
-For a detailed example of all possible functions that implement statistical methods to assess cell type annotation, please refer to the "**Detection of Annotation Anomalies**" vignette.
+For a detailed example of all possible functions that implement statistical methods to assess cell type annotation, please refer to the [Detection of Annotation Anomalies](https://ccb-hms.github.io/scDiagnostics/articles/AnnotationAnomalies.html) vignette.
 
 The `detectAnomaly` function is designed to identify anomalies in single-cell data by leveraging PCA projections and the Isolation Forest algorithm. This method is useful for detecting anomalies or unusual patterns in single-cell datasets, whether you're analyzing a reference dataset or comparing a query dataset against it.
 
@@ -304,12 +315,12 @@ plot(anomaly_output,
      data_type = "query",
      pc_subset = 1:3)
 ```
-
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/detectAnomaly.png)
 
 
 # Calculation of Distances Between Specific Cells and Cell Types
 
-For a detailed example of all possible functions to analyze distances between specific cells and cell distributions, please refer to the "**Calculation of Distances Between Specific Cells and Cell Types**" vignette.
+For a detailed example of all possible functions to analyze distances between specific cells and cell distributions, please refer to the [Calculation of Distances Between Specific Cells and Cell Types](https://ccb-hms.github.io/scDiagnostics/articles/CellDistancesDiagnostics.html) vignette.
 
 
 The `calculateCellDistances` function computes distances both within a reference dataset and between query cells and reference cells for each specified cell type. By first projecting data onto a PCA space, the function calculates Euclidean distances to quantify similarities and dissimilarities. For each cell type, it generates pairwise distances within the reference dataset and measures how far each query cell is from all reference cells. This approach enables detailed analysis of cell type-specific distances, aiding in the identification of outliers and other patterns of interest.
@@ -333,16 +344,17 @@ distance_data <- calculateCellDistances(query_data = query_data,
 # Plot the densities of the distances
 plot(distance_data, ref_cell_type = "CD4", cell_names = cd4_top6_anomalies)
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/calculateCellDistances.png)
 
 # Conclusion
 
-In this vignette, we have introduced the core functionalities of the scDiagnostics package, providing a detailed guide on its use for scRNA-seq data analysis. We started by exploring the basic capabilities, including the visualization of query versus reference datasets through dimensionality reduction techniques. This approach allows for both the evaluation of multiple cell types simultaneously and the comparison of distributions for individual cell types.
+In this vignette, we have introduced the core functionalities of the `scDiagnostics` package, providing a detailed guide on its use for scRNA-seq data analysis. We started by exploring the basic capabilities, including the visualization of query versus reference datasets through dimensionality reduction techniques. This approach allows for both the evaluation of multiple cell types simultaneously and the comparison of distributions for individual cell types.
 
 We then delved into the visualization of annotation scores, which is essential for assessing the accuracy of cell type assignments. Following this, we discussed statistical methods for evaluating annotation precision. This includes assessing correlation between cell types and performing statistical tests to compare two datasets, offering a rigorous approach to validate cell type classifications.
 
 The vignette also covered techniques for detecting annotation anomalies, crucial for identifying and addressing potential issues that could impact data validity. Additionally, we explored cell distance diagnostics, focusing on analyzing distances between specific cells and various cell populations or distributions to better understand internal relationships and variations.
 
-Overall, this guide equips you with practical tools and methods to enhance the reliability and accuracy of your scRNA-seq data analysis using scDiagnostics, paving the way for more informed and meaningful biological interpretations.
+Overall, this guide equips you with practical tools and methods to enhance the reliability and accuracy of your scRNA-seq data analysis using `scDiagnostics`, paving the way for more informed and meaningful biological interpretations.
 
 ------------------------------------------------------------------------
 
