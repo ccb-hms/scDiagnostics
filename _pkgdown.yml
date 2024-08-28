@@ -10,9 +10,6 @@ last_built: 2024-08-24T18:56Z
 template:
   params:
     bootswatch: flatly
-  light-switch: true
-  theme: gruvbox-light
-  theme-dark: gruvbox-dark
 
 navbar:
   title: "scDiagnostics"
@@ -89,5 +86,3 @@ reference:
 right:
   - icon: fa-github
     href: https://github.com/ccb-hms/scDiagnostics
-  - text: Theme
-    lightswitch: true
