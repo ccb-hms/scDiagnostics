@@ -85,7 +85,7 @@ Through these capabilities, `scDiagnostics` empowers you to perform thorough and
 
 ### Description
 
-The `detectAnomaly` function integrates dimensionality reduction via PCA with the isolation forest algorithm to detect anomalies in single-cell data. By projecting both reference and query datasets (if available) onto a PCA space, the function leverages the isolation forest method to pinpoint outliers or deviations in the data. This approach is highly versatile:
+The `detectAnomaly` function integrates dimensionality reduction via PCA with the isolation forest algorithm to detect anomalies in single-cell data. By projecting both reference and query datasets (if available) onto the PCA space of the reference data, the function trains an isolation forest model on reference data in PCA space to pinpoint anomalies in the reference or query data. This approach is highly versatile:
 
 - **Reference Only**: Compute anomaly scores solely for the reference dataset to identify potential issues within the reference itself.
 - **Reference and Query**: Compare the query dataset against the reference to find anomalies in the query data that may not align with the established reference.
@@ -94,7 +94,7 @@ The function also provides detailed visualizations and statistical outputs to he
 
 ### Parameters
 
-The function takes a **SingleCellExperiment** object as **reference_data** to build a PCA space and train an isolation forest model, with an optional **query_data** for projecting onto this PCA space for anomaly detection. You can specify cell type annotations through **ref_cell_type_col** and **query_cell_type_col**, and limit the analysis to certain cell types using the **cell_types** parameter. The function allows you to select specific principal components via **pc_subset**, adjust the number of trees with **n_tree**, and set an **anomaly_threshold** for classifying anomalies.
+The function takes a `SingleCellExperiment` object as `reference_data` and trains an isolation forest model on the reference PCA-projected data, with an optional `query_data` for projecting onto this PCA space for anomaly detection. You can specify cell type annotations through `ref_cell_type_col` and `query_cell_type_col`, and limit the analysis to certain cell types using the `cell_types` parameter. The function allows you to select specific principal components to use to train the isolation forest via `pc_subset`, adjust the number of trees with `n_tree`, and set an `anomaly_threshold` for classifying anomalies.
 
 
 ### Return Value
