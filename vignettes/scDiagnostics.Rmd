@@ -130,7 +130,7 @@ query_data_cd4 <- runPCA(query_data_cd4)
 
 For a complete overview and detailed demonstrations of all the functions included in the package, please refer to the designated vignettes which you may browse from the [pkgdown site for `scDiagnostics`](https://ccb-hms.github.io/scDiagnostics/). Each vignette is designed to address specific aspects of `scDiagnostics`, and this vignette highlights key functionalities to illustrate their applications. These vignettes provide in-depth guidance and examples for each function, helping users fully leverage the capabilities of `scDiagnostics` in their single-cell analyses. 
 
-# Visualization of Query vs. Reference Datasets
+# Visualization of Cell Type Annotations
 
 For a detailed example of all possible functions to visualize reference and query datasets, please refer to the [Visualization of Cell Type Annotations](https://ccb-hms.github.io/scDiagnostics/articles/VisualizationTools.html) vignette.
 
