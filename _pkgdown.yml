@@ -10,6 +10,9 @@ last_built: 2024-08-24T18:56Z
 template:
   params:
     bootswatch: flatly
+  light-switch: true
+  theme: gruvbox-light
+  theme-dark: gruvbox-dark
 
 navbar:
   title: "scDiagnostics"
@@ -35,6 +38,7 @@ navbar:
       href: reference/index.html
     - text: News
       href: news/index.html
+  right: lightswitch
 
 reference:
   - title: Visualization of Cell Type Annotations
