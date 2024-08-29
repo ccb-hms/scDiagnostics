@@ -47,7 +47,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/scDiagnostics.html">Geting Started with scDiagnostics</a>
+      <a href="../articles/scDiagnostics.html">Getting Started with scDiagnostics</a>
     </li>
     <li>
       <a href="../articles/VisualizationTools.html">Visualization of Cell Type Annotations</a>
@@ -183,14 +183,14 @@ following code:</p>
 </h2>
 <p>To explore the full capabilities of the <code>scDiagnostics</code>
 package, you have the option to use your own data or leverage the
-datasets included within the scDiagnostics package itself. In this
-guide, we will focus on utilizing these built-in datasets, which provide
-a practical and convenient resource for demonstrating the features of
-<code>scDiagnostics.</code> These datasets are specifically designed to
-facilitate the exploration of the package’s functionalities and to help
-evaluate the accuracy of cell type assignments. You can learn more about
-the datasets by looking at the documentation of the datasets available
-in the reference manual.</p>
+datasets included within the <code>scDiagnostics</code> package itself.
+In this guide, we will focus on utilizing these built-in datasets, which
+provide a practical and convenient resource for demonstrating the
+features of <code>scDiagnostics.</code> These datasets are specifically
+designed to facilitate the exploration of the package’s functionalities
+and to help evaluate the accuracy of cell type assignments. You can
+learn more about the datasets by looking at the documentation of the
+datasets available in the reference manual.</p>
 <div class="section level3">
 <h3 id="loading-datasets">Loading Datasets<a class="anchor" aria-label="anchor" href="#loading-datasets"></a>
 </h3>
@@ -220,10 +220,10 @@ cell type assignment based on reference datasets. The
 <code>SingleR</code> annotations, providing a measure of confidence or
 relevance for the assigned cell types.</p>
 <p>By working with these datasets, you can gain hands-on experience with
-the various diagnostic tools and functions offered by scDiagnostics,
-allowing you to better understand how well it aligns query and reference
-datasets, assesses annotation ambiguity, and evaluates cluster
-heterogeneity and marker gene alignment.</p>
+the various diagnostic tools and functions offered by
+<code>scDiagnostics</code>, allowing you to better understand how well
+it aligns query and reference datasets, assesses annotation ambiguity,
+and evaluates cluster heterogeneity and marker gene alignment.</p>
 </div>
 <div class="section level3">
 <h3 id="subsetting-the-datasets">Subsetting the Datasets<a class="anchor" aria-label="anchor" href="#subsetting-the-datasets"></a>
@@ -361,8 +361,12 @@ datasets.</p>
 <span>                     query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span>
 <span>                     gene_name <span class="op">=</span> <span class="st">"VPREB3"</span>, </span>
 <span>                     cell_type <span class="op">=</span> <span class="st">"B_and_plasma"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/plotMarkerExpression.png">
-# Visualization of QC and Annotation Scores</p>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/plotMarkerExpression.png"></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="visualization-of-qc-and-annotation-scores">Visualization of QC and Annotation Scores<a class="anchor" aria-label="anchor" href="#visualization-of-qc-and-annotation-scores"></a>
+</h2>
 <p>For a detailed example of all possible functions to visualize quality
 control and annotation score metrics, please refer to the <a href="https://ccb-hms.github.io/scDiagnostics/articles/VisualizationTools.html">Visualization
 of QC and Annotation Scores</a> vignette.</p>
@@ -385,7 +389,6 @@ larger library sizes or higher mitochondrial content are linked to
 specific annotations. For example, cells exhibiting unusually high
 mitochondrial content may be flagged as low-quality or stressed, which
 could impact their annotation accuracy.</p>
-</div>
 </div>
 <div class="section level2">
 <h2 id="evaluation-of-dataset-and-marker-gene-alignment">Evaluation of Dataset and Marker Gene Alignment<a class="anchor" aria-label="anchor" href="#evaluation-of-dataset-and-marker-gene-alignment"></a>
@@ -419,6 +422,33 @@ different conditions. The combination of CCA with PCA provides a
 reliable framework for subspace comparison.</p>
 </div>
 <div class="section level3">
+<h3 id="plotpairwisedistancesdensity">
+<code>plotPairwiseDistancesDensity</code><a class="anchor" aria-label="anchor" href="#plotpairwisedistancesdensity"></a>
+</h3>
+<p>The <code>plotPairwiseDistancesDensity</code> function calculates and
+visualizes pairwise distances or correlations between cell types in
+query and reference datasets, aiding in the evaluation of cell type
+annotation consistency in single-cell RNA sequencing (scRNA-seq)
+analysis. Operating on <code>SingleCellExperiment</code> objects, it
+allows users to specify cell types of interest and compute either
+distances or correlation coefficients, with the option to project data
+into PCA space for focused analysis. The function generates a density
+plot using <code>ggplot2</code>, comparing cell relationships within and
+between datasets.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Example usage of the function</span></span>
+<span><span class="fu"><a href="../reference/plotPairwiseDistancesDensity.html">plotPairwiseDistancesDensity</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
+<span>                             reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
+<span>                             query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
+<span>                             ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
+<span>                             cell_type_query <span class="op">=</span> <span class="st">"CD8"</span>, </span>
+<span>                             cell_type_ref <span class="op">=</span> <span class="st">"CD8"</span>, </span>
+<span>                             pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
+<span>                             distance_metric <span class="op">=</span> <span class="st">"correlation"</span>,</span>
+<span>                             correlation_method <span class="op">=</span> <span class="st">"spearman"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/plotPairwiseDistancesDensity.png"></p>
+</div>
+<div class="section level3">
 <h3 id="plotwassersteindistance">
 <code>plotWassersteinDistance</code><a class="anchor" aria-label="anchor" href="#plotwassersteindistance"></a>
 </h3>
@@ -427,7 +457,7 @@ reliable framework for subspace comparison.</p>
 distances between CD4 cells in the reference and query datasets. The
 resulting plot provides insight into whether the differences between the
 datasets are statistically significant.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate the Wasserstein distance density plot</span></span>
 <span><span class="fu"><a href="../reference/plotWassersteinDistance.html">plotWassersteinDistance</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_cd4</span>,</span>
 <span>                        reference_data <span class="op">=</span> <span class="va">ref_data_cd4</span>, </span>
@@ -449,7 +479,7 @@ expression and cell types, with columns named
 which genes are most important for each dataset and then compare
 them.</p>
 <p>Here’s how you can do it with the function:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># RF function to compare (between datasets) which genes are best at differentiating cell types</span></span>
 <span><span class="va">rf_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateVarImpOverlap.html">calculateVarImpOverlap</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
 <span>                                    query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -485,7 +515,7 @@ and then averages these correlations for each cell type pair. This
 approach helps assess the similarity between cells in reference and
 query datasets and provides insights into the reliability of cell type
 annotations.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute pairwise correlations between specified cell types</span></span>
 <span><span class="va">cor_matrix_avg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation</a></span><span class="op">(</span></span>
 <span>  query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -531,17 +561,18 @@ dataset is provided, the function computes anomaly scores for the query
 data based on its PCA projections relative to the reference data. If no
 query data is provided, it computes anomaly scores for the reference
 data itself.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Perform anomaly detection</span></span>
 <span><span class="va">anomaly_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/detectAnomaly.html">detectAnomaly</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
 <span>                                query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                                ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
-<span>                                query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span><span class="op">)</span></span>
+<span>                                query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span>
+<span>                                pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co"># Plot the results for a specific cell type</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">anomaly_output</span>, </span>
 <span>     cell_type <span class="op">=</span> <span class="st">"CD4"</span>, </span>
 <span>     data_type <span class="op">=</span> <span class="st">"query"</span>,</span>
-<span>     pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<span>     pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/detectAnomaly.png"></p>
 </div>
 <div class="section level2">
@@ -569,7 +600,7 @@ computed using the <code>calculateCellDistances</code> function, will
 illustrate how these anomalous cells differ from the reference cells,
 providing insight into their potential outlier status and helping to
 visualize patterns within the data.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Identify outliers for CD4</span></span>
 <span><span class="va">cd4_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/detectAnomaly.html">detectAnomaly</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
 <span>                               query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -678,7 +709,7 @@ loaded via a namespace (and not attached):
 [51] generics_0.1.3            sparseMatrixStats_1.16.0 
 [53] munsell_0.5.1             scales_1.3.0             
 [55] glue_1.7.0                metapod_1.12.0           
-[57] tools_4.4.1               data.table_1.15.4        
+[57] tools_4.4.1               data.table_1.16.0        
 [59] BiocNeighbors_1.22.0      ScaledMatrix_1.12.0      
 [61] locfit_1.5-9.10           fs_1.6.4                 
 [63] grid_4.4.1                edgeR_4.2.1              
