@@ -17,7 +17,7 @@ navbar:
   left:
     - text: Vignettes
       menu:
-        - text: Geting Started with scDiagnostics
+        - text: Getting Started with scDiagnostics
           href: articles/scDiagnostics.html
         - text: Visualization of Cell Type Annotations
           href: articles/VisualizationTools.html
