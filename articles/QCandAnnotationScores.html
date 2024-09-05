@@ -101,9 +101,7 @@
 Christidis</h4>
             <address class="author_afil">
       Core for Computational Biomedicine, Harvard Medical
-School<br><a class="author_email" href="mailto:#"></a><a href="mailto:anthony-alexander_christidis@hms.harvard.edu" class="email">anthony-alexander_christidis@hms.harvard.edu</a>
-      </address>
-                              <h4 data-toc-skip class="author">Andrew
+School<br><h4 data-toc-skip class="author">Andrew
 Ghazi</h4>
             <address class="author_afil">
       Core for Computational Biomedicine, Harvard Medical
@@ -127,6 +125,7 @@ School<br><small class="dont-index">Source: <a href="https://github.com/ccb-hms/
       <div class="hidden name"><code>QCandAnnotationScores.Rmd</code></div>
 
     </address>
+</address>
 </address>
 </address>
 </address>
@@ -166,7 +165,8 @@ it serves as a query set for comparison. It contains:</p>
 reference data.</li>
 <li>
 <strong>SingleR Annotations</strong>: Predictions of cell types
-using SingleR, including <code>SingleR_annotation</code> and
+using <em><a href="https://bioconductor.org/packages/3.19/SingleR" class="external-link">SingleR</a></em>,
+including <code>SingleR_annotation</code> and
 <code>annotation_scores.</code>
 </li>
 <li>
@@ -185,8 +185,9 @@ includes:</p>
 <strong>QC Metrics</strong>: Metrics such as total library size and
 mitochondrial gene content.</li>
 <li>
-<strong>SingleR Predictions</strong>: Predicted cell types based on
-SingleR annotations.</li>
+<strong><em><a href="https://bioconductor.org/packages/3.19/SingleR" class="external-link">SingleR</a></em>
+Predictions</strong>: Predicted cell types based on <em><a href="https://bioconductor.org/packages/3.19/SingleR" class="external-link">SingleR</a></em>
+annotations.</li>
 <li>
 <strong>Annotation Scores</strong>: Scores reflecting the confidence
 in cell type predictions.</li>
@@ -335,7 +336,7 @@ loaded via a namespace (and not attached):
 [57] ragg_1.3.2                  evaluate_0.24.0            
 [59] knitr_1.48                  GenomicRanges_1.56.1       
 [61] IRanges_2.38.1              rlang_1.1.4                
-[63] glue_1.7.0                  BiocManager_1.30.24        
+[63] glue_1.7.0                  BiocManager_1.30.25        
 [65] BiocGenerics_0.50.0         jsonlite_1.8.8             
 [67] R6_2.5.1                    MatrixGenerics_1.16.0      
 [69] systemfonts_1.1.0           fs_1.6.4                   

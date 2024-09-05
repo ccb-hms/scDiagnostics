@@ -102,9 +102,7 @@ Alignment</h1>
 Christidis</h4>
             <address class="author_afil">
       Core for Computational Biomedicine, Harvard Medical
-School<br><a class="author_email" href="mailto:#"></a><a href="mailto:anthony-alexander_christidis@hms.harvard.edu" class="email">anthony-alexander_christidis@hms.harvard.edu</a>
-      </address>
-                              <h4 data-toc-skip class="author">Andrew
+School<br><h4 data-toc-skip class="author">Andrew
 Ghazi</h4>
             <address class="author_afil">
       Core for Computational Biomedicine, Harvard Medical
@@ -132,6 +130,7 @@ School<br><small class="dont-index">Source: <a href="https://github.com/ccb-hms/
 </address>
 </address>
 </address>
+</address>
 </div>
 
     
@@ -149,26 +148,26 @@ similarities and differences in high-dimensional data.</p>
 <h3 id="functions-for-evaluation-of-dataset-alignment">Functions for Evaluation of Dataset Alignment<a class="anchor" aria-label="anchor" href="#functions-for-evaluation-of-dataset-alignment"></a>
 </h3>
 <ul>
-<li><p><code>comparecca</code>: This function enables the comparison of
-datasets by applying Canonical Correlation Analysis (CCA). It helps
+<li><p><code><a href="../reference/compareCCA.html">compareCCA()</a></code>: This function enables the comparison
+of datasets by applying Canonical Correlation Analysis (CCA). It helps
 assess how well two datasets align with each other, providing insights
 into the relationship between different single-cell experiments or
 conditions.</p></li>
-<li><p><code>comparepca</code>: This function allows you to compare
+<li><p><code><a href="../reference/comparePCA.html">comparePCA()</a></code>: This function allows you to compare
 datasets using Principal Component Analysis (PCA). It evaluates how
 similar or different the principal components are between two datasets,
 offering a way to understand the underlying structure and variance in
 your data.</p></li>
-<li><p><code>comparepcasubspace</code>: Extending the comparison to
+<li><p><code><a href="../reference/comparePCASubspace.html">comparePCASubspace()</a></code>: Extending the comparison to
 specific subspaces, this function focuses on subsets of principal
 components. It provides a detailed analysis of how subspace structures
 differ or align between datasets, which is valuable for fine-grained
 comparative studies.</p></li>
-<li><p><code>plotPairwiseDistancesDensity</code>: To visualize the
+<li><p><code><a href="../reference/plotPairwiseDistancesDensity.html">plotPairwiseDistancesDensity()</a></code>: To visualize the
 distribution of distances between pairs of samples, this function
 generates density plots. It helps in understanding the variation and
 relationships between samples in high-dimensional spaces.</p></li>
-<li><p><code>plotWassersteinDistance</code>: This function visualizes
+<li><p><code><a href="../reference/plotWassersteinDistance.html">plotWassersteinDistance()</a></code>: This function visualizes
 the Wasserstein distance, a metric for comparing distributions, across
 datasets. It provides an intuitive view of how distributions differ
 between datasets, aiding in the evaluation of alignment and
@@ -219,11 +218,11 @@ annotations across different datasets, offering a reliable standard
 against which other annotations can be assessed.</li>
 <li>
 <code>query_data</code>: This dataset contains cell type annotations
-from both expert assessments and those generated using the
-<code>SingleR</code> package. By comparing these annotations with those
-from the reference dataset, you can identify discrepancies between
-manual and automated results, highlighting potential inconsistencies or
-areas requiring further investigation.</li>
+from both expert assessments and those generated using the <em><a href="https://bioconductor.org/packages/3.19/SingleR" class="external-link">SingleR</a></em>
+package. By comparing these annotations with those from the reference
+dataset, you can identify discrepancies between manual and automated
+results, highlighting potential inconsistencies or areas requiring
+further investigation.</li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load library</span></span>
@@ -246,8 +245,10 @@ functions.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/" class="external-link">scater</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Subset to CD4 cells</span></span>
-<span><span class="va">ref_data_cd4</span> <span class="op">&lt;-</span> <span class="va">reference_data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">reference_data</span><span class="op">$</span><span class="va">expert_annotation</span> <span class="op">==</span> <span class="st">"CD4"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">query_data_cd4</span> <span class="op">&lt;-</span> <span class="va">query_data_cd4</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">query_data</span><span class="op">$</span><span class="va">expert_annotation</span> <span class="op">==</span> <span class="st">"CD4"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">ref_data_cd4</span> <span class="op">&lt;-</span> <span class="va">reference_data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span></span>
+<span>    <span class="va">reference_data</span><span class="op">$</span><span class="va">expert_annotation</span> <span class="op">==</span> <span class="st">"CD4"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">query_data_cd4</span> <span class="op">&lt;-</span> <span class="va">query_data_cd4</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span></span>
+<span>    <span class="va">query_data</span><span class="op">$</span><span class="va">expert_annotation</span> <span class="op">==</span> <span class="st">"CD4"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Select highly variable genes</span></span>
 <span><span class="va">ref_top_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scran/man/getTopHVGs.html" class="external-link">getTopHVGs</a></span><span class="op">(</span><span class="va">ref_data_cd4</span>, n <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
@@ -267,14 +268,14 @@ functions.</p>
 </h2>
 <div class="section level3">
 <h3 id="comparecca">
-<code>compareCCA</code><a class="anchor" aria-label="anchor" href="#comparecca"></a>
+<code>compareCCA()</code><a class="anchor" aria-label="anchor" href="#comparecca"></a>
 </h3>
-<p>The <code>compareCCA</code> function evaluates how well cell types
+<p>The <code><a href="../reference/compareCCA.html">compareCCA()</a></code> function evaluates how well cell types
 from the query dataset align with those from the reference dataset using
 Canonical Correlation Analysis (CCA). It’s particularly useful for
 annotating cells in the query dataset based on their similarity to the
 reference data.</p>
-<p><code>compareCCA</code> performs the following steps:</p>
+<p><code><a href="../reference/compareCCA.html">compareCCA()</a></code> performs the following steps:</p>
 <ul>
 <li>
 <strong>CCA Computation</strong>: It computes the canonical
@@ -303,14 +304,14 @@ reference dataset to the query dataset.</li>
 </div>
 <div class="section level3">
 <h3 id="comparepca">
-<code>comparePCA</code><a class="anchor" aria-label="anchor" href="#comparepca"></a>
+<code>comparePCA()</code><a class="anchor" aria-label="anchor" href="#comparepca"></a>
 </h3>
-<p>The <code>comparePCA</code> function compares the PCA subspaces
+<p>The <code><a href="../reference/comparePCA.html">comparePCA()</a></code> function compares the PCA subspaces
 between the query and reference datasets. It calculates the principal
 angles between the PCA subspaces to assess the alignment and similarity
 between them. This is useful for understanding how well the
 dimensionality reduction spaces of your datasets match.</p>
-<p><code>comparePCA</code> operates as follows:</p>
+<p><code><a href="../reference/comparePCA.html">comparePCA()</a></code> operates as follows:</p>
 <ul>
 <li>
 <strong>PCA Computation</strong>: It computes PCA for both query and
@@ -348,23 +349,23 @@ principal angles to quantify the similarity between the datasets.</li>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "matrix"     "array"      "comparePCA"</span></span></code></pre></div>
 <p>Note that there is also a plot method for the object return for
-<code>comparePCA</code>. See reference manual for details.</p>
+<code><a href="../reference/comparePCA.html">comparePCA()</a></code>. See reference manual for details.</p>
 </div>
 <div class="section level3">
 <h3 id="comparepcasubspace">
-<code>comparePCASubspace</code><a class="anchor" aria-label="anchor" href="#comparepcasubspace"></a>
+<code>comparePCASubspace()</code><a class="anchor" aria-label="anchor" href="#comparepcasubspace"></a>
 </h3>
 <p>In single-cell RNA-seq analysis, it is essential to assess the
 similarity between the subspaces spanned by the top principal components
 (PCs) of query and reference datasets. This is particularly important
 when comparing the structure and variation captured by each dataset. The
-<code>comparePCASubspace</code> function is designed to provide insights
-into how well the subspaces align by computing the cosine similarity
-between the loadings of the top variables for each PC. This analysis
-helps in determining the degree of correspondence between the datasets,
-which is critical for accurate cell type annotation and data
+<code><a href="../reference/comparePCASubspace.html">comparePCASubspace()</a></code> function is designed to provide
+insights into how well the subspaces align by computing the cosine
+similarity between the loadings of the top variables for each PC. This
+analysis helps in determining the degree of correspondence between the
+datasets, which is critical for accurate cell type annotation and data
 integration.</p>
-<p><code>comparePCASubspace</code> performs the following
+<p><code><a href="../reference/comparePCASubspace.html">comparePCASubspace()</a></code> performs the following
 operations:</p>
 <ul>
 <li>
@@ -392,11 +393,13 @@ datasets.</li>
 </ul>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare PCA subspaces between query and reference data</span></span>
-<span><span class="va">subspace_comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/comparePCASubspace.html">comparePCASubspace</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_cd4</span>,</span>
-<span>                                          reference_data <span class="op">=</span> <span class="va">ref_data_cd4</span>, </span>
-<span>                                          query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
-<span>                                          ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
-<span>                                          pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">subspace_comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/comparePCASubspace.html">comparePCASubspace</a></span><span class="op">(</span></span>
+<span>    query_data <span class="op">=</span> <span class="va">query_data_cd4</span>,</span>
+<span>    reference_data <span class="op">=</span> <span class="va">ref_data_cd4</span>, </span>
+<span>    query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
+<span>    ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
+<span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># View weighted cosine similarity score</span></span>
 <span><span class="va">subspace_comparison</span><span class="op">$</span><span class="va">weighted_cosine_similarity</span></span>
@@ -424,21 +427,21 @@ variance explained to give a comprehensive measure of how well the
 subspaces align. A higher score indicates that the datasets are
 well-aligned in the PCA space.</li>
 </ul>
-<p>By using <code>comparePCASubspace</code>, you can quantify the
+<p>By using <code><a href="../reference/comparePCASubspace.html">comparePCASubspace()</a></code>, you can quantify the
 alignment of PCA subspaces between query and reference datasets, aiding
 in the evaluation of dataset integration and the reliability of cell
 type annotations.</p>
 </div>
 <div class="section level3">
 <h3 id="plotpairwisedistancesdensity">
-<code>plotPairwiseDistancesDensity</code><a class="anchor" aria-label="anchor" href="#plotpairwisedistancesdensity"></a>
+<code>plotPairwiseDistancesDensity()</code><a class="anchor" aria-label="anchor" href="#plotpairwisedistancesdensity"></a>
 </h3>
 <div class="section level4">
 <h4 id="purpose">Purpose<a class="anchor" aria-label="anchor" href="#purpose"></a>
 </h4>
-<p>The <code>plotPairwiseDistancesDensity</code> function is designed to
-calculate and visualize the pairwise distances or correlations between
-cell types in query and reference datasets. This function is
+<p>The <code><a href="../reference/plotPairwiseDistancesDensity.html">plotPairwiseDistancesDensity()</a></code> function is designed
+to calculate and visualize the pairwise distances or correlations
+between cell types in query and reference datasets. This function is
 particularly useful in single-cell RNA sequencing (scRNA-seq) analysis,
 where it is essential to evaluate the consistency and reliability of
 cell type annotations by comparing their expression profiles.</p>
@@ -505,9 +508,9 @@ datasets.</p>
 </div>
 <div class="section level3">
 <h3 id="plotwassersteindistance">
-<code>plotWassersteinDistance</code><a class="anchor" aria-label="anchor" href="#plotwassersteindistance"></a>
+<code>plotWassersteinDistance()</code><a class="anchor" aria-label="anchor" href="#plotwassersteindistance"></a>
 </h3>
-<p>The <code>plotWassersteinDistance</code> function creates a density
+<p>The <code><a href="../reference/plotWassersteinDistance.html">plotWassersteinDistance()</a></code> function creates a density
 plot to compare the Wasserstein distances between a reference dataset
 and a query dataset under the null hypothesis. The null hypothesis
 assumes that both datasets are drawn from the same distribution. This
@@ -594,7 +597,7 @@ statistically significant.</li>
 <span>                        alpha <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/plotWassersteinDistance.png"></p>
 <p>This example demonstrates how to use the
-<code>plotWassersteinDistance</code> function to compare Wasserstein
+<code><a href="../reference/plotWassersteinDistance.html">plotWassersteinDistance()</a></code> function to compare Wasserstein
 distances between CD4 cells in the reference and query datasets. The
 resulting plot helps determine whether the difference between the
 datasets is statistically significant.</p>
@@ -606,9 +609,9 @@ datasets is statistically significant.</p>
 </h2>
 <div class="section level3">
 <h3 id="calculatehvgoverlap">
-<code>calculateHVGOverlap</code><a class="anchor" aria-label="anchor" href="#calculatehvgoverlap"></a>
+<code>calculateHVGOverlap()</code><a class="anchor" aria-label="anchor" href="#calculatehvgoverlap"></a>
 </h3>
-<p>The <code>calculateHVGOverlap</code> function computes the overlap
+<p>The <code><a href="../reference/calculateHVGOverlap.html">calculateHVGOverlap()</a></code> function computes the overlap
 coefficient between two sets of highly variable genes (HVGs) from a
 reference dataset and a query dataset. The overlap coefficient is a
 measure of similarity between the two sets, reflecting how much the HVGs
@@ -665,12 +668,12 @@ are less comparable.</p>
 </div>
 <div class="section level3">
 <h3 id="calculatevarimpoverlap">
-<code>calculateVarImpOverlap</code><a class="anchor" aria-label="anchor" href="#calculatevarimpoverlap"></a>
+<code>calculateVarImpOverlap()</code><a class="anchor" aria-label="anchor" href="#calculatevarimpoverlap"></a>
 </h3>
 <div class="section level4">
 <h4 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h4>
-<p>The <code>calculateVarImpOverlap</code> function helps you identify
+<p>The <code><a href="../reference/calculateVarImpOverlap.html">calculateVarImpOverlap()</a></code> function helps you identify
 and compare the most important genes for distinguishing cell types in
 both a reference dataset and a query dataset. It does this using the
 Random Forest algorithm, which calculates how important each gene is in
@@ -693,12 +696,12 @@ between the datasets.</p>
 <p>Let’s say you have a reference dataset (<code>reference_data</code>)
 and a query dataset (<code>query_data</code>). Both datasets contain
 expression data and cell type annotations, stored in columns named
-“expert_annotation” and “SingleR_annotation”, respectively. You want to
-calculate the importance of genes using 500 trees and compare the top 50
-genes between the datasets.</p>
+“expert_annotation” and <code>SingleR_annotation</code>, respectively.
+You want to calculate the importance of genes using 500 trees and
+compare the top 50 genes between the datasets.</p>
 <p>Here’s how you would use the function:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># RF function to compare (between datasets) which genes are best at differentiating cell types</span></span>
+<code class="sourceCode R"><span><span class="co"># RF function to compare which genes are best at differentiating cell types</span></span>
 <span><span class="va">rf_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateVarImpOverlap.html">calculateVarImpOverlap</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
 <span>                                    query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                                    query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
@@ -735,21 +738,22 @@ robust markers.</p>
 </h2>
 <p>In this vignette, we have demonstrated a comprehensive suite of
 functions designed to enhance the analysis and comparison of single-cell
-genomics datasets. <code>compareCCA</code> and <code>comparePCA</code>
-facilitate the evaluation of dataset alignment through canonical
-correlation analysis and principal component analysis, respectively.
-These tools help in assessing the correspondence between datasets and
-identifying potential batch effects or differences in data structure.
-<code>comparePCASubspace</code> further refines this analysis by
-focusing on specific subspaces within the PCA space, providing a more
-granular view of dataset similarities.</p>
-<p><code>plotPairwiseDistancesDensity</code> and
-<code>plotWassersteinDistance</code> offer advanced visualization
+genomics datasets. <code><a href="../reference/compareCCA.html">compareCCA()</a></code> and
+<code><a href="../reference/comparePCA.html">comparePCA()</a></code> facilitate the evaluation of dataset alignment
+through canonical correlation analysis and principal component analysis,
+respectively. These tools help in assessing the correspondence between
+datasets and identifying potential batch effects or differences in data
+structure. <code><a href="../reference/comparePCASubspace.html">comparePCASubspace()</a></code> further refines this
+analysis by focusing on specific subspaces within the PCA space,
+providing a more granular view of dataset similarities.</p>
+<p><code><a href="../reference/plotPairwiseDistancesDensity.html">plotPairwiseDistancesDensity()</a></code> and
+<code><a href="../reference/plotWassersteinDistance.html">plotWassersteinDistance()</a></code> offer advanced visualization
 techniques for comparing distances and distributions across datasets.
 These functions are crucial for understanding the variability and
-overlap between datasets in a more intuitive and interpretable manner.
-On the other hand, <code>calculateHVGOverlap</code> and
-<code>calculateVarImpOverlap</code> provide insights into gene
+overlap between datasets in a more intuitive and interpretable
+manner.</p>
+<p>On the other hand, <code><a href="../reference/calculateHVGOverlap.html">calculateHVGOverlap()</a></code> and
+<code><a href="../reference/calculateVarImpOverlap.html">calculateVarImpOverlap()</a></code> provide insights into gene
 variability and importance, respectively, by comparing highly variable
 genes and variable importance scores across reference and query
 datasets.</p>
@@ -821,7 +825,7 @@ loaded via a namespace (and not attached):
 [43] codetools_0.2-20          lattice_0.22-6           
 [45] tibble_3.2.1              withr_3.0.1              
 [47] evaluate_0.24.0           desc_1.4.3               
-[49] pillar_1.9.0              BiocManager_1.30.24      
+[49] pillar_1.9.0              BiocManager_1.30.25      
 [51] generics_0.1.3            sparseMatrixStats_1.16.0 
 [53] munsell_0.5.1             scales_1.3.0             
 [55] glue_1.7.0                metapod_1.12.0           
