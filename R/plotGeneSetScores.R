@@ -41,16 +41,18 @@ plotGeneSetScores <- function(se_object,
                               method = c("PCA", "TSNE", "UMAP"), 
                               score_col,
                               pc_subset = 1:5) {
-
+    
+    # Match method argument
+    method <- match.arg(method)
+    
+    # Check if dimention reduction method is present in reference's reducedDims
+    if (!(method %in% names(reducedDims(se_object)))) {
+        stop("\'se_object\' must have pre-computed \'", method, "\' in \'reducedDims\'.")
+    }
+    
     # Check standard input arguments
     argumentCheck(query_data = se_object,
                   pc_subset_query = pc_subset)
-    
-    # Check if the specified method is valid
-    method <- match.arg(method)
-    if (!(method %in% c("PCA", "TSNE", "UMAP"))) {
-        stop("Invalid method. Please choose one of: ", paste(c("PCA", "TSNE", "UMAP"), collapse = ", "))
-    }
     
     # Check if score_col is a valid column name in se_object
     if (!score_col %in% colnames(colData(se_object))) {
@@ -59,27 +61,21 @@ plotGeneSetScores <- function(se_object,
     
     # Create the plot object
     if (method == "PCA") {
-
+        
         # PCA data
         plot_mat <- reducedDim(se_object, "PCA")[, pc_subset]
         # Modify column names to include percentage of variance explained
-        colnames(plot_mat) <- paste0("PC", pc_subset, 
-                                     " (", sprintf("%.1f%%", attributes(reducedDim(se_object, "PCA"))[["percentVar"]][pc_subset]), ")")
+        colnames(plot_mat) <- paste0(
+            "PC", pc_subset, 
+            " (", sprintf("%.1f%%", 
+                          attributes(reducedDim(se_object, "PCA"))[["percentVar"]][pc_subset]), ")")
     } else if (method == "TSNE") {
         
-        # Check if "TSNE" is present in reference's reduced dimensions
-        if (!"TSNE" %in% names(reducedDims(se_object))) {
-            stop("Reference data must have pre-computed t-SNE in \'reducedDims\'.")
-        }
         # TSNE data
         plot_mat <- reducedDim(se_object, "TSNE")
         
     } else if (method == "UMAP") {
         
-        # Check if "UMAP" is present in reference's reduced dimensions
-        if (!"UMAP" %in% names(reducedDims(se_object))) {
-            stop("Reference data must have pre-computed UMAP in \'reducedDims\'.")
-        }
         # UMAP data
         plot_mat <- reducedDim(se_object, "UMAP")
     }
@@ -101,21 +97,31 @@ plotGeneSetScores <- function(se_object,
     # Plot data
     data_pairs <- do.call(rbind, data_pairs_list)
     # Remove redundant data (to avoid duplicated plots)
-    data_pairs <- data_pairs[as.numeric(data_pairs[["x"]]) < as.numeric(data_pairs[["y"]]),]
+    data_pairs <- data_pairs[as.numeric(data_pairs[["x"]]) < 
+                                 as.numeric(data_pairs[["y"]]),]
     data_pairs[["Scores"]] <- se_object[[score_col]]
     # Create the ggplot object (with facets if PCA)
-    plot_obj <- ggplot2::ggplot(data_pairs, ggplot2::aes(x = .data[["x_value"]], y = .data[["y_value"]], 
-                                                         color = .data[["Scores"]])) +
+    plot_obj <- ggplot2::ggplot(
+        data_pairs, ggplot2::aes(x = .data[["x_value"]], 
+                                 y = .data[["y_value"]], 
+                                 color = .data[["Scores"]])) +
         ggplot2::geom_point(size = 1, alpha = 0.5) + 
         ggplot2::xlab("") + ggplot2::ylab("") + 
-        ggplot2::scale_color_gradientn(colors = c("#2171B5", "#8AABC1", "#FFEDA0", "#E6550D"), 
-                                       values = seq(0, 1, by = 1/3), 
-                                       limits = c(0, max(data_pairs$Scores))) +
-        ggplot2::facet_grid(rows = ggplot2::vars(.data[["y"]]), cols = ggplot2::vars(.data[["x"]]), scales = "free") +
+        ggplot2::scale_color_gradientn(
+            colors = c("#2171B5", "#8AABC1", "#FFEDA0", "#E6550D"), 
+            values = seq(0, 1, by = 1/3), 
+            limits = c(0, max(data_pairs$Scores))) +
+        ggplot2::facet_grid(
+            rows = ggplot2::vars(.data[["y"]]), 
+            cols = ggplot2::vars(.data[["x"]]), scales = "free") +
         ggplot2::theme_bw() +
-        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
+        ggplot2::theme(
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_line(color = "gray", 
+                                                     linetype = "dotted"),
+            plot.title = ggplot2::element_text(size = 14, face = "bold", 
+                                               hjust = 0.5),
+            axis.title = ggplot2::element_text(size = 12), 
+            axis.text = ggplot2::element_text(size = 10))
     return(plot_obj)
 }

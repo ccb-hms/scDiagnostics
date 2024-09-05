@@ -2,18 +2,23 @@
 title: "Evaluation of Dataset and Marker Gene Alignment"
 author:
     - name: Anthony Christidis
-      affiliation: Core for Computational Biomedicine, Harvard Medical School
-      email: anthony-alexander_christidis@hms.harvard.edu
+      affiliation:
+        - &core_affiliation Core for Computational Biomedicine, Harvard Medical School
     - name: Andrew Ghazi
-      affiliation: Core for Computational Biomedicine, Harvard Medical School
+      affiliation:
+        - *core_affiliation
     - name: Smriti Chawla
-      affiliation: Core for Computational Biomedicine, Harvard Medical School
+      affiliation:
+        - *core_affiliation
     - name: Nitesh Turaga
-      affiliation: Core for Computational Biomedicine, Harvard Medical School
+      affiliation:
+        - *core_affiliation
     - name: Ludwig Geistlinger
-      affiliation: Core for Computational Biomedicine, Harvard Medical School
+      affiliation:
+        - *core_affiliation
     - name: Robert Gentleman
-      affiliation: Core for Computational Biomedicine, Harvard Medical School
+      affiliation:
+        - *core_affiliation
 package: scDiagnostics
 output: 
   BiocStyle::html_document:
@@ -49,15 +54,15 @@ In the realm of single-cell genomics, the ability to compare and integrate data 
 
 ## Functions for Evaluation of Dataset Alignment
 
-- `comparecca`: This function enables the comparison of datasets by applying Canonical Correlation Analysis (CCA). It helps assess how well two datasets align with each other, providing insights into the relationship between different single-cell experiments or conditions.
+- `compareCCA()`: This function enables the comparison of datasets by applying Canonical Correlation Analysis (CCA). It helps assess how well two datasets align with each other, providing insights into the relationship between different single-cell experiments or conditions.
 
-- `comparepca`: This function allows you to compare datasets using Principal Component Analysis (PCA). It evaluates how similar or different the principal components are between two datasets, offering a way to understand the underlying structure and variance in your data.
+- `comparePCA()`: This function allows you to compare datasets using Principal Component Analysis (PCA). It evaluates how similar or different the principal components are between two datasets, offering a way to understand the underlying structure and variance in your data.
 
-- `comparepcasubspace`: Extending the comparison to specific subspaces, this function focuses on subsets of principal components. It provides a detailed analysis of how subspace structures differ or align between datasets, which is valuable for fine-grained comparative studies.
+- `comparePCASubspace()`: Extending the comparison to specific subspaces, this function focuses on subsets of principal components. It provides a detailed analysis of how subspace structures differ or align between datasets, which is valuable for fine-grained comparative studies.
 
-- `plotPairwiseDistancesDensity`: To visualize the distribution of distances between pairs of samples, this function generates density plots. It helps in understanding the variation and relationships between samples in high-dimensional spaces.
+- `plotPairwiseDistancesDensity()`: To visualize the distribution of distances between pairs of samples, this function generates density plots. It helps in understanding the variation and relationships between samples in high-dimensional spaces.
 
-- `plotWassersteinDistance`: This function visualizes the Wasserstein distance, a metric for comparing distributions, across datasets. It provides an intuitive view of how distributions differ between datasets, aiding in the evaluation of alignment and discrepancies.
+- `plotWassersteinDistance()`: This function visualizes the Wasserstein distance, a metric for comparing distributions, across datasets. It provides an intuitive view of how distributions differ between datasets, aiding in the evaluation of alignment and discrepancies.
 
 ## Marker Gene Alignment
 
@@ -81,7 +86,7 @@ In this vignette, we will guide you through the practical use of each function, 
 In the context of the `scDiagnostics` package, this vignette demonstrates how to leverage various functions to evaluate and compare single-cell data across two distinct datasets:
 
 - `reference_data`: This dataset features meticulously curated cell type annotations assigned by experts. It serves as a robust benchmark for evaluating the accuracy and consistency of cell type annotations across different datasets, offering a reliable standard against which other annotations can be assessed.
-- `query_data`: This dataset contains cell type annotations from both expert assessments and those generated using the `SingleR` package. By comparing these annotations with those from the reference dataset, you can identify discrepancies between manual and automated results, highlighting potential inconsistencies or areas requiring further investigation.
+- `query_data`: This dataset contains cell type annotations from both expert assessments and those generated using the `r BiocStyle::Biocpkg("SingleR")` package. By comparing these annotations with those from the reference dataset, you can identify discrepancies between manual and automated results, highlighting potential inconsistencies or areas requiring further investigation.
 
 
 ```{r, message=FALSE, fig.show='hide'}
@@ -103,8 +108,10 @@ library(scran)
 library(scater)
 
 # Subset to CD4 cells
-ref_data_cd4 <- reference_data[, which(reference_data$expert_annotation == "CD4")]
-query_data_cd4 <- query_data_cd4 <- query_data[, which(query_data$expert_annotation == "CD4")]
+ref_data_cd4 <- reference_data[, which(
+    reference_data$expert_annotation == "CD4")]
+query_data_cd4 <- query_data_cd4 <- query_data[, which(
+    query_data$expert_annotation == "CD4")]
 
 # Select highly variable genes
 ref_top_genes <- getTopHVGs(ref_data_cd4, n = 500)
@@ -123,11 +130,11 @@ query_data_cd4 <- runPCA(query_data_cd4)
 
 # Evaluation of Dataset Alignment
 
-## `compareCCA`
+## `compareCCA()`
 
-The `compareCCA` function evaluates how well cell types from the query dataset align with those from the reference dataset using Canonical Correlation Analysis (CCA). It’s particularly useful for annotating cells in the query dataset based on their similarity to the reference data.
+The `compareCCA()` function evaluates how well cell types from the query dataset align with those from the reference dataset using Canonical Correlation Analysis (CCA). It’s particularly useful for annotating cells in the query dataset based on their similarity to the reference data.
 
-`compareCCA` performs the following steps:
+`compareCCA()` performs the following steps:
 
 - **CCA Computation**: It computes the canonical correlation between the query and reference datasets. CCA identifies pairs of canonical variables that maximize the correlation between the datasets.
 - **Correlation Analysis**: The function then calculates the correlation between canonical variables of the query and reference datasets to determine how well they match.
@@ -144,11 +151,11 @@ plot(cca_comparison)
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/compareCCA.png)
 
-## `comparePCA`
+## `comparePCA()`
 
-The `comparePCA` function compares the PCA subspaces between the query and reference datasets. It calculates the principal angles between the PCA subspaces to assess the alignment and similarity between them. This is useful for understanding how well the dimensionality reduction spaces of your datasets match.
+The `comparePCA()` function compares the PCA subspaces between the query and reference datasets. It calculates the principal angles between the PCA subspaces to assess the alignment and similarity between them. This is useful for understanding how well the dimensionality reduction spaces of your datasets match.
 
-`comparePCA` operates as follows:
+`comparePCA()` operates as follows:
 
 - **PCA Computation**: It computes PCA for both query and reference datasets, reducing them into lower-dimensional spaces.
 - **Subspace Comparison**: The function calculates the principal angles between the PCA subspaces of the query and reference datasets. These angles help determine how closely the subspaces align.
@@ -167,15 +174,15 @@ print(pca_comparison)
 ```
 
 
-Note that there is also a plot method for the object return for `comparePCA`. See reference manual for details.
+Note that there is also a plot method for the object return for `comparePCA()`. See reference manual for details.
 
 
-## `comparePCASubspace`
+## `comparePCASubspace()`
 
-In single-cell RNA-seq analysis, it is essential to assess the similarity between the subspaces spanned by the top principal components (PCs) of query and reference datasets. This is particularly important when comparing the structure and variation captured by each dataset. The `comparePCASubspace` function is designed to provide insights into how well the subspaces align by computing the cosine similarity between the loadings of the top variables for each PC. This analysis helps in determining the degree of correspondence between the datasets, which is critical for accurate cell type annotation and data integration.
+In single-cell RNA-seq analysis, it is essential to assess the similarity between the subspaces spanned by the top principal components (PCs) of query and reference datasets. This is particularly important when comparing the structure and variation captured by each dataset. The `comparePCASubspace()` function is designed to provide insights into how well the subspaces align by computing the cosine similarity between the loadings of the top variables for each PC. This analysis helps in determining the degree of correspondence between the datasets, which is critical for accurate cell type annotation and data integration.
 
 
-`comparePCASubspace` performs the following operations:
+`comparePCASubspace()` performs the following operations:
 
 - **Cosine Similarity Calculation**: The function computes the cosine similarity between the loadings of the top variables for each PC in both the query and reference datasets. This similarity measures how closely the two datasets align in the space spanned by their principal components.
 - **Selection of Top Similarities**: The function selects the top cosine similarity scores and stores the corresponding PC indices from both datasets. This step identifies the most aligned principal components between the two datasets.
@@ -185,11 +192,13 @@ In single-cell RNA-seq analysis, it is essential to assess the similarity betwee
 
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Compare PCA subspaces between query and reference data
-subspace_comparison <- comparePCASubspace(query_data = query_data_cd4,
-                                          reference_data = ref_data_cd4, 
-                                          query_cell_type_col = "expert_annotation", 
-                                          ref_cell_type_col = "expert_annotation", 
-                                          pc_subset = 1:5)
+subspace_comparison <- comparePCASubspace(
+    query_data = query_data_cd4,
+    reference_data = ref_data_cd4, 
+    query_cell_type_col = "expert_annotation", 
+    ref_cell_type_col = "expert_annotation", 
+    pc_subset = 1:5
+)
 
 # View weighted cosine similarity score
 subspace_comparison$weighted_cosine_similarity
@@ -205,13 +214,13 @@ In the results:
 - **Variance Explained**: The average_variance_explained vector provides the average percentage of variance captured by the selected top PCs in both datasets. This helps assess the importance of these PCs in explaining data variation.
 - **Weighted Cosine Similarity**: The weighted_cosine_similarity score combines the cosine similarity with variance explained to give a comprehensive measure of how well the subspaces align. A higher score indicates that the datasets are well-aligned in the PCA space.
 
-By using `comparePCASubspace`, you can quantify the alignment of PCA subspaces between query and reference datasets, aiding in the evaluation of dataset integration and the reliability of cell type annotations.
+By using `comparePCASubspace()`, you can quantify the alignment of PCA subspaces between query and reference datasets, aiding in the evaluation of dataset integration and the reliability of cell type annotations.
 
-## `plotPairwiseDistancesDensity`
+## `plotPairwiseDistancesDensity()`
 
 ### Purpose
 
-The `plotPairwiseDistancesDensity` function is designed to calculate and visualize the pairwise distances or correlations between cell types in query and reference datasets. This function is particularly useful in single-cell RNA sequencing (scRNA-seq) analysis, where it is essential to evaluate the consistency and reliability of cell type annotations by comparing their expression profiles.
+The `plotPairwiseDistancesDensity()` function is designed to calculate and visualize the pairwise distances or correlations between cell types in query and reference datasets. This function is particularly useful in single-cell RNA sequencing (scRNA-seq) analysis, where it is essential to evaluate the consistency and reliability of cell type annotations by comparing their expression profiles.
 
 ### Functionality
 
@@ -251,9 +260,9 @@ This example demonstrates how to compare CD4 cells between a query and reference
 
 
 
-## `plotWassersteinDistance` 
+## `plotWassersteinDistance()` 
 
-The `plotWassersteinDistance` function creates a density plot to compare the Wasserstein distances between a reference dataset and a query dataset under the null hypothesis. The null hypothesis assumes that both datasets are drawn from the same distribution. This function is useful for evaluating how different the query data is from the reference data based on their Wasserstein distances.
+The `plotWassersteinDistance()` function creates a density plot to compare the Wasserstein distances between a reference dataset and a query dataset under the null hypothesis. The null hypothesis assumes that both datasets are drawn from the same distribution. This function is useful for evaluating how different the query data is from the reference data based on their Wasserstein distances.
 
 ### How the Function Operates
 
@@ -295,14 +304,14 @@ plotWassersteinDistance(query_data = query_data_cd4,
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/plotWassersteinDistance.png)
 
-This example demonstrates how to use the `plotWassersteinDistance` function to compare Wasserstein distances between CD4 cells in the reference and query datasets. The resulting plot helps determine whether the difference between the datasets is statistically significant.
+This example demonstrates how to use the `plotWassersteinDistance()` function to compare Wasserstein distances between CD4 cells in the reference and query datasets. The resulting plot helps determine whether the difference between the datasets is statistically significant.
 
 
 # Marker Gene Alignment
 
-## `calculateHVGOverlap` 
+## `calculateHVGOverlap()` 
 
-The `calculateHVGOverlap` function computes the overlap coefficient between two sets of highly variable genes (HVGs) from a reference dataset and a query dataset. The overlap coefficient is a measure of similarity between the two sets, reflecting how much the HVGs in one dataset overlap with those in the other.
+The `calculateHVGOverlap()` function computes the overlap coefficient between two sets of highly variable genes (HVGs) from a reference dataset and a query dataset. The overlap coefficient is a measure of similarity between the two sets, reflecting how much the HVGs in one dataset overlap with those in the other.
 
 ### How the Function Operates
 
@@ -334,11 +343,11 @@ overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var_genes,
 overlap_coefficient
 ```
 
-## `calculateVarImpOverlap`
+## `calculateVarImpOverlap()`
 
 ### Overview
 
-The `calculateVarImpOverlap` function helps you identify and compare the most important genes for distinguishing cell types in both a reference dataset and a query dataset. It does this using the Random Forest algorithm, which calculates how important each gene is in differentiating between cell types.
+The `calculateVarImpOverlap()` function helps you identify and compare the most important genes for distinguishing cell types in both a reference dataset and a query dataset. It does this using the Random Forest algorithm, which calculates how important each gene is in differentiating between cell types.
 
 ### Usage
 
@@ -346,11 +355,11 @@ To use the function, you need to provide a reference dataset containing expressi
 
 ### Code Example 
 
-Let’s say you have a reference dataset (`reference_data`) and a query dataset (`query_data`). Both datasets contain expression data and cell type annotations, stored in columns named "expert_annotation" and "SingleR_annotation", respectively. You want to calculate the importance of genes using 500 trees and compare the top 50 genes between the datasets.
+Let’s say you have a reference dataset (`reference_data`) and a query dataset (`query_data`). Both datasets contain expression data and cell type annotations, stored in columns named "expert_annotation" and `SingleR_annotation`, respectively. You want to calculate the importance of genes using 500 trees and compare the top 50 genes between the datasets.
 
 Here’s how you would use the function:
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
-# RF function to compare (between datasets) which genes are best at differentiating cell types
+# RF function to compare which genes are best at differentiating cell types
 rf_output <- calculateVarImpOverlap(reference_data = reference_data, 
                                     query_data = query_data, 
                                     query_cell_type_col = "expert_annotation", 
@@ -370,9 +379,11 @@ For example, if there's a high overlap, it suggests that similar genes are cruci
 
 # Conclusion 
 
-In this vignette, we have demonstrated a comprehensive suite of functions designed to enhance the analysis and comparison of single-cell genomics datasets. `compareCCA` and `comparePCA` facilitate the evaluation of dataset alignment through canonical correlation analysis and principal component analysis, respectively. These tools help in assessing the correspondence between datasets and identifying potential batch effects or differences in data structure. `comparePCASubspace` further refines this analysis by focusing on specific subspaces within the PCA space, providing a more granular view of dataset similarities.
+In this vignette, we have demonstrated a comprehensive suite of functions designed to enhance the analysis and comparison of single-cell genomics datasets. `compareCCA()` and `comparePCA()` facilitate the evaluation of dataset alignment through canonical correlation analysis and principal component analysis, respectively. These tools help in assessing the correspondence between datasets and identifying potential batch effects or differences in data structure. `comparePCASubspace()` further refines this analysis by focusing on specific subspaces within the PCA space, providing a more granular view of dataset similarities.
 
-`plotPairwiseDistancesDensity` and `plotWassersteinDistance` offer advanced visualization techniques for comparing distances and distributions across datasets. These functions are crucial for understanding the variability and overlap between datasets in a more intuitive and interpretable manner. On the other hand, `calculateHVGOverlap` and `calculateVarImpOverlap` provide insights into gene variability and importance, respectively, by comparing highly variable genes and variable importance scores across reference and query datasets.
+`plotPairwiseDistancesDensity()` and `plotWassersteinDistance()` offer advanced visualization techniques for comparing distances and distributions across datasets. These functions are crucial for understanding the variability and overlap between datasets in a more intuitive and interpretable manner. 
+
+On the other hand, `calculateHVGOverlap()` and `calculateVarImpOverlap()` provide insights into gene variability and importance, respectively, by comparing highly variable genes and variable importance scores across reference and query datasets.
 
 Together, these functions form a robust toolkit for single-cell genomics analysis, enabling researchers to conduct detailed comparisons, visualize data differences, and validate the relevance of their findings across different datasets. Incorporating these tools into your research workflow will help ensure more accurate and insightful interpretations of single-cell data, ultimately advancing the understanding of cellular processes and improving experimental outcomes.
 

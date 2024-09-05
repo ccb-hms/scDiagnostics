@@ -46,18 +46,27 @@ plot.calculateCellSimilarityPCA <- function(x, pc_subset = 1:5, ...){
     }
     
     # Create a data frame with the reshaped data
-    cosine_long <- data.frame(Cell = factor(cell_names, levels = rev(rownames(x))), 
+    cosine_long <- data.frame(Cell = factor(cell_names, 
+                                            levels = rev(rownames(x))), 
                               PC = pc_names, CosineSimilarity = cosine_values)
     
     # Create the heatmap plot
-    plot <- ggplot2::ggplot(cosine_long, ggplot2::aes(x = .data[["PC"]], y = .data[["Cell"]], fill = .data[["CosineSimilarity"]])) +
+    plot <- ggplot2::ggplot(cosine_long, ggplot2::aes(
+        x = .data[["PC"]], 
+        y = .data[["Cell"]], 
+        fill = .data[["CosineSimilarity"]])) +
         ggplot2::geom_tile(color = "white") +
-        ggplot2::geom_text(ggplot2::aes(label = sprintf("%.2f", .data[["CosineSimilarity"]])), size = 3) +
-        ggplot2::scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0,
-                             limits = c(-1, 1), space = "Lab", name = "Cosine Similarity") +
+        ggplot2::geom_text(
+            ggplot2::aes(label = sprintf("%.2f", .data[["CosineSimilarity"]])), 
+            size = 3) +
+        ggplot2::scale_fill_gradient2(low = "blue", mid = "white", 
+                                      high = "red", midpoint = 0,
+                             limits = c(-1, 1), space = "Lab", 
+                             name = "Cosine Similarity") +
         ggplot2::labs(title = "Cosine Similarity Heatmap", x = "", y = "") +
         ggplot2::theme_minimal() +
-        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, 
+                                                           hjust = 1),
                        plot.title = ggplot2::element_text(hjust = 0.5))
     return(plot)
 }

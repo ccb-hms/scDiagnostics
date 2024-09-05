@@ -30,22 +30,30 @@
 plot.compareCCA <- function(x, ...){
     
     # Create a data frame for plotting
-    comparison_data <- data.frame(CCA = paste0("CC", seq_len(length(x[["correlations"]]))),
-                                  Cosine = x[["cosine_similarity"]],
-                                  Correlation = x[["correlations"]])
-    comparison_data$CC <- factor(comparison_data[["CCA"]], levels = comparison_data[["CCA"]])
+    comparison_data <- data.frame(
+        CCA = paste0("CC", seq_len(length(x[["correlations"]]))),
+        Cosine = x[["cosine_similarity"]],
+        Correlation = x[["correlations"]])
+    comparison_data$CC <- factor(comparison_data[["CCA"]], 
+                                 levels = comparison_data[["CCA"]])
     
     
-    cca_plot <- ggplot2::ggplot(comparison_data, ggplot2::aes(x = .data[["CCA"]], y = .data[["Cosine"]], 
-                                                              size = .data[["Correlation"]])) +
+    cca_plot <- ggplot2::ggplot(
+        comparison_data, ggplot2::aes(x = .data[["CCA"]], y = .data[["Cosine"]], 
+                                      size = .data[["Correlation"]])) +
         ggplot2::geom_point() +
         ggplot2::scale_size_continuous(range = c(3, 10)) +
-        ggplot2::labs(title = "Cosine Similarities of CCA Coefficients with Correlation",
-                      x = "", y = "Cosine Similarity of CC Coefficients", size = "Correlation") +
+        ggplot2::labs(
+            title = "Cosine Similarities of CCA Coefficients with Correlation",
+            x = "", y = "Cosine Similarity of CC Coefficients", 
+            size = "Correlation") +
         ggplot2::theme_bw() +
-        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
-                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
-                       panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"))
+        ggplot2::theme(axis.text.x = ggplot2::element_text(
+            angle = 45, vjust = 1, size = 12, hjust = 1),
+            axis.title = ggplot2::element_text(size = 12), 
+            axis.text = ggplot2::element_text(size = 10),
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_line(
+                color = "gray", linetype = "dotted"))
     return(cca_plot)
 }

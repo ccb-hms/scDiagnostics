@@ -2,18 +2,23 @@
 title: "Statistical Measures to Assess Dataset Alignment"
 author:
     - name: Anthony Christidis
-      affiliation: Core for Computational Biomedicine, Harvard Medical School
-      email: anthony-alexander_christidis@hms.harvard.edu
+      affiliation:
+        - &core_affiliation Core for Computational Biomedicine, Harvard Medical School
     - name: Andrew Ghazi
-      affiliation: Core for Computational Biomedicine, Harvard Medical School
+      affiliation:
+        - *core_affiliation
     - name: Smriti Chawla
-      affiliation: Core for Computational Biomedicine, Harvard Medical School
+      affiliation:
+        - *core_affiliation
     - name: Nitesh Turaga
-      affiliation: Core for Computational Biomedicine, Harvard Medical School
+      affiliation:
+        - *core_affiliation
     - name: Ludwig Geistlinger
-      affiliation: Core for Computational Biomedicine, Harvard Medical School
+      affiliation:
+        - *core_affiliation
     - name: Robert Gentleman
-      affiliation: Core for Computational Biomedicine, Harvard Medical School
+      affiliation:
+        - *core_affiliation
 package: scDiagnostics
 output: 
   BiocStyle::html_document:
@@ -48,15 +53,15 @@ pngquant = "--speed=1 --quality=1-5"
 
 In single-cell transcriptomics, it is essential to rigorously analyze and interpret the complex data generated from high-throughput experiments. This vignette introduces several key functions that facilitate advanced statistical analysis and data integration within the context of single-cell experiments. Each function serves a specific purpose, aiding in the comprehensive assessment of single-cell data and its associated covariates.
 
-1. `calculateCramerPValue`: This function computes the Cramér's V statistic, which measures the strength of association between categorical variables. Cramér's V is particularly useful for quantifying the association strength in contingency tables, providing insight into how strongly different cell types or conditions are related.
+1. `calculateCramerPValue()`: This function computes the Cramér's V statistic, which measures the strength of association between categorical variables. Cramér's V is particularly useful for quantifying the association strength in contingency tables, providing insight into how strongly different cell types or conditions are related.
 
-2. `calculateHotellingPValue`: This function performs Hotelling's T-squared test, a multivariate statistical test used to assess the differences between two groups of observations. It is useful for comparing the mean vectors of multiple variables and is commonly employed in single-cell data to evaluate group differences in principal component space.
+2. `calculateHotellingPValue()`: This function performs Hotelling's T-squared test, a multivariate statistical test used to assess the differences between two groups of observations. It is useful for comparing the mean vectors of multiple variables and is commonly employed in single-cell data to evaluate group differences in principal component space.
 
-3. `calculateNearestNeighborProbabilities`: This function calculates the probability of nearest neighbor assignments in a high-dimensional space. It is used to evaluate the likelihood of a cell belonging to a specific cluster based on its proximity to neighboring cells. This function helps in assessing clustering quality and the robustness of cell type assignments.
+3. `calculateNearestNeighborProbabilities()`: This function calculates the probability of nearest neighbor assignments in a high-dimensional space. It is used to evaluate the likelihood of a cell belonging to a specific cluster based on its proximity to neighboring cells. This function helps in assessing clustering quality and the robustness of cell type assignments.
 
-4. `calculateAveragePairwiseCorrelation`: This function computes the average pairwise correlation between variables or features across cells. It provides an overview of the relationships between different markers or genes, helping to identify correlated features and understand their interactions within the dataset.
+4. `calculateAveragePairwiseCorrelation()`: This function computes the average pairwise correlation between variables or features across cells. It provides an overview of the relationships between different markers or genes, helping to identify correlated features and understand their interactions within the dataset.
 
-5. `regressPC`: The `regressPC` function performs linear regression of a covariate of interest onto one or more principal components derived from single-cell data. This analysis helps quantify the variance explained by the covariate and is useful for tasks such as assessing batch effects, clustering homogeneity, and alignment of query and reference datasets.
+5. `regressPC()`: This function performs linear regression of a covariate of interest onto one or more principal components derived from single-cell data. This analysis helps quantify the variance explained by the covariate and is useful for tasks such as assessing batch effects, clustering homogeneity, and alignment of query and reference datasets.
 
 Together, these functions provide a reliable toolkit for analyzing and interpreting single-cell data, allowing researchers to gain deeper insights into the underlying biological processes and the relationships between different variables and cell types. The following sections of this vignette will guide you through the usage and application of each function, illustrating their role in comprehensive data analysis.
 
@@ -69,7 +74,7 @@ In the context of the `scDiagnostics` package, this vignette demonstrates how to
 
 - `reference_data`: This dataset provides expert-curated cell type annotations, serving as a gold standard for evaluating the quality of cell type annotations. It acts as a benchmark to assess and detect anomalies or inconsistencies in cell type classification.
 
-- `query_data`: This dataset contains cell type annotations from both expert assessments and those generated by the SingleR package. By comparing these annotations with the reference dataset, you can identify discrepancies between manual and automated annotations. This comparison helps in pinpointing inconsistencies and areas that may require further investigation or refinement.
+- `query_data`: This dataset contains cell type annotations from both expert assessments and those generated by the `r BiocStyle::Biocpkg("SingleR")` package. By comparing these annotations with the reference dataset, you can identify discrepancies between manual and automated annotations. This comparison helps in pinpointing inconsistencies and areas that may require further investigation or refinement.
 
 
 
@@ -86,7 +91,7 @@ set.seed(0)
 ```
 
 
-# `calculateCramerPValue` 
+# `calculateCramerPValue()` 
 
 The calculateCramerPValue function is designed to perform the Cramer test for comparing multivariate empirical cumulative distribution functions (ECDFs) between two samples in single-cell data. This test is particularly useful for assessing whether the distributions of principal components (PCs) differ significantly between the reference and query datasets for specific cell types.
 
@@ -94,16 +99,18 @@ To use this function, you first need to provide two key inputs: `reference_data`
 
 The function performs the following steps: it first projects the data into PCA space, subsets the data according to the specified cell types and principal components, and then applies the Cramer test to compare the ECDFs between the reference and query datasets. The result is a named vector of p-values from the Cramer test for each cell type, which indicates whether there is a significant difference in the distributions of PCs between the two datasets.
 
-Here's an example of how to use the `calculateCramerPValue` function:
+Here's an example of how to use the `calculateCramerPValue()` function:
 
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Perform Cramer test for the specified cell types and principal components
-cramer_test <- calculateCramerPValue(reference_data = reference_data,
-                                     query_data = query_data,
-                                     ref_cell_type_col = "expert_annotation", 
-                                     query_cell_type_col = "SingleR_annotation",
-                                     cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                                     pc_subset = 1:5)
+cramer_test <- calculateCramerPValue(
+    reference_data = reference_data,
+    query_data = query_data,
+    ref_cell_type_col = "expert_annotation", 
+    query_cell_type_col = "SingleR_annotation",
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    pc_subset = 1:5
+)
 
 # Display the Cramer test p-values
 print(cramer_test)
@@ -112,23 +119,25 @@ print(cramer_test)
 In this example, the function compares the distributions of the first five principal components between the reference and query datasets for cell types such as "CD4", "CD8", "B_and_plasma", and "Myeloid". The output is a vector of p-values indicating whether the differences in PC distributions are statistically significant.
 
 
-# `calculateHotellingPValue`
+# `calculateHotellingPValue()`
 
-The `calculateHotellingPValue` function is designed to compute Hotelling's T-squared test statistic and corresponding p-values for comparing multivariate means between reference and query datasets in the context of single-cell RNA-seq data. This statistical test is particularly useful for assessing whether the mean vectors of principal components (PCs) differ significantly between the two datasets, which can be indicative of differences in the cell type distributions.
+The `calculateHotellingPValue()` function is designed to compute Hotelling's T-squared test statistic and corresponding p-values for comparing multivariate means between reference and query datasets in the context of single-cell RNA-seq data. This statistical test is particularly useful for assessing whether the mean vectors of principal components (PCs) differ significantly between the two datasets, which can be indicative of differences in the cell type distributions.
 
 To use this function, you need to provide two `SingleCellExperiment` objects: `query_data` and `reference_data`, each containing numeric expression matrices. You also need to specify the column names for cell type annotations in both datasets with `query_cell_type_col` and `ref_cell_type_col.` The `cell_types` parameter allows you to choose which cell types to include in the analysis, and if not specified, the function will automatically include all cell types present in the datasets. The `pc_subset` parameter determines which principal components to consider, with the default being the first five PCs. Additionally, `n_permutation` specifies the number of permutations for calculating p-values, with a default of 500.
 
 The function works by first projecting the data into PCA space and then performing Hotelling's T-squared test for each specified cell type to compare the means between the reference and query datasets. It uses permutation testing to determine the p-values, indicating whether the observed differences in means are statistically significant. The result is a named numeric vector of p-values for each cell type.
 
-Here is an example of how to use the `calculateHotellingPValue` function:
+Here is an example of how to use the `calculateHotellingPValue()` function:
 
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Calculate Hotelling's T-squared test p-values
-p_values <- calculateHotellingPValue(query_data = query_data, 
-                                     reference_data = reference_data, 
-                                     query_cell_type_col = "SingleR_annotation", 
-                                     ref_cell_type_col = "expert_annotation",
-                                     pc_subset = 1:10)
+p_values <- calculateHotellingPValue(
+    query_data = query_data, 
+    reference_data = reference_data, 
+    query_cell_type_col = "SingleR_annotation", 
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:10
+)
 
 # Display the p-values rounded to five decimal places
 print(round(p_values, 5))
@@ -136,17 +145,17 @@ print(round(p_values, 5))
 
 In this example, the function calculates p-values for Hotelling's T-squared test, focusing on the first ten principal components to assess whether the multivariate means differ significantly between the reference and query datasets for each cell type. The p-values indicate the likelihood of observing the differences by chance and help identify significant disparities in cell type distributions.
 
-# `calculateNearestNeighborProbabilities` 
+# `calculateNearestNeighborProbabilities()` 
 
-In this section, we will explore the `calculateNearestNeighborProbabilities` function, which is designed to estimate the probability of each query cell belonging to either the reference or query dataset for each specified cell type. This function uses nearest neighbor analysis on PCA-reduced data to achieve this.
+In this section, we will explore the `calculateNearestNeighborProbabilities()` function, which is designed to estimate the probability of each query cell belonging to either the reference or query dataset for each specified cell type. This function uses nearest neighbor analysis on PCA-reduced data to achieve this.
 
 The function begins by reducing the dimensionality of both the query and reference datasets using Principal Component Analysis (PCA). It then compares each query cell to its nearest neighbors within the reference dataset. To ensure that sample sizes between datasets are comparable, the function uses data augmentation if necessary.
 
-Here is a detailed explanation of how to use the `calculateNearestNeighborProbabilities` function:
+Here is a detailed explanation of how to use the `calculateNearestNeighborProbabilities()` function:
 
 1. **Loading the Data**: First, ensure you have the data available in the form of `SingleCellExperiment` objects for both query and reference datasets.
 
-2. **Function Call**: The function `calculateNearestNeighborProbabilities` is called with several parameters including the query and reference datasets, the names of the columns containing cell type annotations, the subset of principal components to use, and the number of nearest neighbors to consider.
+2. **Function Call**: The function `calculateNearestNeighborProbabilities()` is called with several parameters including the query and reference datasets, the names of the columns containing cell type annotations, the subset of principal components to use, and the number of nearest neighbors to consider.
 
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Compute nearest-neighbor probabilities
@@ -166,7 +175,7 @@ nn_output <- calculateNearestNeighborProbabilities(
 - `n_query`: The number of cells in the query dataset for that cell type.
 - `query_prob`: The average probability of each query cell belonging to the reference dataset.
 
-4. **Plotting the Results**: To visualize the results, you can use the `plot` function provided for objects of class `calculateNearestNeighborProbabilities.`
+4. **Plotting the Results**: To visualize the results, you can use the `plot` function provided for objects of class `calculateNearestNeighborProbabilities`.
 
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot the results
@@ -174,13 +183,13 @@ plot(nn_output, cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"))
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/StatisticalMeasures/calculateNearestNeighborProbabilities.png)
 
-In summary, the `calculateNearestNeighborProbabilities` function provides a robust method for classifying query cells based on nearest neighbor analysis in PCA space. This can be particularly useful for understanding how query cells relate to known reference datasets and for visualizing these relationships across different cell types.
+In summary, the `calculateNearestNeighborProbabilities()` function provides a robust method for classifying query cells based on nearest neighbor analysis in PCA space. This can be particularly useful for understanding how query cells relate to known reference datasets and for visualizing these relationships across different cell types.
 
-# `calculateAveragePairwiseCorrelation` 
+# `calculateAveragePairwiseCorrelation()` 
 
-The `calculateAveragePairwiseCorrelation` function is designed to compute the average pairwise correlations between specified cell types in single-cell gene expression data. This function operates on `SingleCellExperiment` objects and is ideal for single-cell analysis workflows. It calculates pairwise correlations between query and reference cells using a specified correlation method, and then averages these correlations for each cell type pair. This helps in assessing the similarity between cells in the reference and query datasets and provides insights into the reliability of cell type annotations.
+The `calculateAveragePairwiseCorrelation()` function is designed to compute the average pairwise correlations between specified cell types in single-cell gene expression data. This function operates on `SingleCellExperiment` objects and is ideal for single-cell analysis workflows. It calculates pairwise correlations between query and reference cells using a specified correlation method, and then averages these correlations for each cell type pair. This helps in assessing the similarity between cells in the reference and query datasets and provides insights into the reliability of cell type annotations.
 
-To use the `calculateAveragePairwiseCorrelation` function, you need to supply it with two `SingleCellExperiment` objects: one for the query cells and one for the reference cells. The function also requires column names specifying cell type annotations in both datasets, and optionally a vector of cell types to include in the analysis. Additionally, you can specify a subset of principal components to use, or use the raw data directly if `pc_subset` is set to `NULL`. The correlation method can be either "spearman" or "pearson".
+To use the `calculateAveragePairwiseCorrelation()` function, you need to supply it with two `SingleCellExperiment` objects: one for the query cells and one for the reference cells. The function also requires column names specifying cell type annotations in both datasets, and optionally a vector of cell types to include in the analysis. Additionally, you can specify a subset of principal components to use, or use the raw data directly if `pc_subset` is set to `NULL`. The correlation method can be either "spearman" or "pearson".
 
 Here's an example of how to use this function:
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
@@ -199,26 +208,26 @@ cor_matrix_avg <- calculateAveragePairwiseCorrelation(
 round(cor_matrix_avg, 2)
 ```
 
-In this example, `calculateAveragePairwiseCorrelation` computes the average pairwise correlations for the cell types "CD4", "CD8", and "B_and_plasma". The resulting correlation matrix, `cor_matrix_avg`, is then plotted to visualize the correlation values between the specified cell types.
-
-This function is particularly useful for understanding the relationships between different cell types in your single-cell datasets and evaluating how well cell types in the query data correspond to those in the reference data.
+In this example, `calculateAveragePairwiseCorrelation()` computes the average pairwise correlations for the cell types "CD4", "CD8", and "B_and_plasma". This function is particularly useful for understanding the relationships between different cell types in your single-cell datasets and evaluating how well cell types in the query data correspond to those in the reference data.
 
 Note that there is also a plot method for the object return for `calculateAveragePairwiseCorrelation.`. See reference manual for details.
 
 
-# `regressPC`
+# `regressPC()`
 
-The `regressPC` function performs linear regression of a covariate of interest onto one or more principal components using data from a `SingleCellExperiment` object. This method helps quantify the variance explained by a covariate, which can be useful in applications such as quantifying batch effects, assessing clustering homogeneity, and evaluating alignment between query and reference datasets in cell type annotation settings.
+The `regressPC()` function performs linear regression of a covariate of interest onto one or more principal components using data from a `SingleCellExperiment` object. This method helps quantify the variance explained by a covariate, which can be useful in applications such as quantifying batch effects, assessing clustering homogeneity, and evaluating alignment between query and reference datasets in cell type annotation settings.
 
 The function calculates the R-squared value from the linear regression of the covariate onto each principal component. The variance contribution of the covariate effect per principal component is computed as the product of the variance explained by the principal component and the R-squared value. The total variance explained by the covariate is obtained by summing these contributions across all principal components.
 
-Here is how you can use the `regressPC` function:
+Here is how you can use the `regressPC()` function:
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Perform regression analysis using only reference data
-regress_res <- regressPC(reference_data = reference_data,
-                         ref_cell_type_col = "expert_annotation",
-                         cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                         pc_subset = 1:15)
+regress_res <- regressPC(
+    reference_data = reference_data,
+    ref_cell_type_col = "expert_annotation",
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    pc_subset = 1:15
+)
 
 # Plot results showing R-squared values
 plot(regress_res, plot_type = "r_squared")
@@ -230,17 +239,19 @@ plot(regress_res, plot_type = "p-value")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/StatisticalMeasures/regressPC2.png)
 
-In this example, `regressPC` is used to perform regression analysis on principal components 1 to 15 from the reference dataset. The results are then visualized using plots showing the R-squared values and p-values.
+In this example, `regressPC()` is used to perform regression analysis on principal components 1 to 15 from the reference dataset. The results are then visualized using plots showing the R-squared values and p-values.
 
 If you also have a query dataset and want to compare it with the reference dataset, you can include it in the analysis:
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Perform regression analysis using both reference and query data
-regress_res <- regressPC(reference_data = reference_data,
-                         query_data = query_data,
-                         ref_cell_type_col = "expert_annotation",
-                         query_cell_type_col = "SingleR_annotation",
-                         cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                         pc_subset = 1:15)
+regress_res <- regressPC(
+    reference_data = reference_data,
+    query_data = query_data,
+    ref_cell_type_col = "expert_annotation",
+    query_cell_type_col = "SingleR_annotation",
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    pc_subset = 1:15
+)
 
 # Plot results showing R-squared values
 plot(regress_res, plot_type = "r_squared")
@@ -260,7 +271,7 @@ This function is useful for understanding the impact of different covariates on 
 
 # Conclusion 
 
-The functions introduced in this vignette offer powerful tools for in-depth analysis and interpretation of single-cell transcriptomics data. By applying `calculateCramerPValue` and `calculateHotellingPValue`, researchers can quantify associations and differences between categorical variables and multivariate observations, respectively. `calculateNearestNeighborProbabilities` enhances clustering analysis by evaluating the likelihood of cell assignments, while `calculateAveragePairwiseCorrelation` reveals relationships between markers and features. Lastly, `regressPC` provides insights into how principal components relate to covariates, aiding in the understanding of variance explained by different factors.
+The functions introduced in this vignette offer powerful tools for in-depth analysis and interpretation of single-cell transcriptomics data. By applying `calculateCramerPValue()` and `calculateHotellingPValue()`, researchers can quantify associations and differences between categorical variables and multivariate observations, respectively. `calculateNearestNeighborProbabilities()` enhances clustering analysis by evaluating the likelihood of cell assignments, while `calculateAveragePairwiseCorrelation()` reveals relationships between markers and features. Lastly, `regressPC()` provides insights into how principal components relate to covariates, aiding in the understanding of variance explained by different factors.
 
 Together, these functions enable a comprehensive approach to single-cell data analysis, facilitating the identification of key relationships and enhancing the robustness of conclusions drawn from complex datasets. By leveraging these tools, researchers can advance their understanding of cellular processes and improve the accuracy of data interpretations in single-cell genomics.
 

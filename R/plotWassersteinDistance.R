@@ -102,12 +102,17 @@ plotWassersteinDistance <- function(query_data,
     n_null <- min(floor(ncol(reference_data)/2), ncol(query_data), 500)
     
     # Extract variance explained
-    weights <- attributes(reducedDim(reference_data, "PCA"))[["varExplained"]][pc_subset] / 
-        sum(attributes(reducedDim(reference_data, "PCA"))[["varExplained"]][pc_subset])
+    weights <- attributes(reducedDim(
+        reference_data, "PCA"))[["varExplained"]][pc_subset] / 
+        sum(attributes(reducedDim(
+            reference_data, "PCA"))[["varExplained"]][pc_subset])
     
     # Compute reference-reference PCA weighted distances
-    pca_ref <- pca_output[pca_output$dataset == "Reference", paste0("PC", pc_subset)]
-    pca_ref_weighted <- t(apply(pca_ref, 1, function(x, weights) return(x * weights), weights = sqrt(weights)))
+    pca_ref <- pca_output[pca_output$dataset == "Reference", 
+                          paste0("PC", pc_subset)]
+    pca_ref_weighted <- t(apply(pca_ref, 1, 
+                                function(x, weights) return(x * weights), 
+                                weights = sqrt(weights)))
     weighted_dist_ref <- as.matrix(dist(pca_ref_weighted))
     
     # Computing Wasserstein distances of null distribution
@@ -116,53 +121,83 @@ plotWassersteinDistance <- function(query_data,
     for(iter in seq_len(n_resamples)){
         
         sample_ref_1 <- sample(seq_len(nrow(pca_ref)), n_null, replace = FALSE)
-        sample_ref_2 <- sample(seq_len(nrow(pca_ref))[-sample_ref_1], n_null, replace = FALSE)
+        sample_ref_2 <- sample(seq_len(nrow(pca_ref))[-sample_ref_1], 
+                               n_null, replace = FALSE)
         cost_mat <- weighted_dist_ref[sample_ref_1, sample_ref_2]
-        opt_plan <- transport::transport(prob_masses, prob_masses, costm = cost_mat)
-        null_dist[iter] <- transport::wasserstein(prob_masses, prob_masses, tplan = opt_plan, costm = cost_mat)
+        opt_plan <- transport::transport(prob_masses, prob_masses, 
+                                         costm = cost_mat)
+        null_dist[iter] <- transport::wasserstein(prob_masses, 
+                                                  prob_masses, 
+                                                  tplan = opt_plan, 
+                                                  costm = cost_mat)
     }
     
     # Compute reference-query PCA weighted distances
-    pca_query <- pca_output[pca_output$dataset == "Query", paste0("PC", pc_subset)]
-    pca_query_weighted <- t(apply(pca_query, 1, function(x, weights) return(x * weights), weights = sqrt(weights)))
-    weighted_dist_query <- outer(rowSums(pca_ref_weighted^2), rowSums(pca_query_weighted^2), "+") - 
+    pca_query <- pca_output[pca_output$dataset == "Query", 
+                            paste0("PC", pc_subset)]
+    pca_query_weighted <- t(apply(pca_query, 1, 
+                                  function(x, weights) return(x * weights), 
+                                  weights = sqrt(weights)))
+    weighted_dist_query <- outer(rowSums(pca_ref_weighted^2), 
+                                 rowSums(pca_query_weighted^2), "+") - 
         2 * pca_ref_weighted %*% t(pca_query_weighted)
 
     # Computing Wasserstein distances for query data
     query_dist <- numeric(n_resamples)
     for(iter in seq_len(n_resamples)){
         
-        sample_ref <- sample(seq_len(nrow(pca_ref)), n_null, replace = FALSE)
-        sample_query <- sample(seq_len(nrow(pca_query)), n_null, replace = FALSE)
+        sample_ref <- sample(seq_len(nrow(pca_ref)), 
+                             n_null, replace = FALSE)
+        sample_query <- sample(seq_len(nrow(pca_query)), 
+                               n_null, replace = FALSE)
         cost_mat <- weighted_dist_query[sample_ref, sample_query]
-        opt_plan <- transport::transport(prob_masses, prob_masses, costm = cost_mat)
-        query_dist[iter] <- transport::wasserstein(prob_masses, prob_masses, tplan = opt_plan, costm = cost_mat)
+        opt_plan <- transport::transport(prob_masses, 
+                                         prob_masses, 
+                                         costm = cost_mat)
+        query_dist[iter] <- transport::wasserstein(prob_masses, 
+                                                   prob_masses, 
+                                                   tplan = opt_plan, 
+                                                   costm = cost_mat)
     }
     
     # Visualize results
-    threshold_text <- bquote(paste("Signifiance Threshold (", alpha, " = ", .(alpha), ")"))
-    vline_data <- data.frame(xintercept = c(quantile(null_dist, 1 - alpha), mean(query_dist)),
-                             line_type = c("Signifiance Threshold", "Reference-Query Distance"))
-    density_plot <- ggplot2::ggplot(data.frame(null_dist), ggplot2::aes(x = null_dist)) +
+    threshold_text <- bquote(paste(
+        "Signifiance Threshold (", alpha, " = ", .(alpha), ")"))
+    vline_data <- data.frame(xintercept = c(quantile(null_dist, 1 - alpha), 
+                                            mean(query_dist)),
+                             line_type = c("Signifiance Threshold", 
+                                           "Reference-Query Distance"))
+    density_plot <- ggplot2::ggplot(data.frame(null_dist), 
+                                    ggplot2::aes(x = null_dist)) +
         ggplot2::geom_density(alpha = 0.7, fill = "#00BBC4") + 
-        ggplot2::labs(title = paste0("Density of Wasserstein Distances For Reference Distribution of ", 
-                                     unique(reference_data[[ref_cell_type_col]])), 
-                      x = "Wasserstein Distances", y = "Density") +
+        ggplot2::labs(title = paste0(
+            "Density of Wasserstein Distances For Reference Distribution of ", 
+            unique(reference_data[[ref_cell_type_col]])), 
+            x = "Wasserstein Distances", y = "Density") +
         ggplot2::theme_bw() +
-        ggplot2::theme(legend.position = "right", panel.grid.minor = ggplot2::element_blank(), 
-                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10)) + 
-        ggplot2::geom_vline(data = vline_data, ggplot2::aes(xintercept = .data[["xintercept"]], 
-                                                            linetype = .data[["line_type"]]), 
+        ggplot2::theme(
+            legend.position = "right", 
+            panel.grid.minor = ggplot2::element_blank(), 
+            panel.grid.major = ggplot2::element_line(color = "gray", 
+                                                     linetype = "dotted"),
+            plot.title = ggplot2::element_text(size = 14, face = "bold", 
+                                               hjust = 0.5),
+                       axis.title = ggplot2::element_text(size = 12), 
+            axis.text = ggplot2::element_text(size = 10)) + 
+        ggplot2::geom_vline(data = vline_data, 
+                            ggplot2::aes(xintercept = .data[["xintercept"]], 
+                                         linetype = .data[["line_type"]]), 
                             color = "black", linewidth = c(1, 1)) +
-        ggplot2::scale_linetype_manual(name = NULL, 
-                                       values = c("Signifiance Threshold" = "solid", "Reference-Query Distance" = "dashed"),
-                                       labels = c("Reference-Query Distance", threshold_text)) +
-        ggplot2::guides(linetype = ggplot2::guide_legend(nrow = 2, override.aes = list(color = "black", size = 0.5), 
-                                                         direction = "horizontal", 
-                                                         keywidth = ggplot2::unit(1, "line"), 
-                                                         keyheight = ggplot2::unit(1.5, "line")))
+        ggplot2::scale_linetype_manual(
+            name = NULL, 
+            values = c("Signifiance Threshold" = "solid", 
+                       "Reference-Query Distance" = "dashed"),
+            labels = c("Reference-Query Distance", threshold_text)) +
+        ggplot2::guides(linetype = ggplot2::guide_legend(
+            nrow = 2, override.aes = list(color = "black", size = 0.5), 
+            direction = "horizontal", 
+            keywidth = ggplot2::unit(1, "line"), 
+            keyheight = ggplot2::unit(1.5, "line")))
     return(density_plot)
 }
 

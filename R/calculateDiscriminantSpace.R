@@ -101,9 +101,11 @@ calculateDiscriminantSpace <- function(reference_data,
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){
         if(is.null(query_data)){
-            cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]])))
+            cell_types <- na.omit(
+                unique(c(reference_data[[ref_cell_type_col]])))
         } else{
-            cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
+            cell_types <- na.omit(
+                unique(c(reference_data[[ref_cell_type_col]],
                                            query_data[[query_cell_type_col]])))
         }
     }
@@ -141,7 +143,8 @@ calculateDiscriminantSpace <- function(reference_data,
         
         # Extract reference matrix using top genes
         top_genes <- var_imp[["var_imp_ref"]][[combination_name]]$Gene[seq_len(n_top)]
-        ref_mat <- t(as.matrix(assay(reference_data, "logcounts")))[, top_genes]
+        ref_mat <- t(
+            as.matrix(assay(reference_data, "logcounts")))[, top_genes]
         
         # Compute within-class and between-class scatter matrix
         sw <- sb <- matrix(0, length(top_genes), length(top_genes))
@@ -150,7 +153,8 @@ calculateDiscriminantSpace <- function(reference_data,
         for(cell_type in cell_types){
             
             # Extract matrix for cell type
-            ref_mat_subset <- ref_mat[which(reference_data[[ref_cell_type_col]] == cell_type),]
+            ref_mat_subset <- ref_mat[which(
+                reference_data[[ref_cell_type_col]] == cell_type),]
             
             # Ledoit-Wolf estimation for the current class
             lw_cov <- ledoitWolf(ref_mat_subset)
@@ -159,7 +163,8 @@ calculateDiscriminantSpace <- function(reference_data,
             
             # Update within-class scatter matrix
             class_mean <- colMeans(ref_mat_subset)
-            sb <- sb + nrow(ref_mat_subset) * (class_mean - overall_mean) %*% t(class_mean - overall_mean)
+            sb <- sb + nrow(ref_mat_subset) * (class_mean - overall_mean) %*% 
+                t(class_mean - overall_mean)
         }
         
         # Ensure symmetry of sw
@@ -167,14 +172,22 @@ calculateDiscriminantSpace <- function(reference_data,
         # Solve generalized eigenvalue problem
         eig <- eigen(solve(sw) %*% sb)
         # Sort eigenvectors by eigenvalues
-        discriminant_eigenvalues <- Re(eig$values[which(Re(eig$values) > eigen_threshold), drop = FALSE])
-        discriminant_eigenvectors <- Re(eig$vectors[, which(Re(eig$values) > eigen_threshold), drop = FALSE])
+        discriminant_eigenvalues <- Re(
+            eig$values[which(Re(eig$values) > eigen_threshold), 
+                       drop = FALSE])
+        discriminant_eigenvectors <- Re(
+            eig$vectors[, which(Re(eig$values) > eigen_threshold), 
+                        drop = FALSE])
         rownames(discriminant_eigenvectors) <- top_genes
-        colnames(discriminant_eigenvectors) <- paste0("DV", seq_len(ncol(discriminant_eigenvectors)))
+        colnames(discriminant_eigenvectors) <- paste0(
+            "DV", seq_len(ncol(discriminant_eigenvectors)))
         # Compute projected data
-        ref_proj <- data.frame(ref_mat[which(reference_data[[ref_cell_type_col]] %in% cell_types),] %*% discriminant_eigenvectors, 
-                               reference_data[[ref_cell_type_col]][reference_data[[ref_cell_type_col]] %in% cell_types])
-        colnames(ref_proj) <- c(paste0("DV", seq_len(ncol(discriminant_eigenvectors))), "cell_type")
+        ref_proj <- data.frame(
+            ref_mat[which(reference_data[[ref_cell_type_col]] %in% 
+                              cell_types),] %*% discriminant_eigenvectors, 
+            reference_data[[ref_cell_type_col]][reference_data[[ref_cell_type_col]] %in% cell_types])
+        colnames(ref_proj) <- c(
+            paste0("DV", seq_len(ncol(discriminant_eigenvectors))), "cell_type")
         discriminant_output[[combination_name]][["discriminant_eigenvalues"]] <- discriminant_eigenvalues
         discriminant_output[[combination_name]][["discriminant_eigenvectors"]] <- discriminant_eigenvectors
         discriminant_output[[combination_name]][["ref_proj"]] <- ref_proj
@@ -183,27 +196,40 @@ calculateDiscriminantSpace <- function(reference_data,
         if(!is.null(query_data)){
             
             # Projection on discriminant space
-            query_mat <- t(as.matrix(assay(query_data, "logcounts")))[, top_genes]
-            query_proj <- data.frame(query_mat[which(query_data[[query_cell_type_col]] %in% cell_types),] %*% discriminant_eigenvectors, 
-                                     query_data[[query_cell_type_col]][query_data[[query_cell_type_col]] %in% cell_types])
-            colnames(query_proj) <- c(paste0("DV", seq_len(ncol(discriminant_eigenvectors))), "cell_type")
-            discriminant_output[[combination_name]][["query_proj"]] <- query_proj
+            query_mat <- t(
+                as.matrix(assay(query_data, "logcounts")))[, top_genes]
+            query_proj <- data.frame(
+                query_mat[which(query_data[[query_cell_type_col]] %in% 
+                                    cell_types),] %*% discriminant_eigenvectors, 
+                query_data[[query_cell_type_col]][query_data[[query_cell_type_col]] %in% cell_types])
+            colnames(query_proj) <- c(
+                paste0("DV", seq_len(ncol(discriminant_eigenvectors))), 
+                "cell_type")
+            discriminant_output[[combination_name]][["query_proj"]] <- 
+                query_proj
             
             if(calculate_metrics){
                 
                 # Cosine similarity between mean vector of reference projection
                 # Mahalanobis distance between each query cell projected on reference discriminant space and reference data projected on reference discriminant space
-                cosine_similarity <- mahalanobis_dist <- numeric(nrow(query_proj))
+                cosine_similarity <- mahalanobis_dist <- 
+                    numeric(nrow(query_proj))
                 mahalanobis_crit <- numeric(length(cell_types))
                 for(type in c(1:2)){
                     mahalanobis_dist[query_proj[, "cell_type"] == cell_types[type]] <- 
-                        mahalanobis(query_proj[query_proj[, "cell_type"] == cell_types[type], paste0("DV", seq_len(length(discriminant_eigenvalues)))], 
-                                    colMeans(ref_proj[ref_proj[, "cell_type"] == cell_types[type], paste0("DV", seq_len(length(discriminant_eigenvalues)))]), 
-                                    cov(ref_proj[ref_proj[, "cell_type"] == cell_types[type], paste0("DV", seq_len(length(discriminant_eigenvalues)))]))
+                        mahalanobis(
+                            query_proj[query_proj[, "cell_type"] == cell_types[type], 
+                                       paste0("DV", seq_len(length(discriminant_eigenvalues)))], 
+                            colMeans(ref_proj[ref_proj[, "cell_type"] == cell_types[type], 
+                                              paste0("DV", seq_len(length(discriminant_eigenvalues)))]), 
+                            cov(ref_proj[ref_proj[, "cell_type"] == cell_types[type], 
+                                         paste0("DV", seq_len(length(discriminant_eigenvalues)))]))
                     cosine_similarity[query_proj[, "cell_type"] == cell_types[type]] <- 
-                        apply(query_proj[query_proj[, "cell_type"] == cell_types[type], paste0("DV", seq_len(length(discriminant_eigenvalues)))], 1, 
+                        apply(query_proj[query_proj[, "cell_type"] == cell_types[type], 
+                                         paste0("DV", seq_len(length(discriminant_eigenvalues)))], 1, 
                               function(x, y) return(sum(x * y) / (sqrt(sum(x^2)) * sqrt(sum(y^2)))), 
-                              y = colMeans(ref_proj[ref_proj[, "cell_type"] == cell_types[type], paste0("DV", seq_len(length(discriminant_eigenvalues)))]))
+                              y = colMeans(ref_proj[ref_proj[, "cell_type"] == cell_types[type], 
+                                                    paste0("DV", seq_len(length(discriminant_eigenvalues)))]))
                 }
                 discriminant_output[[combination_name]][["query_mahalanobis_dist"]] <- mahalanobis_dist
                 discriminant_output[[combination_name]][["mahalanobis_crit"]] <- qchisq(1 - alpha, df = length(cell_types))
@@ -213,7 +239,8 @@ calculateDiscriminantSpace <- function(reference_data,
     }
     
     # Return data projected onto (reference) discriminant space for each combination of cell types
-    class(discriminant_output) <- c(class(discriminant_output), "calculateDiscriminantSpace")
+    class(discriminant_output) <- c(class(discriminant_output), 
+                                    "calculateDiscriminantSpace")
     return(discriminant_output)
 }
 
@@ -249,9 +276,11 @@ ledoitWolf <- function(class_data) {
     shrinkage_target <- diag(mean_variance, ncol(class_data), ncol(class_data))
     # Calculate the shrinkage intensity
     phi_hat <- sum((class_data - col_means) ^ 2) / (nrow(class_data) - 1)
-    shrinkage_intensity <- (1 / nrow(class_data)) * min(phi_hat, mean_variance ^ 2)
+    shrinkage_intensity <- (1 / nrow(class_data)) * 
+        min(phi_hat, mean_variance ^ 2)
     # Ledoit-Wolf estimated covariance matrix
-    lw_cov <- (1 - shrinkage_intensity) * sample_cov + shrinkage_intensity * shrinkage_target
+    lw_cov <- (1 - shrinkage_intensity) * 
+        sample_cov + shrinkage_intensity * shrinkage_target
     # Ensure symmetry
     lw_cov <- (lw_cov + t(lw_cov)) / 2
     return(lw_cov)

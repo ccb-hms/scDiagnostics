@@ -96,20 +96,25 @@ compareCCA <- function(query_data,
                   common_rotation_genes = TRUE)
     
     # Check if n_top_vars is a positive integer
-    if (!is.numeric(n_top_vars) || n_top_vars <= 0 || n_top_vars != as.integer(n_top_vars)) {
+    if (!is.numeric(n_top_vars) || n_top_vars <= 0 || 
+        n_top_vars != as.integer(n_top_vars)) {
         stop("\'n_top_vars\' must be a positive integer.")
     }
     
     # Extract the rotation matrices
-    ref_rotation <- attributes(reducedDim(reference_data, "PCA"))[["rotation"]][, pc_subset]
-    query_rotation <- attributes(reducedDim(query_data, "PCA"))[["rotation"]][, pc_subset]
-    query_rotation <- query_rotation[match(rownames(ref_rotation), rownames(query_rotation)), ]
+    ref_rotation <- attributes(
+        reducedDim(reference_data, "PCA"))[["rotation"]][, pc_subset]
+    query_rotation <- attributes(
+        reducedDim(query_data, "PCA"))[["rotation"]][, pc_subset]
+    query_rotation <- query_rotation[match(rownames(ref_rotation), 
+                                           rownames(query_rotation)), ]
 
     # Function to identify high-loading variables for each PC
     .getHighLoadingVars <- function(rotation_mat, n_top_vars) {
         high_loading_vars <- lapply(seq_len(ncol(rotation_mat)), function(pc) {
             abs_loadings <- abs(rotation_mat[, pc])
-            top_vars <- names(sort(abs_loadings, decreasing = TRUE))[1:n_top_vars]
+            top_vars <- names(sort(abs_loadings, 
+                                   decreasing = TRUE))[seq_len(n_top_vars)]
             return(top_vars)
         })
         return(high_loading_vars)
@@ -118,7 +123,9 @@ compareCCA <- function(query_data,
     # Get union of variables with highest loadings
     top_ref <- .getHighLoadingVars(ref_rotation, n_top_vars)
     top_query <- .getHighLoadingVars(query_rotation, n_top_vars)
-    top_union <- unlist(lapply(seq_len(length(pc_subset)), function(i) return(union(top_ref[[i]], top_query[[i]]))))
+    top_union <- unlist(lapply(seq_len(length(pc_subset)), 
+                               function(i) return(union(top_ref[[i]], 
+                                                        top_query[[i]]))))
     
     # Perform CCA
     cca_result <- cancor(ref_rotation, query_rotation)
@@ -136,7 +143,8 @@ compareCCA <- function(query_data,
     # Compute similarities and account for correlations
     similarities <- rep(0, length(pc_subset))
     for (i in seq_len(length(pc_subset))) {
-        similarities[i] <- .cosine_similarity(canonical_ref[, i], canonical_query[, i])
+        similarities[i] <- .cosine_similarity(canonical_ref[, i], 
+                                              canonical_query[, i])
     }
     
     # Update class of return output

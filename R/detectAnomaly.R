@@ -91,8 +91,10 @@ detectAnomaly <- function(reference_data,
                             list(na.omit(unique(reference_labels))))
         } else{
             query_labels <- query_data[[query_cell_type_col]]
-            cell_types <- c(as.list(na.omit(intersect(unique(reference_labels), unique(query_labels)))),
-                            list(na.omit(intersect(unique(reference_labels), unique(query_labels)))))
+            cell_types <- c(as.list(na.omit(intersect(unique(reference_labels), 
+                                                      unique(query_labels)))),
+                            list(na.omit(intersect(unique(reference_labels), 
+                                                   unique(query_labels)))))
         }
     }
     
@@ -102,7 +104,8 @@ detectAnomaly <- function(reference_data,
     }
     
     # Input check for anomaly_treshold
-    if (!is.numeric(anomaly_treshold) || anomaly_treshold <= 0 || anomaly_treshold >= 1) {
+    if (!is.numeric(anomaly_treshold) || anomaly_treshold <= 0 || 
+        anomaly_treshold >= 1) {
         stop("\'anomaly_treshold\' must be a positive number greater than 0 and less than 1.")
     }
     
@@ -115,7 +118,8 @@ detectAnomaly <- function(reference_data,
                                      query_cell_type_col = query_cell_type_col, 
                                      ref_cell_type_col = ref_cell_type_col,
                                      pc_subset = pc_subset)
-            query_mat <- pca_output[pca_output[["dataset"]] == "Query", paste0("PC", pc_subset)]
+            query_mat <- pca_output[pca_output[["dataset"]] == "Query", 
+                                    paste0("PC", pc_subset)]
         }
     } else{
         reference_mat <- t(as.matrix(assay(reference_data, "logcounts")))
@@ -134,31 +138,44 @@ detectAnomaly <- function(reference_data,
     for (cell_type in cell_types) {
         
         # Filter reference and query PCA data for the current cell type
-        reference_mat_subset <- na.omit(reference_mat[which(reference_labels %in% cell_type),])
+        reference_mat_subset <- na.omit(reference_mat[which(
+            reference_labels %in% cell_type),])
         
         # Build isolation forest on reference PCA data for this cell type
-        isolation_forest <- isotree::isolation.forest(reference_mat_subset, ntree = n_tree, ...)
+        isolation_forest <- isotree::isolation.forest(reference_mat_subset, 
+                                                      ntree = n_tree, ...)
         
         # Calculate anomaly scores for query data (scaled by reference path length)
-        reference_anomaly_scores <- predict(isolation_forest, newdata = reference_mat_subset, type = "score")
+        reference_anomaly_scores <- predict(isolation_forest, 
+                                            newdata = reference_mat_subset, 
+                                            type = "score")
         if(!is.null(query_data)){
-            query_mat_subset <- na.omit(query_mat[which(query_labels %in% cell_type),])
-            query_anomaly_scores <- predict(isolation_forest, newdata = query_mat_subset, type = "score")
+            query_mat_subset <- na.omit(query_mat[which(
+                query_labels %in% cell_type),])
+            query_anomaly_scores <- predict(isolation_forest, 
+                                            newdata = query_mat_subset, 
+                                            type = "score")
         }
         
         # Store cell type anomaly scores and PCA data
         list_name <- ifelse(length(cell_type) == 1, cell_type, "Combined")
         output[[list_name]] <- list()
-        output[[list_name]][["reference_anomaly_scores"]] <- reference_anomaly_scores
-        output[[list_name]][["reference_anomaly"]] <- reference_anomaly_scores > anomaly_treshold
+        output[[list_name]][["reference_anomaly_scores"]] <- 
+            reference_anomaly_scores
+        output[[list_name]][["reference_anomaly"]] <- 
+            reference_anomaly_scores > anomaly_treshold
         output[[list_name]][["reference_mat_subset"]] <- reference_mat_subset
         if(!is.null(query_data)){
             output[[list_name]][["query_mat_subset"]] <- query_mat_subset
-            output[[list_name]][["query_anomaly_scores"]] <- query_anomaly_scores
-            output[[list_name]][["query_anomaly"]] <- query_anomaly_scores > anomaly_treshold
+            output[[list_name]][["query_anomaly_scores"]] <- 
+                query_anomaly_scores
+            output[[list_name]][["query_anomaly"]] <- 
+                query_anomaly_scores > anomaly_treshold
         }
         if(!is.null(pc_subset))
-            output[[list_name]][["var_explained"]] <- attributes(reducedDim(reference_data, "PCA"))[["percentVar"]][pc_subset]
+            output[[list_name]][["var_explained"]] <- 
+            attributes(reducedDim(
+                reference_data, "PCA"))[["percentVar"]][pc_subset]
     }
     
     # Set the class of the output

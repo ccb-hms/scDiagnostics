@@ -66,7 +66,8 @@ calculateNearestNeighborProbabilities <- function(query_data,
                   pc_subset_ref = pc_subset)
     
     # Check if n_neighbor is a positive integer
-    if (!is.numeric(n_neighbor) || n_neighbor <= 0 || n_neighbor != as.integer(n_neighbor)) {
+    if (!is.numeric(n_neighbor) || n_neighbor <= 0 || 
+        n_neighbor != as.integer(n_neighbor)) {
         stop("\'n_neighbor\' must be a positive integer.")
     }
     
@@ -77,7 +78,8 @@ calculateNearestNeighborProbabilities <- function(query_data,
     }
     
     # Get PCA data
-    pca_output <- projectPCA(query_data = query_data, reference_data = reference_data,
+    pca_output <- projectPCA(query_data = query_data, 
+                             reference_data = reference_data,
                              pc_subset = pc_subset,
                              query_cell_type_col = query_cell_type_col, 
                              ref_cell_type_col = ref_cell_type_col)
@@ -90,13 +92,18 @@ calculateNearestNeighborProbabilities <- function(query_data,
     for (cell_type in cell_types) {
         
         # Extract PCA-reduced data for the current cell type
-        ref_pca_cell_type <- pca_output[which(pca_output[["dataset"]] == "Reference" & pca_output[["cell_type"]] == cell_type), 
-                                        paste0("PC", pc_subset)]
-        query_pca_cell_type <- pca_output[which(pca_output[["dataset"]] == "Query" & pca_output[["cell_type"]] == cell_type), 
-                                          paste0("PC", pc_subset)]
+        ref_pca_cell_type <- pca_output[which(
+            pca_output[["dataset"]] == "Reference" & 
+                pca_output[["cell_type"]] == cell_type), 
+            paste0("PC", pc_subset)]
+        query_pca_cell_type <- pca_output[which(
+            pca_output[["dataset"]] == "Query" &
+                pca_output[["cell_type"]] == cell_type), 
+            paste0("PC", pc_subset)]
         
         # Combine reference and query data for the current cell type
-        combined_data_cell_type <- rbind(ref_pca_cell_type, query_pca_cell_type)
+        combined_data_cell_type <- rbind(ref_pca_cell_type, 
+                                         query_pca_cell_type)
         
         # Number of cells for reference and query datasets
         n_ref <- nrow(ref_pca_cell_type)
@@ -105,38 +112,51 @@ calculateNearestNeighborProbabilities <- function(query_data,
         # Data augmentation to balance sample size of datasets
         if(n_ref > n_query){
             
-            combined_data_cell_type <- rbind(combined_data_cell_type,
-                                             query_pca_cell_type[sample(seq_len(n_query), n_ref - n_query, replace = TRUE),])
-            combined_data_cell_type <- data.frame(combined_data_cell_type, 
-                                                  data_type = rep(c("Reference", "Query"), each = n_ref))
+            combined_data_cell_type <- rbind(
+                combined_data_cell_type,
+                query_pca_cell_type[sample(seq_len(n_query), 
+                                           n_ref - n_query, 
+                                           replace = TRUE),])
+            combined_data_cell_type <- data.frame(
+                combined_data_cell_type, 
+                data_type = rep(c("Reference", "Query"), each = n_ref))
         } else if (n_query > n_ref){
             
-            combined_data_cell_type <- rbind(combined_data_cell_type,
-                                             ref_pca_cell_type[sample(seq_len(n_ref), n_query - n_ref, replace = TRUE),])
-            combined_data_cell_type <- data.frame(combined_data_cell_type, 
-                                                  data_type = c(rep("Reference", n_ref), 
-                                                                rep("Query", n_query),
-                                                                rep("Reference", n_query - n_ref)))
+            combined_data_cell_type <- rbind(
+                combined_data_cell_type,
+                ref_pca_cell_type[sample(seq_len(n_ref), 
+                                         n_query - n_ref, replace = TRUE),])
+            combined_data_cell_type <- data.frame(
+                combined_data_cell_type, 
+                data_type = c(rep("Reference", n_ref), 
+                              rep("Query", n_query),
+                              rep("Reference", n_query - n_ref)))
         }
         
         # Perform nearest neighbors search
-        dist_mat <- as.matrix(dist(combined_data_cell_type[, paste0("PC", pc_subset)]))
+        dist_mat <- as.matrix(dist(
+            combined_data_cell_type[, paste0("PC", pc_subset)]))
         neighbors_indices <- t(apply(dist_mat, 1, function(row, n_neighbor) {
             return(order(row)[2:(n_neighbor + 1)])},
         n_neighbor = n_neighbor))
-        prob_query <- apply(neighbors_indices, 1, function(x, data_type) {mean(data_type[x] == "Query")}, 
+        prob_query <- apply(neighbors_indices, 1, 
+                            function(x, data_type) {
+                                mean(data_type[x] == "Query")}, 
                             data_type = combined_data_cell_type$data_type)
 
         # Store the data for the cell type
         probabilities[[cell_type]] <- vector("list", length = 3)
-        names(probabilities[[cell_type]]) <- c("n_neighbor", "n_query", "query_prob")
+        names(probabilities[[cell_type]]) <- c("n_neighbor", 
+                                               "n_query", 
+                                               "query_prob")
         probabilities[[cell_type]][["n_neighbor"]] <- n_neighbor
         probabilities[[cell_type]][["n_query"]] <- nrow(query_pca_cell_type)
         probabilities[[cell_type]][["query_prob"]] <- mean(prob_query)
     }
     
     # Creating class for output
-    class(probabilities) <- c(class(probabilities), "calculateNearestNeighborProbabilities")
+    class(probabilities) <- c(class(probabilities), 
+                              "calculateNearestNeighborProbabilities")
     
     # Return the list of probabilities
     return(probabilities)

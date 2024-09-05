@@ -13,9 +13,11 @@ projectPCA(
 )
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix 
+for the query cells.}
 
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix 
+for the reference cells.}
 
 \item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data} 
 that identifies the cell types.}
@@ -30,12 +32,14 @@ A \code{data.frame} containing the projected data in rows (reference and query d
 }
 \description{
 This function projects a query singleCellExperiment object onto the PCA space of a reference 
-singleCellExperiment object. The PCA analysis on the reference data is assumed to be pre-computed and stored within the object.
+singleCellExperiment object. The PCA analysis on the reference data is assumed to be pre-computed 
+and stored within the object.
 }
 \details{
 This function assumes that the "PCA" element exists within the \code{reducedDims} of the reference data 
-(obtained using \code{reducedDim(reference_data)}) and that the genes used for PCA are present in both the reference and query data. 
-It performs centering and scaling of the query data based on the reference data before projection.
+(obtained using \code{reducedDim(reference_data)}) and that the genes used for PCA are present in both 
+the reference and query data. It performs centering and scaling of the query data based on the reference 
+data before projection.
 }
 \examples{
 # Load data

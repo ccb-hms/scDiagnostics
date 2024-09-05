@@ -50,15 +50,22 @@
 #' @importFrom SummarizedExperiment assay                                       
 #' @export
 #' 
-plotPairwiseDistancesDensity <- function(query_data, 
-                                         reference_data, 
-                                         query_cell_type_col, 
-                                         ref_cell_type_col, 
-                                         cell_type_query, 
-                                         cell_type_ref, 
-                                         pc_subset = 1:5,
-                                         distance_metric = c("correlation", "euclidean"), 
-                                         correlation_method = c("spearman", "pearson")) {
+plotPairwiseDistancesDensity <- function(
+        query_data, 
+        reference_data, 
+        query_cell_type_col, 
+        ref_cell_type_col, 
+        cell_type_query, 
+        cell_type_ref, 
+        pc_subset = 1:5,
+        distance_metric = c("correlation", "euclidean"), 
+        correlation_method = c("spearman", "pearson")) {
+    
+    # Match argument for distance_metric
+    distance_metric <- match.arg(distance_metric)
+    
+    # Match argument for correlation method
+    correlation_method <- match.arg(correlation_method)
     
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -67,18 +74,6 @@ plotPairwiseDistancesDensity <- function(query_data,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_types = c(cell_type_query, cell_type_ref),
                   pc_subset_ref = pc_subset)
-    
-    # Check distance_metric method
-    distance_metric <- match.arg(distance_metric)
-    if(!(distance_metric %in% c("correlation", "euclidean"))){
-        stop("The \'distance_metric\' specified is not available.")
-    }
-    
-    # Check correlation method
-    correlation_method <- match.arg(correlation_method)
-    if(!(correlation_method %in% c("spearman", "pearson"))){
-        stop("The \'correlation_method\' specified is not available.")
-    }
     
     # Convert to matrix and potentially applied PCA dimensionality reduction
     if(!is.null(pc_subset)){
@@ -89,9 +84,11 @@ plotPairwiseDistancesDensity <- function(query_data,
                                  ref_cell_type_col = ref_cell_type_col,
                                  pc_subset = pc_subset)
         ref_mat <- pca_output[which(pca_output[["dataset"]] == "Reference" &
-                              pca_output[["cell_type"]] == cell_type_ref), paste0("PC", pc_subset)]
+                                        pca_output[["cell_type"]] == cell_type_ref), 
+                              paste0("PC", pc_subset)]
         query_mat <- pca_output[which(pca_output[["dataset"]] == "Query" &
-                                pca_output[["cell_type"]] == cell_type_query), paste0("PC", pc_subset)]
+                                          pca_output[["cell_type"]] == cell_type_query), 
+                                paste0("PC", pc_subset)]
     } else{
         
         # Subset query data to the specified cell type
@@ -123,10 +120,11 @@ plotPairwiseDistancesDensity <- function(query_data,
     # Extract the distances or correlations for the different pairwise comparisons
     num_query_cells <- nrow(query_mat)
     num_ref_cells <- nrow(ref_mat)
-    dist_query_query <- dist_matrix[1:num_query_cells, 1:num_query_cells]
-    dist_ref_ref <- dist_matrix[(num_query_cells+1):(num_query_cells+num_ref_cells), 
-                                (num_query_cells+1):(num_query_cells+num_ref_cells)]
-    dist_query_ref <- dist_matrix[1:num_query_cells, (num_query_cells+1):(num_query_cells+num_ref_cells)]
+    query_indices <- seq_len(num_query_cells)
+    ref_indices <- seq_len(num_ref_cells) + num_query_cells
+    dist_query_query <- dist_matrix[query_indices, query_indices]
+    dist_ref_ref <- dist_matrix[ref_indices, ref_indices]
+    dist_query_ref <- dist_matrix[query_indices, ref_indices]
     
     # Create data frame for plotting
     dist_df <- data.frame(
@@ -139,16 +137,26 @@ plotPairwiseDistancesDensity <- function(query_data,
     )
     
     # Plot density plots with improved aesthetics
-    ggplot2::ggplot(dist_df, ggplot2::aes(x = .data[["Distance"]], color = .data[["Comparison"]])) +
+    ggplot2::ggplot(dist_df, ggplot2::aes(x = .data[["Distance"]], 
+                                          color = .data[["Comparison"]])) +
         ggplot2::geom_density(alpha = 0.5, linewidth = 0.5, adjust = 2) +  
         ggplot2::scale_color_manual(values = c("#D9534F", "#BA55D3", "#5DADE2")) +
-        ggplot2::labs(x = ifelse(distance_metric == "correlation", 
-                                 ifelse(correlation_method == "spearman", "Spearman Correlation", "Pearson Correlation"), 
-                                 "Distance"), y = "Density", 
-                      title = "Pairwise Distance Analysis and Density Visualization") +
+        ggplot2::labs(
+            x = ifelse(distance_metric == "correlation", 
+                       ifelse(correlation_method == "spearman", 
+                              "Spearman Correlation", 
+                              "Pearson Correlation"), 
+                       "Distance"), 
+            y = "Density", 
+            title = "Pairwise Distance Analysis and Density Visualization") +
         ggplot2::theme_bw() +
-        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
+        ggplot2::theme(
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_line(color = "gray", 
+                                                     linetype = "dotted"),
+            plot.title = ggplot2::element_text(size = 14, 
+                                               face = "bold", 
+                                               hjust = 0.5),
+            axis.title = ggplot2::element_text(size = 12), 
+            axis.text = ggplot2::element_text(size = 10))
 }

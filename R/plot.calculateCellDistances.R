@@ -40,7 +40,8 @@ plot.calculateCellDistances <- function(x, ref_cell_type, cell_names, ...) {
     distance_data <- x[[ref_cell_type]]
     
     # Check if cells are available in data for that cell type
-    if(!all(cell_names %in% rownames(distance_data[["query_to_ref_distances"]])))
+    if(!all(cell_names %in% rownames(
+        distance_data[["query_to_ref_distances"]])))
         stop("One or more specified 'cell_names' are not available for that cell type.")
     
     # Extract distances within the reference dataset
@@ -56,8 +57,10 @@ plot.calculateCellDistances <- function(x, ref_cell_type, cell_names, ...) {
         cell_distances <- distance_data[["query_to_ref_distances"]][s, ]
         
         # Create a data frame for the current cell and reference distances
-        cell_data <- data.frame(cell = s, Distance = cell_distances, Distance_Type = "Cell")
-        ref_data <- data.frame(cell = s, Distance = ref_distances, Distance_Type = "Reference")
+        cell_data <- data.frame(cell = s, Distance = cell_distances, 
+                                Distance_Type = "Cell")
+        ref_data <- data.frame(cell = s, Distance = ref_distances, 
+                               Distance_Type = "Reference")
         
         # Combine the reference and cell data frames
         combined_data <- rbind(ref_data, cell_data)
@@ -73,17 +76,26 @@ plot.calculateCellDistances <- function(x, ref_cell_type, cell_names, ...) {
     plot_data[["Cell"]] <- factor(plot_data$cell, levels = cell_names)
     
     # Plot density comparison with facets for each cell
-    density_plot <- ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["Distance"]], fill = .data[["Distance_Type"]])) +
+    density_plot <- ggplot2::ggplot(plot_data, ggplot2::aes(
+        x = .data[["Distance"]], fill = .data[["Distance_Type"]])) +
         ggplot2::geom_density(alpha = 0.5) +
-        ggplot2::labs(title = paste("Distance Density Comparison for Cell Type:", ref_cell_type),
-                      x = "Distance", y = "Density") +
-        ggplot2::scale_fill_manual(name = "Distance Type", values = c("Reference" = "blue", "Cell" = "red")) +
+        ggplot2::labs(title = paste(
+            "Distance Density Comparison for Cell Type:", ref_cell_type),
+            x = "Distance", y = "Density") +
+        ggplot2::scale_fill_manual(name = "Distance Type", 
+                                   values = c("Reference" = "blue", 
+                                              "Cell" = "red")) +
         ggplot2::facet_wrap(~ .data[["Cell"]], scales = "free_y") +
         ggplot2::theme_bw() +
         ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
+                       panel.grid.major = ggplot2::element_line(
+                           color = "gray", 
+                           linetype = "dotted"),
+                       plot.title = ggplot2::element_text(size = 14, 
+                                                          face = "bold", 
+                                                          hjust = 0.5),
+                       axis.title = ggplot2::element_text(size = 12), 
+                       axis.text = ggplot2::element_text(size = 10))
     return(density_plot)
 }
 

@@ -87,7 +87,8 @@ comparePCASubspace <- function(reference_data,
                   common_rotation_genes = TRUE)
     
     # Check if n_top_vars is a positive integer
-    if (!is.numeric(n_top_vars) || n_top_vars <= 0 || n_top_vars != as.integer(n_top_vars)) {
+    if (!is.numeric(n_top_vars) || n_top_vars <= 0 || 
+        n_top_vars != as.integer(n_top_vars)) {
         stop("\'n_top_vars\' must be a positive integer.")
     }
     
@@ -121,9 +122,12 @@ comparePCASubspace <- function(reference_data,
     }
     
     # Vector of variance explained
-    var_explained_ref <- attributes(reducedDim(reference_data, "PCA"))[["percentVar"]][pc_subset]
-    var_explained_query <- attributes(reducedDim(reference_data, "PCA"))[["percentVar"]][pc_subset]
-    var_explained_avg <- (var_explained_ref[cosine_id[, 1]] + var_explained_query[cosine_id[, 2]]) / 2
+    var_explained_ref <- attributes(
+        reducedDim(reference_data, "PCA"))[["percentVar"]][pc_subset]
+    var_explained_query <- attributes(
+        reducedDim(reference_data, "PCA"))[["percentVar"]][pc_subset]
+    var_explained_avg <- (var_explained_ref[cosine_id[, 1]] + 
+                              var_explained_query[cosine_id[, 2]]) / 2
     
     # Weighted cosine similarity score
     weighted_cosine_similarity <- sum(top_cosine * var_explained_avg)/100

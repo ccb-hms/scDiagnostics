@@ -35,7 +35,8 @@ generateColors <- function(cell_type_names, paired = FALSE){
                          c("#80e0d0", "#20b2aa"),
                          c("#D2B48C", "#8B4513"),
                          c("#FFD700", "#B8860B"),
-                         c("#B7CE95", "#6B8E23"))[seq_len(length(cell_type_names))]
+                         c("#B7CE95", "#6B8E23"))[seq_len(
+                             length(cell_type_names))]
         names(full_colors) <- cell_type_names
         
     } else if (isFALSE(paired)){

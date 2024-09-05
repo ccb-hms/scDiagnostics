@@ -42,31 +42,31 @@
 #' @export                                       
 calculateHVGOverlap <- function(reference_genes, 
                                 query_genes) {
-  
-  # Sanity checks
-  if (!is.vector(reference_genes) || !is.character(reference_genes)) {
-    stop("reference_genes must be a character vector.")
-  }
-  if (!is.vector(query_genes) || !is.character(query_genes)) {
-    stop("query_genes must be a character vector.")
-  }
-  if (length(reference_genes) == 0 || length(query_genes) == 0) {
-    stop("Input vectors must not be empty.")
-  }
-  
-  # Calculate the intersection of highly variable genes
-  common_genes <- intersect(reference_genes, query_genes)
-  
-  # Calculate the size of the intersection
-  intersection_size <- length(common_genes)
-  
-  # Calculate the size of the smaller set
-  min_size <- min(length(reference_genes), length(query_genes))
-  
-  # Compute the overlap coefficient
-  overlap_coefficient <- intersection_size / min_size
-  overlap_coefficient <- round(overlap_coefficient, 2)
-  
-  # Return the overlap coefficient
-  return(overlap_coefficient)
+    
+    # Sanity checks
+    if (!is.vector(reference_genes) || !is.character(reference_genes)) {
+        stop("reference_genes must be a character vector.")
+    }
+    if (!is.vector(query_genes) || !is.character(query_genes)) {
+        stop("query_genes must be a character vector.")
+    }
+    if (length(reference_genes) == 0 || length(query_genes) == 0) {
+        stop("Input vectors must not be empty.")
+    }
+    
+    # Calculate the intersection of highly variable genes
+    common_genes <- intersect(reference_genes, query_genes)
+    
+    # Calculate the size of the intersection
+    intersection_size <- length(common_genes)
+    
+    # Calculate the size of the smaller set
+    min_size <- min(length(reference_genes), length(query_genes))
+    
+    # Compute the overlap coefficient
+    overlap_coefficient <- intersection_size / min_size
+    overlap_coefficient <- round(overlap_coefficient, 2)
+    
+    # Return the overlap coefficient
+    return(overlap_coefficient)
 }

@@ -132,7 +132,8 @@ hotellingT2 <- function(sample1, sample2) {
     
     # Compute Hotelling's T^2 statistic
     # T^2 = n1 * n2 / (n1 + n2) * (mean1 - mean2)' * pooled_cov^-1 * (mean1 - mean2)
-    t2 <- n1 * n2 / (n1 + n2) * t(mean1 - mean2) %*% solve(pooled_cov) %*% (mean1 - mean2)
+    t2 <- n1 * n2 / (n1 + n2) * t(mean1 - mean2) %*% solve(pooled_cov) %*% 
+        (mean1 - mean2)
     
     # Return the computed T^2 statistic
     return(as.numeric(t2))

@@ -103,17 +103,20 @@ calculateCellDistances <- function(query_data,
     for (cell_type in cell_types) {
         
         # Subset principal component scores for current cell type
-        ref_subset_scores <- pca_output[which(pca_output[["dataset"]] == "Reference" &
-                                                  pca_output[["cell_type"]] == cell_type), pc_subset]
-        query_subset_scores <- pca_output[pca_output[["dataset"]] == "Query", pc_subset]
+        ref_subset_scores <- pca_output[which(
+            pca_output[["dataset"]] == "Reference" &
+                pca_output[["cell_type"]] == cell_type), pc_subset]
+        query_subset_scores <- pca_output[pca_output[["dataset"]] == "Query", 
+                                          pc_subset]
         
         # Compute all pairwise distances within the reference subset
         ref_distances <- as.vector(dist(ref_subset_scores))
         
         # Compute distances from each query cell to all reference cells
-        query_to_ref_distances <- apply(query_subset_scores, 1, function(query_cell, ref_subset_scores) {
-            .compute_distances(ref_subset_scores, query_cell)
-        }, ref_subset_scores = ref_subset_scores)
+        query_to_ref_distances <- apply(
+            query_subset_scores, 1, function(query_cell, ref_subset_scores) {
+                .compute_distances(ref_subset_scores, query_cell)
+                }, ref_subset_scores = ref_subset_scores)
         
         # Store the distances
         distance_data[[cell_type]] <- list(

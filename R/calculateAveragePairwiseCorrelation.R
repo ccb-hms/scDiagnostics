@@ -50,13 +50,17 @@
 #' @importFrom stats cor
 #' 
 #' @export
-calculateAveragePairwiseCorrelation <- function(query_data, 
-                                                reference_data, 
-                                                query_cell_type_col, 
-                                                ref_cell_type_col, 
-                                                cell_types = NULL, 
-                                                pc_subset = 1:10,
-                                                correlation_method = c("spearman", "pearson")) {
+calculateAveragePairwiseCorrelation <- function(
+        query_data, 
+        reference_data, 
+        query_cell_type_col, 
+        ref_cell_type_col, 
+        cell_types = NULL, 
+        pc_subset = 1:10,
+        correlation_method = c("spearman", "pearson")) {
+    
+    # Match correlation method argument
+    correlation_method <- match.arg(correlation_method)
     
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -72,49 +76,53 @@ calculateAveragePairwiseCorrelation <- function(query_data,
                                        query_data[[query_cell_type_col]])))
     }
     
-    # Check correlation method
-    correlation_method <- match.arg(correlation_method)
-    if(!(correlation_method %in% c("spearman", "pearson"))){
-        stop("The \'correlation_method\' specified is not available.")
-    }
-    
     # Function to compute correlation between two cell types
     .computeCorrelation <- function(type1, type2) {
         
         if(!is.null(pc_subset)){
             # Project query data onto PCA space of reference data
-            pca_output <- projectPCA(query_data = query_data, 
-                                     reference_data = reference_data, 
-                                     query_cell_type_col = query_cell_type_col,
-                                     ref_cell_type_col = ref_cell_type_col,
-                                     pc_subset = pc_subset)
-            ref_mat <- pca_output[which(pca_output[["dataset"]] == "Reference" &
-                                            pca_output[["cell_type"]] == type2), paste0("PC", pc_subset)]
-            query_mat <- pca_output[which(pca_output[["dataset"]] == "Query" &
-                                              pca_output[["cell_type"]] == type1), paste0("PC", pc_subset)]
+            pca_output <- projectPCA(
+                query_data = query_data, 
+                reference_data = reference_data, 
+                query_cell_type_col = query_cell_type_col,
+                ref_cell_type_col = ref_cell_type_col,
+                pc_subset = pc_subset)
+            ref_mat <- pca_output[which(
+                pca_output[["dataset"]] == "Reference" &
+                    pca_output[["cell_type"]] == type2), 
+                paste0("PC", pc_subset)]
+            query_mat <- pca_output[which(
+                pca_output[["dataset"]] == "Query" &
+                    pca_output[["cell_type"]] == type1), 
+                paste0("PC", pc_subset)]
         } else{
             
             # Subset query data to the specified cell type
-            query_subset <- query_data[, which(query_data[[query_cell_type_col]] == type1), drop = FALSE]
-            ref_subset <- reference_data[, which(reference_data[[ref_cell_type_col]] == type2), drop = FALSE]
+            query_subset <- query_data[, which(
+                query_data[[query_cell_type_col]] == type1), drop = FALSE]
+            ref_subset <- reference_data[, which(
+                reference_data[[ref_cell_type_col]] == type2), drop = FALSE]
             
             query_mat <- t(as.matrix(assay(query_subset, "logcounts")))
             ref_mat <- t(as.matrix(assay(ref_subset, "logcounts")))
         }
         
-        cor_matrix <- cor(t(query_mat), t(ref_mat), method = correlation_method)
+        cor_matrix <- cor(t(query_mat), t(ref_mat), 
+                          method = correlation_method)
         return(mean(cor_matrix))
     }
     
     # Use outer to compute pairwise correlations
-    cor_matrix_avg <- outer(cell_types, cell_types, Vectorize(.computeCorrelation))
+    cor_matrix_avg <- outer(cell_types, cell_types, 
+                            Vectorize(.computeCorrelation))
     
     # Assign cell type names to rows and columns
     rownames(cor_matrix_avg) <- paste0("Query-", cell_types)
     colnames(cor_matrix_avg) <- paste0("Ref-", cell_types)
     
     # Update class of output
-    class(cor_matrix_avg) <- c(class(cor_matrix_avg), "calculateAveragePairwiseCorrelation")
+    class(cor_matrix_avg) <- c(class(cor_matrix_avg), 
+                               "calculateAveragePairwiseCorrelation")
     
     return(cor_matrix_avg)
 }

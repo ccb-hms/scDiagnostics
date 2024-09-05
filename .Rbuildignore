@@ -6,5 +6,5 @@
 ^docs$
 ^pkgdown$
 sandbox
-^data-raw$
 ^inst/extdata
+^inst/script

@@ -39,11 +39,8 @@ plotGeneExpressionDimred <- function(se_object,
     argumentCheck(query_data = se_object,
                   pc_subset_query = pc_subset)
     
-    # Check method input
+    # Match argument for method
     method <- match.arg(method)
-    if (!(method %in% c("TSNE", "UMAP", "PCA"))) {
-        stop("Unsupported method. Please choose one of: ", paste(c("TSNE", "UMAP", "PCA"), collapse = ", "))
-    }
     
     # Check if feature is available
     if (!feature %in% rownames(assay(se_object, "logcounts"))) {
@@ -59,7 +56,8 @@ plotGeneExpressionDimred <- function(se_object,
         reduction <- reducedDim(se_object, method)
         
         # Prepare data for plotting
-        df <- data.frame(Dim1 = reduction[, 1], Dim2 = reduction[, 2], Expression = expression)
+        df <- data.frame(Dim1 = reduction[, 1], Dim2 = reduction[, 2], 
+                         Expression = expression)
         
         # Create the plot object
         plot_obj <- ggplot2::ggplot(df, ggplot2::aes(x = .data[["Dim1"]], y = .data[["Dim2"]])) +
@@ -68,12 +66,20 @@ plotGeneExpressionDimred <- function(se_object,
             ggplot2::xlab("Dimension 1") +
             ggplot2::ylab("Dimension 2") +
             ggplot2::theme_minimal() +
-            ggplot2::theme(strip.background = ggplot2::element_rect(fill = "grey85", color = "grey70"),   
-                           strip.text = ggplot2::element_text(size = 10, face = "bold", color = "black"), 
-                           axis.title = ggplot2::element_blank(), axis.text = ggplot2::element_text(size = 10), 
-                           panel.grid = ggplot2::element_blank(), panel.background = ggplot2::element_rect(fill = "white", color = "black"), 
-                           legend.position = "right", plot.title = ggplot2::element_text(size = 14, hjust = 0.5), 
-                           plot.background = ggplot2::element_rect(fill = "white")) 
+            ggplot2::theme(
+                strip.background = ggplot2::element_rect(fill = "grey85", 
+                                                         color = "grey70"),   
+                strip.text = ggplot2::element_text(size = 10, 
+                                                   face = "bold", 
+                                                   color = "black"), 
+                axis.title = ggplot2::element_blank(), 
+                axis.text = ggplot2::element_text(size = 10), 
+                panel.grid = ggplot2::element_blank(), 
+                panel.background = ggplot2::element_rect(fill = "white", 
+                                                         color = "black"), 
+                legend.position = "right", 
+                plot.title = ggplot2::element_text(size = 14, hjust = 0.5), 
+                plot.background = ggplot2::element_rect(fill = "white")) 
         
     } else if (method == "PCA"){
         
@@ -85,7 +91,8 @@ plotGeneExpressionDimred <- function(se_object,
         plot_mat <- reducedDim(se_object, "PCA")[, pc_subset]
         # Modify column names to include percentage of variance explained
         colnames(plot_mat) <- paste0("PC", pc_subset, 
-                                     " (", sprintf("%.1f%%", attributes(reducedDim(se_object, "PCA"))[["percentVar"]][pc_subset]), ")")
+                                     " (", sprintf("%.1f%%", 
+                                                   attributes(reducedDim(se_object, "PCA"))[["percentVar"]][pc_subset]), ")")
         
         # Create all possible pairs of specified PCs
         plot_names <- colnames(plot_mat)
@@ -104,21 +111,30 @@ plotGeneExpressionDimred <- function(se_object,
         # Plot data
         data_pairs <- do.call(rbind, data_pairs_list)
         # Remove redundant data (to avoid duplicated plots)
-        data_pairs <- data_pairs[as.numeric(data_pairs$x) < as.numeric(data_pairs$y),]
+        data_pairs <- data_pairs[as.numeric(data_pairs$x) < 
+                                     as.numeric(data_pairs$y),]
         data_pairs$Expression <- expression
         
         # Create the ggplot object (with facets if PCA)
-        plot_obj <- ggplot2::ggplot(data_pairs, ggplot2::aes(x = .data[["x_value"]], y = .data[["y_value"]], 
-                                                             color = .data[["Expression"]])) +
+        plot_obj <- ggplot2::ggplot(
+            data_pairs, ggplot2::aes(x = .data[["x_value"]], 
+                                     y = .data[["y_value"]], 
+                                     color = .data[["Expression"]])) +
             ggplot2::geom_point(size = 1, alpha = 0.5) + 
             ggplot2::xlab("") + ggplot2::ylab("") + 
             ggplot2::scale_color_gradient(low = "grey90", high = "blue") +
-            ggplot2::facet_grid(rows = ggplot2::vars(.data[["y"]]), cols = ggplot2::vars(.data[["x"]]), scales = "free") +
+            ggplot2::facet_grid(rows = ggplot2::vars(.data[["y"]]), 
+                                cols = ggplot2::vars(.data[["x"]]), 
+                                scales = "free") +
             ggplot2::theme_bw() +
-            ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                           panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                           plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                           axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
+            ggplot2::theme(
+                panel.grid.minor = ggplot2::element_blank(),
+                panel.grid.major = ggplot2::element_line(color = "gray", 
+                                                         linetype = "dotted"),
+                plot.title = ggplot2::element_text(size = 14, face = "bold", 
+                                                   hjust = 0.5),
+                axis.title = ggplot2::element_text(size = 12), 
+                axis.text = ggplot2::element_text(size = 10))
     }
     return(plot_obj)
 }

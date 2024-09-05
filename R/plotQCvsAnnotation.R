@@ -60,7 +60,8 @@ plotQCvsAnnotation <- function(se_object,
     
     # Filter cells based on cell_types if specified
     if (!is.null(cell_types)) {
-        se_object <- se_object[, which(se_object[[cell_type_col]] %in% cell_types)]
+        se_object <- se_object[, which(se_object[[cell_type_col]] %in% 
+                                           cell_types)]
     }
     
     # Extract QC stats, scores, and cell_typess
@@ -74,20 +75,29 @@ plotQCvsAnnotation <- function(se_object,
                        cell_type = cell_labels)
     
     # Define the colors for cell types
-    cell_type_colors <- generateColors(sort(unique(cell_labels)), paired = FALSE)
+    cell_type_colors <- generateColors(sort(unique(cell_labels)), 
+                                       paired = FALSE)
     
     # Create a scatter plot with color-coded points based on cell types or labels
-    qc_plot <- ggplot2::ggplot(data, ggplot2::aes(x = .data[["QCStats"]], y = .data[["Scores"]], color = .data[["cell_type"]])) +
+    qc_plot <- ggplot2::ggplot(data, 
+                               ggplot2::aes(x = .data[["QCStats"]], 
+                                            y = .data[["Scores"]], 
+                                            color = .data[["cell_type"]])) +
         ggplot2::geom_point() +
-        ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Type") + 
+        ggplot2::scale_color_manual(values = cell_type_colors, 
+                                    name = "Cell Type") + 
         ggplot2::xlab("QC stats") +
         ggplot2::ylab("Annotation Scores") +
         ggplot2::labs(color = "Cell Type") +
         ggplot2::theme_bw() +
-        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
+        ggplot2::theme(
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_line(color = "gray", 
+                                                     linetype = "dotted"),
+            plot.title = ggplot2::element_text(size = 14, 
+                                               face = "bold", hjust = 0.5),
+            axis.title = ggplot2::element_text(size = 12), 
+            axis.text = ggplot2::element_text(size = 10))
     
     return(qc_plot)
 }

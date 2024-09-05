@@ -94,17 +94,27 @@ plotCellTypePCA <- function(query_data,
     cell_type_colors <- generateColors(order_combinations, paired = TRUE)
 
     # Create the ggplot object (with facets if PCA)
-    plot_obj <- ggplot2::ggplot(data_pairs, ggplot2::aes(x = .data[["x_value"]], y = .data[["y_value"]], 
-                                                         color = .data[["cell_type_dataset"]])) +
+    plot_obj <- ggplot2::ggplot(
+        data_pairs, ggplot2::aes(x = .data[["x_value"]], 
+                                 y = .data[["y_value"]],
+                                 color = .data[["cell_type_dataset"]])) +
         ggplot2::geom_point(alpha = 0.5, size = 1) +
-        ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Types") + 
-        ggplot2::facet_grid(rows = ggplot2::vars(.data[["y"]]), cols = ggplot2::vars(.data[["x"]]), scales = "free") +
+        ggplot2::scale_color_manual(values = cell_type_colors, 
+                                    name = "Cell Types") + 
+        ggplot2::facet_grid(rows = ggplot2::vars(.data[["y"]]), 
+                            cols = ggplot2::vars(.data[["x"]]), 
+                            scales = "free") +
         ggplot2::xlab("") + ggplot2::ylab("") + 
         ggplot2::theme_bw() +
-        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
+        ggplot2::theme(
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_line(color = "gray", 
+                                                     linetype = "dotted"),
+            plot.title = ggplot2::element_text(size = 14, 
+                                               face = "bold", 
+                                               hjust = 0.5),
+            axis.title = ggplot2::element_text(size = 12), 
+            axis.text = ggplot2::element_text(size = 10))
     
     # Return the plot
     return(plot_obj)

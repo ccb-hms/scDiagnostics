@@ -69,8 +69,10 @@ plotCellTypeMDS <- function(query_data,
     }
     
     # Subset data
-    query_data <- query_data[, which(query_data[[query_cell_type_col]] %in% cell_types)]
-    reference_data <- reference_data[, which(reference_data[[ref_cell_type_col]] %in% cell_types)]
+    query_data <- query_data[, which(
+        query_data[[query_cell_type_col]] %in% cell_types)]
+    reference_data <- reference_data[, which(
+        reference_data[[ref_cell_type_col]] %in% cell_types)]
     
     # Extract logcounts
     queryExp <- as.matrix(assay(query_data, "logcounts"))
@@ -80,27 +82,34 @@ plotCellTypeMDS <- function(query_data,
     df <- cbind(queryExp, refExp)
     corMat <- cor(df, method = "spearman")
     disMat <- (1 - corMat)
-    cmd <- data.frame(cmdscale(disMat), c(rep("Query", ncol(queryExp)), rep("Reference", ncol(refExp))),
-                      c(query_data[[query_cell_type_col]], reference_data[[ref_cell_type_col]]))
+    cmd <- data.frame(cmdscale(disMat), c(rep("Query", ncol(queryExp)), 
+                                          rep("Reference", ncol(refExp))),
+                      c(query_data[[query_cell_type_col]], 
+                        reference_data[[ref_cell_type_col]]))
     colnames(cmd) <- c("Dim1", "Dim2", "dataset", "cellType")
     cmd <- na.omit(cmd)
     cmd$cell_type_dataset <- paste(cmd[["dataset"]], cmd[["cellType"]], sep = " ")
     
     # Define the order of cell type and dataset combinations
-    order_combinations <- paste(rep(c("Reference", "Query"), length(cell_types)), rep(sort(cell_types), each = 2))
-    cmd$cell_type_dataset <- factor(cmd$cell_type_dataset, levels = order_combinations)
+    order_combinations <- paste(rep(c("Reference", "Query"), length(cell_types)), 
+                                rep(sort(cell_types), each = 2))
+    cmd$cell_type_dataset <- factor(cmd$cell_type_dataset, 
+                                    levels = order_combinations)
     
     # Define the colors for cell types
     cell_type_colors <- generateColors(order_combinations, paired = TRUE)
     
-    mds_plot <- ggplot2::ggplot(cmd, ggplot2::aes(x = .data[["Dim1"]], y = .data[["Dim2"]], 
+    mds_plot <- ggplot2::ggplot(cmd, ggplot2::aes(x = .data[["Dim1"]], 
+                                                  y = .data[["Dim2"]], 
                                                   color = .data[["cell_type_dataset"]])) +
         ggplot2::geom_point(alpha = 0.5, size = 1) +
         ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Types") + 
         ggplot2::theme_bw() +
         ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+                       panel.grid.major = ggplot2::element_line(color = "gray", 
+                                                                linetype = "dotted"),
+                       plot.title = ggplot2::element_text(size = 14, face = "bold", 
+                                                          hjust = 0.5),
                        axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10)) + 
         ggplot2::guides(color = ggplot2::guide_legend(title = "Cell Types"))
     return(mds_plot)
