@@ -61,7 +61,8 @@ calculateCellSimilarityPCA <- function(se_object,
                   pc_subset_query = pc_subset)
     
     # Check if n_top_vars is a positive integer
-    if (!is.numeric(n_top_vars) || n_top_vars <= 0 || n_top_vars != as.integer(n_top_vars)) {
+    if (!is.numeric(n_top_vars) || n_top_vars <= 0 || 
+        n_top_vars != as.integer(n_top_vars)) {
         stop("\'n_top_vars\' must be a positive integer.")
     }
     if(is.null(n_top_vars)){
@@ -69,13 +70,16 @@ calculateCellSimilarityPCA <- function(se_object,
     }
     
     # Extract rotation matrix for SingleCellExperiment object
-    rotation_mat <- attributes(reducedDim(se_object, "PCA"))$rotation[, pc_subset]
+    rotation_mat <- attributes(
+        reducedDim(se_object, "PCA"))$rotation[, pc_subset]
     
     # Function to identify high-loading variables for each PC
     .getHighLoadingVars <- function(rotation_mat, n_top_vars) {
-        high_loading_vars <- lapply(seq_len(ncol(rotation_mat)), function(pc) {
-            abs_loadings <- abs(rotation_mat[, pc])
-            top_vars <- names(sort(abs_loadings, decreasing = TRUE))[seq_len(n_top_vars)]
+        high_loading_vars <- lapply(
+            seq_len(ncol(rotation_mat)), function(pc) {
+                abs_loadings <- abs(rotation_mat[, pc])
+                top_vars <- names(sort(abs_loadings, 
+                                       decreasing = TRUE))[seq_len(n_top_vars)]
             return(top_vars)
         })
         return(high_loading_vars)
@@ -90,25 +94,31 @@ calculateCellSimilarityPCA <- function(se_object,
     }
     
     # Function to compute cosine similarity for each PC using high-loading variables
-    .computeCosineSimilarity <- function(cell_names, rotation_mat, high_loading_vars) {
-        similarities <- lapply(seq_len(length(high_loading_vars)), function(pc) {
-            vars <- high_loading_vars[[pc]]
-            cell_subset <- cell_names[, vars, drop = FALSE]
-            pc_vector <- rotation_mat[vars, pc]
-            apply(cell_subset, 1, .cosine_similarity, vector2 = pc_vector)
+    .computeCosineSimilarity <- function(cell_names, 
+                                         rotation_mat, 
+                                         high_loading_vars) {
+        similarities <- lapply(
+            seq_len(length(high_loading_vars)), function(pc) {
+                vars <- high_loading_vars[[pc]]
+                cell_subset <- cell_names[, vars, drop = FALSE]
+                pc_vector <- rotation_mat[vars, pc]
+                apply(cell_subset, 1, .cosine_similarity, vector2 = pc_vector)
         })
         return(similarities)
     }
     
     # Calculate similarities
-    assay_mat <- t(as.matrix(assay(se_object[, cell_names, drop = FALSE], "logcounts")))
-    similarities <- .computeCosineSimilarity(assay_mat, rotation_mat, high_loading_vars)
+    assay_mat <- t(as.matrix(assay(se_object[, cell_names, drop = FALSE], 
+                                   "logcounts")))
+    similarities <- .computeCosineSimilarity(assay_mat, rotation_mat, 
+                                             high_loading_vars)
     
     # Format the result into a data frame for easy interpretation
     similarity_df <- do.call(cbind, similarities)
     colnames(similarity_df) <- paste0("PC", seq_len(ncol(rotation_mat)))
     
     # Update class of output
-    class(similarity_df) <- c(class(similarity_df), "calculateCellSimilarityPCA")
+    class(similarity_df) <- c(class(similarity_df), 
+                              "calculateCellSimilarityPCA")
     return(similarity_df)
 }

@@ -54,154 +54,155 @@ argumentCheck <- function(query_data = NULL,
                           cell_names_ref = NULL,
                           pc_subset_query = NULL,
                           pc_subset_ref = NULL,
-                          common_rotation_genes = FALSE){
+                          common_rotation_genes = FALSE) {
     
     # Check if query_data is a SingleCellExperiment object
-    if(!is.null(query_data)){
-        
+    if (!is.null(query_data)) {
         if (!is(query_data, "SingleCellExperiment")) {
-            stop("\'query_data\' must be a SingleCellExperiment object.")
+            stop("'query_data' must be a SingleCellExperiment object.")
         }
         
         if (!("logcounts" %in% SummarizedExperiment::assayNames(query_data))) {
-            stop("\'query_data\' does not contain \'logcounts\' in its assays.")
+            stop("'query_data' does not contain 'logcounts' in its assays.")
         }
     }
     
     # Check if reference_data is a SingleCellExperiment object
-    if(!is.null(reference_data)){
-        
+    if (!is.null(reference_data)) {
         if (!is(reference_data, "SingleCellExperiment")) {
-            stop("\'reference_data\' must be a SingleCellExperiment object.")
+            stop("'reference_data' must be a SingleCellExperiment object.")
         }
         
         if (!("logcounts" %in% SummarizedExperiment::assayNames(reference_data))) {
-            stop("\'reference_data\' does not contain \'logcounts\' in its assays.")
+            stop("'reference_data' does not contain 'logcounts' in its assays.")
         }
     }
     
     # Check if query_cell_type_col is a character string of length 1 and exists in query_data
-    if(!is.null(query_cell_type_col)){
-        if(!is.null(query_data)){
-            
-            if (!is.character(query_cell_type_col) || length(query_cell_type_col) != 1) {
-                stop("\'query_cell_type_col\' must be a character string of length 1")
+    if (!is.null(query_cell_type_col)) {
+        if (!is.null(query_data)) {
+            if (!is.character(query_cell_type_col) || 
+                length(query_cell_type_col) != 1) {
+                stop("'query_cell_type_col' must be a character string of length 1")
             }
             
-            if(!(query_cell_type_col %in% names(colData(query_data)))){
-                stop("\'query_cell_type_col\' is not an existing column of \'query_data\'.")
+            if (!(query_cell_type_col %in% names(colData(query_data)))) {
+                stop("'query_cell_type_col' is not an existing column of 'query_data'.")
             }
         }
     }
     
-    # Check if ref_cell_type_col is a character string of length 1 and exists in query_data
-    if(!is.null(ref_cell_type_col)){
-        if(!is.null(reference_data)){
-            
-            if (!is.character(ref_cell_type_col) || length(ref_cell_type_col) != 1) {
-                stop("\'ref_cell_type_col\' must be a character string of length 1")
+    # Check if ref_cell_type_col is a character string of length 1 and exists in reference_data
+    if (!is.null(ref_cell_type_col)) {
+        if (!is.null(reference_data)) {
+            if (!is.character(ref_cell_type_col) || 
+                length(ref_cell_type_col) != 1) {
+                stop("'ref_cell_type_col' must be a character string of length 1")
             }
             
-            if(!(ref_cell_type_col %in% names(colData(reference_data)))){
-                stop("\'ref_cell_type_col\' is not an existing column of \'reference_data\'.")
+            if (!(ref_cell_type_col %in% names(colData(reference_data)))) {
+                stop("'ref_cell_type_col' is not an existing column of 'reference_data'.")
             }
         }
     }
     
     # Check if cell_types are available in the SingleCellExperiment object(s)
-    if(!is.null(cell_types)){
-        if(!is.null(query_data)){
-            if(!all(cell_types %in% unique(query_data[[query_cell_type_col]]))){
-                stop("\'cell_types\' contains one or more cell types that are not available in \'query_data\'.")
+    if (!is.null(cell_types)) {
+        if (!is.null(query_data)) {
+            if (!all(cell_types %in% 
+                     unique(query_data[[query_cell_type_col]]))) {
+                stop("'cell_types' contains one or more cell types that are not available in 'query_data'.")
             }
         }
-        if(!is.null(reference_data)){
-            if(!all(cell_types %in% unique(reference_data[[ref_cell_type_col]]))){
-                stop("\'cell_types\' contains one or more cell types that are not available in \'reference_data\'.")
+        
+        if (!is.null(reference_data)) {
+            if (!all(cell_types %in% 
+                     unique(reference_data[[ref_cell_type_col]]))) {
+                stop("'cell_types' contains one or more cell types that are not available in 'reference_data'.")
             }
         }
     }
     
     # Check that the SingleCellExperiment object(s) have a unique cell type
-    if(isTRUE(unique_cell_type)){
-        if(!is.null(query_data)){
-            if(length(unique(query_data[[query_cell_type_col]])) > 1){
-                stop("This function should be used when there is only one cell type in \'query_data\'.")
+    if (isTRUE(unique_cell_type)) {
+        if (!is.null(query_data)) {
+            if (length(unique(query_data[[query_cell_type_col]])) > 1) {
+                stop("This function should be used when there is only one cell type in 'query_data'.")
             }
         }
         
-        if(!is.null(reference_data)){
-            if(length(unique(reference_data[[ref_cell_type_col]])) > 1){
-                stop("This function should be used when there is only one cell type in \'reference_data\'.")
+        if (!is.null(reference_data)) {
+            if (length(unique(reference_data[[ref_cell_type_col]])) > 1) {
+                stop("This function should be used when there is only one cell type in 'reference_data'.")
             }
         }
         
-        if(!is.null(reference_data) && !is.null(query_data)){
-            if(unique(query_data[[query_cell_type_col]]) != unique(reference_data[[ref_cell_type_col]])){
+        if (!is.null(reference_data) && !is.null(query_data)) {
+            if (unique(query_data[[query_cell_type_col]]) != unique(reference_data[[ref_cell_type_col]])) {
                 stop("The cell type of the query data does not match the cell type of the reference data.")
             }
         }
     }
     
     # Check the number of cell types for plot function
-    if(plot_function == TRUE){
-        if(length(unique(cell_types)) > 10){
+    if (plot_function == TRUE) {
+        if (length(unique(cell_types)) > 10) {
             stop("The maximum number of cell types for plotting is 10.")
         }
     }
-
+    
     # Check cell_names contain valid cell names in query_data
-    if(!is.null(cell_names_query)){
-        if(!all(cell_names_query %in% colnames(query_data))){
-            stop("\'cell_names\' contains one or more cells that are not available in \'query_data\'.")
+    if (!is.null(cell_names_query)) {
+        if (!all(cell_names_query %in% colnames(query_data))) {
+            stop("'cell_names' contains one or more cells that are not available in 'query_data'.")
         }
     }
     
     # Check cell_names contain valid cell names in reference_data
-    if(!is.null(cell_names_ref)){
-        if(!all(cell_names_ref %in% colnames(reference_data))){
-            stop("\'cell_names\' contains one or more cells that are not available in \'reference_data\'.")
+    if (!is.null(cell_names_ref)) {
+        if (!all(cell_names_ref %in% colnames(reference_data))) {
+            stop("'cell_names' contains one or more cells that are not available in 'reference_data'.")
         }
     }
     
     # Check PC subset for query_data
-    if(!is.null(pc_subset_query)){
+    if (!is.null(pc_subset_query)) {
         # Check if "PCA" is present in query's reduced dimensions
         if (!"PCA" %in% names(reducedDims(query_data))) {
-            stop("\'query_data\' must have pre-computed PCA in \'reducedDims\'.")
+            stop("'query_data' must have pre-computed PCA in 'reducedDims'.")
         }
         
         # Check input if PC subset is valid
-        if(!all(pc_subset_query %in% seq_len(ncol(reducedDim(query_data, "PCA"))))){
-            stop("\'pc_subset\' is out of range for \'query_data\'.")
+        if (!all(pc_subset_query %in% seq_len(ncol(reducedDim(query_data, "PCA"))))) {
+            stop("'pc_subset' is out of range for 'query_data'.")
         }
     }
     
     # Check PC subset for reference_data
-    if(!is.null(pc_subset_ref)){
+    if (!is.null(pc_subset_ref)) {
         # Check if "PCA" is present in reference's reduced dimensions
         if (!"PCA" %in% names(reducedDims(reference_data))) {
-            stop("Reference data must have pre-computed PCA in \'reducedDims\'.")
+            stop("Reference data must have pre-computed PCA in 'reducedDims'.")
         }
         
         # Check input if PC subset is valid
-        if(!all(pc_subset_ref %in% seq_len(ncol(reducedDim(reference_data, "PCA"))))){
-            stop("\'pc_subset\' is out of range for \'reference_data\'.")
+        if (!all(pc_subset_ref %in% seq_len(ncol(reducedDim(reference_data, "PCA"))))) {
+            stop("'pc_subset' is out of range for 'reference_data'.")
         }
     }
     
     # Check if the rotation matrices have the same genes in the same order
-    if(common_rotation_genes == TRUE){
-        
+    if (common_rotation_genes == TRUE) {
         # Check if the rotation matrices have the same number of genes
-        if(ncol(attributes(reducedDim(query_data, "PCA"))[["rotation"]]) !=
-           ncol(attributes(reducedDim(reference_data, "PCA"))[["rotation"]]))
+        if (ncol(attributes(reducedDim(query_data, "PCA"))[["rotation"]]) !=
+            ncol(attributes(reducedDim(reference_data, "PCA"))[["rotation"]])) {
             stop("The number of genes in the rotation matrices differ.")
+        }
         
-        
-        # Check of genes in both rotation matrices are the same
-        if(!all(rownames(attributes(reducedDim(query_data, "PCA"))[["rotation"]]) %in%
-                rownames(attributes(reducedDim(reference_data, "PCA"))[["rotation"]])))
+        # Check if genes in both rotation matrices are the same
+        if (!all(rownames(attributes(reducedDim(query_data, "PCA"))[["rotation"]]) %in%
+                rownames(attributes(reducedDim(reference_data, "PCA"))[["rotation"]]))) {
             stop("The genes in the rotation matrices differ.")
+        }
     }
 }

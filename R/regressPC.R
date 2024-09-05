@@ -92,7 +92,8 @@ regressPC <- function(reference_data,
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){
         if(is.null(query_data)){
-            cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]])))
+            cell_types <- na.omit(unique(
+                c(reference_data[[ref_cell_type_col]])))
         } else{
             cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
                                            query_data[[query_cell_type_col]])))
@@ -103,9 +104,13 @@ regressPC <- function(reference_data,
     .regressFast <- function(pc, indep_var, df, reference_category) {
         regression_formula <- paste(pc, "~", indep_var)
         if(isTRUE(reference_category)){
-            model <- do.call(speedglm::speedlm, list(formula = paste(pc, " ~ ", indep_var), data = df))
+            model <- do.call(speedglm::speedlm, 
+                             list(formula = paste(pc, " ~ ", indep_var), 
+                                  data = df))
         } else{
-            model <- do.call(speedglm::speedlm, list(formula = paste(pc, " ~ ", indep_var, " - 1"), data = df))
+            model <- do.call(speedglm::speedlm, 
+                             list(formula = paste(pc, " ~ ", indep_var, " - 1"), 
+                                  data = df))
         }
         model_summary <- list(coefficients = summary(model)[["coefficients"]],
                               r_squared = summary(model)[["r.squared"]])
@@ -125,7 +130,8 @@ regressPC <- function(reference_data,
         regress_data <- regress_data[reference_labels %in% cell_types,]
         
         # Regress PCs
-        summaries <- lapply(dep_vars, .regressFast, indep_var = "Cell_Type_", df = regress_data, 
+        summaries <- lapply(dep_vars, .regressFast, indep_var = "Cell_Type_", 
+                            df = regress_data, 
                             reference_category = TRUE)
         names(summaries) <- dep_vars
         
@@ -136,7 +142,8 @@ regressPC <- function(reference_data,
         
         # Calculate variance contributions by principal component
         r_squared <- vapply(summaries, `[[`, numeric(1), x = "r_squared")
-        var_expl <- attr(reducedDim(reference_data, "PCA"), "percentVar")[pc_subset]
+        var_expl <- attr(reducedDim(reference_data, "PCA"), 
+                         "percentVar")[pc_subset]
         var_contr <- var_expl * r_squared
         
         # Calculate total variance explained by summing the variance contributions
@@ -158,7 +165,8 @@ regressPC <- function(reference_data,
                                  ref_cell_type_col = ref_cell_type_col,
                                  pc_subset = pc_subset)
         pca_output <- pca_output[pca_output[["cell_type"]] %in% cell_types,]
-        pca_output[["dataset"]] <- factor(pca_output[["dataset"]], levels = c("Reference", "Query"))
+        pca_output[["dataset"]] <- factor(pca_output[["dataset"]], 
+                                          levels = c("Reference", "Query"))
         
         # Set dependent variables
         dep_vars <- paste0("PC", pc_subset)
@@ -171,7 +179,9 @@ regressPC <- function(reference_data,
         names(regress_res) <- cell_types
         for(cell_type in cell_types){
             
-            regress_res[[cell_type]] <- lapply(dep_vars, .regressFast, indep_var = "dataset", df = indep_list[[cell_type]],
+            regress_res[[cell_type]] <- lapply(dep_vars, .regressFast, 
+                                               indep_var = "dataset", 
+                                               df = indep_list[[cell_type]],
                                                reference_category = TRUE)
             names(regress_res[[cell_type]]) <- dep_vars
         }

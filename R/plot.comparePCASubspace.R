@@ -37,18 +37,25 @@ plot.comparePCASubspace <- function(x, ...){
     x[["PC"]] <- factor(x[["PC"]], levels = x[["PC"]])
     
     # Create plot
-    pc_plot <- ggplot2::ggplot(x, ggplot2::aes(x = .data[["PC"]], y = .data[["Cosine"]], 
-                                               size = .data[["VarianceExplained"]])) +
+    pc_plot <- ggplot2::ggplot(
+        x, ggplot2::aes(x = .data[["PC"]], 
+                        y = .data[["Cosine"]], 
+                        size = .data[["VarianceExplained"]])) +
         ggplot2::geom_point() +
         ggplot2::scale_size_continuous(range = c(3, 10)) +
-        ggplot2::labs(title = "Principal Angles Cosines with Variance Explained",
-                      x = "",
-                      y = "Cosine Similarity of Principal Angle",
-                      size = "Variance Explained") +
+        ggplot2::labs(
+            title = "Principal Angles Cosines with Variance Explained",
+            x = "",
+            y = "Cosine Similarity of Principal Angle",
+            size = "Variance Explained") +
         ggplot2::theme_bw() +
-        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
-                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
-                       panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"))
+        ggplot2::theme(
+            axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, 
+                                                size = 12, hjust = 1),
+            axis.title = ggplot2::element_text(size = 12), 
+            axis.text = ggplot2::element_text(size = 10),
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_line(color = "gray", 
+                                                     linetype = "dotted"))
     return(pc_plot)
 }

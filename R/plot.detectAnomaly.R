@@ -33,7 +33,10 @@
 #' @rdname detectAnomaly
 #' 
 # Function to create faceted scatter plots for specified PC combinations
-plot.detectAnomaly <- function(x, cell_type = NULL, pc_subset = NULL, data_type = c("query", "reference"), ...) {
+plot.detectAnomaly <- function(x, 
+                               cell_type = NULL, 
+                               pc_subset = NULL, 
+                               data_type = c("query", "reference"), ...) {
     
     # Check if PCA was used for computations
     if(!("var_explained" %in% names(x[[names(x)[1]]])))
@@ -49,7 +52,8 @@ plot.detectAnomaly <- function(x, cell_type = NULL, pc_subset = NULL, data_type 
     
     # Check input for pc_subset
     if(!is.null(pc_subset)){
-        if(!all(pc_subset %in% seq_len(ncol(x[[cell_type]][["reference_mat_subset"]]))))
+        if(!all(pc_subset %in% seq_len(
+            ncol(x[[cell_type]][["reference_mat_subset"]]))))
             stop("\'pc_subset\' is out of range.")
     } else{
         pc_subset <- seq_len(ncol(x[[cell_type]][["reference_mat_subset"]]))
@@ -63,18 +67,21 @@ plot.detectAnomaly <- function(x, cell_type = NULL, pc_subset = NULL, data_type 
         stop("There is no query data available in the \'detectAnomaly\' object.")
     } else{
         if(data_type == "query"){
-            data_subset <- x[[cell_type]]$query_mat_subset[, pc_subset, drop = FALSE]
+            data_subset <- x[[cell_type]]$query_mat_subset[, pc_subset, 
+                                                           drop = FALSE]
             anomaly <- x[[cell_type]]$query_anomaly
             
         } else if(data_type == "reference"){
-            data_subset <- x[[cell_type]]$reference_mat_subset[, pc_subset, drop = FALSE]
+            data_subset <- x[[cell_type]]$reference_mat_subset[, pc_subset, 
+                                                               drop = FALSE]
             anomaly <- x[[cell_type]]$reference_anomaly
         }
     }
     
     # Modify column names to include percentage of variance explained
-    colnames(data_subset) <- paste0("PC", pc_subset, 
-                                    " (", sprintf("%.1f%%", x[[cell_type]]$var_explained[pc_subset]), ")")
+    colnames(data_subset) <- paste0(
+        "PC", pc_subset, 
+        " (", sprintf("%.1f%%", x[[cell_type]]$var_explained[pc_subset]), ")")
     
     # Create all possible pairs of specified PCs
     pc_names <- colnames(data_subset)
@@ -94,23 +101,33 @@ plot.detectAnomaly <- function(x, cell_type = NULL, pc_subset = NULL, data_type 
     data_pairs <- do.call(rbind, data_pairs_list)
     
     # Remove redundant data (to avoid duplicated plots)
-    data_pairs <- data_pairs[as.numeric(data_pairs[["x"]]) < as.numeric(data_pairs[["y"]]),]
+    data_pairs <- data_pairs[as.numeric(data_pairs[["x"]]) < 
+                                 as.numeric(data_pairs[["y"]]),]
     
     # Add anomalies vector to data_pairs dataframe
     data_pairs$anomaly <- rep(anomaly, choose(length(pc_subset), 2))
     
     # Create the ggplot object with facets
-    anomaly_plot <- ggplot2::ggplot(data_pairs, ggplot2::aes(x = .data[["x_value"]], y = .data[["y_value"]], 
-                                                             color = factor(.data[["anomaly"]]))) +
+    anomaly_plot <- ggplot2::ggplot(data_pairs, ggplot2::aes(
+        x = .data[["x_value"]], y = .data[["y_value"]], 
+        color = factor(.data[["anomaly"]]))) +
         ggplot2::geom_point(size = 1, alpha = 0.5) + 
-        ggplot2::scale_color_manual(values = c("black", "red"), labels = c("Normal", "Anomaly")) + 
-        ggplot2::facet_grid(rows = ggplot2::vars(.data[["y"]]), cols = ggplot2::vars(.data[["x"]]), scales = "free") +
+        ggplot2::scale_color_manual(values = c("black", "red"), 
+                                    labels = c("Normal", "Anomaly")) + 
+        ggplot2::facet_grid(rows = ggplot2::vars(.data[["y"]]), 
+                            cols = ggplot2::vars(.data[["x"]]), 
+                            scales = "free") +
         ggplot2::xlab("") + ggplot2::ylab("") + 
         ggplot2::theme_bw() +
         ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10)) + 
-        ggplot2::labs(title = paste0("Isolation Forest Anomaly Plot: ", cell_type), color = "iForest Type")
+                       panel.grid.major = ggplot2::element_line(
+                           color = "gray", linetype = "dotted"),
+                       plot.title = ggplot2::element_text(size = 14, 
+                                                          face = "bold", 
+                                                          hjust = 0.5),
+                       axis.title = ggplot2::element_text(size = 12), 
+                       axis.text = ggplot2::element_text(size = 10)) + 
+        ggplot2::labs(title = paste0("Isolation Forest Anomaly Plot: ", 
+                                     cell_type), color = "iForest Type")
     return(anomaly_plot)
 }

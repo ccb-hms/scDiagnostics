@@ -59,7 +59,7 @@ reference:
       - comparePCASubspace
       - plotPairwiseDistancesDensity
       - plotWassersteinDistance 
-  - title: Marker Gene Alignment
+  - title: Evaluation of Marker Gene Alignment
     contents:
       - calculateHVGOverlap
       - calculateVarImpOverlap
@@ -74,7 +74,7 @@ reference:
     contents:
       - detectAnomaly
       - calculateCellSimilarityPCA 
-  - title: Calculation of Distances Between Specific Cells and Cell Types
+  - title: Calculation of Distances Between Specific Cells and Cell Populations
     contents:
       - calculateCellDistances 
       - calculateCellDistancesSimilarity 

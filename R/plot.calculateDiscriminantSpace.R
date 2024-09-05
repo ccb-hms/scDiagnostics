@@ -27,17 +27,17 @@
 #' @rdname calculateDiscriminantSpace
 #' 
 # Function to plot the projected reference/query data on the discriminant spaces.
-plot.calculateDiscriminantSpace <- function(x, cell_types, plot_type = c("scatterplot", "boxplot"), ...){
+plot.calculateDiscriminantSpace <- function(
+        x, 
+        cell_types, 
+        plot_type = c("scatterplot", "boxplot"), ...){
     
     # Check if query data is available in the object
     if(!("query_proj" %in% names(x[[names(x)[[1]]]])))
         stop("There is no query data to plot.")
     
-    # Check input for plot_type
+    # Match argument for plot_type
     plot_type <- match.arg(plot_type)
-    if(!(plot_type %in% c("scatterplot", "boxplot"))){
-        stop("The \'plot_type\' specified is not available.")
-    }
     
     # Scatter plot
     if(plot_type == "scatterplot"){

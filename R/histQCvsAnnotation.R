@@ -76,20 +76,26 @@ histQCvsAnnotation <- function(se_object,
     
     # Combine QC stats, scores, and cell_types into a data frame
     data <- data.frame(stats = c(qc_stats, cell_type_scores), 
-                       Metric = c(rep("QC Statistics", length(qc_stats)), rep("Annotation Scores", length(cell_type_scores))))
-    data[["Metric"]] <- factor(data[["Metric"]], levels = c("QC Statistics", "Annotation Scores"))
+                       Metric = c(rep("QC Statistics", length(qc_stats)), 
+                                  rep("Annotation Scores", 
+                                      length(cell_type_scores))))
+    data[["Metric"]] <- factor(data[["Metric"]], 
+                               levels = c("QC Statistics", "Annotation Scores"))
     
     # Create histogram plots
-    hist_plot <- ggplot2::ggplot(data, ggplot2::aes(x = .data[["stats"]], fill = .data[["Metric"]])) +
-        ggplot2::geom_histogram(bins = 30, alpha = 0.5, position = "identity", color = "gray50") +
+    hist_plot <- ggplot2::ggplot(data, ggplot2::aes(x = .data[["stats"]], 
+                                                    fill = .data[["Metric"]])) +
+        ggplot2::geom_histogram(bins = 30, alpha = 0.5, position = "identity", 
+                                color = "gray50") +
         ggplot2::facet_wrap(~ .data[["Metric"]], scales = "free") +
         ggplot2::labs(x = "", y = "Frequency", fill = "Metric") +
         ggplot2::theme_bw() +
-        ggplot2::theme(legend.position = "none",
-                       panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
+        ggplot2::theme(
+            legend.position = "none",
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+            plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+            axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
     
     # Return the list of plots
     return(hist_plot)

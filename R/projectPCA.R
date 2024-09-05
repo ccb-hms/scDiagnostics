@@ -2,15 +2,19 @@
 #'
 #' @description 
 #' This function projects a query singleCellExperiment object onto the PCA space of a reference 
-#' singleCellExperiment object. The PCA analysis on the reference data is assumed to be pre-computed and stored within the object.
+#' singleCellExperiment object. The PCA analysis on the reference data is assumed to be pre-computed 
+#' and stored within the object.
 #'
 #' @details 
 #' This function assumes that the "PCA" element exists within the \code{reducedDims} of the reference data 
-#' (obtained using \code{reducedDim(reference_data)}) and that the genes used for PCA are present in both the reference and query data. 
-#' It performs centering and scaling of the query data based on the reference data before projection.
+#' (obtained using \code{reducedDim(reference_data)}) and that the genes used for PCA are present in both 
+#' the reference and query data. It performs centering and scaling of the query data based on the reference 
+#' data before projection.
 #'
-#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix 
+#' for the query cells.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix 
+#' for the reference cells.
 #' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data} 
 #' that identifies the cell types.
 #' @param ref_cell_type_col character. The column name in the \code{colData} of \code{reference_data} 
@@ -51,7 +55,8 @@ projectPCA <- function(query_data,
 
     # Extract reference PCA components and rotation matrix
     ref_mat <- reducedDim(reference_data, "PCA")[, pc_subset, drop = FALSE]
-    rotation_mat <- attributes(reducedDim(reference_data, "PCA"))[["rotation"]][, pc_subset, drop = FALSE]
+    rotation_mat <- attributes(reducedDim(
+        reference_data, "PCA"))[["rotation"]][, pc_subset, drop = FALSE]
     PCA_genes <- rownames(rotation_mat)
     
     # Check if genes used for PCA are available in query data
@@ -60,17 +65,22 @@ projectPCA <- function(query_data,
     }
     
     # Center and scale query data based on reference for projection
-    centering_vec <- apply(t(as.matrix(assay(reference_data, "logcounts"))), 2, mean)[PCA_genes]
-    query_mat <- scale(t(as.matrix(assay(query_data, "logcounts")))[, PCA_genes, drop = FALSE], center = centering_vec, scale = FALSE) %*% 
-        rotation_mat
+    centering_vec <- apply(t(as.matrix(
+        assay(reference_data, "logcounts"))), 2, mean)[PCA_genes]
+    query_mat <- scale(t(as.matrix(
+        assay(query_data, "logcounts")))[, PCA_genes, drop = FALSE], 
+                       center = centering_vec, scale = FALSE) %*% rotation_mat
     
     # Returning output as a dataframe
     return(data.frame(rbind(ref_mat, query_mat), 
-                      dataset = c(rep("Reference", nrow(ref_mat)), rep("Query", nrow(query_mat))),
-                      cell_type = c(ifelse(rep(is.null(ref_cell_type_col), nrow(ref_mat)), 
+                      dataset = c(rep("Reference", nrow(ref_mat)), 
+                                  rep("Query", nrow(query_mat))),
+                      cell_type = c(ifelse(rep(is.null(ref_cell_type_col), 
+                                               nrow(ref_mat)), 
                                            rep(NA, nrow(ref_mat)), 
                                            reference_data[[ref_cell_type_col]]),
-                                    ifelse(rep(is.null(query_cell_type_col), nrow(query_mat)), 
+                                    ifelse(rep(is.null(query_cell_type_col), 
+                                               nrow(query_mat)), 
                                            rep(NA, nrow(query_mat)), 
                                            query_data[[query_cell_type_col]]))))
 }

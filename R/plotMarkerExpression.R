@@ -62,7 +62,7 @@ plotMarkerExpression <- function(reference_data,
     # Get common cell types if they are not specified by user
     if(is.null(cell_type)){
         cell_type <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
-                                       query_data[[query_cell_type_col]])))
+                                      query_data[[query_cell_type_col]])))
     }
     
     # Check if gene_name is present in both query_data and reference_data
@@ -89,32 +89,44 @@ plotMarkerExpression <- function(reference_data,
     query_gene_expression_specific_zr <- .rankTransformation(query_gene_expression_specific)
     
     # Create a combined vector of gene expression values
-    combined_gene_expression <- c(ref_gene_expression_zr, query_gene_expression_zr,
-                                  ref_gene_expression_specific_zr, query_gene_expression_specific_zr)
+    combined_gene_expression <- c(ref_gene_expression_zr, 
+                                  query_gene_expression_zr,
+                                  ref_gene_expression_specific_zr, 
+                                  query_gene_expression_specific_zr)
     
     # Create a grouping vector for dataset cell_types
     dataset_cell_types <- rep(c("Reference", "Query", "Reference", "Query"), 
-                               times = c(length(ref_gene_expression), length(query_gene_expression),
-                                         length(ref_gene_expression_specific), length(query_gene_expression_specific)))
+                              times = c(length(ref_gene_expression), 
+                                        length(query_gene_expression),
+                                        length(ref_gene_expression_specific), 
+                                        length(query_gene_expression_specific)))
     
     # Combine the gene expression values and dataset cell_types
     data <- data.frame(GeneExpression = combined_gene_expression,
                        Dataset = dataset_cell_types,
                        plot_type = rep(c("Overall Distribution", "Cell Type-Specific Distribution"), 
-                                       times = c(length(ref_gene_expression) + length(query_gene_expression),
-                                                 length(ref_gene_expression_specific) + length(query_gene_expression_specific))))
+                                       times = c(length(ref_gene_expression) + 
+                                                     length(query_gene_expression),
+                                                 length(ref_gene_expression_specific) + 
+                                                     length(query_gene_expression_specific))))
     
     # Create a stacked density plot using ggplot2 for overall dataset
-    plot_obj <- ggplot2::ggplot(data, ggplot2::aes(x = .data[["GeneExpression"]], fill = .data[["Dataset"]])) +
+    plot_obj <- ggplot2::ggplot(data, 
+                                ggplot2::aes(x = .data[["GeneExpression"]], 
+                                             fill = .data[["Dataset"]])) +
         ggplot2::geom_density(alpha = 0.5) +
         ggplot2::facet_wrap(~ .data[["plot_type"]], scales = "free") + 
         ggplot2::labs(title = paste("Overall Distribution"), 
                       x = paste("Log Gene Expression", gene_name), 
                       y = "Density") +
         ggplot2::theme_bw() +
-        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10))
+        ggplot2::theme(
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_line(color = "gray", 
+                                                     linetype = "dotted"),
+            plot.title = ggplot2::element_text(size = 14, 
+                                               face = "bold", hjust = 0.5),
+            axis.title = ggplot2::element_text(size = 12), 
+            axis.text = ggplot2::element_text(size = 10))
     return(plot_obj)
 }

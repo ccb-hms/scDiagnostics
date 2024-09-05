@@ -100,18 +100,29 @@ calculateVarImpOverlap <- function(reference_data,
     cell_types_combn <- combn(length(cell_types), 2)
     for(combn_id in seq_len(ncol(cell_types_combn))){
         
-        ref_x_subset <- ref_x[which(ref_y %in% c(cell_types[cell_types_combn[1, combn_id]], cell_types[cell_types_combn[2, combn_id]])),]
-        ref_y_subset <- ref_y[which(ref_y %in% c(cell_types[cell_types_combn[1, combn_id]], cell_types[cell_types_combn[2, combn_id]]))]
-        training_data <- data.frame(ref_x_subset, cell_type = factor(ref_y_subset))
-        rf_binary <- ranger::ranger(cell_type ~ ., data = training_data, num.trees = n_tree, importance = "impurity")
-        var_importance_name <- paste0(cell_types[cell_types_combn[1, combn_id]], "-", cell_types[cell_types_combn[2, combn_id]])
+        ref_x_subset <- ref_x[which(
+            ref_y %in% c(cell_types[cell_types_combn[1, combn_id]], 
+                         cell_types[cell_types_combn[2, combn_id]])),]
+        ref_y_subset <- ref_y[which(
+            ref_y %in% c(cell_types[cell_types_combn[1, combn_id]], 
+                         cell_types[cell_types_combn[2, combn_id]]))]
+        training_data <- data.frame(ref_x_subset, 
+                                    cell_type = factor(ref_y_subset))
+        rf_binary <- ranger::ranger(cell_type ~ ., data = training_data, 
+                                    num.trees = n_tree, importance = "impurity")
+        var_importance_name <- paste0(cell_types[cell_types_combn[1, combn_id]], 
+                                      "-", 
+                                      cell_types[cell_types_combn[2, combn_id]])
         var_imp_ref[[var_importance_name]] <- rf_binary$variable.importance
         names(var_imp_ref[[var_importance_name]]) <- colnames(ref_x_subset)
         var_imp_ref[[var_importance_name]] <- 
-            data.frame(Gene = names(var_imp_ref[[var_importance_name]])[order(var_imp_ref[[var_importance_name]], 
-                                                                                    decreasing = TRUE)], 
-                       RF_Importance = var_imp_ref[[var_importance_name]][order(var_imp_ref[[var_importance_name]], 
-                                                                                   decreasing = TRUE)])
+            data.frame(Gene = names(
+                var_imp_ref[[var_importance_name]])[order(
+                    var_imp_ref[[var_importance_name]], 
+                    decreasing = TRUE)], 
+                       RF_Importance = var_imp_ref[[var_importance_name]][order(
+                           var_imp_ref[[var_importance_name]], 
+                           decreasing = TRUE)])
         rownames(var_imp_ref[[var_importance_name]]) <- NULL
     }
     
@@ -132,18 +143,32 @@ calculateVarImpOverlap <- function(reference_data,
         var_imp_query <- list()
         for(combn_id in seq_len(ncol(cell_types_combn))){
             
-            query_x_subset <- query_x[which(query_y %in% c(cell_types[cell_types_combn[1, combn_id]], cell_types[cell_types_combn[2, combn_id]])),]
-            query_y_subset <- query_y[which(query_y %in% c(cell_types[cell_types_combn[1, combn_id]], cell_types[cell_types_combn[2, combn_id]]))]
-            training_data <- data.frame(query_x_subset, cell_type = factor(query_y_subset))
-            rf_binary <- ranger::ranger(cell_type ~ ., data = training_data, num.trees = n_tree, importance = "impurity")
-            var_importance_name <- paste0(cell_types[cell_types_combn[1, combn_id]], "-", cell_types[cell_types_combn[2, combn_id]])
-            var_imp_query[[var_importance_name]] <- rf_binary$variable.importance
-            names(var_imp_query[[var_importance_name]]) <- colnames(query_x_subset)
+            query_x_subset <- query_x[which(
+                query_y %in% c(cell_types[cell_types_combn[1, combn_id]], 
+                               cell_types[cell_types_combn[2, combn_id]])),]
+            query_y_subset <- query_y[which(
+                query_y %in% c(cell_types[cell_types_combn[1, combn_id]], 
+                               cell_types[cell_types_combn[2, combn_id]]))]
+            training_data <- data.frame(query_x_subset, 
+                                        cell_type = factor(query_y_subset))
+            rf_binary <- ranger::ranger(cell_type ~ ., data = training_data, 
+                                        num.trees = n_tree, 
+                                        importance = "impurity")
+            var_importance_name <- paste0(
+                cell_types[cell_types_combn[1, combn_id]], "-", 
+                cell_types[cell_types_combn[2, combn_id]])
             var_imp_query[[var_importance_name]] <- 
-                data.frame(Gene = names(var_imp_query[[var_importance_name]])[order(var_imp_query[[var_importance_name]], 
-                                                                                    decreasing = TRUE)], 
-                           RF_Importance = var_imp_query[[var_importance_name]][order(var_imp_query[[var_importance_name]], 
-                                                                                      decreasing = TRUE)])
+                rf_binary$variable.importance
+            names(var_imp_query[[var_importance_name]]) <- 
+                colnames(query_x_subset)
+            var_imp_query[[var_importance_name]] <- 
+                data.frame(Gene = names(
+                    var_imp_query[[var_importance_name]])[order(
+                        var_imp_query[[var_importance_name]], 
+                        decreasing = TRUE)], 
+                           RF_Importance = var_imp_query[[var_importance_name]][order(
+                               var_imp_query[[var_importance_name]], 
+                               decreasing = TRUE)])
             rownames(var_imp_query[[var_importance_name]]) <- NULL
         }
         
@@ -151,8 +176,10 @@ calculateVarImpOverlap <- function(reference_data,
         var_imp_comparison <- rep(NA, length(var_imp_ref))
         names(var_imp_comparison) <- names(var_imp_ref)
         for(cells in names(var_imp_comparison)){
-            var_imp_comparison[cells] <- length(intersect(var_imp_ref[[cells]][["Gene"]][seq_len(n_top)], 
-                                                          var_imp_query[[cells]][["Gene"]][seq_len(n_top)])) / n_top
+            var_imp_comparison[cells] <- length(
+                intersect(var_imp_ref[[cells]][["Gene"]][seq_len(n_top)], 
+                          var_imp_query[[cells]][["Gene"]][seq_len(n_top)])) / 
+                n_top
         }
         
         # Return variable importance scores for each combination of cell types in each dataset and the comparison 

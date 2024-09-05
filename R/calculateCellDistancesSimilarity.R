@@ -85,14 +85,16 @@ calculateCellDistancesSimilarity <- function(query_data,
     
     # Compute distance data
     query_data_subset <- query_data[, cell_names, drop = FALSE]
-    distance_data <- calculateCellDistances(query_data = query_data_subset, 
-                                            reference_data = reference_data, 
-                                            query_cell_type_col = query_cell_type_col, 
-                                            ref_cell_type_col = ref_cell_type_col, 
-                                            pc_subset = pc_subset)
+    distance_data <- calculateCellDistances(
+        query_data = query_data_subset, 
+        reference_data = reference_data, 
+        query_cell_type_col = query_cell_type_col, 
+        ref_cell_type_col = ref_cell_type_col, 
+        pc_subset = pc_subset)
     
     # Initialize empty lists to store results
-    bhattacharyya_list <- hellinger_list <- vector("list", length = length(distance_data))
+    bhattacharyya_list <- hellinger_list <- 
+        vector("list", length = length(distance_data))
     names(bhattacharyya_list) <- names(hellinger_list) <- names(distance_data)
     
     # Iterate over each cell type
@@ -118,18 +120,27 @@ calculateCellDistancesSimilarity <- function(query_data,
             cell_density <- density(cell_distances)
             
             # Create a common grid for evaluating densities
-            common_grid <- seq(min(min(ref_density[["x"]]), min(cell_density[["x"]]), 0), 
-                               max(max(ref_density[["x"]]), max(cell_density[["x"]])), length.out = 1000)
+            common_grid <- seq(min(min(ref_density[["x"]]), 
+                                   min(cell_density[["x"]]), 0), 
+                               max(max(ref_density[["x"]]), 
+                                   max(cell_density[["x"]])), 
+                               length.out = 1000)
             
             # Interpolate densities onto the common grid
-            ref_density_interp <- approxfun(ref_density[["x"]], ref_density[["y"]])(common_grid)
+            ref_density_interp <- approxfun(ref_density[["x"]], 
+                                            ref_density[["y"]])(common_grid)
             ref_density_interp[is.na(ref_density_interp)] <- 0
-            cell_density_interp <- approxfun(cell_density[["x"]], cell_density[["y"]])(common_grid)
+            cell_density_interp <- approxfun(cell_density[["x"]], 
+                                             cell_density[["y"]])(common_grid)
             cell_density_interp[is.na(cell_density_interp)] <- 0
             
             # Compute and store Bhattacharyya coefficient/Hellinger distance
-            bhattacharyya_coef[i] <- sum(sqrt(ref_density_interp * cell_density_interp) * mean(diff(common_grid)))
-            hellinger_dist[i] <- sqrt(1 - sum(sqrt(ref_density_interp * cell_density_interp)) * mean(diff(common_grid)))
+            bhattacharyya_coef[i] <- sum(
+                sqrt(ref_density_interp * cell_density_interp) * 
+                    mean(diff(common_grid)))
+            hellinger_dist[i] <- sqrt(
+                1 - sum(sqrt(ref_density_interp * cell_density_interp)) * 
+                    mean(diff(common_grid)))
         }
         
         # Store overlap measures for the current cell type

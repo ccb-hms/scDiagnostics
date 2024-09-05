@@ -73,43 +73,57 @@ boxplotPCA <- function(query_data,
     pca_output <- pca_output[!is.na(pca_output[["cell_type"]]),]
     if(!is.null(cell_types)){
         if(all(cell_types %in% pca_output[["cell_type"]])){
-            pca_output <- pca_output[which(pca_output[["cell_type"]] %in% cell_types),]
+            pca_output <- pca_output[which(pca_output[["cell_type"]] %in% 
+                                               cell_types),]
         } else{
             stop("One or more of the specified \'cell_types\' are not available.")
         }
     }
-    pca_long <- data.frame(PC = rep(paste0("pc", pc_subset), each = nrow(pca_output)),
+    pca_long <- data.frame(PC = rep(paste0("pc", pc_subset), 
+                                    each = nrow(pca_output)),
                            Value = unlist(c(pca_output[, pc_subset])),
-                           dataset = rep(pca_output[["dataset"]], length(pc_subset)),
-                           cell_type = rep(pca_output[["cell_type"]], length(pc_subset)))
+                           dataset = rep(pca_output[["dataset"]], 
+                                         length(pc_subset)),
+                           cell_type = rep(pca_output[["cell_type"]], 
+                                           length(pc_subset)))
     pca_long[["PC"]] <- toupper(pca_long[["PC"]])
     
     # Create a new variable representing the combination of cell type and dataset
-    pca_long[["cell_type_dataset"]] <- paste(pca_long[["dataset"]], pca_long[["cell_type"]], sep = " ")
+    pca_long[["cell_type_dataset"]] <- paste(pca_long[["dataset"]], 
+                                             pca_long[["cell_type"]], 
+                                             sep = " ")
     
     # Define the order of cell type and dataset combinations
-    order_combinations <- paste(rep(c("Reference", "Query"), length(unique(pca_long[["cell_type"]]))),
-                                rep(sort(unique(pca_long[["cell_type"]])), each = 2))
+    order_combinations <- paste(rep(c("Reference", "Query"), 
+                                    length(unique(pca_long[["cell_type"]]))),
+                                rep(sort(unique(pca_long[["cell_type"]])), 
+                                    each = 2))
     
     # Reorder the levels of cell type and dataset factor
-    pca_long[["cell_type_dataset"]] <- factor(pca_long[["cell_type_dataset"]], levels = order_combinations)
+    pca_long[["cell_type_dataset"]] <- factor(pca_long[["cell_type_dataset"]], 
+                                              levels = order_combinations)
     
     # Define the colors for cell types
-    cell_type_colors <- generateColors(order_combinations, paired = TRUE)
+    cell_type_colors <- generateColors(order_combinations, 
+                                       paired = TRUE)
     
     # Create the ggplot
-    plot <- ggplot2::ggplot(pca_long, ggplot2::aes(x = .data[["cell_type"]], y = .data[["Value"]], 
-                                                   fill = .data[["cell_type_dataset"]])) +
+    plot <- ggplot2::ggplot(pca_long, ggplot2::aes(
+        x = .data[["cell_type"]], 
+        y = .data[["Value"]], 
+        fill = .data[["cell_type_dataset"]])) +
         ggplot2::geom_boxplot(alpha = 0.7, outlier.shape = NA, width = 0.7) + 
         ggplot2::facet_wrap(~ .data[["PC"]], scales = "free") +
-        ggplot2::scale_fill_manual(values = cell_type_colors, name = "Cell Types") + 
+        ggplot2::scale_fill_manual(values = cell_type_colors, 
+                                   name = "Cell Types") + 
         ggplot2::labs(x = "", y = "Value") +  
         ggplot2::theme_bw() +
-        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                       plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                       axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
-                       axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10))
+        ggplot2::theme(
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
+            plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+            axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
+            axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10))
 
     # Return the plot
     return(plot)
