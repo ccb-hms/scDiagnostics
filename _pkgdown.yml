@@ -24,7 +24,7 @@ navbar:
         - text: Visualization of QC and Annotation Scores
           href: articles/QCandAnnotationScores.html
         - text: Evaluation of Dataset and Marker Gene Alignment
-          href: articles/DatasetAlignment.html
+          href: articles/DatasetMarkerGeneAlignment.html
         - text: Statistical Measures to Assess Dataset Alignment
           href: articles/StatisticalMeasures.html
         - text: Detection of Annotation Anomalies

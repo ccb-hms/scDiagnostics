@@ -66,9 +66,9 @@ In the realm of single-cell genomics, the ability to compare and integrate data 
 
 ## Marker Gene Alignment
 
-- `calculateHVGOverlap`: To assess the similarity between datasets based on highly variable genes, this function computes the overlap coefficient. It measures how well the sets of highly variable genes from different datasets correspond to each other.
+- `calculateHVGOverlap()`: To assess the similarity between datasets based on highly variable genes, this function computes the overlap coefficient. It measures how well the sets of highly variable genes from different datasets correspond to each other.
 
-- `calculateVarImpOverlap`: Using Random Forest, this function identifies and compares the importance of genes for differentiating cell types between datasets. It highlights which genes are most critical in each dataset and compares their importance, providing insights into shared and unique markers.
+- `calculateVarImpOverlap()`: Using Random Forest, this function identifies and compares the importance of genes for differentiating cell types between datasets. It highlights which genes are most critical in each dataset and compares their importance, providing insights into shared and unique markers.
 
 ## Purpose and Applications
 
