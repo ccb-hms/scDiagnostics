@@ -8,6 +8,26 @@ The accurate annotation of cell types is a critical step in single-cell RNA-sequ
 
 # Installation
 
+## Release Version
+
+To install the release version of the package from Bioconductor use the following command:
+
+``` r
+BiocManager::install("scDiagnostics")
+```
+
+NOTE: you will need the [**BiocManager**](https://cran.r-project.org/web/packages/BiocManager/index.html) package to install from GitHub.
+
+To build the package vignettes upon installation use:
+
+``` r
+BiocManager::install("scDiagnostics",
+                     build_vignettes = TRUE,
+                     dependencies = TRUE)
+```
+
+## Development Version
+
 To install the development version of the package from GitHub use the following command:
 
 ``` r
