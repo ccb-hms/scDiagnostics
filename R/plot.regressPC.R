@@ -80,7 +80,7 @@ plot.regressPC <- function(x,
             
             for(pc in unique(plot_data[["PC"]])){
                 plot_data[plot_data[["PC"]] == pc, "p_value"] <- 
-                    x[["regression_summaries"]][[pc]][["coefficients"]][, "p.value"]
+                    x[["regression_summaries"]][[pc]][["coefficients"]][, "p.adjusted"]
             }
             
             plot_obj <- ggplot2::ggplot(
@@ -93,7 +93,7 @@ plot.regressPC <- function(x,
                                             name = "Cell Types") + 
                 ggplot2::scale_y_continuous(trans = "log10") +
                 ggplot2::labs(
-                    title = "P-values by Principal Component and Cell Type",
+                    title = "Adjusted P-Values by Principal Component and Cell Type",
                     x = NULL, y = "-log10(p-value) of Cell Type") +
                 ggplot2::geom_hline(yintercept = -log10(alpha), 
                                     linetype = "dashed", color = "black") +
@@ -163,7 +163,7 @@ plot.regressPC <- function(x,
             for(pc in unique(plot_data[["PC"]])){
                 plot_data[plot_data[["PC"]] == pc, "p_value"] <- 
                     unlist(lapply(unique(plot_data[["cell_type"]]), 
-                                  function(t) x[[t]][[pc]][["coefficients"]][2, "p.value"]))
+                                  function(t) x[[t]][[pc]][["coefficients"]][2, "p.adjusted"]))
             }
             
             plot_obj <- ggplot2::ggplot(
@@ -176,7 +176,7 @@ plot.regressPC <- function(x,
                                             name = "Cell Types") + 
                 ggplot2::scale_y_continuous(trans = "log10") +
                 ggplot2::labs(
-                    title = "P-values (Query Data Indicator) by Principal Component and Cell Type",
+                    title = "Adjusted P-Values (Query Data Indicator) by Principal Component and Cell Type",
                     x = NULL, y = "-log10(p-value) of Query Indicator") +
                 ggplot2::geom_hline(yintercept = -log10(alpha), 
                                     linetype = "dashed", 

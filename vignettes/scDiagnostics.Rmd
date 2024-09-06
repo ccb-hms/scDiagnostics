@@ -57,6 +57,27 @@ The `scDiagnostics` package is designed to address these issues by offering a su
 
 # Installation
 
+## Release Version
+
+To install the release version of the package from Bioconductor use the following command:
+
+```{r, eval = FALSE, fig.show='hide'}
+BiocManager::install("scDiagnostics")
+```
+
+NOTE: you will need the `r BiocStyle::CRANpkg("BiocManager")` package to install from GitHub.
+
+To build the package vignettes upon installation use:
+
+```{r, eval = FALSE, fig.show='hide'}
+BiocManager::install("scDiagnostics",
+                     build_vignettes = TRUE,
+                     dependencies = TRUE)
+```
+
+
+## Development Version
+
 To install the development version of the package from Github, use the
 following command:
 
@@ -226,21 +247,30 @@ This scatter plot can uncover patterns, such as whether cells with larger librar
 
 For a detailed example of all possible functions to assess the alignment of datasets and marker genes, please refer to the [Evaluation of Dataset and Marker Gene Alignment](https://ccb-hms.github.io/scDiagnostics/articles/https://ccb-hms.github.io/scDiagnostics/articles/DatasetAlignment.html) vignette.
 
-## `compareCCA()`
+## `comparePCASubspace()`
 
-The `compareCCA()` function is designed to compare the subspaces spanned by the top principal components (PCs) of two datasets using Canonical Correlation Analysis (CCA). The function calculates canonical variables, correlations, and a similarity measure between the subspaces of the reference and query datasets. This can be useful in determining the similarity of cell populations or other high-dimensional data structures across different conditions or datasets.
+
+In single-cell RNA-seq analysis, evaluating how closely the subspaces defined by the leading principal components (PCs) of query and reference datasets match is crucial. This evaluation is key to understanding how each dataset captures and represents structure and variation. The `comparePCASubspace()` function is specifically designed to assess this alignment by calculating the cosine similarity between the loadings of the most significant variables for each principal component. This analysis is essential for measuring the extent of similarity between datasets, which is vital for precise cell type annotation and effective data integration.
+
+
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
-# Perform CCA comparison
-cca_comparison <- compareCCA(query_data = query_data_cd4, 
-                             reference_data = ref_data_cd4, 
-                             query_cell_type_col = "expert_annotation", 
-                             ref_cell_type_col = "expert_annotation")
-# Visualize results
-plot(cca_comparison)
-```
-![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/compareCCA.png)
+# Compare PCA subspaces between query and reference data
+subspace_comparison <- comparePCASubspace(
+    query_data = query_data_cd4,
+    reference_data = ref_data_cd4, 
+    query_cell_type_col = "expert_annotation", 
+    ref_cell_type_col = "expert_annotation", 
+    pc_subset = 1:5
+)
 
-This function is useful for identifying similarities and differences in cellular subpopulations or other high-dimensional datasets across different conditions. The combination of CCA with PCA provides a reliable framework for subspace comparison.
+# View weighted cosine similarity score
+subspace_comparison$weighted_cosine_similarity
+
+# Plot output for PCA subspace comparison (if a plot method is available)
+plot(subspace_comparison)
+```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/comparePCASubspace.png)
+
 
 ## `plotPairwiseDistancesDensity()`
 

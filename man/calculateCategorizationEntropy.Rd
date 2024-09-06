@@ -51,10 +51,9 @@ be a high as possible.
 X <- rnorm(500 * 4) |> matrix(nrow = 4)
 X[1, 1:250] <- X[1, 1:250] + 5 # Make the first category highly scored in the first 250 cells
 
-
 # The function will issue a message about softmaxing the scores, and the entropy histogram will be
 # bimodal since we made half of the cells clearly category 1 while the other half are roughly even.
-# entropy_scores <- calculateCategorizationEntropy(X)
+entropy_scores <- calculateCategorizationEntropy(X)
 
 }
 \author{
