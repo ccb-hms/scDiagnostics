@@ -248,6 +248,8 @@ regressPC <- function(reference_data,
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
+#' @importFrom stats p.adjust
+#' 
 # Function to adjust p-values from the regression analysis on PCs
 adjustPValues <- function(regress_res, 
                           adjust_method = c("BH", "holm", 
