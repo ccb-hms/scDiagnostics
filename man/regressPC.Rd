@@ -13,7 +13,9 @@ regressPC(
   ref_cell_type_col,
   query_cell_type_col = NULL,
   cell_types = NULL,
-  pc_subset = 1:10
+  pc_subset = 1:10,
+  adjust_method = c("BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr",
+    "none")
 )
 }
 \arguments{
@@ -37,6 +39,10 @@ If NULL, the PC scores are regressed against the cell types of the reference dat
 \item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
 
 \item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.}
+
+\item{adjust_method}{A character string specifying the method to adjust the p-values. 
+Options include "BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr", or "none". 
+Default is "BH" (Benjamini-Hochberg). Default is "BH".}
 }
 \value{
 The S3 plot method returns a \code{ggplot} object representing the specified plot type.
@@ -117,5 +123,8 @@ single-cell genomics. Nature Methods, 19:41-50, 2022.
 }
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+
+Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Andrew Ghazi, \email{andrew_ghazi@hms.harvard.edu}
 }
 \keyword{internal}

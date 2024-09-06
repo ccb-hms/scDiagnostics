@@ -48,7 +48,8 @@
 #' 
 #' @export
 #' 
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author 
+#' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #' 
 #' @seealso \code{\link{plot.calculateDiscriminantSpace}}
 #' 
@@ -262,7 +263,8 @@ calculateDiscriminantSpace <- function(reference_data,
 #'
 #' @return A numeric matrix representing the Ledoit-Wolf estimated covariance matrix.
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author 
+#' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 # Function to compute Ledoit-Wolf covariance matrix
 ledoitWolf <- function(class_data) {
