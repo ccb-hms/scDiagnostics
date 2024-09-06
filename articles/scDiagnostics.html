@@ -161,21 +161,40 @@ supporting more accurate and reliable downstream analysis.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>To install the development version of the package from Github, use
+<div class="section level3">
+<h3 id="release-version">Release Version<a class="anchor" aria-label="anchor" href="#release-version"></a>
+</h3>
+<p>To install the release version of the package from Bioconductor use
 the following command:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"scDiagnostics"</span><span class="op">)</span></span></code></pre></div>
+<p>NOTE: you will need the <em><a href="https://CRAN.R-project.org/package=BiocManager" class="external-link">BiocManager</a></em>
+package to install from GitHub.</p>
+<p>To build the package vignettes upon installation use:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"scDiagnostics"</span>,</span>
+<span>                     build_vignettes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                     dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="development-version">Development Version<a class="anchor" aria-label="anchor" href="#development-version"></a>
+</h3>
+<p>To install the development version of the package from Github, use
+the following command:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ccb-hms/scDiagnostics"</span><span class="op">)</span></span></code></pre></div>
 <p>NOTE: you will need the <em><a href="https://bioconductor.org/packages/3.19/remotes" class="external-link">remotes</a></em>
 package to install from GitHub.</p>
 <p>To build the package vignettes upon installation use:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ccb-hms/scDiagnostics"</span>,</span>
 <span>                          build_vignettes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                          dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Once you have installed the package, you can load it with the
 following code:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ccb-hms/scDiagnostics" class="external-link">scDiagnostics</a></span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="preliminaries">Preliminaries<a class="anchor" aria-label="anchor" href="#preliminaries"></a>
@@ -198,7 +217,7 @@ package, <code>reference_data</code>, <code>query_data</code>, and
 <code>qc_data</code> are all <code>SingleCellExperiment</code> objects
 that include a <code>logcounts</code> assay, which stores the
 log-transformed expression values for the genes.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load datasets</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"reference_data"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"query_data"</span><span class="op">)</span></span>
@@ -232,7 +251,7 @@ and evaluates cluster heterogeneity and marker gene alignment.</p>
 one cell type. We will create separate <code>SingleCellExperiment</code>
 objects that only CD4 cells, to ensure compatibility with these
 functions.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load library</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scran</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/" class="external-link">scater</a></span><span class="op">)</span></span>
@@ -289,7 +308,7 @@ query and reference datasets. By projecting the query data onto the PCA
 space of the reference dataset, it creates informative plots to help you
 understand how various cell types are distributed in the principal
 component space.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot PCA data</span></span>
 <span><span class="va">pc_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotCellTypePCA.html">plotCellTypePCA</a></span><span class="op">(</span></span>
 <span>    query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -325,7 +344,7 @@ single-cell RNA-seq data onto a discriminant space defined by a
 reference dataset. This approach helps evaluate the similarity between
 the query and reference data, offering insights into the classification
 of query cells.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">disc_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateDiscriminantSpace.html">calculateDiscriminantSpace</a></span><span class="op">(</span></span>
 <span>    reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
 <span>    query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -341,7 +360,7 @@ reference cell types are calculated, offering insights into how close
 the query projections are to the reference. The cosine similarity scores
 provide another metric to assess the similarity between the
 datasets.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">disc_output</span>, plot_type <span class="op">=</span> <span class="st">"scatterplot"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/calculateDiscriminantSpace.png"></p>
 <p>Alternatively, you can create a boxplot comparing query and reference
@@ -359,7 +378,7 @@ dataset and a query dataset, both overall and within a specified cell
 type. This comparison is done using density plots, which help in
 assessing the alignment and potential discrepancies between
 datasets.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotMarkerExpression.html">plotMarkerExpression</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
 <span>                     query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                     ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
@@ -380,7 +399,7 @@ of QC and Annotation Scores</a> vignette.</p>
 type annotation scores. This visualization aids in assessing how QC
 factors might influence or correlate with the assigned cell type
 annotations.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate scatter plot</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotQCvsAnnotation.html">plotQCvsAnnotation</a></span><span class="op">(</span>se_object <span class="op">=</span> <span class="va">qc_data</span>,</span>
@@ -402,29 +421,36 @@ could impact their annotation accuracy.</p>
 alignment of datasets and marker genes, please refer to the <a href="https://ccb-hms.github.io/scDiagnostics/articles/https://ccb-hms.github.io/scDiagnostics/articles/DatasetAlignment.html">Evaluation
 of Dataset and Marker Gene Alignment</a> vignette.</p>
 <div class="section level3">
-<h3 id="comparecca">
-<code>compareCCA()</code><a class="anchor" aria-label="anchor" href="#comparecca"></a>
+<h3 id="comparepcasubspace">
+<code>comparePCASubspace()</code><a class="anchor" aria-label="anchor" href="#comparepcasubspace"></a>
 </h3>
-<p>The <code><a href="../reference/compareCCA.html">compareCCA()</a></code> function is designed to compare the
-subspaces spanned by the top principal components (PCs) of two datasets
-using Canonical Correlation Analysis (CCA). The function calculates
-canonical variables, correlations, and a similarity measure between the
-subspaces of the reference and query datasets. This can be useful in
-determining the similarity of cell populations or other high-dimensional
-data structures across different conditions or datasets.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Perform CCA comparison</span></span>
-<span><span class="va">cca_comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareCCA.html">compareCCA</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_cd4</span>, </span>
-<span>                             reference_data <span class="op">=</span> <span class="va">ref_data_cd4</span>, </span>
-<span>                             query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
-<span>                             ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span><span class="op">)</span></span>
-<span><span class="co"># Visualize results</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cca_comparison</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/compareCCA.png"></p>
-<p>This function is useful for identifying similarities and differences
-in cellular subpopulations or other high-dimensional datasets across
-different conditions. The combination of CCA with PCA provides a
-reliable framework for subspace comparison.</p>
+<p>In single-cell RNA-seq analysis, evaluating how closely the subspaces
+defined by the leading principal components (PCs) of query and reference
+datasets match is crucial. This evaluation is key to understanding how
+each dataset captures and represents structure and variation. The
+<code><a href="../reference/comparePCASubspace.html">comparePCASubspace()</a></code> function is specifically designed to
+assess this alignment by calculating the cosine similarity between the
+loadings of the most significant variables for each principal component.
+This analysis is essential for measuring the extent of similarity
+between datasets, which is vital for precise cell type annotation and
+effective data integration.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Compare PCA subspaces between query and reference data</span></span>
+<span><span class="va">subspace_comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/comparePCASubspace.html">comparePCASubspace</a></span><span class="op">(</span></span>
+<span>    query_data <span class="op">=</span> <span class="va">query_data_cd4</span>,</span>
+<span>    reference_data <span class="op">=</span> <span class="va">ref_data_cd4</span>, </span>
+<span>    query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
+<span>    ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
+<span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># View weighted cosine similarity score</span></span>
+<span><span class="va">subspace_comparison</span><span class="op">$</span><span class="va">weighted_cosine_similarity</span></span>
+<span><span class="co">#&gt; [1] 0.2462199</span></span>
+<span></span>
+<span><span class="co"># Plot output for PCA subspace comparison (if a plot method is available)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">subspace_comparison</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/comparePCASubspace.png"></p>
 </div>
 <div class="section level3">
 <h3 id="plotpairwisedistancesdensity">
@@ -440,7 +466,7 @@ distances or correlation coefficients, with the option to project data
 into PCA space for focused analysis. The function generates a density
 plot using <code>ggplot2</code>, comparing cell relationships within and
 between datasets.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example usage of the function</span></span>
 <span><span class="fu"><a href="../reference/plotPairwiseDistancesDensity.html">plotPairwiseDistancesDensity</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                             reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
@@ -462,7 +488,7 @@ between datasets.</p>
 Wasserstein distances between CD4 cells in the reference and query
 datasets. The resulting plot provides insight into whether the
 differences between the datasets are statistically significant.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate the Wasserstein distance density plot</span></span>
 <span><span class="fu"><a href="../reference/plotWassersteinDistance.html">plotWassersteinDistance</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_cd4</span>,</span>
 <span>                        reference_data <span class="op">=</span> <span class="va">ref_data_cd4</span>, </span>
@@ -484,7 +510,7 @@ expression and cell types, with columns named
 which genes are most important for each dataset and then compare
 them.</p>
 <p>Here’s how you can do it with the function:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># RF function to compare (between datasets) which genes are best at differentiating cell types</span></span>
 <span><span class="va">rf_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateVarImpOverlap.html">calculateVarImpOverlap</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
 <span>                                    query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -520,7 +546,7 @@ and then averages these correlations for each cell type pair. This
 approach helps assess the similarity between cells in reference and
 query datasets and provides insights into the reliability of cell type
 annotations.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute pairwise correlations between specified cell types</span></span>
 <span><span class="va">cor_matrix_avg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation</a></span><span class="op">(</span></span>
 <span>  query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -566,7 +592,7 @@ dataset is provided, the function computes anomaly scores for the query
 data based on its PCA projections relative to the reference data. If no
 query data is provided, it computes anomaly scores for the reference
 data itself.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Perform anomaly detection</span></span>
 <span><span class="va">anomaly_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/detectAnomaly.html">detectAnomaly</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
 <span>                                query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -605,7 +631,7 @@ computed using the <code><a href="../reference/calculateCellDistances.html">calc
 illustrate how these anomalous cells differ from the reference cells,
 providing insight into their potential outlier status and helping to
 visualize patterns within the data.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Identify outliers for CD4</span></span>
 <span><span class="va">cd4_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/detectAnomaly.html">detectAnomaly</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
 <span>                               query_data <span class="op">=</span> <span class="va">query_data</span>, </span>

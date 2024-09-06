@@ -154,10 +154,11 @@ be a high as possible.</p>
 <span class="r-in"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">500</span> <span class="op">*</span> <span class="fl">4</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>nrow <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">X</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">250</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">X</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">250</span><span class="op">]</span> <span class="op">+</span> <span class="fl">5</span> <span class="co"># Make the first category highly scored in the first 250 cells</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The function will issue a message about softmaxing the scores, and the entropy histogram will be</span></span></span>
 <span class="r-in"><span><span class="co"># bimodal since we made half of the cells clearly category 1 while the other half are roughly even.</span></span></span>
-<span class="r-in"><span><span class="co"># entropy_scores &lt;- calculateCategorizationEntropy(X)</span></span></span>
+<span class="r-in"><span><span class="va">entropy_scores</span> <span class="op">&lt;-</span> <span class="fu">calculateCategorizationEntropy</span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> X doesn't seem to be on the probability scale, applying column-wise softmax.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Max possible entropy given 4 categories: 1.39</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

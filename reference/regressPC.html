@@ -98,7 +98,9 @@ object.</p>
 <span>  <span class="va">ref_cell_type_col</span>,</span>
 <span>  query_cell_type_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span></span>
+<span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
+<span>  adjust_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"BH"</span>, <span class="st">"holm"</span>, <span class="st">"hochberg"</span>, <span class="st">"hommel"</span>, <span class="st">"bonferroni"</span>, <span class="st">"BY"</span>, <span class="st">"fdr"</span>,</span>
+<span>    <span class="st">"none"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -145,6 +147,12 @@ If NULL, the PC scores are regressed against the cell types of the reference dat
 
 <dt id="arg-pc-subset">pc_subset<a class="anchor" aria-label="anchor" href="#arg-pc-subset"></a></dt>
 <dd><p>A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.</p></dd>
+
+
+<dt id="arg-adjust-method">adjust_method<a class="anchor" aria-label="anchor" href="#arg-adjust-method"></a></dt>
+<dd><p>A character string specifying the method to adjust the p-values.
+Options include "BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr", or "none".
+Default is "BH" (Benjamini-Hochberg). Default is "BH".</p></dd>
 
 </dl></div>
     <div id="value">
@@ -194,6 +202,8 @@ single-cell genomics. Nature Methods, 19:41-50, 2022.</p>
     <div id="author">
     <h2>Author</h2>
     <p>Anthony Christidis, <a href="mailto:anthony-alexander_christidis@hms.harvard.edu">anthony-alexander_christidis@hms.harvard.edu</a></p>
+<p>Anthony Christidis, <a href="mailto:anthony-alexander_christidis@hms.harvard.edu">anthony-alexander_christidis@hms.harvard.edu</a>
+Andrew Ghazi, <a href="mailto:andrew_ghazi@hms.harvard.edu">andrew_ghazi@hms.harvard.edu</a></p>
     </div>
 
     <div id="ref-examples">
