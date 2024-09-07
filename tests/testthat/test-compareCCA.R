@@ -30,48 +30,18 @@ test_that("compareCCA function works correctly", {
                                  reference_data = reference_data_subset, 
                                  query_cell_type_col = "expert_annotation", 
                                  ref_cell_type_col = "expert_annotation", 
-                                 pc_subset = 1:5, 
-                                 n_top_vars = 25)
+                                 pc_subset = 1:5)
     
     expect_type(cca_comparison, "list")
     expect_s3_class(cca_comparison, "compareCCA")
     expect_named(cca_comparison, c("coef_ref", "coef_query", "cosine_similarity", "correlations"))
-    
-    # Test for positive integer validation for n_top_vars
-    expect_error(compareCCA(query_data = query_data_subset, 
-                            reference_data = reference_data_subset, 
-                            query_cell_type_col = "expert_annotation", 
-                            ref_cell_type_col = "expert_annotation", 
-                            pc_subset = 1:5, 
-                            n_top_vars = -1), 
-                 "'n_top_vars' must be a positive integer.")
-    
-    expect_error(compareCCA(query_data = query_data_subset, 
-                            reference_data = reference_data_subset, 
-                            query_cell_type_col = "expert_annotation", 
-                            ref_cell_type_col = "expert_annotation", 
-                            pc_subset = 1:5, 
-                            n_top_vars = "five"), 
-                 "'n_top_vars' must be a positive integer.")
     
     # Test with subset of principal components
     cca_comparison <- compareCCA(query_data = query_data_subset, 
                                  reference_data = reference_data_subset, 
                                  query_cell_type_col = "expert_annotation", 
                                  ref_cell_type_col = "expert_annotation", 
-                                 pc_subset = 1:3, 
-                                 n_top_vars = 25)
+                                 pc_subset = 1:3)
     expect_equal(length(cca_comparison$cosine_similarity), 3)
     expect_equal(length(cca_comparison$correlations), 3)
-    
-    # Test with different number of top variables
-    cca_comparison <- compareCCA(query_data = query_data_subset, 
-                                 reference_data = reference_data_subset, 
-                                 query_cell_type_col = "expert_annotation", 
-                                 ref_cell_type_col = "expert_annotation", 
-                                 pc_subset = 1:5, 
-                                 n_top_vars = 10)
-    expect_type(cca_comparison, "list")
-    expect_s3_class(cca_comparison, "compareCCA")
-    expect_named(cca_comparison, c("coef_ref", "coef_query", "cosine_similarity", "correlations"))
 })

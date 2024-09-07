@@ -25,7 +25,8 @@
 #' that identifies the cell types.
 #' @param cell_names A character vector specifying the names of the query cells for which to compute distance measures.
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is 1:5.
-#'
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' 
 #' @return A list containing distance data for each cell type. Each entry in the list contains:
 #' \describe{
 #'   \item{ref_distances}{A vector of all pairwise distances within the reference subset for the cell type.}
@@ -73,7 +74,8 @@ calculateCellDistancesSimilarity <- function(query_data,
                                              query_cell_type_col, 
                                              ref_cell_type_col,
                                              cell_names,
-                                             pc_subset = 1:5) {
+                                             pc_subset = 1:5,
+                                             assay_name = "logcounts") {
     
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -81,7 +83,8 @@ calculateCellDistancesSimilarity <- function(query_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_names_query = cell_names,
-                  pc_subset_ref = pc_subset)
+                  pc_subset_ref = pc_subset,
+                  assay_name = assay_name)
     
     # Compute distance data
     query_data_subset <- query_data[, cell_names, drop = FALSE]
@@ -90,7 +93,8 @@ calculateCellDistancesSimilarity <- function(query_data,
         reference_data = reference_data, 
         query_cell_type_col = query_cell_type_col, 
         ref_cell_type_col = ref_cell_type_col, 
-        pc_subset = pc_subset)
+        pc_subset = pc_subset,
+        assay_name = assay_name)
     
     # Initialize empty lists to store results
     bhattacharyya_list <- hellinger_list <- 
@@ -114,7 +118,8 @@ calculateCellDistancesSimilarity <- function(query_data,
         for (i in seq_len(length(cell_names))) {
             
             # Extract distances from the current cell to reference cells
-            cell_distances <- distance_data[[cell_type]][["query_to_ref_distances"]][cell_names[i], , drop = FALSE]
+            cell_distances <- 
+                distance_data[[cell_type]][["query_to_ref_distances"]][cell_names[i], , drop = FALSE]
             
             # Compute density of cell distances
             cell_density <- density(cell_distances)

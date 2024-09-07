@@ -16,6 +16,7 @@
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #'
 #' @return A ggplot object representing the boxplots of specified principal components for the given cell types and datasets.
 #'
@@ -46,7 +47,8 @@ boxplotPCA <- function(query_data,
                        query_cell_type_col, 
                        ref_cell_type_col, 
                        cell_types = NULL,
-                       pc_subset = 1:5){
+                       pc_subset = 1:5,
+                       assay_name = "logcounts"){
     
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -54,7 +56,8 @@ boxplotPCA <- function(query_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_types = cell_types,
-                  pc_subset_ref = pc_subset)
+                  pc_subset_ref = pc_subset,
+                  assay_name = assay_name)
     
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){
@@ -67,7 +70,8 @@ boxplotPCA <- function(query_data,
                              reference_data = reference_data, 
                              query_cell_type_col = query_cell_type_col, 
                              ref_cell_type_col = ref_cell_type_col,
-                             pc_subset = pc_subset)
+                             pc_subset = pc_subset,
+                             assay_name = assay_name)
     
     # Create the long format data frame manually
     pca_output <- pca_output[!is.na(pca_output[["cell_type"]]),]

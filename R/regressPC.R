@@ -35,6 +35,7 @@
 #' @param adjust_method A character string specifying the method to adjust the p-values. 
 #'   Options include "BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr", or "none". 
 #'   Default is "BH" (Benjamini-Hochberg). Default is "BH".
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #'
 #' @return 
 #' A \code{list} containing \itemize{ \item summaries of the linear
@@ -49,7 +50,6 @@
 #' 
 #' @author 
 #' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
-#' Andrew Ghazi, \email{andrew_ghazi@hms.harvard.edu}
 #' 
 #' @seealso \code{\link{plot.regressPC}}
 #'
@@ -90,7 +90,8 @@ regressPC <- function(reference_data,
                       adjust_method = c("BH", "holm", 
                                         "hochberg", "hommel", 
                                         "bonferroni", "BY", 
-                                        "fdr", "none")) {
+                                        "fdr", "none"),
+                      assay_name = "logcounts") {
     
     # Match argument for independent variable
     adjust_method <- match.arg(adjust_method)
@@ -101,7 +102,8 @@ regressPC <- function(reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_types = cell_types,
-                  pc_subset_ref = pc_subset)
+                  pc_subset_ref = pc_subset,
+                  assay_name = assay_name)
     
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){
@@ -183,7 +185,8 @@ regressPC <- function(reference_data,
                                  reference_data = reference_data, 
                                  query_cell_type_col = query_cell_type_col, 
                                  ref_cell_type_col = ref_cell_type_col,
-                                 pc_subset = pc_subset)
+                                 pc_subset = pc_subset,
+                                 assay_name = assay_name)
         pca_output <- pca_output[pca_output[["cell_type"]] %in% cell_types,]
         pca_output[["dataset"]] <- factor(pca_output[["dataset"]], 
                                           levels = c("Reference", "Query"))

@@ -20,6 +20,7 @@
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
 #' @param cell_type A vector of cell type cell_types to plot (e.g., c("T-cell", "B-cell")).
 #' @param gene_name The gene name for which the distribution is to be visualized.
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #'
 #' @return A gtable object containing two arranged density plots as grobs. 
 #'         The first plot shows the overall gene expression distribution, 
@@ -50,14 +51,16 @@ plotMarkerExpression <- function(reference_data,
                                  ref_cell_type_col, 
                                  query_cell_type_col, 
                                  cell_type,
-                                 gene_name) {
+                                 gene_name,
+                                 assay_name = "logcounts") {
     
     # Check standard input arguments
     argumentCheck(query_data = query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_type)
+                  cell_types = cell_type,
+                  assay_name = assay_name)
     
     # Get common cell types if they are not specified by user
     if(is.null(cell_type)){
@@ -72,10 +75,10 @@ plotMarkerExpression <- function(reference_data,
     }
     
     # Get expression of the specified gene for reference and query datasets
-    ref_gene_expression <- assay(reference_data, "logcounts")[gene_name, ]
-    query_gene_expression <- assay(query_data, "logcounts")[gene_name, ]
-    ref_gene_expression_specific <- assay(reference_data, "logcounts")[gene_name, which(reference_data[[ref_cell_type_col]] %in% cell_type)]
-    query_gene_expression_specific <- assay(query_data, "logcounts")[gene_name, which(query_data[[query_cell_type_col]] %in% cell_type)]
+    ref_gene_expression <- assay(reference_data, assay_name)[gene_name, ]
+    query_gene_expression <- assay(query_data, assay_name)[gene_name, ]
+    ref_gene_expression_specific <- assay(reference_data, assay_name)[gene_name, which(reference_data[[ref_cell_type_col]] %in% cell_type)]
+    query_gene_expression_specific <- assay(query_data, assay_name)[gene_name, which(query_data[[query_cell_type_col]] %in% cell_type)]
     
     # Z-rank transformation
     .rankTransformation <- function(x) {

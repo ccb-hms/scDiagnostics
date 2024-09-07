@@ -14,6 +14,7 @@
 #' @param cell_names A character vector specifying the cell names for which to compute the similarity.
 #' @param pc_subset A numeric vector specifying the subset of principal components to consider. Default is 1:5..
 #' @param n_top_vars An integer indicating the number of top loading variables to consider for each PC. Default is 50.
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #'
 #' @return A data frame containing cosine similarity values between cells for each selected principal component.
 #'
@@ -53,12 +54,14 @@
 calculateCellSimilarityPCA <- function(se_object, 
                                        cell_names, 
                                        pc_subset = 1:5, 
-                                       n_top_vars = 50){
+                                       n_top_vars = 50,
+                                       assay_name = "logcounts"){
     
     # Check standard input arguments
     argumentCheck(query_data = se_object,
                   cell_names_query = cell_names,
-                  pc_subset_query = pc_subset)
+                  pc_subset_query = pc_subset,
+                  assay_name = assay_name)
     
     # Check if n_top_vars is a positive integer
     if (!is.numeric(n_top_vars) || n_top_vars <= 0 || 
@@ -109,7 +112,7 @@ calculateCellSimilarityPCA <- function(se_object,
     
     # Calculate similarities
     assay_mat <- t(as.matrix(assay(se_object[, cell_names, drop = FALSE], 
-                                   "logcounts")))
+                                   assay_name)))
     similarities <- .computeCosineSimilarity(assay_mat, rotation_mat, 
                                              high_loading_vars)
     

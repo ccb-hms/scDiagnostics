@@ -10,7 +10,8 @@ calculateCellSimilarityPCA(
   se_object,
   cell_names,
   pc_subset = 1:5,
-  n_top_vars = 50
+  n_top_vars = 50,
+  assay_name = "logcounts"
 )
 
 \method{plot}{calculateCellSimilarityPCA}(x, pc_subset = 1:5, ...)
@@ -23,6 +24,8 @@ calculateCellSimilarityPCA(
 \item{pc_subset}{A numeric vector specifying the subset of principal components to include in the plot (default: 1:5).}
 
 \item{n_top_vars}{An integer indicating the number of top loading variables to consider for each PC. Default is 50.}
+
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
 \item{x}{An object of class 'calculateCellSimilarityPCA' containing a dataframe of cosine similarity values 
 between cells and PCs.}

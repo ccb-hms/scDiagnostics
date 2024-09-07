@@ -11,7 +11,8 @@ plotWassersteinDistance(
   query_cell_type_col,
   pc_subset = 1:5,
   n_resamples = 300,
-  alpha = 0.05
+  alpha = 0.05,
+  assay_name = "logcounts"
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ plotWassersteinDistance(
 \item{n_resamples}{An integer specifying the number of resamples to use for generating the null distribution. Default is 300.}
 
 \item{alpha}{A numeric value specifying the significance level for thresholding. Default is 0.05.}
+
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 }
 \value{
 A ggplot2 object representing the density plot of Wasserstein distances under the null distribution.

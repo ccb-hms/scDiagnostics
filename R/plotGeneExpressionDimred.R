@@ -9,6 +9,7 @@
 #' @param pc_subset An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA". 
 #'        Default is 1:5.
 #' @param feature A character string representing the name of the gene or feature to be visualized.
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #'
 #' @importFrom SummarizedExperiment assay
 #' @import SingleCellExperiment
@@ -33,22 +34,24 @@
 plotGeneExpressionDimred <- function(se_object, 
                                      method = c("TSNE", "UMAP", "PCA"), 
                                      pc_subset = 1:5, 
-                                     feature) {
+                                     feature,
+                                     assay_name = "logcounts") {
     
     # Check standard input arguments
     argumentCheck(query_data = se_object,
-                  pc_subset_query = pc_subset)
+                  pc_subset_query = pc_subset,
+                  assay_name = assay_name)
     
     # Match argument for method
     method <- match.arg(method)
     
     # Check if feature is available
-    if (!feature %in% rownames(assay(se_object, "logcounts"))) {
+    if (!feature %in% rownames(assay(se_object, assay_name))) {
         stop("Specified feature does not exist in the expression matrix.")
     }
     
     # Extract gene expression vector
-    expression <- assay(se_object, "logcounts")[feature, ]
+    expression <- assay(se_object, assay_name)[feature, ]
     
     if(method %in% c("TSNE", "UMAP")){
         

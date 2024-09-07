@@ -16,7 +16,8 @@ argumentCheck(
   cell_names_ref = NULL,
   pc_subset_query = NULL,
   pc_subset_ref = NULL,
-  common_rotation_genes = FALSE
+  common_rotation_genes = FALSE,
+  assay_name = NULL
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ Default is `FALSE`.}
 
 \item{common_rotation_genes}{If TRUE, check the rotation matrices of the reference and query data and ensure they have the same genes.
 Default is FALSE.}
+
+\item{assay_name}{Name of the assay on which to perform computations. If `NULL`, no check is performed.}
 }
 \value{
 None.

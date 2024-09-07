@@ -10,7 +10,8 @@ plotMarkerExpression(
   ref_cell_type_col,
   query_cell_type_col,
   cell_type,
-  gene_name
+  gene_name,
+  assay_name = "logcounts"
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ plotMarkerExpression(
 \item{cell_type}{A vector of cell type cell_types to plot (e.g., c("T-cell", "B-cell")).}
 
 \item{gene_name}{The gene name for which the distribution is to be visualized.}
+
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 }
 \value{
 A gtable object containing two arranged density plots as grobs. 

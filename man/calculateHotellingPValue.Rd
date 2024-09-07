@@ -11,7 +11,8 @@ calculateHotellingPValue(
   ref_cell_type_col,
   cell_types = NULL,
   pc_subset = 1:5,
-  n_permutation = 500
+  n_permutation = 500,
+  assay_name = "logcounts"
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ that identifies the cell types.}
 \item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.}
 
 \item{n_permutation}{Number of permutations to perform for p-value calculation. Default is 500.}
+
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 }
 \value{
 A named numeric vector of p-values from Hotelling's T-squared test for each cell type.

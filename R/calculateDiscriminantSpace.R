@@ -27,6 +27,7 @@
 #' @param eigen_threshold A numeric value specifying the threshold for retaining eigenvalues in discriminant analysis.
 #' @param calculate_metrics Parameter to determine if cosine similarity and Mahalanobis distance metrics should be computed. Default is FALSE.
 #' @param alpha A numeric value specifying the significance level for Mahalanobis distance cutoff.
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #'
 #' @return A list with the following components for each cell type combination:
 #' \item{discriminant_eigenvalues}{Eigenvalues from the discriminant analysis.}
@@ -90,14 +91,16 @@ calculateDiscriminantSpace <- function(reference_data,
                                        n_top = 20,
                                        eigen_threshold  = 1e-1,
                                        calculate_metrics = FALSE,
-                                       alpha = 0.01){
+                                       alpha = 0.01,
+                                       assay_name = "logcounts"){
     
     # Check standard input arguments
     argumentCheck(query_data = query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_types)
+                  cell_types = cell_types,
+                  assay_name = assay_name)
     
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){
@@ -145,7 +148,7 @@ calculateDiscriminantSpace <- function(reference_data,
         # Extract reference matrix using top genes
         top_genes <- var_imp[["var_imp_ref"]][[combination_name]]$Gene[seq_len(n_top)]
         ref_mat <- t(
-            as.matrix(assay(reference_data, "logcounts")))[, top_genes]
+            as.matrix(assay(reference_data, assay_name)))[, top_genes]
         
         # Compute within-class and between-class scatter matrix
         sw <- sb <- matrix(0, length(top_genes), length(top_genes))
@@ -198,7 +201,7 @@ calculateDiscriminantSpace <- function(reference_data,
             
             # Projection on discriminant space
             query_mat <- t(
-                as.matrix(assay(query_data, "logcounts")))[, top_genes]
+                as.matrix(assay(query_data, assay_name)))[, top_genes]
             query_proj <- data.frame(
                 query_mat[which(query_data[[query_cell_type_col]] %in% 
                                     cell_types),] %*% discriminant_eigenvectors, 
@@ -268,22 +271,30 @@ calculateDiscriminantSpace <- function(reference_data,
 #'
 # Function to compute Ledoit-Wolf covariance matrix
 ledoitWolf <- function(class_data) {
+    
     # Sample covariance matrix
     sample_cov <- cov(class_data)
+    
     # Check for zero column means and replace them with a small constant if necessary
     col_means <- colMeans(class_data)
     col_means[col_means == 0] <- 1e-10
+    
     # Calculate the shrinkage target (identity matrix scaled by the average variance)
     mean_variance <- mean(diag(sample_cov))
     shrinkage_target <- diag(mean_variance, ncol(class_data), ncol(class_data))
+    
     # Calculate the shrinkage intensity
     phi_hat <- sum((class_data - col_means) ^ 2) / (nrow(class_data) - 1)
     shrinkage_intensity <- (1 / nrow(class_data)) * 
         min(phi_hat, mean_variance ^ 2)
+    
     # Ledoit-Wolf estimated covariance matrix
     lw_cov <- (1 - shrinkage_intensity) * 
         sample_cov + shrinkage_intensity * shrinkage_target
+    
     # Ensure symmetry
     lw_cov <- (lw_cov + t(lw_cov)) / 2
+    
+    # Return Ledoit-Wolf estimated covariance matrix
     return(lw_cov)
 }

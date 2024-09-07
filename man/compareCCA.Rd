@@ -3,7 +3,7 @@
 \name{compareCCA}
 \alias{compareCCA}
 \alias{plot.compareCCA}
-\title{Compare Subspaces Spanned by Top Principal Components Using Canonical Correlation Analysis}
+\title{Compare Canonical Correlation Analysis (CCA) between Query and Reference Data}
 \usage{
 compareCCA(
   query_data,
@@ -11,7 +11,7 @@ compareCCA(
   query_cell_type_col,
   ref_cell_type_col,
   pc_subset = 1:5,
-  n_top_vars = 25
+  assay_name = "logcounts"
 )
 
 \method{plot}{compareCCA}(x, ...)
@@ -28,7 +28,7 @@ compareCCA(
 \item{pc_subset}{A numeric vector specifying the subset of principal components (PCs) 
 to compare. Default is the first five PCs.}
 
-\item{n_top_vars}{An integer indicating the number of top loading variables to consider for each PC. Default is 25.}
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
 \item{x}{A list containing the output from the \code{compareCCA} function. 
 This list should include \code{cosine_similarity} and \code{correlations}.}
@@ -47,21 +47,23 @@ A list containing the following elements:
 The S3 plot method returns a \code{ggplot} object representing the scatter plot of cosine similarities of CCA coefficients and correlations.
 }
 \description{
-This function compares the subspaces spanned by the top principal components (PCs) of the reference 
-and query datasets using canonical correlation analysis (CCA). It calculates the canonical variables, 
-correlations, and a similarity measure for the subspaces.
+This function performs Canonical Correlation Analysis (CCA) between two datasets (query and reference) after 
+performing PCA on each dataset. It projects the query data onto the PCA space of the reference data and then 
+computes the cosine similarity of the canonical correlation vectors between the two datasets.
 
 The S3 plot method generates a visualization of the output from the `compareCCA` function.
 The plot shows the cosine similarities of canonical correlation analysis (CCA) coefficients,
 with point sizes representing the correlations.
 }
 \details{
-This function performs canonical correlation analysis (CCA) to compare the subspaces spanned by the 
-top principal components (PCs) of the reference and query datasets. The function extracts the rotation 
-matrices corresponding to the specified PCs and performs CCA on these matrices. It computes the canonical 
-variables and their corresponding correlations. Additionally, it calculates a similarity measure for the 
-canonical variables using cosine similarity. The output is a list containing the canonical coefficients 
-for both datasets, the cosine similarity values, and the canonical correlations.
+The function performs the following steps:
+1. Projects the query data onto the PCA space of the reference data using the specified number of principal components.
+2. Downsamples the datasets to ensure an equal number of rows for CCA.
+3. Performs CCA on the projected datasets.
+4. Computes the cosine similarity between the canonical correlation vectors and extracts the canonical correlations.
+
+The cosine similarity provides a measure of alignment between the canonical correlation vectors of the two datasets.
+Higher values indicate greater similarity.
 
 The S3 plot method converts the input list into a data frame suitable for plotting with \code{ggplot2}.
 Each point in the scatter plot represents the cosine similarity of CCA coefficients, with the size of the point
@@ -98,8 +100,7 @@ cca_comparison <- compareCCA(query_data = query_data_subset,
                              reference_data = ref_data_subset, 
                              query_cell_type_col = "expert_annotation", 
                              ref_cell_type_col = "expert_annotation", 
-                             pc_subset = 1:5, 
-                             n_top_vars = 25)
+                             pc_subset = 1:5)
 
 # Visualize output of CCA comparison
 plot(cca_comparison)

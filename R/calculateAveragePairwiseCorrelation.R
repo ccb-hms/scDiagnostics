@@ -19,6 +19,7 @@
 #' @param pc_subset A numeric vector specifying which principal components to use in the analysis. Default is 1:10.
 #' If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.
 #' @param correlation_method The correlation method to use for calculating pairwise correlations.
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #'
 #' @return A matrix containing the average pairwise correlation values. 
 #'         Rows and columns are labeled with the cell types. Each element 
@@ -57,7 +58,8 @@ calculateAveragePairwiseCorrelation <- function(
         ref_cell_type_col, 
         cell_types = NULL, 
         pc_subset = 1:10,
-        correlation_method = c("spearman", "pearson")) {
+        correlation_method = c("spearman", "pearson"),
+        assay_name = "logcounts") {
     
     # Match correlation method argument
     correlation_method <- match.arg(correlation_method)
@@ -68,7 +70,8 @@ calculateAveragePairwiseCorrelation <- function(
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_types = cell_types,
-                  pc_subset_ref = pc_subset)
+                  pc_subset_ref = pc_subset,
+                  assay_name = assay_name)
     
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){
@@ -86,7 +89,8 @@ calculateAveragePairwiseCorrelation <- function(
                 reference_data = reference_data, 
                 query_cell_type_col = query_cell_type_col,
                 ref_cell_type_col = ref_cell_type_col,
-                pc_subset = pc_subset)
+                pc_subset = pc_subset,
+                assay_name = assay_name)
             ref_mat <- pca_output[which(
                 pca_output[["dataset"]] == "Reference" &
                     pca_output[["cell_type"]] == type2), 
@@ -103,8 +107,8 @@ calculateAveragePairwiseCorrelation <- function(
             ref_subset <- reference_data[, which(
                 reference_data[[ref_cell_type_col]] == type2), drop = FALSE]
             
-            query_mat <- t(as.matrix(assay(query_subset, "logcounts")))
-            ref_mat <- t(as.matrix(assay(ref_subset, "logcounts")))
+            query_mat <- t(as.matrix(assay(query_subset, assay_name)))
+            ref_mat <- t(as.matrix(assay(ref_subset, assay_name)))
         }
         
         cor_matrix <- cor(t(query_mat), t(ref_mat), 
