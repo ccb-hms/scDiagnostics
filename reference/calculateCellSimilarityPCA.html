@@ -89,7 +89,8 @@ obtained from PCA (Principal Component Analysis) loadings.</p>
 <span>  <span class="va">se_object</span>,</span>
 <span>  <span class="va">cell_names</span>,</span>
 <span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
-<span>  n_top_vars <span class="op">=</span> <span class="fl">50</span></span>
+<span>  n_top_vars <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'calculateCellSimilarityPCA'</span></span>
@@ -114,6 +115,10 @@ obtained from PCA (Principal Component Analysis) loadings.</p>
 
 <dt id="arg-n-top-vars">n_top_vars<a class="anchor" aria-label="anchor" href="#arg-n-top-vars"></a></dt>
 <dd><p>An integer indicating the number of top loading variables to consider for each PC. Default is 50.</p></dd>
+
+
+<dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
+<dd><p>Name of the assay on which to perform computations. Default is "logcounts".</p></dd>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>

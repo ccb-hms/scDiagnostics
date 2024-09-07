@@ -89,7 +89,8 @@ between two samples.</p>
 <span>  <span class="va">ref_cell_type_col</span>,</span>
 <span>  query_cell_type_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span></span>
+<span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -120,6 +121,10 @@ If NULL, the PC scores are regressed against the cell types of the reference dat
 
 <dt id="arg-pc-subset">pc_subset<a class="anchor" aria-label="anchor" href="#arg-pc-subset"></a></dt>
 <dd><p>A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.</p></dd>
+
+
+<dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
+<dd><p>Name of the assay on which to perform computations. Default is "logcounts".</p></dd>
 
 </dl></div>
     <div id="value">
