@@ -10,7 +10,6 @@ set.seed(100)
 indices <- sample(ncol(SummarizedExperiment::assay(sce)), 
                   size = floor(0.8 * ncol(SummarizedExperiment::assay(sce))), 
                   replace = FALSE)
-ref_indices <- sample(indices, 0.7*length(indices))
 reference_data <- sce[, sample(indices, 1500)]
 query_data <- sce[, -indices]
 

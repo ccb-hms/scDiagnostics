@@ -101,7 +101,7 @@ data("query_data")
 set.seed(0)
 ```
 
-Some functions in the vignette are designed to work with `SingleCellExperiment` objects that contain data from only one cell type. We will create separate `SingleCellExperiment` objects that only CD4 cells, to ensure compatibility with these functions.
+Some functions in the vignette are designed to work with `r `BiocStyle::Biocpkg("SingleCellExperiment")` objects that contain data from only one cell type. We will create separate `r `BiocStyle::Biocpkg("SingleCellExperiment")` objects that only CD4 cells, to ensure compatibility with these functions.
 ```{r, message=FALSE, fig.show='hide'}
 # Load library
 library(scran)
@@ -233,7 +233,7 @@ The `plotPairwiseDistancesDensity()` function is designed to calculate and visua
 
 ### Functionality
 
-The function operates on `SingleCellExperiment` objects, which are commonly used to store single-cell data, including expression matrices and associated metadata. Users specify the cell types of interest in both the query and reference datasets, and the function computes either the distances or correlation coefficients between these cells.
+The function operates on `r `BiocStyle::Biocpkg("SingleCellExperiment")` objects, which are commonly used to store single-cell data, including expression matrices and associated metadata. Users specify the cell types of interest in both the query and reference datasets, and the function computes either the distances or correlation coefficients between these cells.
 
 When principal component analysis (PCA) is applied, the function projects the expression data into a lower-dimensional PCA space, which can be specified by the user. This allows for a more focused analysis of the major sources of variation in the data. Alternatively, if no dimensionality reduction is desired, the function can directly use the expression data for computation.
 
