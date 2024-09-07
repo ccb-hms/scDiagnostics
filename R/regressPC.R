@@ -270,19 +270,19 @@ adjustPValues <- function(regress_res,
     if(indep_var == "cell_type"){
         
         # Add adjusted p-values 
-        for (pc in names(regress_res$regression_summaries)) {
+        for (pc in names(regress_res[["regression_summaries"]])) {
             
             # Extract the coefficients table for the current PC
-            coeffs <- regress_res$regression_summaries[[pc]]$coefficients
+            coeffs <- regress_res[["regression_summaries"]][[pc]]$coefficients
             
             # Adjust the p-values using Benjamini-Hochberg (FDR) correction
-            p.adjusted <- p.adjust(coeffs$p.value, method = "BH")
+            p.adjusted <- p.adjust(coeffs[["p.value"]], method = "BH")
             
             # Add the adjusted p-values as a new column to the coefficients table
             coeffs$p.adjusted <- p.adjusted
             
             # Update the coefficients table in the object
-            regress_res$regression_summaries[[pc]]$coefficients <- coeffs
+            regress_res[["regression_summaries"]][[pc]][["regression_summaries"]] <- coeffs
         }
         
     } else if (indep_var == "dataset"){
@@ -296,13 +296,13 @@ adjustPValues <- function(regress_res,
                 coeffs <- regress_res[[cell_type]][[pc_id]]$coefficients
                 
                 # Adjust the p-values using Benjamini-Hochberg (FDR) correction
-                p.adjusted <- p.adjust(coeffs$p.value, method = "BH")
+                p.adjusted <- p.adjust(coeffs[["p.value"]], method = "BH")
                 
                 # Add the adjusted p-values as a new column to the coefficients table
-                coeffs$p.adjusted <- p.adjusted
+                coeffs[["p.adjusted"]] <- p.adjusted
                 
                 # Update the coefficients table in the object
-                regress_res[[cell_type]][[pc_id]]$coefficients <- coeffs
+                regress_res[[cell_type]][[pc_id]][["p.value"]] <- coeffs
             }
         }
     }
