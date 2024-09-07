@@ -282,7 +282,7 @@ adjustPValues <- function(regress_res,
             coeffs$p.adjusted <- p.adjusted
             
             # Update the coefficients table in the object
-            regress_res[["regression_summaries"]][[pc]][["regression_summaries"]] <- coeffs
+            regress_res[["regression_summaries"]][[pc]][["coefficients"]] <- coeffs
         }
         
     } else if (indep_var == "dataset"){
@@ -302,7 +302,7 @@ adjustPValues <- function(regress_res,
                 coeffs[["p.adjusted"]] <- p.adjusted
                 
                 # Update the coefficients table in the object
-                regress_res[[cell_type]][[pc_id]][["p.value"]] <- coeffs
+                regress_res[[cell_type]][[pc_id]][["coefficients"]] <- coeffs
             }
         }
     }
