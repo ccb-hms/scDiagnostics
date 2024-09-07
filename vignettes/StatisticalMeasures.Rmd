@@ -233,7 +233,7 @@ regress_res <- regressPC(
 plot(regress_res, plot_type = "r_squared")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/StatisticalMeasures/regressPC1.png)
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot results showing p-values
 plot(regress_res, plot_type = "p-value")
 ```
@@ -258,7 +258,7 @@ plot(regress_res, plot_type = "r_squared")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/StatisticalMeasures/regressPC3.png)
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot results showing p-values
 plot(regress_res, plot_type = "p-value")
 ```
