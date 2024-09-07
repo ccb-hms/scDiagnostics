@@ -225,10 +225,11 @@ components (PCs) differ significantly between the reference and query
 datasets for specific cell types.</p>
 <p>To use this function, you first need to provide two key inputs:
 <code>reference_data</code> and <code>query_data</code>, both of which
-should be <code>SingleCellExperiment</code> objects containing numeric
-expression matrices. If <code>query_data</code> is not supplied, the
-function will only use the <code>reference_data.</code> You should also
-specify the column names for cell type annotations in both datasets via
+should be <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+objects containing numeric expression matrices. If
+<code>query_data</code> is not supplied, the function will only use the
+<code>reference_data.</code> You should also specify the column names
+for cell type annotations in both datasets via
 <code>ref_cell_type_col</code> and <code>query_cell_type_col.</code> If
 <code>cell_types</code> is not provided, the function will automatically
 include all unique cell types found in the datasets. The
@@ -276,18 +277,18 @@ the context of single-cell RNA-seq data. This statistical test is
 particularly useful for assessing whether the mean vectors of principal
 components (PCs) differ significantly between the two datasets, which
 can be indicative of differences in the cell type distributions.</p>
-<p>To use this function, you need to provide two
-<code>SingleCellExperiment</code> objects: <code>query_data</code> and
-<code>reference_data</code>, each containing numeric expression
-matrices. You also need to specify the column names for cell type
-annotations in both datasets with <code>query_cell_type_col</code> and
-<code>ref_cell_type_col.</code> The <code>cell_types</code> parameter
-allows you to choose which cell types to include in the analysis, and if
-not specified, the function will automatically include all cell types
-present in the datasets. The <code>pc_subset</code> parameter determines
-which principal components to consider, with the default being the first
-five PCs. Additionally, <code>n_permutation</code> specifies the number
-of permutations for calculating p-values, with a default of 500.</p>
+<p>To use this function, you need to provide two <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+objects: <code>query_data</code> and <code>reference_data</code>, each
+containing numeric expression matrices. You also need to specify the
+column names for cell type annotations in both datasets with
+<code>query_cell_type_col</code> and <code>ref_cell_type_col.</code> The
+<code>cell_types</code> parameter allows you to choose which cell types
+to include in the analysis, and if not specified, the function will
+automatically include all cell types present in the datasets. The
+<code>pc_subset</code> parameter determines which principal components
+to consider, with the default being the first five PCs. Additionally,
+<code>n_permutation</code> specifies the number of permutations for
+calculating p-values, with a default of 500.</p>
 <p>The function works by first projecting the data into PCA space and
 then performing Hotelling’s T-squared test for each specified cell type
 to compare the means between the reference and query datasets. It uses
@@ -336,8 +337,8 @@ the function uses data augmentation if necessary.</p>
 <code><a href="../reference/calculateNearestNeighborProbabilities.html">calculateNearestNeighborProbabilities()</a></code> function:</p>
 <ol style="list-style-type: decimal">
 <li><p><strong>Loading the Data</strong>: First, ensure you have the
-data available in the form of <code>SingleCellExperiment</code> objects
-for both query and reference datasets.</p></li>
+data available in the form of <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+objects for both query and reference datasets.</p></li>
 <li><p><strong>Function Call</strong>: The function
 <code><a href="../reference/calculateNearestNeighborProbabilities.html">calculateNearestNeighborProbabilities()</a></code> is called with
 several parameters including the query and reference datasets, the names
@@ -395,22 +396,22 @@ for visualizing these relationships across different cell types.</p>
 <p>The <code><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code> function is
 designed to compute the average pairwise correlations between specified
 cell types in single-cell gene expression data. This function operates
-on <code>SingleCellExperiment</code> objects and is ideal for
-single-cell analysis workflows. It calculates pairwise correlations
-between query and reference cells using a specified correlation method,
-and then averages these correlations for each cell type pair. This helps
-in assessing the similarity between cells in the reference and query
-datasets and provides insights into the reliability of cell type
-annotations.</p>
+on <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+objects and is ideal for single-cell analysis workflows. It calculates
+pairwise correlations between query and reference cells using a
+specified correlation method, and then averages these correlations for
+each cell type pair. This helps in assessing the similarity between
+cells in the reference and query datasets and provides insights into the
+reliability of cell type annotations.</p>
 <p>To use the <code><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code>
-function, you need to supply it with two
-<code>SingleCellExperiment</code> objects: one for the query cells and
-one for the reference cells. The function also requires column names
-specifying cell type annotations in both datasets, and optionally a
-vector of cell types to include in the analysis. Additionally, you can
-specify a subset of principal components to use, or use the raw data
-directly if <code>pc_subset</code> is set to <code>NULL</code>. The
-correlation method can be either “spearman” or “pearson”.</p>
+function, you need to supply it with two <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+objects: one for the query cells and one for the reference cells. The
+function also requires column names specifying cell type annotations in
+both datasets, and optionally a vector of cell types to include in the
+analysis. Additionally, you can specify a subset of principal components
+to use, or use the raw data directly if <code>pc_subset</code> is set to
+<code>NULL</code>. The correlation method can be either “spearman” or
+“pearson”.</p>
 <p>Here’s an example of how to use this function:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute pairwise correlations between specified cell types</span></span>
@@ -449,11 +450,12 @@ for details.</p>
 </h2>
 <p>The <code><a href="../reference/regressPC.html">regressPC()</a></code> function performs linear regression of a
 covariate of interest onto one or more principal components using data
-from a <code>SingleCellExperiment</code> object. This method helps
-quantify the variance explained by a covariate, which can be useful in
-applications such as quantifying batch effects, assessing clustering
-homogeneity, and evaluating alignment between query and reference
-datasets in cell type annotation settings.</p>
+from a <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+object. This method helps quantify the variance explained by a
+covariate, which can be useful in applications such as quantifying batch
+effects, assessing clustering homogeneity, and evaluating alignment
+between query and reference datasets in cell type annotation
+settings.</p>
 <p>The function calculates the R-squared value from the linear
 regression of the covariate onto each principal component. The variance
 contribution of the covariate effect per principal component is computed

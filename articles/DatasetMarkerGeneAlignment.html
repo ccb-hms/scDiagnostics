@@ -235,10 +235,9 @@ further investigation.</li>
 <span><span class="co"># Set seed for reproducibility</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 <p>Some functions in the vignette are designed to work with
-<code>SingleCellExperiment</code> objects that contain data from only
-one cell type. We will create separate <code>SingleCellExperiment</code>
-objects that only CD4 cells, to ensure compatibility with these
-functions.</p>
+<code>r</code>BiocStyle::Biocpkg(“SingleCellExperiment”)<code>objects that contain data from only one cell type. We will create separate</code>r
+<code>BiocStyle::Biocpkg("SingleCellExperiment")</code> objects that
+only CD4 cells, to ensure compatibility with these functions.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load library</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scran</span><span class="op">)</span></span>
@@ -480,8 +479,9 @@ cell type annotations by comparing their expression profiles.</p>
 <div class="section level4">
 <h4 id="functionality">Functionality<a class="anchor" aria-label="anchor" href="#functionality"></a>
 </h4>
-<p>The function operates on <code>SingleCellExperiment</code> objects,
-which are commonly used to store single-cell data, including expression
+<p>The function operates on
+<code>r</code>BiocStyle::Biocpkg(“SingleCellExperiment”)` objects, which
+are commonly used to store single-cell data, including expression
 matrices and associated metadata. Users specify the cell types of
 interest in both the query and reference datasets, and the function
 computes either the distances or correlation coefficients between these
