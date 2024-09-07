@@ -10,7 +10,8 @@ calculateCellDistancesSimilarity(
   query_cell_type_col,
   ref_cell_type_col,
   cell_names,
-  pc_subset = 1:5
+  pc_subset = 1:5,
+  assay_name = "logcounts"
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ that identifies the cell types.}
 \item{cell_names}{A character vector specifying the names of the query cells for which to compute distance measures.}
 
 \item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is 1:5.}
+
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 }
 \value{
 A list containing distance data for each cell type. Each entry in the list contains:

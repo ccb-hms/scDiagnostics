@@ -19,6 +19,7 @@
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #' 
 #' @return A ggplot object representing the MDS scatter plot with cell type coloring.
 #' 
@@ -53,14 +54,16 @@ plotCellTypeMDS <- function(query_data,
                             reference_data, 
                             query_cell_type_col, 
                             ref_cell_type_col,
-                            cell_types = NULL) {
+                            cell_types = NULL,
+                            assay_name = "logcounts") {
     
     # Check standard input arguments
     argumentCheck(query_data = query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_types)
+                  cell_types = cell_types,
+                  assay_name = assay_name)
     
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){
@@ -74,16 +77,16 @@ plotCellTypeMDS <- function(query_data,
     reference_data <- reference_data[, which(
         reference_data[[ref_cell_type_col]] %in% cell_types)]
     
-    # Extract logcounts
-    queryExp <- as.matrix(assay(query_data, "logcounts"))
-    refExp <- as.matrix(assay(reference_data, "logcounts"))
+    # Extract assay matrices
+    query_assay <- as.matrix(assay(query_data, assay_name))
+    ref_assay <- as.matrix(assay(reference_data, assay_name))
     
     # Compute correlation and dissimilarity matrix
-    df <- cbind(queryExp, refExp)
+    df <- cbind(query_assay, ref_assay)
     corMat <- cor(df, method = "spearman")
     disMat <- (1 - corMat)
-    cmd <- data.frame(cmdscale(disMat), c(rep("Query", ncol(queryExp)), 
-                                          rep("Reference", ncol(refExp))),
+    cmd <- data.frame(cmdscale(disMat), c(rep("Query", ncol(query_assay)), 
+                                          rep("Reference", ncol(ref_assay))),
                       c(query_data[[query_cell_type_col]], 
                         reference_data[[ref_cell_type_col]]))
     colnames(cmd) <- c("Dim1", "Dim2", "dataset", "cellType")

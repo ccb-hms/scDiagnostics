@@ -20,6 +20,7 @@
 #' @param ref_cell_type_col character. The column name in the \code{colData} of \code{reference_data} 
 #' that identifies the cell types.
 #' @param pc_subset A numeric vector specifying the subset of principal components (PCs) to compare. Default is 1:10.
+#' @param assay_name Name of the assay on which to perform computations.
 #'
 #' @return A \code{data.frame} containing the projected data in rows (reference and query data combined).
 #'
@@ -44,14 +45,16 @@ projectPCA <- function(query_data,
                        reference_data, 
                        query_cell_type_col, 
                        ref_cell_type_col, 
-                       pc_subset = 1:10){
+                       pc_subset = 1:10,
+                       assay_name = "logcounts"){
     
     # Check standard input arguments
     argumentCheck(query_data = query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  pc_subset_ref = pc_subset)
+                  pc_subset_ref = pc_subset,
+                  assay_name = assay_name)
 
     # Extract reference PCA components and rotation matrix
     ref_mat <- reducedDim(reference_data, "PCA")[, pc_subset, drop = FALSE]
@@ -66,9 +69,9 @@ projectPCA <- function(query_data,
     
     # Center and scale query data based on reference for projection
     centering_vec <- apply(t(as.matrix(
-        assay(reference_data, "logcounts"))), 2, mean)[PCA_genes]
+        assay(reference_data, assay_name))), 2, mean)[PCA_genes]
     query_mat <- scale(t(as.matrix(
-        assay(query_data, "logcounts")))[, PCA_genes, drop = FALSE], 
+        assay(query_data, assay_name)))[, PCA_genes, drop = FALSE], 
                        center = centering_vec, scale = FALSE) %*% rotation_mat
     
     # Returning output as a dataframe

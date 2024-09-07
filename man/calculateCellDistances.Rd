@@ -12,7 +12,8 @@ calculateCellDistances(
   query_cell_type_col,
   ref_cell_type_col,
   cell_types = NULL,
-  pc_subset = 1:5
+  pc_subset = 1:5,
+  assay_name = "logcounts"
 )
 
 \method{plot}{calculateCellDistances}(x, ref_cell_type, cell_names, ...)
@@ -31,6 +32,8 @@ that identifies the cell types.}
 \item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
 
 \item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default 1:5.}
+
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
 \item{x}{A list containing the distance data computed by \code{calculatecellDistances}.}
 

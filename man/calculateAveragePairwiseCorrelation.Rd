@@ -13,7 +13,8 @@ calculateAveragePairwiseCorrelation(
   ref_cell_type_col,
   cell_types = NULL,
   pc_subset = 1:10,
-  correlation_method = c("spearman", "pearson")
+  correlation_method = c("spearman", "pearson"),
+  assay_name = "logcounts"
 )
 
 \method{plot}{calculateAveragePairwiseCorrelation}(x, ...)
@@ -33,6 +34,8 @@ calculateAveragePairwiseCorrelation(
 If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.}
 
 \item{correlation_method}{The correlation method to use for calculating pairwise correlations.}
+
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
 \item{x}{Output matrix from calculateAveragePairwiseCorrelation function.}
 

@@ -15,7 +15,8 @@
 #' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param pc_subset A vector specifying the subset of principal components to use in the analysis. Default is 1:5
-#' @param n_neighbor An integer specifying the number of nearest neighbors to consider. Default is 20
+#' @param n_neighbor An integer specifying the number of nearest neighbors to consider. Default is 20.
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #'
 #' @return A list where each element corresponds to a cell type and contains:
 #' \item{n_neighbor}{The number of nearest neighbors considered.}
@@ -55,7 +56,8 @@ calculateNearestNeighborProbabilities <- function(query_data,
                                                   ref_cell_type_col,
                                                   cell_types = NULL,
                                                   pc_subset = 1:5,
-                                                  n_neighbor = 20){
+                                                  n_neighbor = 20,
+                                                  assay_name = "logcounts"){
     
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -63,7 +65,8 @@ calculateNearestNeighborProbabilities <- function(query_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_types = cell_types,
-                  pc_subset_ref = pc_subset)
+                  pc_subset_ref = pc_subset,
+                  assay_name = assay_name)
     
     # Check if n_neighbor is a positive integer
     if (!is.numeric(n_neighbor) || n_neighbor <= 0 || 
@@ -82,7 +85,8 @@ calculateNearestNeighborProbabilities <- function(query_data,
                              reference_data = reference_data,
                              pc_subset = pc_subset,
                              query_cell_type_col = query_cell_type_col, 
-                             ref_cell_type_col = ref_cell_type_col)
+                             ref_cell_type_col = ref_cell_type_col,
+                             assay_name = assay_name)
     
     # Initialize list to store probabilities
     probabilities <- vector("list", length = length(cell_types))

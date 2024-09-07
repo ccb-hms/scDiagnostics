@@ -13,7 +13,8 @@ calculateNearestNeighborProbabilities(
   ref_cell_type_col,
   cell_types = NULL,
   pc_subset = 1:5,
-  n_neighbor = 20
+  n_neighbor = 20,
+  assay_name = "logcounts"
 )
 
 \method{plot}{calculateNearestNeighborProbabilities}(x, cell_types = NULL, ...)
@@ -31,7 +32,9 @@ calculateNearestNeighborProbabilities(
 
 \item{pc_subset}{A vector specifying the subset of principal components to use in the analysis. Default is 1:5}
 
-\item{n_neighbor}{An integer specifying the number of nearest neighbors to consider. Default is 20}
+\item{n_neighbor}{An integer specifying the number of nearest neighbors to consider. Default is 20.}
+
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
 \item{x}{An object of class \code{nearestNeighbotDiagnostics} containing the probabilities calculated by the \code{\link{calculateNearestNeighborProbabilities}} function.}
 

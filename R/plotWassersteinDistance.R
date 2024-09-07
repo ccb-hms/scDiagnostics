@@ -18,6 +18,7 @@
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is 1:5.
 #' @param n_resamples An integer specifying the number of resamples to use for generating the null distribution. Default is 300.
 #' @param alpha A numeric value specifying the significance level for thresholding. Default is 0.05.
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #'
 #' @return A ggplot2 object representing the density plot of Wasserstein distances under the null distribution.
 #' 
@@ -69,7 +70,8 @@ plotWassersteinDistance <- function(query_data,
                                     query_cell_type_col, 
                                     pc_subset = 1:5,
                                     n_resamples = 300,
-                                    alpha = 0.05){
+                                    alpha = 0.05,
+                                    assay_name = "logcounts"){
     
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -77,7 +79,8 @@ plotWassersteinDistance <- function(query_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
                   unique_cell_type = TRUE,
-                  pc_subset_ref = pc_subset)
+                  pc_subset_ref = pc_subset,
+                  assay_name = assay_name)
     
     # Check if n_resamples is a positive integer
     if (!inherits(n_resamples, "numeric")) {
@@ -96,7 +99,8 @@ plotWassersteinDistance <- function(query_data,
                              reference_data = reference_data, 
                              pc_subset = pc_subset, 
                              query_cell_type_col = query_cell_type_col, 
-                             ref_cell_type_col = ref_cell_type_col)
+                             ref_cell_type_col = ref_cell_type_col,
+                             assay_name = assay_name)
     
     # Get sample size for Wasserstein null distribution
     n_null <- min(floor(ncol(reference_data)/2), ncol(query_data), 500)

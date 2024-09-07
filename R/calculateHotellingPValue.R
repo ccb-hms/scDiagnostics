@@ -18,6 +18,7 @@
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
 #' @param n_permutation Number of permutations to perform for p-value calculation. Default is 500.
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #'
 #' @return A named numeric vector of p-values from Hotelling's T-squared test for each cell type.
 #' 
@@ -49,7 +50,8 @@ calculateHotellingPValue <- function(query_data,
                                      ref_cell_type_col,
                                      cell_types = NULL,
                                      pc_subset = 1:5,
-                                     n_permutation = 500) {
+                                     n_permutation = 500,
+                                     assay_name = "logcounts") {
     
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -57,7 +59,8 @@ calculateHotellingPValue <- function(query_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_types = cell_types,
-                  pc_subset_ref = pc_subset)
+                  pc_subset_ref = pc_subset,
+                  assay_name = assay_name)
     
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){
@@ -70,7 +73,8 @@ calculateHotellingPValue <- function(query_data,
                              reference_data = reference_data, 
                              pc_subset = pc_subset, 
                              query_cell_type_col = query_cell_type_col, 
-                             ref_cell_type_col = ref_cell_type_col)
+                             ref_cell_type_col = ref_cell_type_col,
+                             assay_name = assay_name)
     cell_list <- split(pca_output, pca_output[["cell_type"]])
     
     # Perform permutation test with p-values

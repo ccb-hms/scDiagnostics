@@ -1,18 +1,19 @@
-#' @title Compare Subspaces Spanned by Top Principal Components Using Canonical Correlation Analysis
+#' @title Compare Canonical Correlation Analysis (CCA) between Query and Reference Data
 #' 
 #' @description 
-#' This function compares the subspaces spanned by the top principal components (PCs) of the reference 
-#' and query datasets using canonical correlation analysis (CCA). It calculates the canonical variables, 
-#' correlations, and a similarity measure for the subspaces.
+#' This function performs Canonical Correlation Analysis (CCA) between two datasets (query and reference) after 
+#' performing PCA on each dataset. It projects the query data onto the PCA space of the reference data and then 
+#' computes the cosine similarity of the canonical correlation vectors between the two datasets.
 #'
 #' @details
-#' This function performs canonical correlation analysis (CCA) to compare the subspaces spanned by the 
-#' top principal components (PCs) of the reference and query datasets. The function extracts the rotation 
-#' matrices corresponding to the specified PCs and performs CCA on these matrices. It computes the canonical 
-#' variables and their corresponding correlations. Additionally, it calculates a similarity measure for the 
-#' canonical variables using cosine similarity. The output is a list containing the canonical coefficients 
-#' for both datasets, the cosine similarity values, and the canonical correlations.
-
+#' The function performs the following steps:
+#' 1. Projects the query data onto the PCA space of the reference data using the specified number of principal components.
+#' 2. Downsamples the datasets to ensure an equal number of rows for CCA.
+#' 3. Performs CCA on the projected datasets.
+#' 4. Computes the cosine similarity between the canonical correlation vectors and extracts the canonical correlations.
+#'
+#' The cosine similarity provides a measure of alignment between the canonical correlation vectors of the two datasets.
+#' Higher values indicate greater similarity.
 #'
 #' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
@@ -20,7 +21,7 @@
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
 #' @param pc_subset A numeric vector specifying the subset of principal components (PCs) 
 #' to compare. Default is the first five PCs.
-#' @param n_top_vars An integer indicating the number of top loading variables to consider for each PC. Default is 25.
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #'
 #' @return A list containing the following elements:
 #' \describe{
@@ -70,8 +71,7 @@
 #'                              reference_data = ref_data_subset, 
 #'                              query_cell_type_col = "expert_annotation", 
 #'                              ref_cell_type_col = "expert_annotation", 
-#'                              pc_subset = 1:5, 
-#'                              n_top_vars = 25)
+#'                              pc_subset = 1:5)
 #' 
 #' # Visualize output of CCA comparison
 #' plot(cca_comparison)
@@ -83,7 +83,7 @@ compareCCA <- function(query_data,
                        query_cell_type_col, 
                        ref_cell_type_col, 
                        pc_subset = 1:5,
-                       n_top_vars = 25){
+                       assay_name = "logcounts"){
     
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -91,49 +91,36 @@ compareCCA <- function(query_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
                   unique_cell_type = TRUE,
-                  pc_subset_query = pc_subset,
                   pc_subset_ref = pc_subset, 
-                  common_rotation_genes = TRUE)
+                  assay_name = assay_name)
     
-    # Check if n_top_vars is a positive integer
-    if (!is.numeric(n_top_vars) || n_top_vars <= 0 || 
-        n_top_vars != as.integer(n_top_vars)) {
-        stop("\'n_top_vars\' must be a positive integer.")
+    # Get the projected PCA data
+    pca_output <- projectPCA(query_data = query_data, 
+                             reference_data = reference_data, 
+                             query_cell_type_col = query_cell_type_col, 
+                             ref_cell_type_col = ref_cell_type_col,
+                             pc_subset = pc_subset,
+                             assay_name = assay_name)
+    
+    # Get respective datasets
+    ref_data <- pca_output[pca_output[["dataset"]] == "Reference", paste0("PC", pc_subset)]
+    query_data <- pca_output[pca_output[["dataset"]] == "Query", paste0("PC", pc_subset)]
+    
+    # Downsample to ensure equal size of datasets
+    n_samples <- min(nrow(ref_data), nrow(query_data))
+    if (nrow(query_data) > n_samples) {
+        query_data <- query_data[sample(nrow(query_data), n_samples), ]
+    } else if (nrow(ref_data) > n_samples) {
+        ref_data <- ref_data[sample(nrow(ref_data), n_samples), ]
     }
-    
-    # Extract the rotation matrices
-    ref_rotation <- attributes(
-        reducedDim(reference_data, "PCA"))[["rotation"]][, pc_subset]
-    query_rotation <- attributes(
-        reducedDim(query_data, "PCA"))[["rotation"]][, pc_subset]
-    query_rotation <- query_rotation[match(rownames(ref_rotation), 
-                                           rownames(query_rotation)), ]
-
-    # Function to identify high-loading variables for each PC
-    .getHighLoadingVars <- function(rotation_mat, n_top_vars) {
-        high_loading_vars <- lapply(seq_len(ncol(rotation_mat)), function(pc) {
-            abs_loadings <- abs(rotation_mat[, pc])
-            top_vars <- names(sort(abs_loadings, 
-                                   decreasing = TRUE))[seq_len(n_top_vars)]
-            return(top_vars)
-        })
-        return(high_loading_vars)
-    }
-    
-    # Get union of variables with highest loadings
-    top_ref <- .getHighLoadingVars(ref_rotation, n_top_vars)
-    top_query <- .getHighLoadingVars(query_rotation, n_top_vars)
-    top_union <- unlist(lapply(seq_len(length(pc_subset)), 
-                               function(i) return(union(top_ref[[i]], 
-                                                        top_query[[i]]))))
     
     # Perform CCA
-    cca_result <- cancor(ref_rotation, query_rotation)
+    cca_result <- cancor(ref_data, query_data)
     
     # Extract canonical variables and correlations
-    canonical_ref <- cca_result$xcoef
-    canonical_query <- cca_result$ycoef
-    correlations <- cca_result$cor
+    canonical_ref <- cca_result[["xcoef"]]
+    canonical_query <- cca_result[["ycoef"]]
+    correlations <- cca_result[["cor"]]
     
     # Function to compute similarity measure (e.g., cosine similarity)
     .cosine_similarity <- function(u, v) {

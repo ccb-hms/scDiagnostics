@@ -15,7 +15,8 @@ regressPC(
   cell_types = NULL,
   pc_subset = 1:10,
   adjust_method = c("BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr",
-    "none")
+    "none"),
+  assay_name = "logcounts"
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ If NULL, the PC scores are regressed against the cell types of the reference dat
 \item{adjust_method}{A character string specifying the method to adjust the p-values. 
 Options include "BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr", or "none". 
 Default is "BH" (Benjamini-Hochberg). Default is "BH".}
+
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 }
 \value{
 The S3 plot method returns a \code{ggplot} object representing the specified plot type.
@@ -123,8 +126,5 @@ single-cell genomics. Nature Methods, 19:41-50, 2022.
 }
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
-
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
-Andrew Ghazi, \email{andrew_ghazi@hms.harvard.edu}
 }
 \keyword{internal}

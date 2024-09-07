@@ -10,7 +10,8 @@ boxplotPCA(
   query_cell_type_col,
   ref_cell_type_col,
   cell_types = NULL,
-  pc_subset = 1:5
+  pc_subset = 1:5,
+  assay_name = "logcounts"
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ boxplotPCA(
 \item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
 
 \item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.}
+
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 }
 \value{
 A ggplot object representing the boxplots of specified principal components for the given cell types and datasets.

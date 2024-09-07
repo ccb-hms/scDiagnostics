@@ -9,7 +9,8 @@ plotCellTypeMDS(
   reference_data,
   query_cell_type_col,
   ref_cell_type_col,
-  cell_types = NULL
+  cell_types = NULL,
+  assay_name = "logcounts"
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ expression data and metadata.}
 \item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
 
 \item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 }
 \value{
 A ggplot object representing the MDS scatter plot with cell type coloring.

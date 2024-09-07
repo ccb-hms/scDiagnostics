@@ -19,6 +19,7 @@
 #' If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.
 #' @param n_tree An integer specifying the number of trees for the isolation forest. Default is 500
 #' @param anomaly_treshold A numeric value specifying the threshold for identifying anomalies, Default is 0.6.
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #' @param ... Additional arguments passed to the `isolation.forest` function.
 #' 
 #' @return A list containing the following components for each cell type and the combined data:
@@ -73,6 +74,7 @@ detectAnomaly <- function(reference_data,
                           pc_subset = 1:10,
                           n_tree = 500,
                           anomaly_treshold = 0.6,
+                          assay_name = "logcounts",
                           ...) {
     
     # Check standard input arguments
@@ -81,7 +83,8 @@ detectAnomaly <- function(reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_types = cell_types,
-                  pc_subset_ref = pc_subset)
+                  pc_subset_ref = pc_subset,
+                  assay_name = assay_name)
     
     # Get common cell types if they are not specified by user
     reference_labels <- reference_data[[ref_cell_type_col]]
@@ -117,14 +120,15 @@ detectAnomaly <- function(reference_data,
                                      reference_data = reference_data, 
                                      query_cell_type_col = query_cell_type_col, 
                                      ref_cell_type_col = ref_cell_type_col,
-                                     pc_subset = pc_subset)
+                                     pc_subset = pc_subset,
+                                     assay_name = assay_name)
             query_mat <- pca_output[pca_output[["dataset"]] == "Query", 
                                     paste0("PC", pc_subset)]
         }
     } else{
-        reference_mat <- t(as.matrix(assay(reference_data, "logcounts")))
+        reference_mat <- t(as.matrix(assay(reference_data, assay_name)))
         if(!is.null(query_data)){
-            query_mat <- t(as.matrix(assay(query_data, "logcounts")))
+            query_mat <- t(as.matrix(assay(query_data, assay_name)))
         }
     }
     

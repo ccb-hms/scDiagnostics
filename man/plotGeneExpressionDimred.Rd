@@ -8,7 +8,8 @@ plotGeneExpressionDimred(
   se_object,
   method = c("TSNE", "UMAP", "PCA"),
   pc_subset = 1:5,
-  feature
+  feature,
+  assay_name = "logcounts"
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ It can be either a reference or query dataset.}
 Default is 1:5.}
 
 \item{feature}{A character string representing the name of the gene or feature to be visualized.}
+
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 }
 \value{
 A ggplot object representing the dimensional reduction plot with gene expression.

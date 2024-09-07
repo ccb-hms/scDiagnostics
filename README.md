@@ -31,7 +31,7 @@ BiocManager::install("scDiagnostics",
 To install the development version of the package from GitHub use the following command:
 
 ``` r
-devtools::install_github("ccb-hms/scDiagnostics")
+remotes::install_github("ccb-hms/scDiagnostics")
 ```
 
 NOTE: you will need the [**remotes**](https://cran.r-project.org/web/packages/remotes/index.html) package to install from GitHub.
@@ -39,9 +39,9 @@ NOTE: you will need the [**remotes**](https://cran.r-project.org/web/packages/re
 To build the package vignettes upon installation use:
 
 ``` r
-devtools::install_github("ccb-hms/scDiagnostics",
-                         build_vignettes = TRUE,
-                         dependencies = TRUE)
+remotes::install_github("ccb-hms/scDiagnostics",
+                        build_vignettes = TRUE,
+                        dependencies = TRUE)
 ```
 
 # Usage

@@ -82,7 +82,7 @@ To install the development version of the package from Github, use the
 following command:
 
 ```{r, eval = FALSE, fig.show='hide'}
-devtools::install_github("ccb-hms/scDiagnostics")
+remotes::install_github("ccb-hms/scDiagnostics")
 ```
 
 NOTE: you will need the
@@ -92,9 +92,9 @@ package to install from GitHub.
 To build the package vignettes upon installation use:
 
 ```{r, eval=FALSE, fig.show='hide'}
-devtools::install_github("ccb-hms/scDiagnostics",
-                          build_vignettes = TRUE,
-                          dependencies = TRUE)
+remotes::install_github("ccb-hms/scDiagnostics",
+                        build_vignettes = TRUE,
+                        dependencies = TRUE)
 ```
 
 Once you have installed the package, you can load it with the following code:

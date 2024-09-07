@@ -16,7 +16,8 @@ calculateDiscriminantSpace(
   n_top = 20,
   eigen_threshold = 0.1,
   calculate_metrics = FALSE,
-  alpha = 0.01
+  alpha = 0.01,
+  assay_name = "logcounts"
 )
 
 \method{plot}{calculateDiscriminantSpace}(x, cell_types, plot_type = c("scatterplot", "boxplot"), ...)
@@ -42,6 +43,8 @@ If NULL, only the projected reference data is returned. Default is NULL.}
 \item{calculate_metrics}{Parameter to determine if cosine similarity and Mahalanobis distance metrics should be computed. Default is FALSE.}
 
 \item{alpha}{A numeric value specifying the significance level for Mahalanobis distance cutoff.}
+
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
 \item{x}{An object of class \code{calculateDiscriminantSpace} containing the projected data on the discriminant space.. 
 Each element of the list represents a combination of cell types and datasets. Each element should contain 'ref_proj' and 'query_proj' data frames.}
