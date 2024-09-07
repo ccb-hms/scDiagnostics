@@ -91,7 +91,7 @@ distance_data <- calculateCellDistances(
 ```
 
 In the code above:
-- `query_data` and reference_data: These are `SingleCellExperiment` objects containing the respective datasets for analysis.
+- `query_data` and reference_data: These are `r `BiocStyle::Biocpkg("SingleCellExperiment")` objects containing the respective datasets for analysis.
 - `query_cell_type_col` and ref_cell_type_col: These arguments specify the columns in the `colData` of each dataset that contain cell type annotations.
 - `pc_subset`: Specifies which principal components (1 to 10) are used to compute distances. PCA is applied for dimensionality reduction before calculating distances.
 

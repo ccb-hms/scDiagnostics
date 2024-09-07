@@ -81,7 +81,12 @@ reference:
   - title: Misc
     contents:
       - projectPCA 
-      - calculateCategorizationEntropy     
+      - calculateCategorizationEntropy
+  - title: Datasets
+    contents:
+      - reference_data 
+      - query_data
+      - qc_data
 
 right:
   - icon: fa-github
