@@ -14,20 +14,20 @@ test_that("regressPC works correctly with only reference data", {
         cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
         pc_subset = 1:5
     )
-    
+
     # Check if the output is a list
     expect_true(is.list(regress_res))
-    
+
     # Check if the list contains the correct elements
     expect_true("regression_summaries" %in% names(regress_res))
     expect_true("r_squared" %in% names(regress_res))
     expect_true("var_contributions" %in% names(regress_res))
     expect_true("total_variance_explained" %in% names(regress_res))
-    
+
     # Check if R-squared values are numeric and of correct length
     expect_true(is.numeric(regress_res$r_squared))
     expect_equal(length(regress_res$r_squared), 5)
-    
+
     # Check if total variance explained is a numeric value
     expect_true(is.numeric(regress_res$total_variance_explained))
 })
@@ -42,18 +42,18 @@ test_that("regressPC works correctly with reference and query data", {
         cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
         pc_subset = 1:5
     )
-    
+
     # Check if the output is a list
     expect_true(is.list(regress_res))
-    
+
     # Check if the list contains the correct elements
     for (cell_type in c("CD4", "CD8", "B_and_plasma", "Myeloid")) {
         expect_true(cell_type %in% names(regress_res))
     }
-    
+
     expect_true("indep_var" %in% names(regress_res))
     expect_equal(regress_res$indep_var, "dataset")
-    
+
     # Check if each cell type has regression summaries
     for (cell_type in c("CD4", "CD8", "B_and_plasma", "Myeloid")) {
         expect_true(is.list(regress_res[[cell_type]]))
@@ -69,7 +69,7 @@ test_that("regressPC handles incorrect parameters", {
         cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
         pc_subset = 1:5
     ))
-    
+
     # Test for invalid query data column
     expect_error(regressPC(
         reference_data = reference_data,
@@ -79,7 +79,7 @@ test_that("regressPC handles incorrect parameters", {
         cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
         pc_subset = 1:5
     ))
-    
+
     # Test for invalid cell types
     expect_error(regressPC(
         reference_data = reference_data,
@@ -95,20 +95,20 @@ test_that("regressPC works with all cell types and default PC subset", {
         reference_data = reference_data,
         ref_cell_type_col = "expert_annotation"
     )
-    
+
     # Check if the output is a list
     expect_true(is.list(regress_res))
-    
+
     # Check if the list contains the correct elements
     expect_true("regression_summaries" %in% names(regress_res))
     expect_true("r_squared" %in% names(regress_res))
     expect_true("var_contributions" %in% names(regress_res))
     expect_true("total_variance_explained" %in% names(regress_res))
-    
+
     # Check if R-squared values are numeric and of correct length
     expect_true(is.numeric(regress_res$r_squared))
     expect_equal(length(regress_res$r_squared), 10)
-    
+
     # Check if total variance explained is a numeric value
     expect_true(is.numeric(regress_res$total_variance_explained))
 })
