@@ -363,23 +363,7 @@ principal angles to quantify the similarity between the datasets.</li>
 <span>                             ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
 <span>                             pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, </span>
 <span>                             metric <span class="op">=</span> <span class="st">"cosine"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">pca_comparison</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                 Query PC1 (13.7%) Query PC2 (6.1%) Query PC3 (5.5%)</span></span>
-<span><span class="co">#&gt; Ref PC1 (14.4%)        0.96692366     -0.138182038       0.04883847</span></span>
-<span><span class="co">#&gt; Ref PC2 (6.4%)         0.11134920      0.881989898       0.06631160</span></span>
-<span><span class="co">#&gt; Ref PC3 (4.2%)         0.01076531      0.001894819      -0.70001113</span></span>
-<span><span class="co">#&gt; Ref PC4 (3.8%)         0.09870584      0.113243418      -0.52047580</span></span>
-<span><span class="co">#&gt; Ref PC5 (2.6%)         0.06950094      0.146937897      -0.05612079</span></span>
-<span><span class="co">#&gt;                 Query PC4 (4.4%) Query PC5 (3.2%)</span></span>
-<span><span class="co">#&gt; Ref PC1 (14.4%)        0.0757061      0.003461808</span></span>
-<span><span class="co">#&gt; Ref PC2 (6.4%)         0.1674888     -0.047986368</span></span>
-<span><span class="co">#&gt; Ref PC3 (4.2%)         0.3328525     -0.312303449</span></span>
-<span><span class="co">#&gt; Ref PC4 (3.8%)        -0.4877441      0.141942215</span></span>
-<span><span class="co">#&gt; Ref PC5 (2.6%)        -0.1058441      0.121535874</span></span>
-<span><span class="co">#&gt; attr(,"class")</span></span>
-<span><span class="co">#&gt; [1] "matrix"     "array"      "comparePCA"</span></span></code></pre></div>
-<p>Note that there is also a plot method for the object return for
-<code><a href="../reference/comparePCA.html">comparePCA()</a></code>. See reference manual for details.</p>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pca_comparison</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="comparepcasubspace">
@@ -433,7 +417,7 @@ datasets.</li>
 <span></span>
 <span><span class="co"># View weighted cosine similarity score</span></span>
 <span><span class="va">subspace_comparison</span><span class="op">$</span><span class="va">weighted_cosine_similarity</span></span>
-<span><span class="co">#&gt; [1] 0.2462199</span></span>
+<span><span class="co">#&gt; [1] 0.2578375</span></span>
 <span></span>
 <span><span class="co"># Plot output for PCA subspace comparison (if a plot method is available)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">subspace_comparison</span><span class="op">)</span></span></code></pre></div>
@@ -694,7 +678,7 @@ are less comparable.</p>
 <span></span>
 <span><span class="co"># Display the overlap coefficient</span></span>
 <span><span class="va">overlap_coefficient</span></span>
-<span><span class="co">#&gt; [1] 0.96</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.93</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -742,10 +726,10 @@ compare the top 50 genes between the datasets.</p>
 <span></span>
 <span><span class="co"># Comparison table</span></span>
 <span><span class="va">rf_output</span><span class="op">$</span><span class="va">var_imp_comparison</span></span>
-<span><span class="co">#&gt;     B_and_plasma-CD4     B_and_plasma-CD8 B_and_plasma-Myeloid </span></span>
-<span><span class="co">#&gt;                 0.90                 0.84                 0.76 </span></span>
-<span><span class="co">#&gt;              CD4-CD8          CD4-Myeloid          CD8-Myeloid </span></span>
-<span><span class="co">#&gt;                 0.82                 0.86                 0.90</span></span></code></pre></div>
+<span><span class="co">#&gt;              CD4-CD8     CD4-B_and_plasma          CD4-Myeloid </span></span>
+<span><span class="co">#&gt;                 0.84                 0.82                 0.86 </span></span>
+<span><span class="co">#&gt;     CD8-B_and_plasma          CD8-Myeloid B_and_plasma-Myeloid </span></span>
+<span><span class="co">#&gt;                 0.84                 0.80                 0.76</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="interpretation-3">Interpretation:<a class="anchor" aria-label="anchor" href="#interpretation-3"></a>

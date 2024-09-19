@@ -74,7 +74,7 @@ The S3 plot method  creates a heatmap plot to visualize the cosine similarities 
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate Cell Similarity Using PCA Loadings</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/calculateCellSimilarityPCA.R" class="external-link"><code>R/calculateCellSimilarityPCA.R</code></a>, <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/plot.calculateCellSimilarityPCA.R" class="external-link"><code>R/plot.calculateCellSimilarityPCA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/calculateCellSimilarityPCA.R" class="external-link"><code>R/calculateCellSimilarityPCA.R</code></a>, <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/plot.calculateCellSimilarityPCAObject.R" class="external-link"><code>R/plot.calculateCellSimilarityPCAObject.R</code></a></small>
     <div class="hidden name"><code>calculateCellSimilarityPCA.Rd</code></div>
     </div>
 
@@ -93,7 +93,7 @@ obtained from PCA (Principal Component Analysis) loadings.</p>
 <span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S3 method for class 'calculateCellSimilarityPCA'</span></span>
+<span><span class="co"># S3 method for class 'calculateCellSimilarityPCAObject'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -110,7 +110,7 @@ obtained from PCA (Principal Component Analysis) loadings.</p>
 
 
 <dt id="arg-pc-subset">pc_subset<a class="anchor" aria-label="anchor" href="#arg-pc-subset"></a></dt>
-<dd><p>A numeric vector specifying the subset of principal components to include in the plot (default: 1:5).</p></dd>
+<dd><p>A numeric vector specifying the subset of principal components to include in the plot. Default is 1:5.</p></dd>
 
 
 <dt id="arg-n-top-vars">n_top_vars<a class="anchor" aria-label="anchor" href="#arg-n-top-vars"></a></dt>
@@ -122,7 +122,7 @@ obtained from PCA (Principal Component Analysis) loadings.</p>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>An object of class 'calculateCellSimilarityPCA' containing a dataframe of cosine similarity values
+<dd><p>An object of class `calculateCellSimilarityPCA` containing a dataframe of cosine similarity values
 between cells and PCs.</p></dd>
 
 
@@ -147,7 +147,7 @@ color intensity represents the cosine similarity values.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code>plot.calculateCellSimilarityPCA</code></p>
+    <div class="dont-index"><p><code>plot.calculateCellSimilarityPCAObject</code></p>
 <p><code>calculateCellSimilarityPCA</code></p></div>
     </div>
     <div id="author">
@@ -162,67 +162,60 @@ color intensity represents the cosine similarity values.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"query_data"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Store PCA anomaly data and plots</span></span></span>
-<span class="r-in"><span><span class="va">anomaly_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="detectAnomaly.html">detectAnomaly</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span></span>
+<span class="r-in"><span><span class="va">anomaly_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="detectAnomaly.html">detectAnomaly</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
 <span class="r-in"><span>                                query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
-<span class="r-in"><span>                                ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span></span>
+<span class="r-in"><span>                                ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
 <span class="r-in"><span>                                query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
 <span class="r-in"><span>                                pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span></span>
 <span class="r-in"><span>                                n_tree <span class="op">=</span> <span class="fl">500</span>,</span></span>
-<span class="r-in"><span>                                anomaly_treshold <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> </span></span>
-<span class="r-in"><span><span class="va">top6_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">anomaly_output</span><span class="op">$</span><span class="va">Combined</span><span class="op">$</span><span class="va">reference_anomaly_scores</span>, </span></span>
+<span class="r-in"><span>                                anomaly_treshold <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">top6_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">anomaly_output</span><span class="op">$</span><span class="va">Combined</span><span class="op">$</span><span class="va">reference_anomaly_scores</span>,</span></span>
 <span class="r-in"><span>                             decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Compute cosine similarity between anomalies and top PCs</span></span></span>
-<span class="r-in"><span><span class="va">cosine_similarities</span> <span class="op">&lt;-</span> <span class="fu">calculateCellSimilarityPCA</span><span class="op">(</span><span class="va">reference_data</span>, </span></span>
-<span class="r-in"><span>                                                  cell_names <span class="op">=</span> <span class="va">top6_anomalies</span>, </span></span>
-<span class="r-in"><span>                                                  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">25</span>, </span></span>
+<span class="r-in"><span><span class="va">cosine_similarities</span> <span class="op">&lt;-</span> <span class="fu">calculateCellSimilarityPCA</span><span class="op">(</span><span class="va">reference_data</span>,</span></span>
+<span class="r-in"><span>                                                  cell_names <span class="op">=</span> <span class="va">top6_anomalies</span>,</span></span>
+<span class="r-in"><span>                                                  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">25</span>,</span></span>
 <span class="r-in"><span>                                                  n_top_vars <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cosine_similarities</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                            PC1         PC2         PC3        PC4          PC5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GTACTTTTCCGTTGTC-1 -0.17450411 -0.20019181 -0.41020314 -0.4778291 -0.085970590</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GGACATTTCATCGGAT-1 -0.07751458 -0.26929774  0.07843913 -0.7465807  0.003168586</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GGCTCGACAAGGCTCC-1 -0.18504170 -0.08148941 -0.24965167 -0.4912133 -0.266592336</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AGAATAGAGCTAGTCT-1 -0.08957401 -0.05534934 -0.12785400 -0.5046028 -0.259999637</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CGATCGGAGTAGATGT-1 -0.11960682  0.03191168 -0.18520728 -0.4312329 -0.151462095</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GTGCATATCTAAGCCA-1 -0.26328396 -0.16071740  0.17411809 -0.7172964 -0.012626842</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           PC6         PC7          PC8        PC9       PC10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GTACTTTTCCGTTGTC-1 0.12330862  0.47767606  0.008587002 -0.3264937 -0.1337527</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GGACATTTCATCGGAT-1 0.01268027 -0.24412210  0.113249963 -0.4074193  0.3835983</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GGCTCGACAAGGCTCC-1 0.22233671  0.51380892  0.105824558 -0.3569807  0.1709700</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AGAATAGAGCTAGTCT-1 0.16389103  0.25566710 -0.016943700 -0.3625567  0.2615553</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CGATCGGAGTAGATGT-1 0.11208319  0.44539779  0.136642666 -0.4024926  0.1327318</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GTGCATATCTAAGCCA-1 0.23987994 -0.08275879  0.081775480 -0.3721154  0.2703663</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                          PC11        PC12       PC13       PC14        PC15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GTACTTTTCCGTTGTC-1 -0.2225053  0.09222158 -0.3971269 -0.1378896 -0.01319840</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GGACATTTCATCGGAT-1  0.1929986 -0.06451502 -0.2869696  0.0356427  0.05211816</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GGCTCGACAAGGCTCC-1 -0.2096213 -0.01141587 -0.4437214 -0.1076380  0.13353447</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AGAATAGAGCTAGTCT-1 -0.1601072  0.04599675 -0.4541449 -0.1248159  0.26037798</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CGATCGGAGTAGATGT-1 -0.2249524  0.06555386 -0.4210631  0.1067506  0.17352620</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GTGCATATCTAAGCCA-1  0.5201065  0.13111132 -0.3686646 -0.1595876  0.13313315</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           PC16       PC17         PC18          PC19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GTACTTTTCCGTTGTC-1 -0.16541199 -0.2103451  0.087116652  0.0698733420</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GGACATTTCATCGGAT-1  0.02547204 -0.0731971 -0.001803912  0.0858607123</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GGCTCGACAAGGCTCC-1 -0.05318700 -0.3023481  0.166832547  0.1044284206</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AGAATAGAGCTAGTCT-1 -0.04188019 -0.2752238  0.204611100  0.2104588470</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CGATCGGAGTAGATGT-1 -0.11231229 -0.3054559  0.194564522  0.1184217645</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GTGCATATCTAAGCCA-1  0.06641751 -0.2346827 -0.025517420 -0.0006227002</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           PC20        PC21        PC22        PC23        PC24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GTACTTTTCCGTTGTC-1  0.12220219  0.06244163 -0.19568746 -0.11583845 -0.15807458</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GGACATTTCATCGGAT-1 -0.11162142 -0.18866934 -0.01092906 -0.18398792 -0.02026839</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GGCTCGACAAGGCTCC-1  0.12805494  0.15634354 -0.24118539 -0.09671704 -0.06636830</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AGAATAGAGCTAGTCT-1  0.04412507 -0.06658471 -0.19769037 -0.09220633 -0.10579743</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CGATCGGAGTAGATGT-1  0.11954683  0.03688756 -0.17178535 -0.07874248 -0.16655345</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GTGCATATCTAAGCCA-1 -0.03218779 -0.21154430 -0.08526195 -0.16954092 -0.05113521</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           PC25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GTACTTTTCCGTTGTC-1 -0.16304220</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GGACATTTCATCGGAT-1 -0.23868909</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GGCTCGACAAGGCTCC-1  0.02782088</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AGAATAGAGCTAGTCT-1 -0.10633987</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CGATCGGAGTAGATGT-1 -0.10141014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GTGCATATCTAAGCCA-1 -0.16102530</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           PC1         PC2        PC3         PC4        PC5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ACACCAATCTTAACCT-1 -0.4339110 -0.09963651  0.3110854 -0.08549224 -0.4661250</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GGCTGGTAGCCAACAG-1 -0.1681258 -0.11032005 -0.3459655  0.12366785 -0.4343250</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TACACGAAGCGATAGC-1  0.1963692 -0.35033672  0.3592792  0.26904778 -0.3701442</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CATGGCGCATGCTGGC-1 -0.4543269  0.13915218 -0.1297861  0.42427682 -0.4812924</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GTACTTTTCCGTTGTC-1 -0.1021777 -0.31110592  0.2177546  0.18410164  0.1572341</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ATTTCTGAGCGATATA-1 -0.1511318 -0.35997557 -0.3094156  0.25524359 -0.4173836</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            PC6         PC7         PC8         PC9       PC10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ACACCAATCTTAACCT-1  0.08965511 -0.28471345 -0.03848145 -0.02509098  0.1984070</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GGCTGGTAGCCAACAG-1 -0.44398087  0.44270822  0.20765271  0.32789078 -0.2897046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TACACGAAGCGATAGC-1 -0.04491305 -0.13313434 -0.22034812 -0.03196268  0.3863550</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CATGGCGCATGCTGGC-1 -0.03646835 -0.27812421 -0.06673205  0.03553433  0.4146546</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GTACTTTTCCGTTGTC-1  0.34378011 -0.04846996  0.15205252 -0.06588815  0.1151667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ATTTCTGAGCGATATA-1 -0.43443550  0.50350174  0.18993881  0.23150141 -0.2185454</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         PC11        PC12          PC13         PC14       PC15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ACACCAATCTTAACCT-1 0.4923395 -0.17826466 -0.3202226875 -0.312132975 0.09964316</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GGCTGGTAGCCAACAG-1 0.2087768 -0.06268242 -0.0026756314  0.030647911 0.06246700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TACACGAAGCGATAGC-1 0.5287059 -0.18751592 -0.4558131990 -0.108185967 0.07114757</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CATGGCGCATGCTGGC-1 0.2411911 -0.22173854 -0.3039888814 -0.049363044 0.12935983</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GTACTTTTCCGTTGTC-1 0.2177147 -0.31268091 -0.3460231683 -0.139152955 0.16349138</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ATTTCTGAGCGATATA-1 0.2233703  0.01592932 -0.0002387811 -0.004114576 0.04984666</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           PC16        PC17        PC18        PC19        PC20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ACACCAATCTTAACCT-1 -0.05174298  0.24119214  0.01087895 -0.05486866 -0.08136207</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GGCTGGTAGCCAACAG-1  0.13249124  0.33300045 -0.06014086 -0.12756236  0.03290126</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TACACGAAGCGATAGC-1  0.02257555 -0.01167362  0.11506239  0.16164452  0.02227341</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CATGGCGCATGCTGGC-1 -0.12436648  0.08177501  0.13639314 -0.24033899 -0.03036031</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GTACTTTTCCGTTGTC-1  0.01026400  0.24160362 -0.03110863 -0.02319528 -0.03991881</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ATTTCTGAGCGATATA-1  0.28777554  0.24104826  0.18234860 -0.20402436  0.05224256</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            PC21        PC22         PC23        PC24       PC25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ACACCAATCTTAACCT-1  0.156645638 -0.14554951  0.005130646 -0.07969989 0.00773240</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GGCTGGTAGCCAACAG-1  0.071622296 -0.01272424  0.107414647 -0.03822199 0.25503201</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TACACGAAGCGATAGC-1 -0.081428923  0.13620682 -0.059126924  0.25641032 0.36310770</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CATGGCGCATGCTGGC-1 -0.009631736 -0.17322741 -0.170650194  0.04995105 0.01052363</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GTACTTTTCCGTTGTC-1 -0.111535403 -0.08143938 -0.145467265  0.16015895 0.16858203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ATTTCTGAGCGATATA-1 -0.151709758  0.07784683  0.151823492 -0.10531818 0.06131092</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "matrix"                     "array"                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "calculateCellSimilarityPCA"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "matrix"                           "array"                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "calculateCellSimilarityPCAObject"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot similarities</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cosine_similarities</span>, pc_subset <span class="op">=</span> <span class="fl">15</span><span class="op">:</span><span class="fl">25</span><span class="op">)</span></span></span>

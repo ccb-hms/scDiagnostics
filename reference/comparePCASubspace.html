@@ -77,7 +77,7 @@ with point sizes representing the variance explained."><!-- mathjax --><script s
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Compare Subspaces Spanned by Top Principal Components</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/comparePCASubspace.R" class="external-link"><code>R/comparePCASubspace.R</code></a>, <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/plot.comparePCASubspace.R" class="external-link"><code>R/plot.comparePCASubspace.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/comparePCASubspace.R" class="external-link"><code>R/comparePCASubspace.R</code></a>, <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/plot.comparePCASubspaceObject.R" class="external-link"><code>R/plot.comparePCASubspaceObject.R</code></a></small>
     <div class="hidden name"><code>comparePCASubspace.Rd</code></div>
     </div>
 
@@ -100,7 +100,7 @@ with point sizes representing the variance explained.</p>
 <span>  n_top_vars <span class="op">=</span> <span class="fl">50</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S3 method for class 'comparePCASubspace'</span></span>
+<span><span class="co"># S3 method for class 'comparePCASubspaceObject'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -170,7 +170,7 @@ indicating the average variance explained by the corresponding principal compone
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code>plot.comparePCASubspace</code></p>
+    <div class="dont-index"><p><code>plot.comparePCASubspaceObject</code></p>
 <p><code>comparePCASubspace</code></p></div>
     </div>
     <div id="author">
@@ -207,9 +207,9 @@ indicating the average variance explained by the corresponding principal compone
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Compare PCA subspaces</span></span></span>
 <span class="r-in"><span><span class="va">subspace_comparison</span> <span class="op">&lt;-</span> <span class="fu">comparePCASubspace</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>,</span></span>
-<span class="r-in"><span>                                          reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span></span>
-<span class="r-in"><span>                                          query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span></span>
-<span class="r-in"><span>                                          ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span></span>
+<span class="r-in"><span>                                          reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>,</span></span>
+<span class="r-in"><span>                                          query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
+<span class="r-in"><span>                                          ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
 <span class="r-in"><span>                                          n_top_vars <span class="op">=</span> <span class="fl">50</span>,</span></span>
 <span class="r-in"><span>                                          pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

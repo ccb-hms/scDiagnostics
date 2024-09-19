@@ -76,7 +76,7 @@ PCs and highlights anomalies detected by the Isolation Forest algorithm."><!-- m
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>PCA Anomaly Scores via Isolation Forests with Visualization</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/detectAnomaly.R" class="external-link"><code>R/detectAnomaly.R</code></a>, <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/plot.detectAnomaly.R" class="external-link"><code>R/plot.detectAnomaly.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/detectAnomaly.R" class="external-link"><code>R/detectAnomaly.R</code></a>, <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/plot.detectAnomalyObject.R" class="external-link"><code>R/plot.detectAnomalyObject.R</code></a></small>
     <div class="hidden name"><code>detectAnomaly.Rd</code></div>
     </div>
 
@@ -95,14 +95,14 @@ PCs and highlights anomalies detected by the Isolation Forest algorithm.</p>
 <span>  <span class="va">ref_cell_type_col</span>,</span>
 <span>  query_cell_type_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
+<span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  n_tree <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  anomaly_treshold <span class="op">=</span> <span class="fl">0.6</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S3 method for class 'detectAnomaly'</span></span>
+<span><span class="co"># S3 method for class 'detectAnomalyObject'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  cell_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -212,7 +212,7 @@ a pair of PCs. Anomalies are highlighted in red, while normal points are shown i
 </ul></div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code>plot.detectAnomaly</code></p>
+    <div class="dont-index"><p><code>plot.detectAnomalyObject</code></p>
 <p><code>detectAnomaly</code></p></div>
     </div>
     <div id="author">
@@ -227,21 +227,21 @@ a pair of PCs. Anomalies are highlighted in red, while normal points are shown i
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"query_data"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Store PCA anomaly data</span></span></span>
-<span class="r-in"><span><span class="va">anomaly_output</span> <span class="op">&lt;-</span> <span class="fu">detectAnomaly</span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span></span>
-<span class="r-in"><span>                                query_data <span class="op">=</span> <span class="va">query_data</span>, </span></span>
-<span class="r-in"><span>                                ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span></span>
+<span class="r-in"><span><span class="va">anomaly_output</span> <span class="op">&lt;-</span> <span class="fu">detectAnomaly</span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
+<span class="r-in"><span>                                query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
+<span class="r-in"><span>                                ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
 <span class="r-in"><span>                                query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
-<span class="r-in"><span>                                pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span></span>
+<span class="r-in"><span>                                pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span></span>
 <span class="r-in"><span>                                n_tree <span class="op">=</span> <span class="fl">500</span>,</span></span>
-<span class="r-in"><span>                                anomaly_treshold <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> </span></span>
+<span class="r-in"><span>                                anomaly_treshold <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot the output for a cell type</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">anomaly_output</span>, </span></span>
-<span class="r-in"><span>     cell_type <span class="op">=</span> <span class="st">"CD4"</span>, </span></span>
-<span class="r-in"><span>     pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">anomaly_output</span>,</span></span>
+<span class="r-in"><span>     cell_type <span class="op">=</span> <span class="st">"CD4"</span>,</span></span>
+<span class="r-in"><span>     pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span></span>
 <span class="r-in"><span>     data_type <span class="op">=</span> <span class="st">"query"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="detectAnomaly-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span>     </span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>

@@ -77,7 +77,7 @@ with point sizes representing the correlations."><!-- mathjax --><script src="ht
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Compare Canonical Correlation Analysis (CCA) between Query and Reference Data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/compareCCA.R" class="external-link"><code>R/compareCCA.R</code></a>, <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/plot.compareCCA.R" class="external-link"><code>R/plot.compareCCA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/compareCCA.R" class="external-link"><code>R/compareCCA.R</code></a>, <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/plot.compareCCAObject.R" class="external-link"><code>R/plot.compareCCAObject.R</code></a></small>
     <div class="hidden name"><code>compareCCA.Rd</code></div>
     </div>
 
@@ -100,7 +100,7 @@ with point sizes representing the correlations.</p>
 <span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S3 method for class 'compareCCA'</span></span>
+<span><span class="co"># S3 method for class 'compareCCAObject'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -178,7 +178,7 @@ indicating the correlation.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code>plot.compareCCA</code></p>
+    <div class="dont-index"><p><code>plot.compareCCAObject</code></p>
 <p><code>compareCCA</code></p></div>
     </div>
     <div id="author">
@@ -280,10 +280,10 @@ indicating the correlation.</p>
 <span class="r-in"><span><span class="va">query_data_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">query_data_subset</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Compare CCA</span></span></span>
-<span class="r-in"><span><span class="va">cca_comparison</span> <span class="op">&lt;-</span> <span class="fu">compareCCA</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span></span>
-<span class="r-in"><span>                             reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span></span>
-<span class="r-in"><span>                             query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span></span>
-<span class="r-in"><span>                             ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span></span>
+<span class="r-in"><span><span class="va">cca_comparison</span> <span class="op">&lt;-</span> <span class="fu">compareCCA</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>,</span></span>
+<span class="r-in"><span>                             reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>,</span></span>
+<span class="r-in"><span>                             query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
+<span class="r-in"><span>                             ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
 <span class="r-in"><span>                             pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Visualize output of CCA comparison</span></span></span>

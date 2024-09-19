@@ -259,7 +259,7 @@ of PCs between the two datasets.</p>
 <span><span class="co"># Display the Cramer test p-values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cramer_test</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          CD4          CD8 B_and_plasma      Myeloid </span></span>
-<span><span class="co">#&gt;  0.000000000  0.000000000  0.197802198  0.000999001</span></span></code></pre></div>
+<span><span class="co">#&gt;    0.0000000    0.0000000    0.1368631    0.4105894</span></span></code></pre></div>
 <p>In this example, the function compares the distributions of the first
 five principal components between the reference and query datasets for
 cell types such as “CD4”, “CD8”, “B_and_plasma”, and “Myeloid”. The
@@ -309,8 +309,8 @@ is a named numeric vector of p-values for each cell type.</p>
 <span></span>
 <span><span class="co"># Display the p-values rounded to five decimal places</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">p_values</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; B_and_plasma          CD4          CD8      Myeloid </span></span>
-<span><span class="co">#&gt;        0.004        0.000        0.000        0.000</span></span></code></pre></div>
+<span><span class="co">#&gt;          CD4          CD8 B_and_plasma      Myeloid </span></span>
+<span><span class="co">#&gt;         0.00         0.00         0.12         0.00</span></span></code></pre></div>
 <p>In this example, the function calculates p-values for Hotelling’s
 T-squared test, focusing on the first ten principal components to assess
 whether the multivariate means differ significantly between the
@@ -426,23 +426,14 @@ to use, or use the raw data directly if <code>pc_subset</code> is set to
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Visualize the average pairwise correlation matrix</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">cor_matrix_avg</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                    Ref-CD4 Ref-CD8 Ref-B_and_plasma</span></span>
-<span><span class="co">#&gt; Query-CD4             0.44    0.20            -0.39</span></span>
-<span><span class="co">#&gt; Query-CD8            -0.23    0.36            -0.31</span></span>
-<span><span class="co">#&gt; Query-B_and_plasma   -0.23   -0.28             0.80</span></span>
-<span><span class="co">#&gt; attr(,"class")</span></span>
-<span><span class="co">#&gt; [1] "matrix"                              "array"                              </span></span>
-<span><span class="co">#&gt; [3] "calculateAveragePairwiseCorrelation"</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cor_matrix_avg</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/StatisticalMeasures/calculateAveragePairwiseCorrelation.png"></p>
 <p>In this example, <code><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code>
 computes the average pairwise correlations for the cell types “CD4”,
 “CD8”, and “B_and_plasma”. This function is particularly useful for
 understanding the relationships between different cell types in your
 single-cell datasets and evaluating how well cell types in the query
 data correspond to those in the reference data.</p>
-<p>Note that there is also a plot method for the object return for
-<code>calculateAveragePairwiseCorrelation.</code>. See reference manual
-for details.</p>
 </div>
 <div class="section level2">
 <h2 id="regresspc">

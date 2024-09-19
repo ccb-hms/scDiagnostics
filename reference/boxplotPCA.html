@@ -150,12 +150,12 @@ to perform the PCA projection. It then reshapes the output data into a long form
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"query_data"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot the PC data</span></span></span>
-<span class="r-in"><span><span class="va">pc_plot</span> <span class="op">&lt;-</span> <span class="fu">boxplotPCA</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>, </span></span>
+<span class="r-in"><span><span class="va">pc_plot</span> <span class="op">&lt;-</span> <span class="fu">boxplotPCA</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
 <span class="r-in"><span>                      reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
 <span class="r-in"><span>                      cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                      query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span></span>
-<span class="r-in"><span>                      ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span></span>
-<span class="r-in"><span>                      pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                      query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
+<span class="r-in"><span>                      ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
+<span class="r-in"><span>                      pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pc_plot</span></span></span>
 <span class="r-plt img"><img src="boxplotPCA-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>

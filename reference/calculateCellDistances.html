@@ -75,7 +75,7 @@ to all reference cell within a specified cell type."><!-- mathjax --><script src
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Compute Cell Distances Between Reference and Query Data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/calculateCellDistances.R" class="external-link"><code>R/calculateCellDistances.R</code></a>, <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/plot.calculateCellDistances.R" class="external-link"><code>R/plot.calculateCellDistances.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/calculateCellDistances.R" class="external-link"><code>R/calculateCellDistances.R</code></a>, <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/plot.calculateCellDistancesObject.R" class="external-link"><code>R/plot.calculateCellDistancesObject.R</code></a></small>
     <div class="hidden name"><code>calculateCellDistances.Rd</code></div>
     </div>
 
@@ -97,7 +97,7 @@ to all reference cell within a specified cell type.</p>
 <span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S3 method for class 'calculateCellDistances'</span></span>
+<span><span class="co"># S3 method for class 'calculateCellDistancesObject'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">ref_cell_type</span>, <span class="va">cell_names</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -176,7 +176,7 @@ plotted in different colors to visually assess how similar the query cell is to 
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code>plot.calculateCellDistances</code></p>
+    <div class="dont-index"><p><code>plot.calculateCellDistancesObject</code></p>
 <p><code>calculateCellDistances</code></p></div>
     </div>
     <div id="author">
@@ -191,16 +191,16 @@ plotted in different colors to visually assess how similar the query cell is to 
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"query_data"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot the PC data</span></span></span>
-<span class="r-in"><span><span class="va">distance_data</span> <span class="op">&lt;-</span> <span class="fu">calculateCellDistances</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>, </span></span>
-<span class="r-in"><span>                                        reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span></span>
-<span class="r-in"><span>                                        query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span></span>
+<span class="r-in"><span><span class="va">distance_data</span> <span class="op">&lt;-</span> <span class="fu">calculateCellDistances</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
+<span class="r-in"><span>                                        reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
+<span class="r-in"><span>                                        query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
 <span class="r-in"><span>                                        ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
-<span class="r-in"><span>                                        pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> </span></span>
+<span class="r-in"><span>                                        pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Identify outliers for CD4</span></span></span>
-<span class="r-in"><span><span class="va">cd4_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="detectAnomaly.html">detectAnomaly</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span></span>
-<span class="r-in"><span>                               query_data <span class="op">=</span> <span class="va">query_data</span>, </span></span>
-<span class="r-in"><span>                               query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span></span>
+<span class="r-in"><span><span class="va">cd4_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="detectAnomaly.html">detectAnomaly</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
+<span class="r-in"><span>                               query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
+<span class="r-in"><span>                               query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
 <span class="r-in"><span>                               ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
 <span class="r-in"><span>                               pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span></span>
 <span class="r-in"><span>                               n_tree <span class="op">=</span> <span class="fl">500</span>,</span></span>

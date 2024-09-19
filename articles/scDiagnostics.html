@@ -473,7 +473,7 @@ effective data integration.</p>
 <span></span>
 <span><span class="co"># View weighted cosine similarity score</span></span>
 <span><span class="va">subspace_comparison</span><span class="op">$</span><span class="va">weighted_cosine_similarity</span></span>
-<span><span class="co">#&gt; [1] 0.2462199</span></span>
+<span><span class="co">#&gt; [1] 0.2578375</span></span>
 <span></span>
 <span><span class="co"># Plot output for PCA subspace comparison (if a plot method is available)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">subspace_comparison</span><span class="op">)</span></span></code></pre></div>
@@ -548,10 +548,10 @@ them.</p>
 <span></span>
 <span><span class="co"># Comparison table</span></span>
 <span><span class="va">rf_output</span><span class="op">$</span><span class="va">var_imp_comparison</span></span>
-<span><span class="co">#&gt;     B_and_plasma-CD4     B_and_plasma-CD8 B_and_plasma-Myeloid </span></span>
-<span><span class="co">#&gt;                 0.82                 0.72                 0.34 </span></span>
-<span><span class="co">#&gt;              CD4-CD8          CD4-Myeloid          CD8-Myeloid </span></span>
-<span><span class="co">#&gt;                 0.72                 0.42                 0.24</span></span></code></pre></div>
+<span><span class="co">#&gt;              CD4-CD8     CD4-B_and_plasma          CD4-Myeloid </span></span>
+<span><span class="co">#&gt;                 0.74                 0.76                 0.68 </span></span>
+<span><span class="co">#&gt;     CD8-B_and_plasma          CD8-Myeloid B_and_plasma-Myeloid </span></span>
+<span><span class="co">#&gt;                 0.70                 0.56                 0.52</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -586,18 +586,8 @@ annotations.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Visualize the average pairwise correlation matrix</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">cor_matrix_avg</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                    Ref-CD4 Ref-CD8 Ref-B_and_plasma</span></span>
-<span><span class="co">#&gt; Query-CD4             0.44    0.20            -0.39</span></span>
-<span><span class="co">#&gt; Query-CD8            -0.23    0.36            -0.31</span></span>
-<span><span class="co">#&gt; Query-B_and_plasma   -0.23   -0.28             0.80</span></span>
-<span><span class="co">#&gt; attr(,"class")</span></span>
-<span><span class="co">#&gt; [1] "matrix"                              "array"                              </span></span>
-<span><span class="co">#&gt; [3] "calculateAveragePairwiseCorrelation"</span></span></code></pre></div>
-<p>Note that the object returned by
-<code><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code> includes a plot
-method, similar to most functions in this package. For more details,
-please refer to the reference manual.</p>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cor_matrix_avg</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/calculateAveragePairwiseCorrelation.png"></p>
 </div>
 </div>
 <div class="section level2">

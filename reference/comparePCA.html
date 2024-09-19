@@ -75,7 +75,7 @@ principal components from the output of the comparePCA function."><!-- mathjax -
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Compare Principal Components Analysis (PCA) Results</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/comparePCA.R" class="external-link"><code>R/comparePCA.R</code></a>, <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/plot.comparePCA.R" class="external-link"><code>R/plot.comparePCA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/comparePCA.R" class="external-link"><code>R/comparePCA.R</code></a>, <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/plot.comparePCAObject.R" class="external-link"><code>R/plot.comparePCAObject.R</code></a></small>
     <div class="hidden name"><code>comparePCA.Rd</code></div>
     </div>
 
@@ -98,7 +98,7 @@ principal components from the output of the <code>comparePCA</code> function.</p
 <span>  correlation_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spearman"</span>, <span class="st">"pearson"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S3 method for class 'comparePCA'</span></span>
+<span><span class="co"># S3 method for class 'comparePCAObject'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -171,7 +171,7 @@ similarity, white indicates zero similarity, and red indicates positive similari
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code>plot.comparePCA</code></p>
+    <div class="dont-index"><p><code>plot.comparePCAObject</code></p>
 <p><code>comparePCA</code></p></div>
     </div>
     <div id="author">
@@ -207,13 +207,13 @@ similarity, white indicates zero similarity, and red indicates positive similari
 <span class="r-in"><span><span class="va">query_data_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">query_data_subset</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Call the PCA comparison function</span></span></span>
-<span class="r-in"><span><span class="va">similarity_mat</span> <span class="op">&lt;-</span> <span class="fu">comparePCA</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>, </span></span>
-<span class="r-in"><span>                             reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>, </span></span>
-<span class="r-in"><span>                             query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span></span>
-<span class="r-in"><span>                             ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span></span>
-<span class="r-in"><span>                             pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,  </span></span>
+<span class="r-in"><span><span class="va">similarity_mat</span> <span class="op">&lt;-</span> <span class="fu">comparePCA</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_subset</span>,</span></span>
+<span class="r-in"><span>                             reference_data <span class="op">=</span> <span class="va">ref_data_subset</span>,</span></span>
+<span class="r-in"><span>                             query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
+<span class="r-in"><span>                             ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
+<span class="r-in"><span>                             pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span></span>
 <span class="r-in"><span>                             n_top_vars <span class="op">=</span> <span class="fl">50</span>,</span></span>
-<span class="r-in"><span>                             metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cosine"</span>, <span class="st">"correlation"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, </span></span>
+<span class="r-in"><span>                             metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cosine"</span>, <span class="st">"correlation"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>                             correlation_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spearman"</span>, <span class="st">"pearson"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create the heatmap</span></span></span>

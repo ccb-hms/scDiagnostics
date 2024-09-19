@@ -75,7 +75,7 @@ either the reference or query dataset for each cell type."><!-- mathjax --><scri
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate Nearest Neighbor Diagnostics for Cell Type Classification</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/calculateNearestNeighborProbabilities.R" class="external-link"><code>R/calculateNearestNeighborProbabilities.R</code></a>, <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/plot.calculateNearestNeighborProbabilities.R" class="external-link"><code>R/plot.calculateNearestNeighborProbabilities.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/calculateNearestNeighborProbabilities.R" class="external-link"><code>R/calculateNearestNeighborProbabilities.R</code></a>, <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/R/plot.calculateNearestNeighborProbabilitiesObject.R" class="external-link"><code>R/plot.calculateNearestNeighborProbabilitiesObject.R</code></a></small>
     <div class="hidden name"><code>calculateNearestNeighborProbabilities.Rd</code></div>
     </div>
 
@@ -98,7 +98,7 @@ either the reference or query dataset for each cell type.</p>
 <span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S3 method for class 'calculateNearestNeighborProbabilities'</span></span>
+<span><span class="co"># S3 method for class 'calculateNearestNeighborProbabilitiesObject'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, cell_types <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -172,7 +172,7 @@ reference or query dataset for each cell type. It utilizes the ggplot2 package f
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code>plot.calculateNearestNeighborProbabilities</code></p>
+    <div class="dont-index"><p><code>plot.calculateNearestNeighborProbabilitiesObject</code></p>
 <p><code>calculateNearestNeighborProbabilities</code></p></div>
     </div>
     <div id="author">
@@ -187,9 +187,9 @@ reference or query dataset for each cell type. It utilizes the ggplot2 package f
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"query_data"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Project the query data onto PCA space of reference</span></span></span>
-<span class="r-in"><span><span class="va">nn_output</span> <span class="op">&lt;-</span> <span class="fu">calculateNearestNeighborProbabilities</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>, </span></span>
+<span class="r-in"><span><span class="va">nn_output</span> <span class="op">&lt;-</span> <span class="fu">calculateNearestNeighborProbabilities</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
 <span class="r-in"><span>                                                   reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
-<span class="r-in"><span>                                                   query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span></span>
+<span class="r-in"><span>                                                   query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
 <span class="r-in"><span>                                                   ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
 <span class="r-in"><span>                                                   pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span></span>
 <span class="r-in"><span>                                                   n_neighbor <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
