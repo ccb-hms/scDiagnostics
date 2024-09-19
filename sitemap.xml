@@ -24,11 +24,13 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateHVGOverlap.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateHotellingPValue.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateNearestNeighborProbabilities.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateSIRSpace.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateVarImpOverlap.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculate_entropy.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/compareCCA.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/comparePCA.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/comparePCASubspace.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/conditionalMeans.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/detectAnomaly.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/generateColors.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/histQCvsAnnotation.html</loc></url>
@@ -46,6 +48,7 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotQCvsAnnotation.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotWassersteinDistance.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/projectPCA.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/projectSIR.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/qc_data.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/query_data.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/reference_data.html</loc></url>

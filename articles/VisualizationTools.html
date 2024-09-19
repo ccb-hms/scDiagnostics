@@ -355,6 +355,61 @@ anomalies.</p></li>
 </ul>
 </div>
 </div>
+<div class="section level3">
+<h3 id="project-data-onto-sliced-inverse-regression-sir-space-of-reference-data">Project Data onto Sliced Inverse Regression (SIR) Space of Reference
+Data<a class="anchor" aria-label="anchor" href="#project-data-onto-sliced-inverse-regression-sir-space-of-reference-data"></a>
+</h3>
+<p>The <code><a href="../reference/calculateSIRSpace.html">calculateSIRSpace()</a></code> function leverages Sliced
+Inverse Regression (SIR) to analyze high-dimensional cell type data by
+focusing on the directions that best separate different cell types and
+their subtypes. The function projects data onto a lower-dimensional SIR
+space, aiming to highlight the most informative features for
+distinguishing between cell types.</p>
+<p>The process starts by handling each cell type as a distinct slice of
+the data, allowing for a more detailed analysis. When
+<code>multiple_cond_means</code> is set to <code>TRUE</code>, the
+function refines this by computing conditional means for each cell type,
+using clustering to capture finer distinctions within each type. It then
+performs Singular Value Decomposition (SVD) on these refined means to
+uncover the principal directions that most effectively differentiate the
+cell types.</p>
+<p>Ultimately, the function provides projections that reveal how cell
+types and their subtypes relate to each other in a reduced space,
+facilitating a deeper understanding of cellular variability and
+distinctions in complex datasets.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Calculate the SIR space projections</span></span>
+<span><span class="va">sir_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateSIRSpace.html">calculateSIRSpace</a></span><span class="op">(</span></span>
+<span>  reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
+<span>  query_data <span class="op">=</span> <span class="va">query_data</span>,</span>
+<span>  query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span>
+<span>  ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span>
+<span>  multiple_cond_means <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot the SIR space projections</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sir_output</span>, </span>
+<span>     plot_type <span class="op">=</span> <span class="st">"boxplot"</span>, </span>
+<span>     sir_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/VisualizationTools/calculateSIRSpace1.png"></p>
+<p>In this example, we compute the SIR space projections using the
+<code><a href="../reference/calculateSIRSpace.html">calculateSIRSpace()</a></code> function, and then we visualize the
+projections with a boxplot to analyze the distribution of the data in
+the SIR space. This example helps you understand how different cell
+types and their subtypes are projected into a common space, facilitating
+their comparison and interpretation.</p>
+<p>The plot below visualizes the contribution of different markers to
+the variance along the SIR dimensions, helping identify which markers
+are most influential in differentiating e.g. between B cells (including
+plasma cells) from other cell types.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plot the top contributing markers</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sir_output</span>, </span>
+<span>     plot_type <span class="op">=</span> <span class="st">"varplot"</span>, </span>
+<span>     sir_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,</span>
+<span>     n_top_vars <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/VisualizationTools/calculateSIRSpace2.png"></p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="visualization-of-marker-expressions">Visualization of Marker Expressions<a class="anchor" aria-label="anchor" href="#visualization-of-marker-expressions"></a>
@@ -370,7 +425,7 @@ t-SNE, or UMAP. Each point on the plot represents a single cell,
 color-coded according to the expression level of the specified gene.</p>
 <p>Let’s visualize the expression of the gene <strong>VPREB3</strong> on
 a PCA plot:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Visualize VPREB3 gene on a PCA plot</span></span>
 <span><span class="fu"><a href="../reference/plotGeneExpressionDimred.html">plotGeneExpressionDimred</a></span><span class="op">(</span>se_object <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                         method <span class="op">=</span> <span class="st">"PCA"</span>, </span>
@@ -403,7 +458,7 @@ these distributions, providing a graphical means of assessing the
 similarity between reference and query datasets. The function also
 applies a z-rank normalization to make expression values comparable
 between datasets.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotMarkerExpression.html">plotMarkerExpression</a></span><span class="op">(</span></span>
 <span>  reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
 <span>  query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -488,7 +543,7 @@ your single-cell analyses.</p>
 </h2>
 <pre><code>R version 4.4.1 (2024-06-14)
 Platform: x86_64-pc-linux-gnu
-Running under: Ubuntu 22.04.4 LTS
+Running under: Ubuntu 22.04.5 LTS
 
 Matrix products: default
 BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -515,37 +570,41 @@ loaded via a namespace (and not attached):
  [5] htmlwidgets_1.6.4           Biobase_2.64.0             
  [7] lattice_0.22-6              vctrs_0.6.5                
  [9] tools_4.4.1                 generics_0.1.3             
-[11] stats4_4.4.1                tibble_3.2.1               
-[13] fansi_1.0.6                 pkgconfig_2.0.3            
-[15] Matrix_1.7-0                desc_1.4.3                 
-[17] S4Vectors_0.42.1            lifecycle_1.0.4            
-[19] GenomeInfoDbData_1.2.12     farver_2.1.2               
-[21] compiler_4.4.1              textshaping_0.4.0          
-[23] munsell_0.5.1               GenomeInfoDb_1.40.1        
-[25] htmltools_0.5.8.1           sass_0.4.9                 
-[27] yaml_2.3.10                 pkgdown_2.1.0              
-[29] pillar_1.9.0                crayon_1.5.3               
-[31] jquerylib_0.1.4             SingleCellExperiment_1.26.0
-[33] DelayedArray_0.30.1         cachem_1.1.0               
-[35] abind_1.4-5                 tidyselect_1.2.1           
-[37] digest_0.6.37               dplyr_1.1.4                
-[39] bookdown_0.40               labeling_0.4.3             
-[41] fastmap_1.2.0               grid_4.4.1                 
-[43] colorspace_2.1-1            cli_3.6.3                  
-[45] SparseArray_1.4.8           magrittr_2.0.3             
-[47] S4Arrays_1.4.1              utf8_1.2.4                 
-[49] withr_3.0.1                 UCSC.utils_1.0.0           
-[51] scales_1.3.0                rmarkdown_2.28             
-[53] XVector_0.44.0              httr_1.4.7                 
-[55] matrixStats_1.4.0           ranger_0.16.0              
-[57] ragg_1.3.2                  evaluate_0.24.0            
-[59] knitr_1.48                  GenomicRanges_1.56.1       
-[61] IRanges_2.38.1              rlang_1.1.4                
-[63] Rcpp_1.0.13                 glue_1.7.0                 
-[65] BiocManager_1.30.25         BiocGenerics_0.50.0        
-[67] jsonlite_1.8.8              R6_2.5.1                   
-[69] MatrixGenerics_1.16.0       systemfonts_1.1.0          
-[71] fs_1.6.4                    zlibbioc_1.50.0            </code></pre>
+[11] parallel_4.4.1              stats4_4.4.1               
+[13] tibble_3.2.1                fansi_1.0.6                
+[15] cluster_2.1.6               BiocNeighbors_1.22.0       
+[17] pkgconfig_2.0.3             Matrix_1.7-0               
+[19] desc_1.4.3                  S4Vectors_0.42.1           
+[21] lifecycle_1.0.4             GenomeInfoDbData_1.2.12    
+[23] farver_2.1.2                compiler_4.4.1             
+[25] textshaping_0.4.0           munsell_0.5.1              
+[27] bluster_1.14.0              codetools_0.2-20           
+[29] GenomeInfoDb_1.40.1         htmltools_0.5.8.1          
+[31] sass_0.4.9                  yaml_2.3.10                
+[33] pkgdown_2.1.1               pillar_1.9.0               
+[35] crayon_1.5.3                jquerylib_0.1.4            
+[37] BiocParallel_1.38.0         SingleCellExperiment_1.26.0
+[39] DelayedArray_0.30.1         cachem_1.1.0               
+[41] abind_1.4-8                 tidyselect_1.2.1           
+[43] digest_0.6.37               dplyr_1.1.4                
+[45] bookdown_0.40               labeling_0.4.3             
+[47] fastmap_1.2.0               grid_4.4.1                 
+[49] colorspace_2.1-1            cli_3.6.3                  
+[51] SparseArray_1.4.8           magrittr_2.0.3             
+[53] patchwork_1.3.0             S4Arrays_1.4.1             
+[55] utf8_1.2.4                  withr_3.0.1                
+[57] UCSC.utils_1.0.0            scales_1.3.0               
+[59] rmarkdown_2.28              XVector_0.44.0             
+[61] httr_1.4.7                  matrixStats_1.4.1          
+[63] igraph_2.0.3                ranger_0.16.0              
+[65] ragg_1.3.3                  evaluate_1.0.0             
+[67] knitr_1.48                  GenomicRanges_1.56.1       
+[69] IRanges_2.38.1              rlang_1.1.4                
+[71] Rcpp_1.0.13                 glue_1.7.0                 
+[73] BiocManager_1.30.25         BiocGenerics_0.50.0        
+[75] jsonlite_1.8.8              R6_2.5.1                   
+[77] MatrixGenerics_1.16.0       systemfonts_1.1.0          
+[79] fs_1.6.4                    zlibbioc_1.50.0            </code></pre>
 </div>
   </div>
 
@@ -564,7 +623,7 @@ loaded via a namespace (and not attached):
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer>
