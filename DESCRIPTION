@@ -36,7 +36,9 @@ Imports:
     transport,
     speedglm,
     cramer,
-    rlang
+    rlang,
+    bluster,
+    patchwork
 Suggests:
     AUCell,
     BiocStyle,
