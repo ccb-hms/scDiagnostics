@@ -28,7 +28,7 @@ that identifies the cell types.}
 
 \item{pc_subset}{A numeric vector specifying the subset of principal components (PCs) to compare. Default is 1:10.}
 
-\item{assay_name}{Name of the assay on which to perform computations.}
+\item{assay_name}{Name of the assay on which to perform computations. Defaults to \code{"logcounts"}.}
 }
 \value{
 A \code{data.frame} containing the projected data in rows (reference and query data combined).

@@ -20,7 +20,7 @@ test_that("calculateSIRSpace returns correct structure", {
     expect_named(result, c("cond_means", "rotation_mat", "sir_projections", "percent_var"))
 
     # Check that the class includes "calculateSIRSpace"
-    expect_s3_class(result, "calculateSIRSpace")
+    expect_s3_class(result, "calculateSIRSpaceObject")
 })
 
 test_that("calculateSIRSpace uses the correct cumulative variance threshold", {

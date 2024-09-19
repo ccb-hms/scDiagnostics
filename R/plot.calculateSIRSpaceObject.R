@@ -30,11 +30,12 @@
 #' @importFrom utils head
 #'
 # This function plots the SIR output either as a scatterplot for a boxplot
-plot.calculateSIRSpace <- function(x,
-                                   plot_type = c("scatterplot", "boxplot", "varplot"),
-                                   sir_subset = NULL,
-                                   n_top_vars = 5,
-                                   ...){
+plot.calculateSIRSpaceObject <- function(
+        x,
+        plot_type = c("scatterplot", "boxplot", "varplot"),
+        sir_subset = NULL,
+        n_top_vars = 5,
+        ...){
 
     # Match argument for plot type
     plot_type <- match.arg(plot_type)

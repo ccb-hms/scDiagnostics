@@ -34,7 +34,7 @@ If NULL, the PC scores are regressed against the cell types of the reference dat
 A named vector of p-values from the Cramer test for each cell type.
 }
 \description{
-This function performs the Cramer test for comparing multivariate empirical cumulative distribution functions (ECDFs) 
+This function performs the Cramer test for comparing multivariate empirical cumulative distribution functions (ECDFs)
 between two samples.
 }
 \details{
@@ -53,7 +53,7 @@ data("query_data")
 # Plot the PC data (with query data)
 cramer_test <- calculateCramerPValue(reference_data = reference_data,
                                      query_data = query_data,
-                                     ref_cell_type_col = "expert_annotation", 
+                                     ref_cell_type_col = "expert_annotation",
                                      query_cell_type_col = "SingleR_annotation",
                                      cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
                                      pc_subset = 1:5)
@@ -61,9 +61,6 @@ cramer_test
 
 }
 \references{
-Baringhaus, L., & Franz, C. (2004). "On a new multivariate two-sample test". 
+Baringhaus, L., & Franz, C. (2004). "On a new multivariate two-sample test".
 Journal of Multivariate Analysis, 88(1), 190-206.
-}
-\seealso{
-\code{\link{plot.regressPC}}
 }

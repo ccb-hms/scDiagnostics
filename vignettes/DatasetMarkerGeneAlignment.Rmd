@@ -179,11 +179,10 @@ pca_comparison <- comparePCA(query_data = query_data_cd4,
                              ref_cell_type_col = "expert_annotation", 
                              pc_subset = 1:5, 
                              metric = "cosine")
-print(pca_comparison)
+plot(pca_comparison)
 ```
 
 
-Note that there is also a plot method for the object return for `comparePCA()`. See reference manual for details.
 
 
 ## `comparePCASubspace()`

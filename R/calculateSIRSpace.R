@@ -25,7 +25,7 @@
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
-#' @seealso \code{\link{plot.calculateSIRSpace}}
+#' @seealso \code{\link{plot.calculateSIRSpaceObject}}
 #'
 #' @examples
 #' # Load data
@@ -92,7 +92,7 @@ calculateSIRSpace <- function(query_data,
                              n_neighbor = n_neighbor)
 
     # Return SIR projections output
-    class(sir_output) <- c(class(sir_output), "calculateSIRSpace")
+    class(sir_output) <- c(class(sir_output), "calculateSIRSpaceObject")
     return(sir_output)
 }
 

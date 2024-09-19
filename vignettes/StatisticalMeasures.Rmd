@@ -44,7 +44,7 @@ dpi = 72,
 fig.retina = 2,
 fig.align = "center",
 out.width = "100%",
-pngquant = "--speed=1 --quality=1-5"
+pngquant = "--speed=1 --quality=85-90"
 )
 ```
 
@@ -205,12 +205,12 @@ cor_matrix_avg <- calculateAveragePairwiseCorrelation(
 )
 
 # Visualize the average pairwise correlation matrix
-round(cor_matrix_avg, 2)
+plot(cor_matrix_avg)
 ```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/StatisticalMeasures/calculateAveragePairwiseCorrelation.png)
 
 In this example, `calculateAveragePairwiseCorrelation()` computes the average pairwise correlations for the cell types "CD4", "CD8", and "B_and_plasma". This function is particularly useful for understanding the relationships between different cell types in your single-cell datasets and evaluating how well cell types in the query data correspond to those in the reference data.
 
-Note that there is also a plot method for the object return for `calculateAveragePairwiseCorrelation.`. See reference manual for details.
 
 
 # `regressPC()`

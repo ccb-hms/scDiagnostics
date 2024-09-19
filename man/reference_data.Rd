@@ -5,7 +5,7 @@
 \alias{reference_data}
 \title{Reference Single-Cell RNA-Seq Dataset}
 \format{
-An object of class \code{SingleCellExperiment} with 423 rows and 1500 columns.
+An object of class \code{SingleCellExperiment} with 392 rows and 1500 columns.
 }
 \source{
 The HeOrganAtlas dataset, available through the scRNAseq package.

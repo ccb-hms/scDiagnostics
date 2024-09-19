@@ -5,10 +5,13 @@
 # Load data
 sce <- scRNAseq::HeOrganAtlasData(tissue = c("Marrow"), ensembl = FALSE)
 
+# Remove cells with NA cell type
+sce <- sce[, !is.na(sce$reclustered.broad)]
+
 # Divide the data into reference and query datasets
 set.seed(100)
-indices <- sample(ncol(SummarizedExperiment::assay(sce)), 
-                  size = floor(0.8 * ncol(SummarizedExperiment::assay(sce))), 
+indices <- sample(ncol(SummarizedExperiment::assay(sce)),
+                  size = floor(0.8 * ncol(SummarizedExperiment::assay(sce))),
                   replace = FALSE)
 reference_data <- sce[, sample(indices, 1500)]
 query_data <- sce[, -indices]
@@ -18,9 +21,9 @@ reference_data <- scuttle::logNormCounts(reference_data)
 query_data <- scuttle::logNormCounts(query_data)
 
 # Select specific column (cell) data
-SummarizedExperiment::colData(reference_data) <- SummarizedExperiment::colData(reference_data)[, c("reclustered.broad"), 
+SummarizedExperiment::colData(reference_data) <- SummarizedExperiment::colData(reference_data)[, c("reclustered.broad"),
                                                                                                drop = FALSE]
-SummarizedExperiment::colData(query_data) <- SummarizedExperiment::colData(query_data)[, c("percent.mito", 
+SummarizedExperiment::colData(query_data) <- SummarizedExperiment::colData(query_data)[, c("percent.mito",
                                                                                            "reclustered.broad")]
 names(SummarizedExperiment::colData(reference_data))[1] <- "expert_annotation"
 names(SummarizedExperiment::colData(query_data))[1] <- "percent_mito"
@@ -38,7 +41,7 @@ gene_set1 <- sample(rownames(expression_matrix), 10)
 gene_set2 <- sample(rownames(expression_matrix), 20)
 gene_sets <- list(geneSet1 = gene_set1, geneSet2 = gene_set2)
 cells_AUC <- AUCell::AUCell_calcAUC(gene_sets, cells_rankings)
-SummarizedExperiment::colData(query_data)$gene_set_scores <- SummarizedExperiment::assay(cells_AUC)["geneSet1", ] 
+SummarizedExperiment::colData(query_data)$gene_set_scores <- SummarizedExperiment::assay(cells_AUC)["geneSet1", ]
 
 # Selecting highly variable genes (can be customized by the user)
 ref_var <- scran::getTopHVGs(reference_data, n = 500)
@@ -60,9 +63,9 @@ query_data <- scater::runTSNE(query_data)
 query_data <- scater::runUMAP(query_data)
 
 # Remove counts assays
-SummarizedExperiment::assays(reference_data) <- 
+SummarizedExperiment::assays(reference_data) <-
     SummarizedExperiment::assays(reference_data)[-which(names(SummarizedExperiment::assays(reference_data)) == "counts")]
-SummarizedExperiment::assays(query_data) <- 
+SummarizedExperiment::assays(query_data) <-
     SummarizedExperiment::assays(query_data)[-which(names(SummarizedExperiment::assays(query_data)) == "counts")]
 
 # Save datasets to data/ folder

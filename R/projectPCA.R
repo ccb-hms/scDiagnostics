@@ -20,7 +20,7 @@
 #' @param ref_cell_type_col character. The column name in the \code{colData} of \code{reference_data}
 #' that identifies the cell types.
 #' @param pc_subset A numeric vector specifying the subset of principal components (PCs) to compare. Default is 1:10.
-#' @param assay_name Name of the assay on which to perform computations.
+#' @param assay_name Name of the assay on which to perform computations. Defaults to \code{"logcounts"}.
 #'
 #' @return A \code{data.frame} containing the projected data in rows (reference and query data combined).
 #'

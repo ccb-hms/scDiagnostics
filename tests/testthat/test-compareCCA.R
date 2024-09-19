@@ -1,6 +1,6 @@
 # Load necessary libraries
 library(testthat)
-library(scDiagnostics) 
+library(scDiagnostics)
 
 # Load example datasets
 data("reference_data")
@@ -26,21 +26,21 @@ query_data_subset <- scater::runPCA(query_data_subset)
 # Define unit tests
 test_that("compareCCA function works correctly", {
     # Test correct output structure and class
-    cca_comparison <- compareCCA(query_data = query_data_subset, 
-                                 reference_data = reference_data_subset, 
-                                 query_cell_type_col = "expert_annotation", 
-                                 ref_cell_type_col = "expert_annotation", 
+    cca_comparison <- compareCCA(query_data = query_data_subset,
+                                 reference_data = reference_data_subset,
+                                 query_cell_type_col = "expert_annotation",
+                                 ref_cell_type_col = "expert_annotation",
                                  pc_subset = 1:5)
-    
+
     expect_type(cca_comparison, "list")
-    expect_s3_class(cca_comparison, "compareCCA")
+    expect_s3_class(cca_comparison, "compareCCAObject")
     expect_named(cca_comparison, c("coef_ref", "coef_query", "cosine_similarity", "correlations"))
-    
+
     # Test with subset of principal components
-    cca_comparison <- compareCCA(query_data = query_data_subset, 
-                                 reference_data = reference_data_subset, 
-                                 query_cell_type_col = "expert_annotation", 
-                                 ref_cell_type_col = "expert_annotation", 
+    cca_comparison <- compareCCA(query_data = query_data_subset,
+                                 reference_data = reference_data_subset,
+                                 query_cell_type_col = "expert_annotation",
+                                 ref_cell_type_col = "expert_annotation",
                                  pc_subset = 1:3)
     expect_equal(length(cca_comparison$cosine_similarity), 3)
     expect_equal(length(cca_comparison$correlations), 3)

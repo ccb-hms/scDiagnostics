@@ -33,14 +33,14 @@ boxplotPCA(
 A ggplot object representing the boxplots of specified principal components for the given cell types and datasets.
 }
 \description{
-This function generates a \code{ggplot2} boxplot visualization of principal components (PCs) for different 
+This function generates a \code{ggplot2} boxplot visualization of principal components (PCs) for different
 cell types across two datasets (query and reference).
 }
 \details{
-The function \code{boxplotPCA} is designed to provide a visualization of principal component analysis (PCA) results. It projects 
-the query dataset onto the principal components obtained from the reference dataset. The results are then visualized 
-as boxplots, grouped by cell types and datasets (query and reference). This allows for a comparative analysis of the 
-distributions of the principal components across different cell types and datasets. The function internally calls \code{projectPCA} 
+The function \code{boxplotPCA} is designed to provide a visualization of principal component analysis (PCA) results. It projects
+the query dataset onto the principal components obtained from the reference dataset. The results are then visualized
+as boxplots, grouped by cell types and datasets (query and reference). This allows for a comparative analysis of the
+distributions of the principal components across different cell types and datasets. The function internally calls \code{projectPCA}
 to perform the PCA projection. It then reshapes the output data into a long format suitable for ggplot2 plotting.
 }
 \examples{
@@ -49,12 +49,12 @@ data("reference_data")
 data("query_data")
 
 # Plot the PC data
-pc_plot <- boxplotPCA(query_data = query_data, 
+pc_plot <- boxplotPCA(query_data = query_data,
                       reference_data = reference_data,
                       cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                      query_cell_type_col = "SingleR_annotation", 
-                      ref_cell_type_col = "expert_annotation", 
-                      pc_subset = 1:3)
+                      query_cell_type_col = "SingleR_annotation",
+                      ref_cell_type_col = "expert_annotation",
+                      pc_subset = 1:6)
 pc_plot
 
 }

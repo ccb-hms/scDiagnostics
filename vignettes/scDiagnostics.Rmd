@@ -351,11 +351,9 @@ cor_matrix_avg <- calculateAveragePairwiseCorrelation(
 )
 
 # Visualize the average pairwise correlation matrix
-round(cor_matrix_avg, 2)
+plot(cor_matrix_avg)
 ```
-
-Note that the object returned by `calculateAveragePairwiseCorrelation()` includes a plot method, similar to most functions in this package. For more details, please refer to the reference manual.
-
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/calculateAveragePairwiseCorrelation.png)
 
 # Detection of Annotation Anomalies
 
