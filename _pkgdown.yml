@@ -41,12 +41,13 @@ reference:
     contents:
       - boxplotPCA
       - calculateDiscriminantSpace
+      - calculateSIRSpace
       - plotCellTypeMDS
       - plotCellTypePCA
   - title: Visualization of Marker Expressions
     contents:
-      - plotGeneExpressionDimred 
-      - plotMarkerExpression 
+      - plotGeneExpressionDimred
+      - plotMarkerExpression
   - title: Visualization of QC and Annotation Scores
     contents:
       - histQCvsAnnotation
@@ -58,7 +59,7 @@ reference:
       - comparePCA
       - comparePCASubspace
       - plotPairwiseDistancesDensity
-      - plotWassersteinDistance 
+      - plotWassersteinDistance
   - title: Evaluation of Marker Gene Alignment
     contents:
       - calculateHVGOverlap
@@ -67,24 +68,25 @@ reference:
     contents:
       - calculateCramerPValue
       - calculateHotellingPValue
-      - calculateNearestNeighborProbabilities 
+      - calculateNearestNeighborProbabilities
       - calculateAveragePairwiseCorrelation
-      - regressPC 
+      - regressPC
   - title: Anomaly Detection (Global and Cell Type-Specific)
     contents:
       - detectAnomaly
-      - calculateCellSimilarityPCA 
+      - calculateCellSimilarityPCA
   - title: Calculation of Distances Between Specific Cells and Cell Populations
     contents:
-      - calculateCellDistances 
-      - calculateCellDistancesSimilarity 
+      - calculateCellDistances
+      - calculateCellDistancesSimilarity
   - title: Misc
     contents:
-      - projectPCA 
+      - projectPCA
+      - projectSIR
       - calculateCategorizationEntropy
   - title: Datasets
     contents:
-      - reference_data 
+      - reference_data
       - query_data
       - qc_data
 
