@@ -1,7 +1,7 @@
 Type: Package
 Package: scDiagnostics
 Title: Cell type annotation diagnostics
-Version: 0.99.9
+Version: 0.99.10
 Authors@R: c(
     person("Anthony", "Christidis", role = c("aut", "cre"), 
             email = "anthony-alexander_christidis@hms.harvard.edu", 
