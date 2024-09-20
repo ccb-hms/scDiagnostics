@@ -238,9 +238,18 @@ statistical outputs to help you interpret the anomalies detected.</li>
 <div class="section level4">
 <h4 id="parameters">Parameters<a class="anchor" aria-label="anchor" href="#parameters"></a>
 </h4>
-<p>The function takes a
-<code>r</code>BiocStyle::Biocpkg(“SingleCellExperiment”)<code>object as</code>reference_data<code>and trains an isolation forest model on the reference PCA-projected data, with an optional</code>query_data<code>for projecting onto this PCA space for anomaly detection. You can specify cell type annotations through</code>ref_cell_type_col<code>and</code>query_cell_type_col<code>, and limit the analysis to certain cell types using the</code>cell_types<code>parameter. The function allows you to select specific principal components to use to train the isolation forest via</code>pc_subset<code>, adjust the number of trees with</code>n_tree<code>, and set an</code>anomaly_threshold`
-for classifying anomalies.</p>
+<p>The function takes a <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+object as <code>reference_data</code> and trains an isolation forest
+model on the reference PCA-projected data, with an optional
+<code>query_data</code> for projecting onto this PCA space for anomaly
+detection. You can specify cell type annotations through
+<code>ref_cell_type_col</code> and <code>query_cell_type_col</code>, and
+limit the analysis to certain cell types using the
+<code>cell_types</code> parameter. The function allows you to select
+specific principal components to use to train the isolation forest via
+<code>pc_subset</code>, adjust the number of trees with
+<code>n_tree</code>, and set an <code>anomaly_threshold</code> for
+classifying anomalies.</p>
 </div>
 <div class="section level4">
 <h4 id="return-value">Return Value<a class="anchor" aria-label="anchor" href="#return-value"></a>

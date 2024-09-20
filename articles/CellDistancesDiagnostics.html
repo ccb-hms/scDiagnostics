@@ -195,12 +195,20 @@ principal component (PC) scores.</p>
 <span>    ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span>
 <span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>In the code above: - <code>query_data</code> and reference_data:
-These are
-<code>r</code>BiocStyle::Biocpkg(“SingleCellExperiment”)<code>objects containing the respective datasets for analysis. -</code>query_cell_type_col<code>and ref_cell_type_col: These arguments specify the columns in the</code>colData<code>of each dataset that contain cell type annotations. -</code>pc_subset`:
-Specifies which principal components (1 to 10) are used to compute
-distances. PCA is applied for dimensionality reduction before
-calculating distances.</p>
+<p>In the code above:</p>
+<ul>
+<li>
+<code>query_data</code> and reference_data: These are <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+objects containing the respective datasets for analysis.</li>
+<li>
+<code>query_cell_type_col</code> and ref_cell_type_col: These
+arguments specify the columns in the <code>colData</code> of each
+dataset that contain cell type annotations.</li>
+<li>
+<code>pc_subset</code>: Specifies which principal components (1 to
+10) are used to compute distances. PCA is applied for dimensionality
+reduction before calculating distances.</li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="output">Output<a class="anchor" aria-label="anchor" href="#output"></a>

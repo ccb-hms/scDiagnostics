@@ -169,7 +169,7 @@ the following command:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"scDiagnostics"</span><span class="op">)</span></span></code></pre></div>
 <p>NOTE: you will need the <em><a href="https://CRAN.R-project.org/package=BiocManager" class="external-link">BiocManager</a></em>
-package to install from GitHub.</p>
+package to install from Bioconductor</p>
 <p>To build the package vignettes upon installation use:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"scDiagnostics"</span>,</span>
@@ -182,14 +182,12 @@ package to install from GitHub.</p>
 <p>To install the development version of the package from Github, use
 the following command:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ccb-hms/scDiagnostics"</span><span class="op">)</span></span></code></pre></div>
-<p>NOTE: you will need the <em><a href="https://bioconductor.org/packages/3.19/remotes" class="external-link">remotes</a></em>
-package to install from GitHub.</p>
+<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"ccb-hms/scDiagnostics"</span><span class="op">)</span></span></code></pre></div>
 <p>To build the package vignettes upon installation use:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ccb-hms/scDiagnostics"</span>,</span>
-<span>                        build_vignettes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                        dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"ccb-hms/scDiagnostics"</span>,</span>
+<span>                     build_vignettes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                     dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Once you have installed the package, you can load it with the
 following code:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
