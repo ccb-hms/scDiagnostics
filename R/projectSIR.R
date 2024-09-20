@@ -209,7 +209,7 @@ conditionalMeans <- function(reference_data,
                         k = n_neighbor)))
             cluster_means <- do.call(
                 rbind, lapply(unique(clusters),
-                              function(cl) colMeans(assay_mat[clusters == cl, ])))
+                              function(cl) colMeans(assay_mat[clusters == cl,, drop = FALSE])))
             rownames(cluster_means) <- rep(cell_type, nrow(cluster_means))
             cond_means  <- rbind(cond_means, cluster_means)
         }
