@@ -19,7 +19,7 @@ It can be either a reference or query dataset.}
 
 \item{score_col}{A character string representing the name of the score_col (score) in the colData(se_object) to plot.}
 
-\item{pc_subset}{An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA". 
+\item{pc_subset}{An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA".
 Default is 1:5.}
 }
 \value{
@@ -29,10 +29,10 @@ A ggplot2 object representing the gene set scores plotted on the specified reduc
 Plot gene sets or pathway scores on PCA, TSNE, or UMAP. Single cells are color-coded by scores of gene sets or pathways.
 }
 \details{
-This function plots gene set scores on reduced dimensions such as PCA, t-SNE, or UMAP. 
+This function plots gene set scores on reduced dimensions such as PCA, t-SNE, or UMAP.
 It extracts the reduced dimensions from the provided SingleCellExperiment object.
 Gene set scores are visualized as a scatter plot with colors indicating the scores.
-For PCA, the function automatically includes the percentage of variance explained 
+For PCA, the function automatically includes the percentage of variance explained
 in the plot's legend.
 }
 \examples{
@@ -40,12 +40,12 @@ in the plot's legend.
 data("query_data")
 
 # Plot gene set scores on PCA
-plotGeneSetScores(se_object = query_data, 
-                  method = "PCA", 
+plotGeneSetScores(se_object = query_data,
+                  method = "PCA",
                   score_col = "gene_set_scores",
                   pc_subset = 1:5)
-                  
-# Note: Users can provide their own gene set scores in the colData of the 'se_object' object, 
+
+# Note: Users can provide their own gene set scores in the colData of the 'se_object' object,
 # using any dimension reduction of their choice.
 
 }

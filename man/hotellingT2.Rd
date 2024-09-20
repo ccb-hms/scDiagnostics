@@ -7,7 +7,7 @@
 hotellingT2(sample1, sample2)
 }
 \arguments{
-\item{sample1}{A numeric matrix or data frame of multivariate observations for sample 1, where rows are observations and columns 
+\item{sample1}{A numeric matrix or data frame of multivariate observations for sample 1, where rows are observations and columns
 are variables.}
 
 \item{sample2}{A numeric matrix or data frame of multivariate observations for sample 2, with the same structure as sample 1.}

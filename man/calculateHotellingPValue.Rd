@@ -20,10 +20,10 @@ calculateHotellingPValue(
 
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data} 
+\item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data}
 that identifies the cell types.}
 
-\item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data} 
+\item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data}
 that identifies the cell types.}
 
 \item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
@@ -52,13 +52,13 @@ data("reference_data")
 data("query_data")
 
 # Get the p-values
-p_values <- calculateHotellingPValue(query_data = query_data, 
-                                     reference_data = reference_data, 
-                                     query_cell_type_col = "SingleR_annotation", 
+p_values <- calculateHotellingPValue(query_data = query_data,
+                                     reference_data = reference_data,
+                                     query_cell_type_col = "SingleR_annotation",
                                      ref_cell_type_col = "expert_annotation",
-                                     pc_subset = 1:10) 
+                                     pc_subset = 1:10)
 round(p_values, 5)
-                         
+
 }
 \references{
 Hotelling, H. (1931). "The generalization of Student's ratio". *Annals of Mathematical Statistics*. 2 (3): 360–378. doi:10.1214/aoms/1177732979.

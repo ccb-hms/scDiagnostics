@@ -1,7 +1,7 @@
 Type: Package
 Package: scDiagnostics
 Title: Cell type annotation diagnostics
-Version: 0.99.8
+Version: 1.0.0
 Authors@R: c(
     person("Anthony", "Christidis", role = c("aut", "cre"), 
             email = "anthony-alexander_christidis@hms.harvard.edu", 
@@ -65,7 +65,6 @@ biocViews:
     Software,
     Transcriptomics
 Encoding: UTF-8
-LazyData: true
 LazyDataCompression: xz
 RoxygenNote: 7.3.1
 Config/testthat/edition: 3
