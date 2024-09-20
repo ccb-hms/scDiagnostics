@@ -65,7 +65,7 @@ To install the release version of the package from Bioconductor use the followin
 BiocManager::install("scDiagnostics")
 ```
 
-NOTE: you will need the `r BiocStyle::CRANpkg("BiocManager")` package to install from GitHub.
+NOTE: you will need the `r BiocStyle::CRANpkg("BiocManager")` package to install from Bioconductor
 
 To build the package vignettes upon installation use:
 
@@ -82,19 +82,15 @@ To install the development version of the package from Github, use the
 following command:
 
 ```{r, eval = FALSE, fig.show='hide'}
-remotes::install_github("ccb-hms/scDiagnostics")
+BiocManager::install("ccb-hms/scDiagnostics")
 ```
-
-NOTE: you will need the
-`r BiocStyle::Biocpkg("remotes")`
-package to install from GitHub.
 
 To build the package vignettes upon installation use:
 
 ```{r, eval=FALSE, fig.show='hide'}
-remotes::install_github("ccb-hms/scDiagnostics",
-                        build_vignettes = TRUE,
-                        dependencies = TRUE)
+BiocManager::install("ccb-hms/scDiagnostics",
+                     build_vignettes = TRUE,
+                     dependencies = TRUE)
 ```
 
 Once you have installed the package, you can load it with the following code:

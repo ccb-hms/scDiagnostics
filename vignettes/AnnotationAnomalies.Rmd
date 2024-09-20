@@ -99,7 +99,7 @@ The function also provides detailed visualizations and statistical outputs to he
 
 ### Parameters
 
-The function takes a `r `BiocStyle::Biocpkg("SingleCellExperiment")` object as `reference_data` and trains an isolation forest model on the reference PCA-projected data, with an optional `query_data` for projecting onto this PCA space for anomaly detection. You can specify cell type annotations through `ref_cell_type_col` and `query_cell_type_col`, and limit the analysis to certain cell types using the `cell_types` parameter. The function allows you to select specific principal components to use to train the isolation forest via `pc_subset`, adjust the number of trees with `n_tree`, and set an `anomaly_threshold` for classifying anomalies.
+The function takes a `r BiocStyle::Biocpkg("SingleCellExperiment")` object as `reference_data` and trains an isolation forest model on the reference PCA-projected data, with an optional `query_data` for projecting onto this PCA space for anomaly detection. You can specify cell type annotations through `ref_cell_type_col` and `query_cell_type_col`, and limit the analysis to certain cell types using the `cell_types` parameter. The function allows you to select specific principal components to use to train the isolation forest via `pc_subset`, adjust the number of trees with `n_tree`, and set an `anomaly_threshold` for classifying anomalies.
 
 
 ### Return Value
