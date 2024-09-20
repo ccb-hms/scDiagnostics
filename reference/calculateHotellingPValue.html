@@ -18,7 +18,7 @@ based on PCA-projected data from query and reference datasets."><!-- mathjax -->
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scDiagnostics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -159,15 +159,15 @@ It performs a permutation test to obtain p-values for each cell type specified.<
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"query_data"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get the p-values</span></span></span>
-<span class="r-in"><span><span class="va">p_values</span> <span class="op">&lt;-</span> <span class="fu">calculateHotellingPValue</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>, </span></span>
-<span class="r-in"><span>                                     reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span></span>
-<span class="r-in"><span>                                     query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span></span>
+<span class="r-in"><span><span class="va">p_values</span> <span class="op">&lt;-</span> <span class="fu">calculateHotellingPValue</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
+<span class="r-in"><span>                                     reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
+<span class="r-in"><span>                                     query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
 <span class="r-in"><span>                                     ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
-<span class="r-in"><span>                                     pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> </span></span>
+<span class="r-in"><span>                                     pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">p_values</span>, <span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          CD4          CD8 B_and_plasma      Myeloid </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        0.000        0.000        0.108        0.000 </span>
-<span class="r-in"><span>                         </span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
