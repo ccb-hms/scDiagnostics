@@ -44,11 +44,11 @@ BiocManager::install("ccb-hms/scDiagnostics",
 
 # Usage
 
-You may browse the [**scDiagnostics website**](https://ccb-hms.github.io/scDiagnostics/) website for an overview of the functionality of the package. The individual documentation of each available function in `scDiagnostics`, which includes usage details and executable examples, is available in the [**reference tab**](https://ccb-hms.github.io/scDiagnostics/reference/index.html).
+See the [**scDiagnostics website**](https://ccb-hms.github.io/scDiagnostics/) for an overview of the functionality of the package. The individual documentation of each available function incl. usage details and executable examples is available in the [**reference tab**](https://ccb-hms.github.io/scDiagnostics/reference/index.html).
 
 ## Key Features
 
-To get an overview of the main functionality of the scDiagnostics package, refer to the [**Getting Started with scDiagnostics**](https://ccb-hms.github.io/scDiagnostics/articles/scDiagnostics.html) vignette. The links below direct you to vignettes that explore functions organized around a common theme or purpose, highlighting how they interact or complement each other in specific contexts.
+See the [**Getting Started with scDiagnostics**](https://ccb-hms.github.io/scDiagnostics/articles/scDiagnostics.html) vignette for an overview of the main functionality of the package. As listed below, additional vignettes are available for specific diagnostic tasks.
 
 -   [**Visualization of Cell Type Annotations**](https://ccb-hms.github.io/scDiagnostics/articles/VisualizationTools.html): Illustrates the distributions of cell type annotations of the query and reference dataset, allowing the user to identify potential differences in the cell type composition between datasets.
 
