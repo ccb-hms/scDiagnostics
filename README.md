@@ -1,5 +1,7 @@
 # `scDiagnostics`: diagnostic functions to assess the quality of cell type annotations in single-cell RNA-seq data
 
+[![Bioconductor](https://img.shields.io/badge/Bioconductor-Release-brightgreen)](https://bioconductor.org/packages/release/bioc/html/scDiagnostics.html) [![Platform](https://img.shields.io/badge/Platform-All-blue)](https://bioconductor.org/packages/release/bioc/html/scDiagnostics.html) [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)](https://bioconductor.org/checkResults/release/bioc-LATEST/scDiagnostics/) [![Dependencies](https://img.shields.io/badge/Dependencies-Up%20to%20Date-brightgreen)](https://bioconductor.org/packages/release/bioc/html/scDiagnostics.html) [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![Downloads](https://img.shields.io/badge/Downloads-100%2Fmonth-brightgreen)](https://bioconductor.org/packages/stats/bioc/scDiagnostics/)
+
 # Overview
 
 The accurate annotation of cell types is a critical step in single-cell RNA-sequencing (scRNA-seq) analysis. While annotation transfer from a reference dataset offers a convenient and automated approach, it can also introduce biases and errors if not performed carefully.
