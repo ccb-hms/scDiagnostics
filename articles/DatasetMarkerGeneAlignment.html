@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scDiagnostics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
       </span>
     </div>
 
@@ -53,19 +53,10 @@
       <a href="../articles/VisualizationTools.html">Visualization of Cell Type Annotations</a>
     </li>
     <li>
-      <a href="../articles/QCandAnnotationScores.html">Visualization of QC and Annotation Scores</a>
-    </li>
-    <li>
       <a href="../articles/DatasetMarkerGeneAlignment.html">Evaluation of Dataset and Marker Gene Alignment</a>
     </li>
     <li>
-      <a href="../articles/StatisticalMeasures.html">Statistical Measures to Assess Dataset Alignment</a>
-    </li>
-    <li>
-      <a href="../articles/AnnotationAnomalies.html">Detection of Annotation Anomalies</a>
-    </li>
-    <li>
-      <a href="../articles/CellDistancesDiagnostics.html">Calculation of Distances Between Specific Cells and Cell Populations</a>
+      <a href="../articles/AnnotationAnomalies.html">Detection and Analysis of Annotation Anomalies</a>
     </li>
   </ul>
 </li>
@@ -167,11 +158,45 @@ comparative studies.</p></li>
 distribution of distances between pairs of samples, this function
 generates density plots. It helps in understanding the variation and
 relationships between samples in high-dimensional spaces.</p></li>
-<li><p><code><a href="../reference/plotWassersteinDistance.html">plotWassersteinDistance()</a></code>: This function visualizes
+<li><p><code>plotWassersteinDistance()</code>: This function visualizes
 the Wasserstein distance, a metric for comparing distributions, across
 datasets. It provides an intuitive view of how distributions differ
 between datasets, aiding in the evaluation of alignment and
 discrepancies.</p></li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="statistical-measures-to-assess-dataset-alignment">Statistical Measures to Assess Dataset Alignment<a class="anchor" aria-label="anchor" href="#statistical-measures-to-assess-dataset-alignment"></a>
+</h3>
+<ul>
+<li><p><code><a href="../reference/calculateCramerPValue.html">calculateCramerPValue()</a></code>: This function computes the
+Cramér’s V statistic, which measures the strength of association between
+categorical variables. Cramér’s V is particularly useful for quantifying
+the association strength in contingency tables, providing insight into
+how strongly different cell types or conditions are related.</p></li>
+<li><p><code><a href="../reference/calculateHotellingPValue.html">calculateHotellingPValue()</a></code>: This function performs
+Hotelling’s T-squared test, a multivariate statistical test used to
+assess the differences between two groups of observations. It is useful
+for comparing the mean vectors of multiple variables and is commonly
+employed in single-cell data to evaluate group differences in principal
+component space.</p></li>
+<li><p><code><a href="../reference/calculateNearestNeighborProbabilities.html">calculateNearestNeighborProbabilities()</a></code>: This
+function calculates the probability of nearest neighbor assignments in a
+high-dimensional space. It is used to evaluate the likelihood of a cell
+belonging to a specific cluster based on its proximity to neighboring
+cells. This function helps in assessing clustering quality and the
+robustness of cell type assignments.</p></li>
+<li><p><code><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code>: This function
+computes the average pairwise correlation between variables or features
+across cells. It provides an overview of the relationships between
+different markers or genes, helping to identify correlated features and
+understand their interactions within the dataset.</p></li>
+<li><p><code><a href="../reference/regressPC.html">regressPC()</a></code>: This function performs linear
+regression of a covariate of interest onto one or more principal
+components derived from single-cell data. This analysis helps quantify
+the variance explained by the covariate and is useful for tasks such as
+assessing batch effects, clustering homogeneity, and alignment of query
+and reference datasets.</p></li>
 </ul>
 </div>
 <div class="section level3">
@@ -522,101 +547,289 @@ datasets.</p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="plotwassersteindistance">
-<code>plotWassersteinDistance()</code><a class="anchor" aria-label="anchor" href="#plotwassersteindistance"></a>
+<h3 id="calculatewassersteindistance">
+<code>calculateWassersteinDistance()</code><a class="anchor" aria-label="anchor" href="#calculatewassersteindistance"></a>
 </h3>
-<p>The <code><a href="../reference/plotWassersteinDistance.html">plotWassersteinDistance()</a></code> function creates a density
-plot to compare the Wasserstein distances between a reference dataset
-and a query dataset under the null hypothesis. The null hypothesis
-assumes that both datasets are drawn from the same distribution. This
-function is useful for evaluating how different the query data is from
-the reference data based on their Wasserstein distances.</p>
-<div class="section level4">
-<h4 id="how-the-function-operates">How the Function Operates<a class="anchor" aria-label="anchor" href="#how-the-function-operates"></a>
-</h4>
-<ol style="list-style-type: decimal">
-<li>
-<strong>Projecting Data into PCA Space</strong>:</li>
-</ol>
-<ul>
-<li>The query data is projected into the PCA space defined by the
-reference data. This step aligns the datasets by reducing their
-dimensions using principal components.</li>
-</ul>
-<ol start="2" style="list-style-type: decimal">
-<li>
-<strong>Calculating the Null Distribution</strong>:</li>
-</ol>
-<ul>
-<li>The function generates a null distribution of Wasserstein distances
-by repeatedly sampling subsets from the reference data. This represents
-the distribution of distances you would expect if both datasets were
-from the same source.</li>
-</ul>
-<ol start="3" style="list-style-type: decimal">
-<li>
-<strong>Computing Reference-Query Distance</strong>:</li>
-</ol>
-<ul>
-<li>The Wasserstein distance between the projected reference and query
-data is computed. This distance quantifies how different the query
-dataset is from the reference dataset.</li>
-</ul>
-<ol start="4" style="list-style-type: decimal">
-<li>
-<strong>Creating the Density Plot</strong>:</li>
-</ol>
-<ul>
-<li>The function generates a density plot of the null distribution of
-Wasserstein distances.</li>
-<li>Vertical lines are added to indicate:
-<ul>
-<li>The <strong>significance threshold</strong>: Distances greater than
-this threshold suggest a significant difference between the
-datasets.</li>
-<li>The <strong>reference-query distance</strong>: The actual distance
-between the reference and query datasets.</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section level4">
-<h4 id="interpretation-1">Interpretation<a class="anchor" aria-label="anchor" href="#interpretation-1"></a>
-</h4>
-<ul>
-<li>
-<strong>Density Plot</strong>: This plot shows the distribution of
-Wasserstein distances under the assumption that the datasets are
-similar.</li>
-<li>
-<strong>Significance Threshold Line</strong>: If the reference-query
-distance exceeds this line, it indicates a significant difference
-between the datasets.</li>
-<li>
-<strong>Reference-Query Distance Line</strong>: This line shows the
-observed distance between the reference and query datasets. If this line
-is to the right of the significance threshold, the difference is
-statistically significant.</li>
-</ul>
-</div>
+<p>the <code><a href="../reference/calculateWassersteinDistance.html">calculateWassersteinDistance()</a></code> function uses the
+concept of Wasserstein distances, a measure rooted in optimal transport
+theory, to quantitatively compare these datasets. By projecting both
+datasets into a common PCA space, the function enables a meaningful
+comparison even when they originate from different experimental
+conditions.</p>
+<p>Before diving into a code example, it’s important to understand the
+output of this function. The result is a list containing three key
+components: the null distribution of Wasserstein distances computed from
+the reference dataset alone, the mean Wasserstein distance between the
+query and reference datasets, and a vector of the unique cell types
+present in the reference dataset. This comparison provides insights into
+how similar or different the query dataset is relative to the reference
+dataset.</p>
+<p>What the function reveals is particularly valuable: if the mean
+Wasserstein distance between the query and reference is significantly
+different from the null distribution, it indicates a notable variation
+between the datasets, reflecting differences in cell-type compositions,
+technical artifacts, or biological questions of interest.</p>
 <div class="section level4">
 <h4 id="code-example">Code Example<a class="anchor" aria-label="anchor" href="#code-example"></a>
 </h4>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate the Wasserstein distance density plot</span></span>
-<span><span class="fu"><a href="../reference/plotWassersteinDistance.html">plotWassersteinDistance</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_cd4</span>,</span>
-<span>                        reference_data <span class="op">=</span> <span class="va">ref_data_cd4</span>, </span>
-<span>                        query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
-<span>                        ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
-<span>                        pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
-<span>                        alpha <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">wasserstein_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateWassersteinDistance.html">calculateWassersteinDistance</a></span><span class="op">(</span></span>
+<span>    query_data <span class="op">=</span> <span class="va">query_data_cd4</span>,</span>
+<span>    reference_data <span class="op">=</span> <span class="va">ref_data_cd4</span>, </span>
+<span>    query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
+<span>    ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
+<span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wasserstein_data</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/plotWassersteinDistance.png"></p>
-<p>This example demonstrates how to use the
-<code><a href="../reference/plotWassersteinDistance.html">plotWassersteinDistance()</a></code> function to compare Wasserstein
-distances between CD4 cells in the reference and query datasets. The
-resulting plot helps determine whether the difference between the
-datasets is statistically significant.</p>
+<p>The plotting function generates a density plot that provides a clear
+graphical representation of the Wasserstein distances. On the plot,
+you’ll see the distribution of Wasserstein distances calculated within
+the reference dataset, referred to as the null distribution.</p>
+<p>Within this density plot, two significant vertical lines are
+overlayed: one representing the significance threshold and another
+indicating the mean Wasserstein distance between the reference and query
+datasets. The significance threshold is determined based on your
+specified alpha level, which is the probability threshold for
+considering differences between the datasets as statistically
+significant. This threshold line helps to establish a boundary; if the
+observed reference-query distance exceeds this threshold, it suggests
+that the differences between your query and reference datasets are
+unlikely to occur by random chance.</p>
+<p>The line for the reference-query distance helps identify where this
+calculated distance lies in comparison to the null distribution. If this
+dashed line is noticeably separate from the bulk of the null
+distribution and beyond the significance threshold, it implies a
+significant deviation between the query dataset and the reference
+dataset. In practical terms, this could indicate distinct biological
+differences, batch effects, or other analytical artefacts that
+differentiate the datasets.</p>
 </div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="statistical-measures-to-assess-dataset-alignment-1">Statistical Measures to Assess Dataset Alignment<a class="anchor" aria-label="anchor" href="#statistical-measures-to-assess-dataset-alignment-1"></a>
+</h2>
+<div class="section level3">
+<h3 id="calculatecramerpvalue">
+<code>calculateCramerPValue()</code><a class="anchor" aria-label="anchor" href="#calculatecramerpvalue"></a>
+</h3>
+<p>The calculateCramerPValue function is designed to perform the Cramer
+test for comparing multivariate empirical cumulative distribution
+functions (ECDFs) between two samples in single-cell data. This test is
+particularly useful for assessing whether the distributions of principal
+components (PCs) differ significantly between the reference and query
+datasets for specific cell types.</p>
+<p>To use this function, you first need to provide two key inputs:
+<code>reference_data</code> and <code>query_data</code>, both of which
+should be <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+objects containing numeric expression matrices. If
+<code>query_data</code> is not supplied, the function will only use the
+<code>reference_data.</code> You should also specify the column names
+for cell type annotations in both datasets via
+<code>ref_cell_type_col</code> and <code>query_cell_type_col.</code> If
+<code>cell_types</code> is not provided, the function will automatically
+include all unique cell types found in the datasets. The
+<code>pc_subset</code> parameter allows you to define which principal
+components to include in the analysis, with the default being the first
+five PCs.</p>
+<p>The function performs the following steps: it first projects the data
+into PCA space, subsets the data according to the specified cell types
+and principal components, and then applies the Cramer test to compare
+the ECDFs between the reference and query datasets. The result is a
+named vector of p-values from the Cramer test for each cell type, which
+indicates whether there is a significant difference in the distributions
+of PCs between the two datasets.</p>
+<p>Here’s an example of how to use the
+<code><a href="../reference/calculateCramerPValue.html">calculateCramerPValue()</a></code> function:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Perform Cramer test for the specified cell types and principal components</span></span>
+<span><span class="va">cramer_test</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateCramerPValue.html">calculateCramerPValue</a></span><span class="op">(</span></span>
+<span>    reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
+<span>    query_data <span class="op">=</span> <span class="va">query_data</span>,</span>
+<span>    ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
+<span>    query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span>
+<span>    cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span>
+<span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the Cramer test p-values</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cramer_test</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          CD4          CD8 B_and_plasma      Myeloid </span></span>
+<span><span class="co">#&gt;    0.0000000    0.0000000    0.1378621    0.4575425</span></span></code></pre></div>
+<p>In this example, the function compares the distributions of the first
+five principal components between the reference and query datasets for
+cell types such as “CD4”, “CD8”, “B_and_plasma”, and “Myeloid”. The
+output is a vector of p-values indicating whether the differences in PC
+distributions are statistically significant.</p>
+</div>
+<div class="section level3">
+<h3 id="calculatehotellingpvalue">
+<code>calculateHotellingPValue()</code><a class="anchor" aria-label="anchor" href="#calculatehotellingpvalue"></a>
+</h3>
+<p>The <code><a href="../reference/calculateHotellingPValue.html">calculateHotellingPValue()</a></code> function is designed to
+compute Hotelling’s T-squared test statistic and corresponding p-values
+for comparing multivariate means between reference and query datasets in
+the context of single-cell RNA-seq data. This statistical test is
+particularly useful for assessing whether the mean vectors of principal
+components (PCs) differ significantly between the two datasets, which
+can be indicative of differences in the cell type distributions.</p>
+<p>To use this function, you need to provide two <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+objects: <code>query_data</code> and <code>reference_data</code>, each
+containing numeric expression matrices. You also need to specify the
+column names for cell type annotations in both datasets with
+<code>query_cell_type_col</code> and <code>ref_cell_type_col.</code> The
+<code>cell_types</code> parameter allows you to choose which cell types
+to include in the analysis, and if not specified, the function will
+automatically include all cell types present in the datasets. The
+<code>pc_subset</code> parameter determines which principal components
+to consider, with the default being the first five PCs. Additionally,
+<code>n_permutation</code> specifies the number of permutations for
+calculating p-values, with a default of 500.</p>
+<p>The function works by first projecting the data into PCA space and
+then performing Hotelling’s T-squared test for each specified cell type
+to compare the means between the reference and query datasets. It uses
+permutation testing to determine the p-values, indicating whether the
+observed differences in means are statistically significant. The result
+is a named numeric vector of p-values for each cell type.</p>
+<p>Here is an example of how to use the
+<code><a href="../reference/calculateHotellingPValue.html">calculateHotellingPValue()</a></code> function:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Calculate Hotelling's T-squared test p-values</span></span>
+<span><span class="va">p_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateHotellingPValue.html">calculateHotellingPValue</a></span><span class="op">(</span></span>
+<span>    query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
+<span>    reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
+<span>    query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span>
+<span>    ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span>
+<span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the p-values rounded to five decimal places</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">p_values</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          CD4          CD8 B_and_plasma      Myeloid </span></span>
+<span><span class="co">#&gt;         0.00         0.00         0.09         0.00</span></span></code></pre></div>
+<p>In this example, the function calculates p-values for Hotelling’s
+T-squared test, focusing on the first ten principal components to assess
+whether the multivariate means differ significantly between the
+reference and query datasets for each cell type. The p-values indicate
+the likelihood of observing the differences by chance and help identify
+significant disparities in cell type distributions.</p>
+</div>
+<div class="section level3">
+<h3 id="calculateaveragepairwisecorrelation">
+<code>calculateAveragePairwiseCorrelation()</code><a class="anchor" aria-label="anchor" href="#calculateaveragepairwisecorrelation"></a>
+</h3>
+<p>The <code><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code> function is
+designed to compute the average pairwise correlations between specified
+cell types in single-cell gene expression data. This function operates
+on <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+objects and is ideal for single-cell analysis workflows. It calculates
+pairwise correlations between query and reference cells using a
+specified correlation method, and then averages these correlations for
+each cell type pair. This helps in assessing the similarity between
+cells in the reference and query datasets and provides insights into the
+reliability of cell type annotations.</p>
+<p>To use the <code><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code>
+function, you need to supply it with two <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+objects: one for the query cells and one for the reference cells. The
+function also requires column names specifying cell type annotations in
+both datasets, and optionally a vector of cell types to include in the
+analysis. Additionally, you can specify a subset of principal components
+to use, or use the raw data directly if <code>pc_subset</code> is set to
+<code>NULL</code>. The correlation method can be either “spearman” or
+“pearson”.</p>
+<p>Here’s an example of how to use this function:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Compute pairwise correlations between specified cell types</span></span>
+<span><span class="va">cor_matrix_avg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation</a></span><span class="op">(</span></span>
+<span>  query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
+<span>  reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
+<span>  query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span>
+<span>  ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
+<span>  cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span><span class="op">)</span>, </span>
+<span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
+<span>  correlation_method <span class="op">=</span> <span class="st">"spearman"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Visualize the average pairwise correlation matrix</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cor_matrix_avg</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/calculateAveragePairwiseCorrelation.png"></p>
+<p>In this example, <code><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code>
+computes the average pairwise correlations for the cell types “CD4”,
+“CD8”, and “B_and_plasma”. This function is particularly useful for
+understanding the relationships between different cell types in your
+single-cell datasets and evaluating how well cell types in the query
+data correspond to those in the reference data.</p>
+</div>
+<div class="section level3">
+<h3 id="regresspc">
+<code>regressPC()</code><a class="anchor" aria-label="anchor" href="#regresspc"></a>
+</h3>
+<p>The <code><a href="../reference/regressPC.html">regressPC()</a></code> function performs linear regression of a
+covariate of interest onto one or more principal components using data
+from a <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+object. This method helps quantify the variance explained by a
+covariate, which can be useful in applications such as quantifying batch
+effects, assessing clustering homogeneity, and evaluating alignment
+between query and reference datasets in cell type annotation
+settings.</p>
+<p>The function calculates the R-squared value from the linear
+regression of the covariate onto each principal component. The variance
+contribution of the covariate effect per principal component is computed
+as the product of the variance explained by the principal component and
+the R-squared value. The total variance explained by the covariate is
+obtained by summing these contributions across all principal
+components.</p>
+<p>Here is how you can use the <code><a href="../reference/regressPC.html">regressPC()</a></code> function:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Perform regression analysis using only reference data</span></span>
+<span><span class="va">regress_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/regressPC.html">regressPC</a></span><span class="op">(</span></span>
+<span>    reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
+<span>    ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span>
+<span>    cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span>
+<span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot results showing R-squared values</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC1.png"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plot results showing p-values</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"p-value"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC2.png"></p>
+<p>In this example, <code><a href="../reference/regressPC.html">regressPC()</a></code> is used to perform
+regression analysis on principal components 1 to 15 from the reference
+dataset. The results are then visualized using plots showing the
+R-squared values and p-values.</p>
+<p>If you also have a query dataset and want to compare it with the
+reference dataset, you can include it in the analysis:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Perform regression analysis using both reference and query data</span></span>
+<span><span class="va">regress_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/regressPC.html">regressPC</a></span><span class="op">(</span></span>
+<span>    reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
+<span>    query_data <span class="op">=</span> <span class="va">query_data</span>,</span>
+<span>    ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span>
+<span>    query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span>
+<span>    cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span>
+<span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot results showing R-squared values</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC3.png"></p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plot results showing p-values</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"p-value"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC4.png"></p>
+<p>In this case, the function projects the query data onto the principal
+components of the reference data and performs regression analysis. The
+results are visualized in the same way, providing insights into how well
+the principal components from the query data align with those from the
+reference data.</p>
+<p>This function is useful for understanding the impact of different
+covariates on principal components and for comparing how cell types in
+different datasets are represented in the principal component space.</p>
 </div>
 </div>
 <div class="section level2">
@@ -632,7 +845,7 @@ reference dataset and a query dataset. The overlap coefficient is a
 measure of similarity between the two sets, reflecting how much the HVGs
 in one dataset overlap with those in the other.</p>
 <div class="section level4">
-<h4 id="how-the-function-operates-1">How the Function Operates<a class="anchor" aria-label="anchor" href="#how-the-function-operates-1"></a>
+<h4 id="how-the-function-operates">How the Function Operates<a class="anchor" aria-label="anchor" href="#how-the-function-operates"></a>
 </h4>
 <p>The function begins by ensuring that the input vectors
 <code>reference_genes</code> and <code>query_genes</code> are character
@@ -650,7 +863,7 @@ complete overlap.</p>
 places before returning it as the output.</p>
 </div>
 <div class="section level4">
-<h4 id="interpretation-2">Interpretation<a class="anchor" aria-label="anchor" href="#interpretation-2"></a>
+<h4 id="interpretation-1">Interpretation<a class="anchor" aria-label="anchor" href="#interpretation-1"></a>
 </h4>
 <p>The overlap coefficient quantifies the extent to which the HVGs in
 the reference dataset align with those in the query dataset. A higher
@@ -664,7 +877,7 @@ are less comparable.</p>
 <div class="section level4">
 <h4 id="code-example-1">Code Example<a class="anchor" aria-label="anchor" href="#code-example-1"></a>
 </h4>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load library to get top HVGs</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scran</span><span class="op">)</span></span>
 <span></span>
@@ -715,7 +928,7 @@ expression data and cell type annotations, stored in columns named
 You want to calculate the importance of genes using 500 trees and
 compare the top 50 genes between the datasets.</p>
 <p>Here’s how you would use the function:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># RF function to compare which genes are best at differentiating cell types</span></span>
 <span><span class="va">rf_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateVarImpOverlap.html">calculateVarImpOverlap</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
 <span>                                    query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -727,12 +940,12 @@ compare the top 50 genes between the datasets.</p>
 <span><span class="co"># Comparison table</span></span>
 <span><span class="va">rf_output</span><span class="op">$</span><span class="va">var_imp_comparison</span></span>
 <span><span class="co">#&gt;              CD4-CD8     CD4-B_and_plasma          CD4-Myeloid </span></span>
-<span><span class="co">#&gt;                 0.84                 0.82                 0.86 </span></span>
+<span><span class="co">#&gt;                 0.84                 0.84                 0.88 </span></span>
 <span><span class="co">#&gt;     CD8-B_and_plasma          CD8-Myeloid B_and_plasma-Myeloid </span></span>
 <span><span class="co">#&gt;                 0.84                 0.80                 0.76</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="interpretation-3">Interpretation:<a class="anchor" aria-label="anchor" href="#interpretation-3"></a>
+<h4 id="interpretation-2">Interpretation:<a class="anchor" aria-label="anchor" href="#interpretation-2"></a>
 </h4>
 <p>After running the function, you’ll receive the importance scores of
 genes for each pair of cell types in your reference dataset. If you
@@ -745,41 +958,9 @@ different datasets.</p>
 genes are crucial in both datasets for differentiating the cell types,
 which could be important for validating your findings or identifying
 robust markers.</p>
-</div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
-</h2>
-<p>In this vignette, we have demonstrated a comprehensive suite of
-functions designed to enhance the analysis and comparison of single-cell
-genomics datasets. <code><a href="../reference/compareCCA.html">compareCCA()</a></code> and
-<code><a href="../reference/comparePCA.html">comparePCA()</a></code> facilitate the evaluation of dataset alignment
-through canonical correlation analysis and principal component analysis,
-respectively. These tools help in assessing the correspondence between
-datasets and identifying potential batch effects or differences in data
-structure. <code><a href="../reference/comparePCASubspace.html">comparePCASubspace()</a></code> further refines this
-analysis by focusing on specific subspaces within the PCA space,
-providing a more granular view of dataset similarities.</p>
-<p><code><a href="../reference/plotPairwiseDistancesDensity.html">plotPairwiseDistancesDensity()</a></code> and
-<code><a href="../reference/plotWassersteinDistance.html">plotWassersteinDistance()</a></code> offer advanced visualization
-techniques for comparing distances and distributions across datasets.
-These functions are crucial for understanding the variability and
-overlap between datasets in a more intuitive and interpretable
-manner.</p>
-<p>On the other hand, <code><a href="../reference/calculateHVGOverlap.html">calculateHVGOverlap()</a></code> and
-<code><a href="../reference/calculateVarImpOverlap.html">calculateVarImpOverlap()</a></code> provide insights into gene
-variability and importance, respectively, by comparing highly variable
-genes and variable importance scores across reference and query
-datasets.</p>
-<p>Together, these functions form a robust toolkit for single-cell
-genomics analysis, enabling researchers to conduct detailed comparisons,
-visualize data differences, and validate the relevance of their findings
-across different datasets. Incorporating these tools into your research
-workflow will help ensure more accurate and insightful interpretations
-of single-cell data, ultimately advancing the understanding of cellular
-processes and improving experimental outcomes.</p>
 <hr>
+</div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="r-session-info">R Session Info<a class="anchor" aria-label="anchor" href="#r-session-info"></a>
@@ -809,58 +990,62 @@ other attached packages:
  [1] scater_1.32.1               ggplot2_3.5.1              
  [3] scran_1.32.0                scuttle_1.14.0             
  [5] SingleCellExperiment_1.26.0 SummarizedExperiment_1.34.0
- [7] Biobase_2.64.0              GenomicRanges_1.56.1       
+ [7] Biobase_2.64.0              GenomicRanges_1.56.2       
  [9] GenomeInfoDb_1.40.1         IRanges_2.38.1             
 [11] S4Vectors_0.42.1            BiocGenerics_0.50.0        
 [13] MatrixGenerics_1.16.0       matrixStats_1.4.1          
-[15] scDiagnostics_1.0.0         BiocStyle_2.32.1           
+[15] scDiagnostics_1.0.1         BiocStyle_2.32.1           
 
 loaded via a namespace (and not attached):
- [1] gridExtra_2.3             rlang_1.1.4              
- [3] magrittr_2.0.3            compiler_4.4.1           
- [5] DelayedMatrixStats_1.26.0 systemfonts_1.1.0        
- [7] vctrs_0.6.5               pkgconfig_2.0.3          
- [9] crayon_1.5.3              fastmap_1.2.0            
-[11] XVector_0.44.0            labeling_0.4.3           
-[13] utf8_1.2.4                rmarkdown_2.28           
-[15] UCSC.utils_1.0.0          ggbeeswarm_0.7.2         
-[17] ragg_1.3.3                xfun_0.47                
-[19] bluster_1.14.0            zlibbioc_1.50.0          
-[21] cachem_1.1.0              beachmat_2.20.0          
-[23] jsonlite_1.8.9            DelayedArray_0.30.1      
-[25] BiocParallel_1.38.0       irlba_2.3.5.1            
-[27] parallel_4.4.1            cluster_2.1.6            
-[29] R6_2.5.1                  bslib_0.8.0              
-[31] ranger_0.16.0             limma_3.60.4             
-[33] jquerylib_0.1.4           Rcpp_1.0.13              
-[35] bookdown_0.40             knitr_1.48               
-[37] Matrix_1.7-0              igraph_2.0.3             
-[39] tidyselect_1.2.1          abind_1.4-8              
-[41] yaml_2.3.10               viridis_0.6.5            
-[43] codetools_0.2-20          lattice_0.22-6           
-[45] tibble_3.2.1              withr_3.0.1              
-[47] evaluate_1.0.0            desc_1.4.3               
-[49] pillar_1.9.0              BiocManager_1.30.25      
-[51] generics_0.1.3            sparseMatrixStats_1.16.0 
-[53] munsell_0.5.1             scales_1.3.0             
-[55] glue_1.7.0                metapod_1.12.0           
-[57] tools_4.4.1               data.table_1.16.0        
-[59] BiocNeighbors_1.22.0      ScaledMatrix_1.12.0      
-[61] locfit_1.5-9.10           fs_1.6.4                 
-[63] grid_4.4.1                edgeR_4.2.1              
-[65] colorspace_2.1-1          GenomeInfoDbData_1.2.12  
-[67] beeswarm_0.4.0            BiocSingular_1.20.0      
-[69] vipor_0.4.7               cli_3.6.3                
-[71] rsvd_1.0.5                textshaping_0.4.0        
-[73] fansi_1.0.6               S4Arrays_1.4.1           
-[75] viridisLite_0.4.2         dplyr_1.1.4              
-[77] gtable_0.3.5              sass_0.4.9               
-[79] digest_0.6.37             SparseArray_1.4.8        
-[81] ggrepel_0.9.6             dqrng_0.4.1              
-[83] farver_2.1.2              htmlwidgets_1.6.4        
-[85] htmltools_0.5.8.1         pkgdown_2.1.1            
-[87] lifecycle_1.0.4           httr_1.4.7               
-[89] transport_0.15-4          statmod_1.5.0            </code></pre>
+ [1] DBI_1.2.3                 gridExtra_2.3            
+ [3] cramer_0.9-4              rlang_1.1.4              
+ [5] magrittr_2.0.3            ggridges_0.5.6           
+ [7] compiler_4.4.1            DelayedMatrixStats_1.26.0
+ [9] systemfonts_1.1.0         vctrs_0.6.5              
+[11] pkgconfig_2.0.3           crayon_1.5.3             
+[13] fastmap_1.2.0             XVector_0.44.0           
+[15] labeling_0.4.3            utf8_1.2.4               
+[17] rmarkdown_2.28            UCSC.utils_1.0.0         
+[19] ggbeeswarm_0.7.2          ragg_1.3.3               
+[21] xfun_0.48                 bluster_1.14.0           
+[23] zlibbioc_1.50.0           cachem_1.1.0             
+[25] beachmat_2.20.0           jsonlite_1.8.9           
+[27] DelayedArray_0.30.1       BiocParallel_1.38.0      
+[29] irlba_2.3.5.1             parallel_4.4.1           
+[31] cluster_2.1.6             biglm_0.9-3              
+[33] R6_2.5.1                  bslib_0.8.0              
+[35] ranger_0.16.0             limma_3.60.6             
+[37] boot_1.3-30               jquerylib_0.1.4          
+[39] Rcpp_1.0.13               bookdown_0.41            
+[41] knitr_1.48                Matrix_1.7-0             
+[43] igraph_2.1.1              tidyselect_1.2.1         
+[45] abind_1.4-8               yaml_2.3.10              
+[47] viridis_0.6.5             codetools_0.2-20         
+[49] lattice_0.22-6            tibble_3.2.1             
+[51] withr_3.0.1               evaluate_1.0.1           
+[53] desc_1.4.3                pillar_1.9.0             
+[55] BiocManager_1.30.25       generics_0.1.3           
+[57] sparseMatrixStats_1.16.0  munsell_0.5.1            
+[59] scales_1.3.0              glue_1.8.0               
+[61] metapod_1.12.0            tools_4.4.1              
+[63] speedglm_0.3-5            data.table_1.16.2        
+[65] BiocNeighbors_1.22.0      ScaledMatrix_1.12.0      
+[67] locfit_1.5-9.10           fs_1.6.4                 
+[69] grid_4.4.1                edgeR_4.2.2              
+[71] colorspace_2.1-1          GenomeInfoDbData_1.2.12  
+[73] beeswarm_0.4.0            BiocSingular_1.20.0      
+[75] vipor_0.4.7               cli_3.6.3                
+[77] rsvd_1.0.5                textshaping_0.4.0        
+[79] fansi_1.0.6               S4Arrays_1.4.1           
+[81] viridisLite_0.4.2         dplyr_1.1.4              
+[83] gtable_0.3.5              sass_0.4.9               
+[85] digest_0.6.37             SparseArray_1.4.8        
+[87] ggrepel_0.9.6             dqrng_0.4.1              
+[89] htmlwidgets_1.6.4         farver_2.1.2             
+[91] htmltools_0.5.8.1         pkgdown_2.1.1            
+[93] lifecycle_1.0.4           httr_1.4.7               
+[95] transport_0.15-4          statmod_1.5.0            
+[97] MASS_7.3-60.2            </code></pre>
 </div>
   </div>
 

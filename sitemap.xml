@@ -1,10 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/404.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/articles/AnnotationAnomalies.html</loc></url>
-<url><loc>https://ccb-hms.github.io/scDiagnostics/articles/CellDistancesDiagnostics.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/articles/DatasetMarkerGeneAlignment.html</loc></url>
-<url><loc>https://ccb-hms.github.io/scDiagnostics/articles/QCandAnnotationScores.html</loc></url>
-<url><loc>https://ccb-hms.github.io/scDiagnostics/articles/StatisticalMeasures.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/articles/VisualizationTools.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/articles/index.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/articles/scDiagnostics.html</loc></url>
@@ -26,6 +23,7 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateNearestNeighborProbabilities.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateSIRSpace.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateVarImpOverlap.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateWassersteinDistance.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculate_entropy.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/compareCCA.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/comparePCA.html</loc></url>
@@ -39,6 +37,7 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/inverse_normal_trans.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/ledoitWolf.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/n_elements.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plot.calculateWassersteinDistanceObject.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotCellTypeMDS.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotCellTypePCA.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotGeneExpressionDimred.html</loc></url>
@@ -46,7 +45,6 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotMarkerExpression.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotPairwiseDistancesDensity.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotQCvsAnnotation.html</loc></url>
-<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotWassersteinDistance.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/projectPCA.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/projectSIR.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/qc_data.html</loc></url>
