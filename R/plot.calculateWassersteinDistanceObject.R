@@ -15,6 +15,8 @@
 #' @param alpha A numeric value specifying the significance level for thresholding. Default is 0.05.
 #' @param ... Additional arguments for future extensions.
 #'
+#' @internal
+#'
 #' @keywords visualization
 #'
 #' @return A ggplot2 object representing the ridge plots of Wasserstein distances with annotated p-value.
