@@ -1,6 +1,6 @@
 # `scDiagnostics`: diagnostic functions to assess the quality of cell type annotations in single-cell RNA-seq data
 
-[![BioC release version](https://www.bioconductor.org/shields/years-in-bioc/scDiagnostics.svg)](https://www.bioconductor.org/packages/release/bioc/html/scDiagnostics.html) [![GitHub stars](https://img.shields.io/github/stars/ccb-hms/scDiagnostics)](https://github.com/ccb-hms/scDiagnostics/stargazers) [![GitHub issues](https://img.shields.io/github/issues/ccb-hms/scDiagnostics)](https://github.com/ccb-hms/scDiagnostics/issues) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![BioC release version](https://www.bioconductor.org/shields/years-in-bioc/scDiagnostics.svg)](https://www.bioconductor.org/packages/release/bioc/html/scDiagnostics.html) [![GitHub issues](https://img.shields.io/github/issues/ccb-hms/scDiagnostics)](https://github.com/ccb-hms/scDiagnostics/issues) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 # Overview
 
