@@ -582,35 +582,6 @@ plot(distance_data, ref_cell_type = "CD4", cell_names = cd4_top6_anomalies)
 
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/calculateCellDistances.png)
 
-# Conclusion
-
-In this vignette, we have introduced the core functionalities of the
-`scDiagnostics` package, providing a detailed guide on its use for
-scRNA-seq data analysis. We started by exploring the basic capabilities,
-including the visualization of query versus reference datasets through
-dimensionality reduction techniques. This approach allows for both the
-evaluation of multiple cell types simultaneously and the comparison of
-distributions for individual cell types.
-
-We then delved into the visualization of annotation scores, which is
-essential for assessing the accuracy of cell type assignments. Following
-this, we discussed statistical methods for evaluating annotation
-precision. This includes assessing correlation between cell types and
-performing statistical tests to compare two datasets, offering a
-rigorous approach to validate cell type classifications.
-
-The vignette also covered techniques for detecting annotation anomalies,
-crucial for identifying and addressing potential issues that could
-impact data validity. Additionally, we explored cell distance
-diagnostics, focusing on analyzing distances between specific cells and
-various cell populations or distributions to better understand internal
-relationships and variations.
-
-Overall, this guide equips you with practical tools and methods to
-enhance the reliability and accuracy of your scRNA-seq data analysis
-using `scDiagnostics`, paving the way for more informed and meaningful
-biological interpretations.
-
 ------------------------------------------------------------------------
 
 # R Session Info

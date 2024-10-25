@@ -68,4 +68,4 @@ In *Journal of Machine Learning Research* (Vol. 20, No. 117, pp. 1-61).
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 }
-\keyword{visualization}
+\keyword{internal}
