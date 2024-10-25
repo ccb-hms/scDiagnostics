@@ -1,6 +1,6 @@
 # `scDiagnostics`: diagnostic functions to assess the quality of cell type annotations in single-cell RNA-seq data
 
-[![Bioconductor](https://img.shields.io/badge/Bioconductor-Release-brightgreen)](https://bioconductor.org/packages/release/bioc/html/scDiagnostics.html) [![Platform](https://img.shields.io/badge/Platform-All-blue)](https://bioconductor.org/packages/release/bioc/html/scDiagnostics.html) [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)](https://bioconductor.org/checkResults/release/bioc-LATEST/scDiagnostics/) [![Dependencies](https://img.shields.io/badge/Dependencies-Up%20to%20Date-brightgreen)](https://bioconductor.org/packages/release/bioc/html/scDiagnostics.html) [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![Downloads](https://img.shields.io/badge/Downloads-100%2Fmonth-brightgreen)](https://bioconductor.org/packages/stats/bioc/scDiagnostics/)
+[![BioC release version](https://www.bioconductor.org/shields/years-in-bioc/scDiagnostics.svg)](https://www.bioconductor.org/packages/release/bioc/html/scDiagnostics.html) [![GitHub stars](https://img.shields.io/github/stars/ccb-hms/scDiagnostics)](https://github.com/ccb-hms/scDiagnostics/stargazers) [![GitHub issues](https://img.shields.io/github/issues/ccb-hms/scDiagnostics)](https://github.com/ccb-hms/scDiagnostics/issues) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 # Overview
 
