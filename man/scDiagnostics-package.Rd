@@ -49,7 +49,7 @@ Functions for visualizing differences between query and reference datasets for a
   \item \code{\link{comparePCA}}: Compares PCA results, with a plot method for visualization.
   \item \code{\link{comparePCASubspace}}: Compares PCA subspace, with a plot method for visualization.
   \item \code{\link{plotPairwiseDistancesDensity}}: Plots the density of pairwise distances.
-  \item \code{\link{plotWassersteinDistance}}: Plots Wasserstein distance for different cell types.
+  \item \code{\link{calculateWassersteinDistance}}: Wasserstein distance for different cell types.
 }
 }
 

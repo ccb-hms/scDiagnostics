@@ -5,7 +5,7 @@
 #'
 #' @details
 #' The package includes the following key functionalities, organized by their specific purposes:
-#' 
+#'
 #' @section Visualization of Cell Type Annotations:
 #' Functions for visualizing differences between query and reference datasets across multiple cell types.
 #' \itemize{
@@ -21,7 +21,7 @@
 #'   \item \code{\link{plotGeneExpressionDimred}}: Plots gene expression in a dimensionality reduction space.
 #'   \item \code{\link{plotMarkerExpression}}: Plots marker expression levels.
 #' }
-#' 
+#'
 #' @section Visualization of QC and Annotation Scores:
 #' Functions for visualizing quality control (QC) metrics or other characteristics of the data.
 #' \itemize{
@@ -37,7 +37,7 @@
 #'   \item \code{\link{comparePCA}}: Compares PCA results, with a plot method for visualization.
 #'   \item \code{\link{comparePCASubspace}}: Compares PCA subspace, with a plot method for visualization.
 #'   \item \code{\link{plotPairwiseDistancesDensity}}: Plots the density of pairwise distances.
-#'   \item \code{\link{plotWassersteinDistance}}: Plots Wasserstein distance for different cell types.
+#'   \item \code{\link{calculateWassersteinDistance}}: Wasserstein distance for different cell types.
 #' }
 #'
 #' @section Evaluation of Marker Gene Alignment:
@@ -56,7 +56,7 @@
 #'   \item \code{\link{calculateAveragePairwiseCorrelation}}: Calculates average pairwise correlation, with a plot method for visualization.
 #'   \item \code{\link{regressPC}}: Performs regression on principal components, with a plot method for visualization.
 #' }
-#' 
+#'
 #' @section Anomaly Detection (Global and Cell Type-Specific):
 #' Functions for detecting anomalies at both the global and cell type-specific levels.
 #' \itemize{

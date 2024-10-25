@@ -21,16 +21,10 @@ navbar:
           href: articles/scDiagnostics.html
         - text: Visualization of Cell Type Annotations
           href: articles/VisualizationTools.html
-        - text: Visualization of QC and Annotation Scores
-          href: articles/QCandAnnotationScores.html
         - text: Evaluation of Dataset and Marker Gene Alignment
           href: articles/DatasetMarkerGeneAlignment.html
-        - text: Statistical Measures to Assess Dataset Alignment
-          href: articles/StatisticalMeasures.html
-        - text: Detection of Annotation Anomalies
+        - text: Detection and Analysis of Annotation Anomalies
           href: articles/AnnotationAnomalies.html
-        - text: Calculation of Distances Between Specific Cells and Cell Populations
-          href: articles/CellDistancesDiagnostics.html
     - text: Reference
       href: reference/index.html
     - text: News
@@ -59,7 +53,7 @@ reference:
       - comparePCA
       - comparePCASubspace
       - plotPairwiseDistancesDensity
-      - plotWassersteinDistance
+      - calculateWassersteinDistance
   - title: Evaluation of Marker Gene Alignment
     contents:
       - calculateHVGOverlap

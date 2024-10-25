@@ -1,5 +1,5 @@
 ---
-title: "Detection of Annotation Anomalies"
+title: "Detection and Analysis of Annotation Anomalies"
 author:
     - name: Anthony Christidis
       affiliation:
@@ -25,7 +25,7 @@ output:
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{6. Detection of Annotation Anomalies}
+  %\VignetteIndexEntry{4. Detection and Analysis of Annotation Anomalies}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -56,7 +56,7 @@ In single-cell analysis, detecting anomalies is crucial for identifying potentia
 
 This vignette illustrates how to effectively use the `detectAnomaly()` function in various scenarios. We explore both cell-type-specific and global anomaly detection, demonstrate the utility of integrating query data with reference data, and offer guidance on interpreting the results. Additionally, we show how to extend this analysis by combining anomaly detection with PCA loadings using the `calculateCellSimilarityPCA()` function, providing a comprehensive toolkit for investigating the structure and quality of single-cell data.
 
-Whether you're looking to enhance the accuracy of your cell type annotations or identify subtle deviations in your data, the tools provided by `scDiagnostics` will empower you to conduct thorough and nuanced assessments of your single-cell datasets.
+This vignette also demonstrates the use of two functions, `calculateCellDistances()` and `calculateCellDistancesSimilarity()`, to analyze the distances between cells in query and reference datasets and to measure the similarity of density distributions. These functions are useful for investigating how cells in different datasets relate to each other, particularly in the context of identifying anomalies and understanding distribution overlaps.
 
 # Preliminaries
 
@@ -199,9 +199,90 @@ round(cosine_similarities[, paste0("PC", 15:25)], 2)
 
 Note that there is also a plot method for the object return for `calculateCellSimilarityPCA()`. See reference manual for details.
 
-# Conclusion 
+# Analyzing Cell Distances 
 
-This vignette section provides a comprehensive overview of how to use the `detectAnomaly()` function for both reference and query datasets, with specific and global anomaly detection examples, along with how to visualize the results using the plot method. With `calculateCellSimilarityPCA()`, we can assess whether cells have a large effect on the loadings of PC vectors, affecting the downstream analysis.
+## `calculateCellDistances()`
+
+The `calculateCellDistances()` function calculates Euclidean distances between cells within the reference dataset and between query cells and reference cells. This helps in understanding how closely related cells are within and across datasets based on their principal component (PC) scores.
+
+
+## Function Usage
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Compute cell distances
+distance_data <- calculateCellDistances(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:10
+)
+```
+
+In the code above:
+
+- `query_data` and reference_data: These are `r BiocStyle::Biocpkg("SingleCellExperiment")` objects containing the respective datasets for analysis.
+- `query_cell_type_col` and ref_cell_type_col: These arguments specify the columns in the `colData` of each dataset that contain cell type annotations.
+- `pc_subset`: Specifies which principal components (1 to 10) are used to compute distances. PCA is applied for dimensionality reduction before calculating distances.
+
+## Output
+The output `distance_data` is a list where each entry contains:
+
+- `ref_distances`: Pairwise distances within the reference dataset for each cell type.
+- `query_to_ref_distances`: Distances from each query cell to all reference cells for each cell type.
+
+
+## Example Workflow
+
+In the example workflow, the first step involves plotting the distributions of cell distances for selected query cells against various reference cell populations. This involves visualizing both the distances between the query cells and the reference cells as well as the distances among the reference cells themselves. For each cell type, such as CD4 and CD8, these plots illustrate how the selected query cells compare in terms of their proximity to different reference populations.
+
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Identify top 6 anomalies for CD4 cells
+cd4_anomalies <- detectAnomaly(
+  reference_data = reference_data,
+  query_data = query_data,
+  query_cell_type_col = "SingleR_annotation",
+  ref_cell_type_col = "expert_annotation",
+  pc_subset = 1:10,
+  n_tree = 500,
+  anomaly_treshold = 0.5)
+
+# Top 6 CD4 anomalies
+cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE)[1:6])
+
+# Plot distances for CD4 and CD8 cells
+plot(distance_data, ref_cell_type = "CD4", cell_names = cd4_top6_anomalies)
+```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/AnnotationAnomalies/calculateCellDistances1.png)
+
+For CD4 cells, you might observe that the query cells are located much further away from the reference cells, indicating a significant divergence in their density distributions. This suggests that the CD4 query cells are less similar to the CD4 reference cells, showing greater variation or potential anomalies.
+
+
+In contrast, for CD8 cells, the plots might reveal more overlap between the density distributions of query cells and reference cells. This overlap indicates that the CD8 query cells are more similar to the CD8 reference cells, suggesting better alignment or less divergence between their densities. Such insights are crucial for understanding how closely the query cells match with reference populations and can help in identifying cell types with notable differences or similarities.
+
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Plot distances for CD8 cells
+plot(distance_data, ref_cell_type = "CD8", cell_names = cd4_top6_anomalies)
+```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/AnnotationAnomalies/calculateCellDistances2.png)
+
+## `calculateCellDistancesSimilarity()`
+
+The `calculateCellDistancesSimilarity()` function measures how similar the density distributions of query cells are to those in the reference dataset. It computes **Bhattacharyya coefficients** and **Hellinger distances**, which quantify the overlap between the distributions.
+
+The Bhattacharyya coefficient and Hellinger distance are two measures used to quantify the similarity between probability distributions. The Bhattacharyya coefficient ranges from 0 to 1, where a value closer to 1 indicates higher similarity between distributions, while a value closer to 0 suggests greater dissimilarity. The Hellinger distance, also ranging from 0 to 1, reflects the divergence between distributions, with lower values indicating greater similarity and higher values showing more distinct distributions. In the context of comparing query cells to reference cells, a high Bhattacharyya coefficient and a low Hellinger distance both suggest that the query cells have density profiles similar to those in the reference dataset, which can be desirable depending on the experimental objectives.
+
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Compute similarity measures for top 6 CD4 anomalies
+overlap_measures <- calculateCellDistancesSimilarity(
+  query_data = query_data,
+  reference_data = reference_data,
+  cell_names = cd4_top6_anomalies,
+  query_cell_type_col = "SingleR_annotation",
+  ref_cell_type_col = "expert_annotation",
+  pc_subset = 1:10)
+overlap_measures
+```
+
 
 ------------------------------------------------------------------------
 

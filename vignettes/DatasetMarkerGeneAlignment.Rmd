@@ -25,7 +25,7 @@ output:
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{4. Evaluation of Dataset and Marker Gene Alignment}
+  %\VignetteIndexEntry{3. Evaluation of Dataset and Marker Gene Alignment}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -63,6 +63,18 @@ In the realm of single-cell genomics, the ability to compare and integrate data 
 - `plotPairwiseDistancesDensity()`: To visualize the distribution of distances between pairs of samples, this function generates density plots. It helps in understanding the variation and relationships between samples in high-dimensional spaces.
 
 - `plotWassersteinDistance()`: This function visualizes the Wasserstein distance, a metric for comparing distributions, across datasets. It provides an intuitive view of how distributions differ between datasets, aiding in the evaluation of alignment and discrepancies.
+
+## Statistical Measures to Assess Dataset Alignment
+
+- `calculateCramerPValue()`: This function computes the Cramér's V statistic, which measures the strength of association between categorical variables. Cramér's V is particularly useful for quantifying the association strength in contingency tables, providing insight into how strongly different cell types or conditions are related.
+
+- `calculateHotellingPValue()`: This function performs Hotelling's T-squared test, a multivariate statistical test used to assess the differences between two groups of observations. It is useful for comparing the mean vectors of multiple variables and is commonly employed in single-cell data to evaluate group differences in principal component space.
+
+- `calculateNearestNeighborProbabilities()`: This function calculates the probability of nearest neighbor assignments in a high-dimensional space. It is used to evaluate the likelihood of a cell belonging to a specific cluster based on its proximity to neighboring cells. This function helps in assessing clustering quality and the robustness of cell type assignments.
+
+- `calculateAveragePairwiseCorrelation()`: This function computes the average pairwise correlation between variables or features across cells. It provides an overview of the relationships between different markers or genes, helping to identify correlated features and understand their interactions within the dataset.
+
+- `regressPC()`: This function performs linear regression of a covariate of interest onto one or more principal components derived from single-cell data. This analysis helps quantify the variance explained by the covariate and is useful for tasks such as assessing batch effects, clustering homogeneity, and alignment of query and reference datasets.
 
 ## Marker Gene Alignment
 
@@ -268,52 +280,175 @@ This example demonstrates how to compare CD4 cells between a query and reference
 
 
 
-## `plotWassersteinDistance()` 
+## `calculateWassersteinDistance()` 
 
-The `plotWassersteinDistance()` function creates a density plot to compare the Wasserstein distances between a reference dataset and a query dataset under the null hypothesis. The null hypothesis assumes that both datasets are drawn from the same distribution. This function is useful for evaluating how different the query data is from the reference data based on their Wasserstein distances.
+the `calculateWassersteinDistance()` function uses the concept of Wasserstein distances, a measure rooted in optimal transport theory, to quantitatively compare these datasets. By projecting both datasets into a common PCA space, the function enables a meaningful comparison even when they originate from different experimental conditions.
 
-### How the Function Operates
+Before diving into a code example, it's important to understand the output of this function. The result is a list containing three key components: the null distribution of Wasserstein distances computed from the reference dataset alone, the mean Wasserstein distance between the query and reference datasets, and a vector of the unique cell types present in the reference dataset. This comparison provides insights into how similar or different the query dataset is relative to the reference dataset.
 
-1. **Projecting Data into PCA Space**:
+What the function reveals is particularly valuable: if the mean Wasserstein distance between the query and reference is significantly different from the null distribution, it indicates a notable variation between the datasets, reflecting differences in cell-type compositions, technical artifacts, or biological questions of interest.
 
-- The query data is projected into the PCA space defined by the reference data. This step aligns the datasets by reducing their dimensions using principal components.
-
-2. **Calculating the Null Distribution**:
-
-- The function generates a null distribution of Wasserstein distances by repeatedly sampling subsets from the reference data. This represents the distribution of distances you would expect if both datasets were from the same source.
-
-3. **Computing Reference-Query Distance**:
-
-- The Wasserstein distance between the projected reference and query data is computed. This distance quantifies how different the query dataset is from the reference dataset.
-
-4. **Creating the Density Plot**:
-
-- The function generates a density plot of the null distribution of Wasserstein distances.
-- Vertical lines are added to indicate:
-  - The **significance threshold**: Distances greater than this threshold suggest a significant difference between the datasets.
-  - The **reference-query distance**: The actual distance between the reference and query datasets.
-
-### Interpretation
-
-- **Density Plot**: This plot shows the distribution of Wasserstein distances under the assumption that the datasets are similar.
-- **Significance Threshold Line**: If the reference-query distance exceeds this line, it indicates a significant difference between the datasets.
-- **Reference-Query Distance Line**: This line shows the observed distance between the reference and query datasets. If this line is to the right of the significance threshold, the difference is statistically significant.
 
 ### Code Example
 
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Generate the Wasserstein distance density plot
-plotWassersteinDistance(query_data = query_data_cd4,
-                        reference_data = ref_data_cd4, 
-                        query_cell_type_col = "expert_annotation", 
-                        ref_cell_type_col = "expert_annotation", 
-                        pc_subset = 1:5,
-                        alpha = 0.05)
+wasserstein_data <- calculateWassersteinDistance(
+    query_data = query_data_cd4,
+    reference_data = ref_data_cd4, 
+    query_cell_type_col = "expert_annotation", 
+    ref_cell_type_col = "expert_annotation", 
+    pc_subset = 1:10,
+)
+plot(wasserstein_data)
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/plotWassersteinDistance.png)
 
-This example demonstrates how to use the `plotWassersteinDistance()` function to compare Wasserstein distances between CD4 cells in the reference and query datasets. The resulting plot helps determine whether the difference between the datasets is statistically significant.
+The plotting function generates a density plot that provides a clear graphical representation of the Wasserstein distances. On the plot, you'll see the distribution of Wasserstein distances calculated within the reference dataset, referred to as the null distribution.
 
+Within this density plot, two significant vertical lines are overlayed: one representing the significance threshold and another indicating the mean Wasserstein distance between the reference and query datasets. The significance threshold is determined based on your specified alpha level, which is the probability threshold for considering differences between the datasets as statistically significant. This threshold line helps to establish a boundary; if the observed reference-query distance exceeds this threshold, it suggests that the differences between your query and reference datasets are unlikely to occur by random chance.
+
+The line for the reference-query distance helps identify where this calculated distance lies in comparison to the null distribution. If this dashed line is noticeably separate from the bulk of the null distribution and beyond the significance threshold, it implies a significant deviation between the query dataset and the reference dataset. In practical terms, this could indicate distinct biological differences, batch effects, or other analytical artefacts that differentiate the datasets.
+
+
+# Statistical Measures to Assess Dataset Alignment
+
+## `calculateCramerPValue()` 
+
+The calculateCramerPValue function is designed to perform the Cramer test for comparing multivariate empirical cumulative distribution functions (ECDFs) between two samples in single-cell data. This test is particularly useful for assessing whether the distributions of principal components (PCs) differ significantly between the reference and query datasets for specific cell types.
+
+To use this function, you first need to provide two key inputs: `reference_data` and `query_data`, both of which should be `r BiocStyle::Biocpkg("SingleCellExperiment")` objects containing numeric expression matrices. If `query_data` is not supplied, the function will only use the `reference_data.` You should also specify the column names for cell type annotations in both datasets via `ref_cell_type_col` and `query_cell_type_col.` If `cell_types` is not provided, the function will automatically include all unique cell types found in the datasets. The `pc_subset` parameter allows you to define which principal components to include in the analysis, with the default being the first five PCs.
+
+The function performs the following steps: it first projects the data into PCA space, subsets the data according to the specified cell types and principal components, and then applies the Cramer test to compare the ECDFs between the reference and query datasets. The result is a named vector of p-values from the Cramer test for each cell type, which indicates whether there is a significant difference in the distributions of PCs between the two datasets.
+
+Here's an example of how to use the `calculateCramerPValue()` function:
+
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Perform Cramer test for the specified cell types and principal components
+cramer_test <- calculateCramerPValue(
+    reference_data = reference_data,
+    query_data = query_data,
+    ref_cell_type_col = "expert_annotation", 
+    query_cell_type_col = "SingleR_annotation",
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    pc_subset = 1:5
+)
+
+# Display the Cramer test p-values
+print(cramer_test)
+```
+
+In this example, the function compares the distributions of the first five principal components between the reference and query datasets for cell types such as "CD4", "CD8", "B_and_plasma", and "Myeloid". The output is a vector of p-values indicating whether the differences in PC distributions are statistically significant.
+
+
+## `calculateHotellingPValue()`
+
+The `calculateHotellingPValue()` function is designed to compute Hotelling's T-squared test statistic and corresponding p-values for comparing multivariate means between reference and query datasets in the context of single-cell RNA-seq data. This statistical test is particularly useful for assessing whether the mean vectors of principal components (PCs) differ significantly between the two datasets, which can be indicative of differences in the cell type distributions.
+
+To use this function, you need to provide two `r BiocStyle::Biocpkg("SingleCellExperiment")` objects: `query_data` and `reference_data`, each containing numeric expression matrices. You also need to specify the column names for cell type annotations in both datasets with `query_cell_type_col` and `ref_cell_type_col.` The `cell_types` parameter allows you to choose which cell types to include in the analysis, and if not specified, the function will automatically include all cell types present in the datasets. The `pc_subset` parameter determines which principal components to consider, with the default being the first five PCs. Additionally, `n_permutation` specifies the number of permutations for calculating p-values, with a default of 500.
+
+The function works by first projecting the data into PCA space and then performing Hotelling's T-squared test for each specified cell type to compare the means between the reference and query datasets. It uses permutation testing to determine the p-values, indicating whether the observed differences in means are statistically significant. The result is a named numeric vector of p-values for each cell type.
+
+Here is an example of how to use the `calculateHotellingPValue()` function:
+
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Calculate Hotelling's T-squared test p-values
+p_values <- calculateHotellingPValue(
+    query_data = query_data, 
+    reference_data = reference_data, 
+    query_cell_type_col = "SingleR_annotation", 
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:10
+)
+
+# Display the p-values rounded to five decimal places
+print(round(p_values, 5))
+```
+
+In this example, the function calculates p-values for Hotelling's T-squared test, focusing on the first ten principal components to assess whether the multivariate means differ significantly between the reference and query datasets for each cell type. The p-values indicate the likelihood of observing the differences by chance and help identify significant disparities in cell type distributions.
+
+## `calculateAveragePairwiseCorrelation()` 
+
+The `calculateAveragePairwiseCorrelation()` function is designed to compute the average pairwise correlations between specified cell types in single-cell gene expression data. This function operates on `r BiocStyle::Biocpkg("SingleCellExperiment")` objects and is ideal for single-cell analysis workflows. It calculates pairwise correlations between query and reference cells using a specified correlation method, and then averages these correlations for each cell type pair. This helps in assessing the similarity between cells in the reference and query datasets and provides insights into the reliability of cell type annotations.
+
+To use the `calculateAveragePairwiseCorrelation()` function, you need to supply it with two `r BiocStyle::Biocpkg("SingleCellExperiment")` objects: one for the query cells and one for the reference cells. The function also requires column names specifying cell type annotations in both datasets, and optionally a vector of cell types to include in the analysis. Additionally, you can specify a subset of principal components to use, or use the raw data directly if `pc_subset` is set to `NULL`. The correlation method can be either "spearman" or "pearson".
+
+Here's an example of how to use this function:
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Compute pairwise correlations between specified cell types
+cor_matrix_avg <- calculateAveragePairwiseCorrelation(
+  query_data = query_data, 
+  reference_data = reference_data, 
+  query_cell_type_col = "SingleR_annotation", 
+  ref_cell_type_col = "expert_annotation", 
+  cell_types = c("CD4", "CD8", "B_and_plasma"), 
+  pc_subset = 1:5,
+  correlation_method = "spearman"
+)
+
+# Visualize the average pairwise correlation matrix
+plot(cor_matrix_avg)
+```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/calculateAveragePairwiseCorrelation.png)
+
+In this example, `calculateAveragePairwiseCorrelation()` computes the average pairwise correlations for the cell types "CD4", "CD8", and "B_and_plasma". This function is particularly useful for understanding the relationships between different cell types in your single-cell datasets and evaluating how well cell types in the query data correspond to those in the reference data.
+
+
+
+## `regressPC()`
+
+The `regressPC()` function performs linear regression of a covariate of interest onto one or more principal components using data from a `r BiocStyle::Biocpkg("SingleCellExperiment")` object. This method helps quantify the variance explained by a covariate, which can be useful in applications such as quantifying batch effects, assessing clustering homogeneity, and evaluating alignment between query and reference datasets in cell type annotation settings.
+
+The function calculates the R-squared value from the linear regression of the covariate onto each principal component. The variance contribution of the covariate effect per principal component is computed as the product of the variance explained by the principal component and the R-squared value. The total variance explained by the covariate is obtained by summing these contributions across all principal components.
+
+Here is how you can use the `regressPC()` function:
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Perform regression analysis using only reference data
+regress_res <- regressPC(
+    reference_data = reference_data,
+    ref_cell_type_col = "expert_annotation",
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    pc_subset = 1:15
+)
+
+# Plot results showing R-squared values
+plot(regress_res, plot_type = "r_squared")
+```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC1.png)
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Plot results showing p-values
+plot(regress_res, plot_type = "p-value")
+```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC2.png)
+
+In this example, `regressPC()` is used to perform regression analysis on principal components 1 to 15 from the reference dataset. The results are then visualized using plots showing the R-squared values and p-values.
+
+If you also have a query dataset and want to compare it with the reference dataset, you can include it in the analysis:
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Perform regression analysis using both reference and query data
+regress_res <- regressPC(
+    reference_data = reference_data,
+    query_data = query_data,
+    ref_cell_type_col = "expert_annotation",
+    query_cell_type_col = "SingleR_annotation",
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    pc_subset = 1:15
+)
+
+# Plot results showing R-squared values
+plot(regress_res, plot_type = "r_squared")
+```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC3.png)
+
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Plot results showing p-values
+plot(regress_res, plot_type = "p-value")
+```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC4.png)
+
+In this case, the function projects the query data onto the principal components of the reference data and performs regression analysis. The results are visualized in the same way, providing insights into how well the principal components from the query data align with those from the reference data.
+
+This function is useful for understanding the impact of different covariates on principal components and for comparing how cell types in different datasets are represented in the principal component space.
 
 # Marker Gene Alignment
 
@@ -385,15 +520,7 @@ After running the function, you'll receive the importance scores of genes for ea
 
 For example, if there's a high overlap, it suggests that similar genes are crucial in both datasets for differentiating the cell types, which could be important for validating your findings or identifying robust markers.
 
-# Conclusion 
 
-In this vignette, we have demonstrated a comprehensive suite of functions designed to enhance the analysis and comparison of single-cell genomics datasets. `compareCCA()` and `comparePCA()` facilitate the evaluation of dataset alignment through canonical correlation analysis and principal component analysis, respectively. These tools help in assessing the correspondence between datasets and identifying potential batch effects or differences in data structure. `comparePCASubspace()` further refines this analysis by focusing on specific subspaces within the PCA space, providing a more granular view of dataset similarities.
-
-`plotPairwiseDistancesDensity()` and `plotWassersteinDistance()` offer advanced visualization techniques for comparing distances and distributions across datasets. These functions are crucial for understanding the variability and overlap between datasets in a more intuitive and interpretable manner. 
-
-On the other hand, `calculateHVGOverlap()` and `calculateVarImpOverlap()` provide insights into gene variability and importance, respectively, by comparing highly variable genes and variable importance scores across reference and query datasets.
-
-Together, these functions form a robust toolkit for single-cell genomics analysis, enabling researchers to conduct detailed comparisons, visualize data differences, and validate the relevance of their findings across different datasets. Incorporating these tools into your research workflow will help ensure more accurate and insightful interpretations of single-cell data, ultimately advancing the understanding of cellular processes and improving experimental outcomes.
 
 
 ------------------------------------------------------------------------
