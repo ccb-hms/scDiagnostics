@@ -15,6 +15,7 @@
 *.pdf
 *.tex
 *.docx
+scDiagnostics.Rproj
 
 # Build artifacts
 /NAMESPACE
