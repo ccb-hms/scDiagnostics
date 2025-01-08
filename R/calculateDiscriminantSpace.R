@@ -72,7 +72,7 @@
 #'
 #' # Generate scatter and boxplot
 #' plot(disc_output, plot_type = "scatterplot")
-#' plot(disc_output, cell_types = "CD4-CD8", plot_type = "boxplot")
+#' plot(disc_output, cell_types = c("CD4", "CD8"), plot_type = "boxplot")
 #'
 #' # Check comparison
 #' table(Expert_Annotation = query_data$expert_annotation, SingleR = query_data$SingleR_annotation)
