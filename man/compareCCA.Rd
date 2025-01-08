@@ -105,7 +105,6 @@ cca_comparison <- compareCCA(query_data = query_data_subset,
 # Visualize output of CCA comparison
 plot(cca_comparison)
 
-
 }
 \references{
 Hotelling, H. (1936). "Relations between two sets of variates". *Biometrika*, 28(3/4), 321-377. doi:10.2307/2333955.

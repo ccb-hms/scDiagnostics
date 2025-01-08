@@ -76,7 +76,6 @@
 #' # Visualize output of CCA comparison
 #' plot(cca_comparison)
 #'
-#'
 # Function to compare subspace spanned by top PCs in reference and query datasets
 compareCCA <- function(query_data,
                        reference_data,

@@ -24,6 +24,7 @@
 #' @param correlation_method The correlation method to use when \code{distance_metric} is "correlation".
 #'                           Possible values are "pearson" and "spearman".
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param bandwidth Numeric value controlling the smoothness of the density estimate; smaller values create more detailed curves. Default is 0.25.
 #'
 #' @return A ggplot2 object showing ridgeline plots of calculated distances or correlations.
 #'
@@ -63,13 +64,19 @@ plotPairwiseDistancesDensity <- function(
         pc_subset = 1:5,
         distance_metric = c("correlation", "euclidean"),
         correlation_method = c("spearman", "pearson"),
-        assay_name = "logcounts") {
+        assay_name = "logcounts",
+        bandwidth = 0.25) {
 
     # Match argument for distance_metric
     distance_metric <- match.arg(distance_metric)
 
     # Match argument for correlation method
     correlation_method <- match.arg(correlation_method)
+
+    # Check if bandwidth is valid
+    if (!is.numeric(bandwidth) || length(bandwidth) != 1 || bandwidth <= 0 || bandwidth > 2) {
+        stop("\'bandwidth\' must be a single positive numeric value between 0 and 2.")
+    }
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -123,26 +130,35 @@ plotPairwiseDistancesDensity <- function(
     dist_query_ref <- dist_matrix[query_indices, ref_indices]
 
     # Create data frame for plotting
+    ref_ref_name <- paste("Ref", cell_type_ref,
+                          "vs", "Ref", cell_type_ref)
+    query_query_name <- paste("Query", cell_type_query,
+                              "vs", "Query", cell_type_query)
+    query_ref_name <- paste("Query", cell_type_query,
+                            "vs", "Ref", cell_type_ref)
     dist_df <- data.frame(
-        Comparison = factor(c(rep("Reference vs Reference", length(dist_ref_ref)),
-                              rep("Query vs Reference", length(dist_query_ref)),
-                              rep("Query vs Query", length(dist_query_query))),
-                            levels = c("Reference vs Reference", "Query vs Reference", "Query vs Query")),
+        Comparison = factor(c(
+            rep(ref_ref_name, length(dist_ref_ref)),
+            rep(query_query_name, length(dist_query_query)),
+            rep(query_ref_name, length(dist_query_ref))),
+            levels = c(ref_ref_name,
+                       query_query_name,
+                       query_ref_name)),
         Distance = c(as.vector(dist_ref_ref),
-                     as.vector(dist_query_ref),
-                     as.vector(dist_query_query))
+                     as.vector(dist_query_query),
+                     as.vector(dist_query_ref))
     )
 
-    # Plot ridgeline plots
-    ggplot2::ggplot(
+    # Plot ridge line plots
+    ridgeline_plot <- ggplot2::ggplot(
         dist_df, ggplot2::aes(
             x = .data[["Distance"]], y = .data[["Comparison"]],
             fill = .data[["Comparison"]])) +
-        ggridges::geom_density_ridges(scale = 1.5, bandwidth = 0.25) +
-        ggplot2::scale_fill_manual(values = c(
-            "Reference vs Reference" = "#5DADE2",
-            "Query vs Reference" = "#BA55D3",
-            "Query vs Query" = "#D9534F")) +
+        ggridges::geom_density_ridges(scale = 1.5, bandwidth = bandwidth) +
+        ggplot2::scale_fill_manual(values = setNames(
+            c("#5DADE2", "#BA55D3", "#D9534F"),
+            c(ref_ref_name, query_query_name, query_ref_name)
+        )) +
         ggplot2::labs(
             x = ifelse(distance_metric == "correlation",
                        ifelse(correlation_method == "spearman",
@@ -162,5 +178,14 @@ plotPairwiseDistancesDensity <- function(
                                                face = "bold",
                                                hjust = 0.5),
             axis.title = ggplot2::element_text(size = 12),
-            axis.text = ggplot2::element_text(size = 10))
+            axis.text = ggplot2::element_text(size = 10)) +
+        ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE))
+
+    # Adjust x-axis if correlation is used
+    if(distance_metric == "correlation"){
+        ridgeline_plot <- ridgeline_plot + ggplot2::xlim(-1, 1)
+    }
+
+    # Return the plot
+    return(ridgeline_plot)
 }
