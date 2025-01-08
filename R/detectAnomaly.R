@@ -58,7 +58,7 @@
 #' # Plot the output for a cell type
 #' plot(anomaly_output,
 #'      cell_type = "CD4",
-#'      pc_subset = 1:5,
+#'      pc_subset = 1:3,
 #'      data_type = "query")
 #'
 #' @importFrom methods is

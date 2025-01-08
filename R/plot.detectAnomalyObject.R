@@ -160,11 +160,11 @@ plot.detectAnomalyObject <- function(x,
     # Create the ggplot object with facets
     anomaly_plot <- ggplot2::ggplot() +
         ggplot2::geom_tile(data = background_data,
-                           ggplot2::aes(x = x_value,
-                                        y = y_value,
-                                        fill = anomaly_score),
-                           width = 0.1,
-                           height = 0.1) +
+                           ggplot2::aes(x = .data[["x_value"]],
+                                        y = .data[["y_value"]],
+                                        fill = .data[["anomaly_score"]]),
+                           width = 0.15,
+                           height = 0.15) +
         ggplot2::scale_fill_gradient2(
             low = "lightgreen", mid = "lightyellow", high = "lightpink",
             midpoint = mean(range(background_data[["anomaly_score"]])),
