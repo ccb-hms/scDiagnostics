@@ -243,7 +243,7 @@ annotations across different datasets, offering a reliable standard
 against which other annotations can be assessed.</li>
 <li>
 <code>query_data</code>: This dataset contains cell type annotations
-from both expert assessments and those generated using the <em><a href="https://bioconductor.org/packages/3.19/SingleR" class="external-link">SingleR</a></em>
+from both expert assessments and those generated using the <em><a href="https://bioconductor.org/packages/3.20/SingleR" class="external-link">SingleR</a></em>
 package. By comparing these annotations with those from the reference
 dataset, you can identify discrepancies between manual and automated
 results, highlighting potential inconsistencies or areas requiring
@@ -252,6 +252,8 @@ further investigation.</li>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load library</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ccb-hms/scDiagnostics" class="external-link">scDiagnostics</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
+<span><span class="co">#&gt;   object 'type_sum.accel' not found</span></span>
 <span></span>
 <span><span class="co"># Load datasets</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"reference_data"</span><span class="op">)</span></span>
@@ -259,14 +261,14 @@ further investigation.</li>
 <span></span>
 <span><span class="co"># Set seed for reproducibility</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p>Some functions in the vignette are designed to work with <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+<p>Some functions in the vignette are designed to work with <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects that contain data from only one cell type. We will create
-separate <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+separate <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects that only CD4 cells, to ensure compatibility with these
 functions.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load library</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scran</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/MarioniLab/scran/" class="external-link">scran</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/" class="external-link">scater</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Subset to CD4 cells</span></span>
@@ -489,7 +491,7 @@ cell type annotations by comparing their expression profiles.</p>
 <div class="section level4">
 <h4 id="functionality">Functionality<a class="anchor" aria-label="anchor" href="#functionality"></a>
 </h4>
-<p>The function operates on <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+<p>The function operates on <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects, which are commonly used to store single-cell data, including
 expression matrices and associated metadata. Users specify the cell
 types of interest in both the query and reference datasets, and the
@@ -623,7 +625,7 @@ components (PCs) differ significantly between the reference and query
 datasets for specific cell types.</p>
 <p>To use this function, you first need to provide two key inputs:
 <code>reference_data</code> and <code>query_data</code>, both of which
-should be <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+should be <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects containing numeric expression matrices. If
 <code>query_data</code> is not supplied, the function will only use the
 <code>reference_data.</code> You should also specify the column names
@@ -675,7 +677,7 @@ the context of single-cell RNA-seq data. This statistical test is
 particularly useful for assessing whether the mean vectors of principal
 components (PCs) differ significantly between the two datasets, which
 can be indicative of differences in the cell type distributions.</p>
-<p>To use this function, you need to provide two <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+<p>To use this function, you need to provide two <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects: <code>query_data</code> and <code>reference_data</code>, each
 containing numeric expression matrices. You also need to specify the
 column names for cell type annotations in both datasets with
@@ -723,7 +725,7 @@ significant disparities in cell type distributions.</p>
 <p>The <code><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code> function is
 designed to compute the average pairwise correlations between specified
 cell types in single-cell gene expression data. This function operates
-on <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+on <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects and is ideal for single-cell analysis workflows. It calculates
 pairwise correlations between query and reference cells using a
 specified correlation method, and then averages these correlations for
@@ -731,7 +733,7 @@ each cell type pair. This helps in assessing the similarity between
 cells in the reference and query datasets and provides insights into the
 reliability of cell type annotations.</p>
 <p>To use the <code><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code>
-function, you need to supply it with two <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+function, you need to supply it with two <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects: one for the query cells and one for the reference cells. The
 function also requires column names specifying cell type annotations in
 both datasets, and optionally a vector of cell types to include in the
@@ -768,7 +770,7 @@ data correspond to those in the reference data.</p>
 </h3>
 <p>The <code><a href="../reference/regressPC.html">regressPC()</a></code> function performs linear regression of a
 covariate of interest onto one or more principal components using data
-from a <em><a href="https://bioconductor.org/packages/3.19/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+from a <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 object. This method helps quantify the variance explained by a
 covariate, which can be useful in applications such as quantifying batch
 effects, assessing clustering homogeneity, and evaluating alignment
@@ -879,7 +881,7 @@ are less comparable.</p>
 </h4>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load library to get top HVGs</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scran</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/MarioniLab/scran/" class="external-link">scran</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Select the top 500 highly variable genes from both datasets</span></span>
 <span><span class="va">ref_var_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scran/man/getTopHVGs.html" class="external-link">getTopHVGs</a></span><span class="op">(</span><span class="va">reference_data</span>, n <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
@@ -965,13 +967,13 @@ robust markers.</p>
 <div class="section level2">
 <h2 id="r-session-info">R Session Info<a class="anchor" aria-label="anchor" href="#r-session-info"></a>
 </h2>
-<pre><code>R version 4.4.1 (2024-06-14)
+<pre><code>R version 4.4.2 (2024-10-31)
 Platform: x86_64-pc-linux-gnu
-Running under: Ubuntu 22.04.5 LTS
+Running under: Ubuntu 24.04.1 LTS
 
 Matrix products: default
 BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
 
 locale:
  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
@@ -987,65 +989,47 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] scater_1.32.1               ggplot2_3.5.1              
- [3] scran_1.32.0                scuttle_1.14.0             
- [5] SingleCellExperiment_1.26.0 SummarizedExperiment_1.34.0
- [7] Biobase_2.64.0              GenomicRanges_1.56.2       
- [9] GenomeInfoDb_1.40.1         IRanges_2.38.1             
-[11] S4Vectors_0.42.1            BiocGenerics_0.50.0        
-[13] MatrixGenerics_1.16.0       matrixStats_1.4.1          
-[15] scDiagnostics_1.1.0         BiocStyle_2.32.1           
+ [1] scater_1.34.0               ggplot2_3.5.1              
+ [3] scran_1.34.0                scuttle_1.16.0             
+ [5] SingleCellExperiment_1.28.1 SummarizedExperiment_1.36.0
+ [7] Biobase_2.66.0              GenomicRanges_1.58.0       
+ [9] GenomeInfoDb_1.42.1         IRanges_2.40.1             
+[11] S4Vectors_0.44.0            BiocGenerics_0.52.0        
+[13] MatrixGenerics_1.18.0       matrixStats_1.4.1          
+[15] scDiagnostics_1.1.0         BiocStyle_2.34.0           
 
 loaded via a namespace (and not attached):
- [1] DBI_1.2.3                 gridExtra_2.3            
- [3] cramer_0.9-4              rlang_1.1.4              
- [5] magrittr_2.0.3            ggridges_0.5.6           
- [7] compiler_4.4.1            DelayedMatrixStats_1.26.0
- [9] systemfonts_1.1.0         vctrs_0.6.5              
-[11] pkgconfig_2.0.3           crayon_1.5.3             
-[13] fastmap_1.2.0             XVector_0.44.0           
-[15] labeling_0.4.3            utf8_1.2.4               
-[17] rmarkdown_2.28            UCSC.utils_1.0.0         
-[19] ggbeeswarm_0.7.2          ragg_1.3.3               
-[21] xfun_0.48                 bluster_1.14.0           
-[23] zlibbioc_1.50.0           cachem_1.1.0             
-[25] beachmat_2.20.0           jsonlite_1.8.9           
-[27] DelayedArray_0.30.1       BiocParallel_1.38.0      
-[29] irlba_2.3.5.1             parallel_4.4.1           
-[31] cluster_2.1.6             biglm_0.9-3              
-[33] R6_2.5.1                  bslib_0.8.0              
-[35] ranger_0.16.0             limma_3.60.6             
-[37] boot_1.3-30               jquerylib_0.1.4          
-[39] Rcpp_1.0.13               bookdown_0.41            
-[41] knitr_1.48                Matrix_1.7-0             
-[43] igraph_2.1.1              tidyselect_1.2.1         
-[45] abind_1.4-8               yaml_2.3.10              
-[47] viridis_0.6.5             codetools_0.2-20         
-[49] lattice_0.22-6            tibble_3.2.1             
-[51] withr_3.0.2               evaluate_1.0.1           
-[53] desc_1.4.3                pillar_1.9.0             
-[55] BiocManager_1.30.25       generics_0.1.3           
-[57] sparseMatrixStats_1.16.0  munsell_0.5.1            
-[59] scales_1.3.0              glue_1.8.0               
-[61] metapod_1.12.0            tools_4.4.1              
-[63] speedglm_0.3-5            data.table_1.16.2        
-[65] BiocNeighbors_1.22.0      ScaledMatrix_1.12.0      
-[67] locfit_1.5-9.10           fs_1.6.4                 
-[69] grid_4.4.1                edgeR_4.2.2              
-[71] colorspace_2.1-1          GenomeInfoDbData_1.2.12  
-[73] beeswarm_0.4.0            BiocSingular_1.20.0      
-[75] vipor_0.4.7               cli_3.6.3                
-[77] rsvd_1.0.5                textshaping_0.4.0        
-[79] fansi_1.0.6               S4Arrays_1.4.1           
-[81] viridisLite_0.4.2         dplyr_1.1.4              
-[83] gtable_0.3.6              sass_0.4.9               
-[85] digest_0.6.37             SparseArray_1.4.8        
-[87] ggrepel_0.9.6             dqrng_0.4.1              
-[89] htmlwidgets_1.6.4         farver_2.1.2             
-[91] htmltools_0.5.8.1         pkgdown_2.1.1            
-[93] lifecycle_1.0.4           httr_1.4.7               
-[95] transport_0.15-4          statmod_1.5.0            
-[97] MASS_7.3-60.2            </code></pre>
+ [1] DBI_1.2.3               gridExtra_2.3           cramer_0.9-4           
+ [4] rlang_1.1.4             magrittr_2.0.3          ggridges_0.5.6         
+ [7] compiler_4.4.2          systemfonts_1.1.0       vctrs_0.6.5            
+[10] pkgconfig_2.0.3         crayon_1.5.3            fastmap_1.2.0          
+[13] XVector_0.46.0          labeling_0.4.3          rmarkdown_2.29         
+[16] UCSC.utils_1.2.0        ggbeeswarm_0.7.2        ragg_1.3.3             
+[19] xfun_0.49               bluster_1.16.0          zlibbioc_1.52.0        
+[22] cachem_1.1.0            beachmat_2.22.0         jsonlite_1.8.9         
+[25] DelayedArray_0.32.0     BiocParallel_1.40.0     irlba_2.3.5.1          
+[28] parallel_4.4.2          cluster_2.1.6           biglm_0.9-3            
+[31] R6_2.5.1                bslib_0.8.0             ranger_0.17.0          
+[34] limma_3.62.1            boot_1.3-31             jquerylib_0.1.4        
+[37] Rcpp_1.0.13-1           bookdown_0.41           knitr_1.49             
+[40] Matrix_1.7-1            igraph_2.1.2            tidyselect_1.2.1       
+[43] abind_1.4-8             yaml_2.3.10             viridis_0.6.5          
+[46] codetools_0.2-20        lattice_0.22-6          tibble_3.2.1           
+[49] withr_3.0.2             evaluate_1.0.1          desc_1.4.3             
+[52] pillar_1.10.0           BiocManager_1.30.25     generics_0.1.3         
+[55] munsell_0.5.1           scales_1.3.0            glue_1.8.0             
+[58] metapod_1.14.0          tools_4.4.2             speedglm_0.3-5         
+[61] BiocNeighbors_2.0.1     data.table_1.16.4       ScaledMatrix_1.14.0    
+[64] locfit_1.5-9.10         fs_1.6.5                grid_4.4.2             
+[67] edgeR_4.4.1             colorspace_2.1-1        GenomeInfoDbData_1.2.13
+[70] beeswarm_0.4.0          BiocSingular_1.22.0     vipor_0.4.7            
+[73] cli_3.6.3               rsvd_1.0.5              textshaping_0.4.1      
+[76] S4Arrays_1.6.0          viridisLite_0.4.2       dplyr_1.1.4            
+[79] gtable_0.3.6            sass_0.4.9              digest_0.6.37          
+[82] SparseArray_1.6.0       ggrepel_0.9.6           dqrng_0.4.1            
+[85] htmlwidgets_1.6.4       farver_2.1.2            htmltools_0.5.8.1      
+[88] pkgdown_2.1.1           lifecycle_1.0.4         httr_1.4.7             
+[91] statmod_1.5.0           transport_0.15-4        MASS_7.3-61            </code></pre>
 </div>
   </div>
 
