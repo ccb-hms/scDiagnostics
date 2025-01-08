@@ -36,7 +36,7 @@ A ggplot object representing the boxplots of specified principal components for 
 This function plots the principal components for different cell types in the query and reference datasets.
 }
 \details{
-This function projects the query dataset onto the principal component space of the reference dataset and then plots the 
+This function projects the query dataset onto the principal component space of the reference dataset and then plots the
 specified principal components for the specified cell types.
 It uses the `projectPCA` function to perform the projection and \code{ggplot2} to create the plots.
 }
@@ -46,11 +46,11 @@ data("reference_data")
 data("query_data")
 
 # Plot the PC data
-pc_plot <- plotCellTypePCA(query_data = query_data, 
+pc_plot <- plotCellTypePCA(query_data = query_data,
                            reference_data = reference_data,
                            cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                           query_cell_type_col = "expert_annotation", 
-                           ref_cell_type_col = "expert_annotation", 
+                           query_cell_type_col = "expert_annotation",
+                           ref_cell_type_col = "expert_annotation",
                            pc_subset = 1:5)
 pc_plot
 

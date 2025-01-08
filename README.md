@@ -1,6 +1,6 @@
 # `scDiagnostics`: diagnostic functions to assess the quality of cell type annotations in single-cell RNA-seq data
 
-[![BioC release version](https://www.bioconductor.org/shields/years-in-bioc/scDiagnostics.svg)](https://www.bioconductor.org/packages/release/bioc/html/scDiagnostics.html)
+[![BioC Release Years in BioC](https://www.bioconductor.org/shields/years-in-bioc/scDiagnostics.svg)](https://www.bioconductor.org/packages/release/bioc/html/scDiagnostics.html) 
 
 # Overview
 

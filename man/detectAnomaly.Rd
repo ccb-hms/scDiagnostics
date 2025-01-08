@@ -23,6 +23,7 @@ detectAnomaly(
   cell_type = NULL,
   pc_subset = NULL,
   data_type = c("query", "reference"),
+  n_tree = 500,
   ...
 )
 }
@@ -47,7 +48,7 @@ in \code{reference_mat_subset} will be included.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
-\item{...}{Additional arguments.}
+\item{...}{Additional arguments passed to the `isolation.forest` function.}
 
 \item{x}{A list object containing the anomaly detection results from the \code{detectAnomaly} function.
 Each element of the list should correspond to a cell type and contain \code{reference_mat_subset}, \code{query_mat_subset},
@@ -72,9 +73,10 @@ The S3 plot method returns a \code{ggplot} object representing the PCA plots wit
 This function detects anomalies in single-cell data by projecting the data onto a PCA space and using an isolation forest
 algorithm to identify anomalies.
 
-The S3 plot method generates faceted scatter plots for specified principal component (PC) combinations
-within an anomaly detection object. It allows visualization of the relationship between specified
-PCs and highlights anomalies detected by the Isolation Forest algorithm.
+This S3 plot method generates faceted scatter plots for specified principal component (PC) combinations
+within an anomaly detection object. It visualizes the relationship between specified PCs, highlights
+anomalies detected by the Isolation Forest algorithm, and provides a background gradient representing
+anomaly scores.
 }
 \details{
 This function projects the query data onto the PCA space of the reference data. An isolation forest is then built on the
@@ -82,9 +84,17 @@ reference data to identify anomalies in the query data based on their PCA projec
 the anomaly scores are computed on the reference data itself. Anomaly scores for the data with all combined cell types are also
 provided as part of the output.
 
-The S3 plot method extracts the specified PCs from the given anomaly detection object and generates
-scatter plots for each pair of PCs. It uses \code{ggplot2} to create a faceted plot where each facet represents
-a pair of PCs. Anomalies are highlighted in red, while normal points are shown in black.
+The function extracts the specified PCs from the given anomaly detection object and generates
+scatter plots for each pair of PCs. It uses \code{ggplot2} to create a faceted plot where each facet
+represents a pair of PCs. The plot includes the following elements:
+
+1. A background gradient: This represents the anomaly scores across the PC space. The gradient
+   ranges from green (low anomaly scores) through yellow to red (high anomaly scores).
+2. Data points: Plotted over the gradient, with different shapes for normal and anomalous points.
+   Anomalous points are represented as 'X', while normal points are solid circles.
+
+The background gradient provides a visual representation of the anomaly landscape, allowing for
+intuitive interpretation of regions with high or low anomaly scores.
 }
 \examples{
 # Load data

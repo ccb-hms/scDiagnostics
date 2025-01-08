@@ -1,14 +1,23 @@
 #' @title Create Faceted Scatter Plots for Specified PC Combinations From \code{detectAnomaly} Object
 #'
 #' @description
-#' The S3 plot method generates faceted scatter plots for specified principal component (PC) combinations
-#' within an anomaly detection object. It allows visualization of the relationship between specified
-#' PCs and highlights anomalies detected by the Isolation Forest algorithm.
+#' This S3 plot method generates faceted scatter plots for specified principal component (PC) combinations
+#' within an anomaly detection object. It visualizes the relationship between specified PCs, highlights
+#' anomalies detected by the Isolation Forest algorithm, and provides a background gradient representing
+#' anomaly scores.
 #'
 #' @details
-#' The S3 plot method extracts the specified PCs from the given anomaly detection object and generates
-#' scatter plots for each pair of PCs. It uses \code{ggplot2} to create a faceted plot where each facet represents
-#' a pair of PCs. Anomalies are highlighted in red, while normal points are shown in black.
+#' The function extracts the specified PCs from the given anomaly detection object and generates
+#' scatter plots for each pair of PCs. It uses \code{ggplot2} to create a faceted plot where each facet
+#' represents a pair of PCs. The plot includes the following elements:
+#'
+#' 1. A background gradient: This represents the anomaly scores across the PC space. The gradient
+#'    ranges from green (low anomaly scores) through yellow to red (high anomaly scores).
+#' 2. Data points: Plotted over the gradient, with different shapes for normal and anomalous points.
+#'    Anomalous points are represented as 'X', while normal points are solid circles.
+#'
+#' The background gradient provides a visual representation of the anomaly landscape, allowing for
+#' intuitive interpretation of regions with high or low anomaly scores.
 #'
 #' @param x A list object containing the anomaly detection results from the \code{detectAnomaly} function.
 #' Each element of the list should correspond to a cell type and contain \code{reference_mat_subset}, \code{query_mat_subset},
@@ -18,7 +27,8 @@
 #' @param pc_subset A numeric vector specifying the indices of the PCs to be included in the plots. If NULL, all PCs
 #' in \code{reference_mat_subset} will be included.
 #' @param data_type A character string specifying whether to plot the "query" data or the "reference" data. Default is "query".
-#' @param ... Additional arguments.
+#' @param n_tree An integer specifying the number of trees for the isolation forest. Default is 500
+#' @param ... Additional arguments passed to the `isolation.forest` function.
 #'
 #' @keywords internal
 #'
@@ -36,7 +46,9 @@
 plot.detectAnomalyObject <- function(x,
                                      cell_type = NULL,
                                      pc_subset = NULL,
-                                     data_type = c("query", "reference"), ...) {
+                                     data_type = c("query", "reference"),
+                                     n_tree = 500,
+                                     ...) {
 
     # Check if PCA was used for computations
     if(!("var_explained" %in% names(x[[names(x)[1]]])))
@@ -105,29 +117,85 @@ plot.detectAnomalyObject <- function(x,
                                  as.numeric(data_pairs[["y"]]),]
 
     # Add anomalies vector to data_pairs dataframe
-    data_pairs$anomaly <- rep(anomaly, choose(length(pc_subset), 2))
+    data_pairs[["anomaly"]] <- factor(
+        rep(anomaly, choose(length(pc_subset), 2)),
+        levels = c("TRUE", "FALSE"))
+
+    # Create background data
+    pc_labels <- unique(c(data_pairs[["x"]], data_pairs[["y"]]))
+    pc_combns <- combn(pc_subset, 2, simplify = FALSE)
+    background_data <- data.frame("x_value" = numeric(0), "y_value" = numeric(0),
+                                  "x" = character(0), "y" = character(0),
+                                  anomaly_score = numeric(0))
+
+    for(pc_combn in pc_combns){
+
+        # Range for PC values
+        x_range <- range(
+            data_pairs[data_pairs[["x"]] ==
+                           pc_labels[pc_combn[1]], ][["x_value"]])
+        y_range <- range(
+            data_pairs[data_pairs[["y"]] ==
+                           pc_labels[pc_combn[2]], ][["y_value"]])
+
+        # Create grid for background
+        x_seq <- seq(x_range[1] - 1, x_range[2] + 1, length.out = 200)
+        y_seq <- seq(y_range[1] - 1, y_range[2] + 1, length.out = 200)
+        grid <- expand.grid(x = x_seq, y = y_seq)
+
+        # Adding isolation forest prediction
+        isolation_forest <- isotree::isolation.forest(
+            x[[cell_type]][["reference_mat_subset"]][, paste0("PC", pc_combn)],
+            ntree = n_tree)
+        grid <- cbind(grid,
+                      pc_labels[pc_combn[1]],
+                      pc_labels[pc_combn[2]],
+                      predict(isolation_forest,
+                              newdata = grid,
+                              type = "score"))
+        colnames(grid) <- c("x_value", "y_value", "x", "y", "anomaly_score")
+        background_data <- rbind(background_data, grid)
+    }
 
     # Create the ggplot object with facets
-    anomaly_plot <- ggplot2::ggplot(data_pairs, ggplot2::aes(
-        x = .data[["x_value"]], y = .data[["y_value"]],
-        color = factor(.data[["anomaly"]]))) +
-        ggplot2::geom_point(size = 1, alpha = 0.5) +
-        ggplot2::scale_color_manual(values = c("black", "red"),
-                                    labels = c("Normal", "Anomaly")) +
+    anomaly_plot <- ggplot2::ggplot() +
+        ggplot2::geom_tile(data = background_data,
+                           ggplot2::aes(x = x_value,
+                                        y = y_value,
+                                        fill = anomaly_score),
+                           width = 0.1,
+                           height = 0.1) +
+        ggplot2::scale_fill_gradient2(
+            low = "lightgreen", mid = "lightyellow", high = "lightpink",
+            midpoint = mean(range(background_data[["anomaly_score"]])),
+            guide = "none") +
         ggplot2::facet_grid(rows = ggplot2::vars(.data[["y"]]),
                             cols = ggplot2::vars(.data[["x"]]),
                             scales = "free") +
+        ggplot2::geom_point(data = data_pairs, ggplot2::aes(
+            x = .data[["x_value"]], y = .data[["y_value"]],
+            color = factor(.data[["anomaly"]])),
+            shape = 16,
+            size = 1.5,
+            alpha = 0.45) +
+        ggplot2::scale_color_manual(values = c("TRUE" = "red", "FALSE" = "black"),
+                                    breaks = c("TRUE", "FALSE"),
+                                    labels = c("TRUE", "FALSE"),
+                                    name = "Anomalous") +
         ggplot2::xlab("") + ggplot2::ylab("") +
         ggplot2::theme_bw() +
         ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(
-                           color = "gray", linetype = "dotted"),
+                       panel.grid.major = ggplot2::element_blank(),
                        plot.title = ggplot2::element_text(size = 14,
                                                           face = "bold",
                                                           hjust = 0.5),
                        axis.title = ggplot2::element_text(size = 12),
-                       axis.text = ggplot2::element_text(size = 10)) +
+                       axis.text = ggplot2::element_text(size = 10),
+                       legend.position = "right") +
         ggplot2::labs(title = paste0("Isolation Forest Anomaly Plot: ",
-                                     cell_type), color = "iForest Type")
+                                     cell_type))  +
+        ggplot2::scale_x_continuous(expand = c(0, 0)) +
+        ggplot2::scale_y_continuous(expand = c(0, 0)) +
+        ggplot2::coord_cartesian(expand = FALSE)
     return(anomaly_plot)
 }

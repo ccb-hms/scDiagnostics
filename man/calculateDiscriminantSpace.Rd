@@ -20,7 +20,7 @@ calculateDiscriminantSpace(
   assay_name = "logcounts"
 )
 
-\method{plot}{calculateDiscriminantSpaceObject}(x, cell_types, plot_type = c("scatterplot", "boxplot"), ...)
+\method{plot}{calculateDiscriminantSpaceObject}(x, cell_types = NULL, plot_type = c("scatterplot", "boxplot"), ...)
 }
 \arguments{
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
@@ -32,7 +32,7 @@ If NULL, only the projected reference data is returned. Default is NULL.}
 
 \item{query_cell_type_col}{The column name in \code{query_data} indicating cell type labels.}
 
-\item{cell_types}{A character vector specifying the cell types to plot. If not provided, all cell types will be plotted.}
+\item{cell_types}{A character vector specifying the cell types to plot. If NULL (default), all cell types will be plotted.}
 
 \item{n_tree}{An integer specifying the number of trees for the random forest used in variable importance calculation.}
 
