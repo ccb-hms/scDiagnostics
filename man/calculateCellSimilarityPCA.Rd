@@ -65,7 +65,7 @@ anomaly_output <- detectAnomaly(reference_data = reference_data,
                                 query_cell_type_col = "SingleR_annotation",
                                 pc_subset = 1:10,
                                 n_tree = 500,
-                                anomaly_treshold = 0.5)
+                                anomaly_threshold = 0.5)
 top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores,
                              decreasing = TRUE)[1:6])
 

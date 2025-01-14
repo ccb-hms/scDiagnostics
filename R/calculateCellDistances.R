@@ -50,7 +50,7 @@
 #'                                ref_cell_type_col = "expert_annotation",
 #'                                pc_subset = 1:10,
 #'                                n_tree = 500,
-#'                                anomaly_treshold = 0.5)
+#'                                anomaly_threshold = 0.5)
 #' cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE)[1:6])
 #'
 #' # Plot the densities of the distances

@@ -19,10 +19,10 @@ calculateCellDistancesSimilarity(
 
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} 
+\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data}
 that identifies the cell types.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} 
+\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data}
 that identifies the cell types.}
 
 \item{cell_names}{A character vector specifying the names of the query cells for which to compute distance measures.}
@@ -39,20 +39,20 @@ A list containing distance data for each cell type. Each entry in the list conta
 }
 }
 \description{
-This function computes Bhattacharyya coefficients and Hellinger distances to quantify the similarity of density 
+This function computes Bhattacharyya coefficients and Hellinger distances to quantify the similarity of density
 distributions between query cells and reference data for each cell type.
 }
 \details{
-This function first computes distance data using the \code{calculateCellDistances} function, which calculates 
+This function first computes distance data using the \code{calculateCellDistances} function, which calculates
 pairwise distances between cells within the reference data and between query cells and reference cells in the PCA space.
-Bhattacharyya coefficients and Hellinger distances are calculated to quantify the similarity of density distributions between query 
-cells and reference data for each cell type. Bhattacharyya coefficient measures the similarity of two probability distributions, 
+Bhattacharyya coefficients and Hellinger distances are calculated to quantify the similarity of density distributions between query
+cells and reference data for each cell type. Bhattacharyya coefficient measures the similarity of two probability distributions,
 while Hellinger distance measures the distance between two probability distributions.
 
-Bhattacharyya coefficients range between 0 and 1. A value closer to 1 indicates higher similarity between distributions, while a value 
+Bhattacharyya coefficients range between 0 and 1. A value closer to 1 indicates higher similarity between distributions, while a value
 closer to 0 indicates lower similarity
 
-Hellinger distances range between 0 and 1. A value closer to 0 indicates higher similarity between distributions, while a value 
+Hellinger distances range between 0 and 1. A value closer to 0 indicates higher similarity between distributions, while a value
 closer to 1 indicates lower similarity.
 }
 \examples{
@@ -61,29 +61,29 @@ data("reference_data")
 data("query_data")
 
 # Plot the PC data
-distance_data <- calculateCellDistances(query_data = query_data, 
-                                        reference_data = reference_data, 
-                                        query_cell_type_col = "SingleR_annotation", 
+distance_data <- calculateCellDistances(query_data = query_data,
+                                        reference_data = reference_data,
+                                        query_cell_type_col = "SingleR_annotation",
                                         ref_cell_type_col = "expert_annotation",
-                                        pc_subset = 1:10) 
+                                        pc_subset = 1:10)
 
 # Identify outliers for CD4
-cd4_anomalies <- detectAnomaly(reference_data = reference_data, 
-                               query_data = query_data, 
-                               query_cell_type_col = "SingleR_annotation", 
+cd4_anomalies <- detectAnomaly(reference_data = reference_data,
+                               query_data = query_data,
+                               query_cell_type_col = "SingleR_annotation",
                                ref_cell_type_col = "expert_annotation",
                                pc_subset = 1:10,
                                n_tree = 500,
-                               anomaly_treshold = 0.5)
+                               anomaly_threshold = 0.5)
 cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE)[1:6])
 
 # Get overlap measures
-overlap_measures <- calculateCellDistancesSimilarity(query_data = query_data, 
-                                                     reference_data = reference_data, 
+overlap_measures <- calculateCellDistancesSimilarity(query_data = query_data,
+                                                     reference_data = reference_data,
                                                      cell_names = cd4_top6_anomalies,
-                                                     query_cell_type_col = "SingleR_annotation", 
+                                                     query_cell_type_col = "SingleR_annotation",
                                                      ref_cell_type_col = "expert_annotation",
-                                                     pc_subset = 1:10) 
+                                                     pc_subset = 1:10)
 overlap_measures
 
 }

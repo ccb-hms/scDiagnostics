@@ -18,7 +18,7 @@
 #' @param pc_subset A numeric vector specifying which principal components to use in the analysis. Default is 1:5
 #' If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.
 #' @param n_tree An integer specifying the number of trees for the isolation forest. Default is 500
-#' @param anomaly_treshold A numeric value specifying the threshold for identifying anomalies, Default is 0.6.
+#' @param anomaly_threshold A numeric value specifying the threshold for identifying anomalies, Default is 0.6.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #' @param ... Additional arguments passed to the `isolation.forest` function.
 #'
@@ -53,7 +53,7 @@
 #'                                 query_cell_type_col = "SingleR_annotation",
 #'                                 pc_subset = 1:5,
 #'                                 n_tree = 500,
-#'                                 anomaly_treshold = 0.6)
+#'                                 anomaly_threshold = 0.6)
 #'
 #' # Plot the output for a cell type
 #' plot(anomaly_output,
@@ -73,7 +73,7 @@ detectAnomaly <- function(reference_data,
                           cell_types = NULL,
                           pc_subset = 1:5,
                           n_tree = 500,
-                          anomaly_treshold = 0.6,
+                          anomaly_threshold = 0.6,
                           assay_name = "logcounts",
                           ...) {
 
@@ -106,10 +106,10 @@ detectAnomaly <- function(reference_data,
         stop("\'n_tree\' must be a positive integer.")
     }
 
-    # Input check for anomaly_treshold
-    if (!is.numeric(anomaly_treshold) || anomaly_treshold <= 0 ||
-        anomaly_treshold >= 1) {
-        stop("\'anomaly_treshold\' must be a positive number greater than 0 and less than 1.")
+    # Input check for anomaly_threshold
+    if (!is.numeric(anomaly_threshold) || anomaly_threshold <= 0 ||
+        anomaly_threshold >= 1) {
+        stop("\'anomaly_threshold\' must be a positive number greater than 0 and less than 1.")
     }
 
     # Get data from reference and query datasets
@@ -167,14 +167,14 @@ detectAnomaly <- function(reference_data,
         output[[list_name]][["reference_anomaly_scores"]] <-
             reference_anomaly_scores
         output[[list_name]][["reference_anomaly"]] <-
-            reference_anomaly_scores > anomaly_treshold
+            reference_anomaly_scores > anomaly_threshold
         output[[list_name]][["reference_mat_subset"]] <- reference_mat_subset
         if(!is.null(query_data)){
             output[[list_name]][["query_mat_subset"]] <- query_mat_subset
             output[[list_name]][["query_anomaly_scores"]] <-
                 query_anomaly_scores
             output[[list_name]][["query_anomaly"]] <-
-                query_anomaly_scores > anomaly_treshold
+                query_anomaly_scores > anomaly_threshold
         }
         if(!is.null(pc_subset))
             output[[list_name]][["var_explained"]] <-

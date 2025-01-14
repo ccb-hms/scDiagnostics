@@ -13,7 +13,7 @@ detectAnomaly(
   cell_types = NULL,
   pc_subset = 1:5,
   n_tree = 500,
-  anomaly_treshold = 0.6,
+  anomaly_threshold = 0.6,
   assay_name = "logcounts",
   ...
 )
@@ -44,7 +44,7 @@ in \code{reference_mat_subset} will be included.}
 
 \item{n_tree}{An integer specifying the number of trees for the isolation forest. Default is 500}
 
-\item{anomaly_treshold}{A numeric value specifying the threshold for identifying anomalies, Default is 0.6.}
+\item{anomaly_threshold}{A numeric value specifying the threshold for identifying anomalies, Default is 0.6.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
@@ -108,7 +108,7 @@ anomaly_output <- detectAnomaly(reference_data = reference_data,
                                 query_cell_type_col = "SingleR_annotation",
                                 pc_subset = 1:5,
                                 n_tree = 500,
-                                anomaly_treshold = 0.6)
+                                anomaly_threshold = 0.6)
 
 # Plot the output for a cell type
 plot(anomaly_output,
