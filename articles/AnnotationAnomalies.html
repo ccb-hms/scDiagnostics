@@ -182,8 +182,6 @@ anomalies.</p></li>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load library</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ccb-hms/scDiagnostics" class="external-link">scDiagnostics</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
-<span><span class="co">#&gt;   object 'type_sum.accel' not found</span></span>
 <span></span>
 <span><span class="co"># Load datasets</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"reference_data"</span><span class="op">)</span></span>
@@ -288,7 +286,7 @@ the query data onto the reference PCA space for the “CD4” cell type.</p>
 <span>                                query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span>
 <span>                                pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>                                n_tree <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>                                anomaly_treshold <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span>
+<span>                                anomaly_threshold <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the output for the "CD4" cell type</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">anomaly_output</span>, </span>
@@ -318,7 +316,7 @@ datasets.</p>
 <span>                                query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span>
 <span>                                pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>                                n_tree <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>                                anomaly_treshold <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span>
+<span>                                anomaly_threshold <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the global anomaly scores</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">anomaly_output</span>, </span>
@@ -363,7 +361,7 @@ directions, providing deeper insights into the data structure.</p>
 <span>                                query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span>
 <span>                                pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
 <span>                                n_tree <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>                                anomaly_treshold <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
+<span>                                anomaly_threshold <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Select the top 6 anomalies based on the anomaly scores</span></span>
 <span><span class="va">top6_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">anomaly_output</span><span class="op">$</span><span class="va">Combined</span><span class="op">$</span><span class="va">reference_anomaly_scores</span>, </span>
@@ -468,7 +466,7 @@ terms of their proximity to different reference populations.</p>
 <span>  ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span>
 <span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
 <span>  n_tree <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>  anomaly_treshold <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
+<span>  anomaly_threshold <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Top 6 CD4 anomalies</span></span>
 <span><span class="va">cd4_top6_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">cd4_anomalies</span><span class="op">$</span><span class="va">CD4</span><span class="op">$</span><span class="va">query_anomaly_scores</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span>
@@ -572,7 +570,7 @@ other attached packages:
 
 loaded via a namespace (and not attached):
  [1] SummarizedExperiment_1.36.0 gtable_0.3.6               
- [3] xfun_0.49                   bslib_0.8.0                
+ [3] xfun_0.50                   bslib_0.8.0                
  [5] ggplot2_3.5.1               htmlwidgets_1.6.4          
  [7] Biobase_2.66.0              lattice_0.22-6             
  [9] vctrs_0.6.5                 tools_4.4.2                
@@ -583,31 +581,31 @@ loaded via a namespace (and not attached):
 [19] ggridges_0.5.6              lifecycle_1.0.4            
 [21] GenomeInfoDbData_1.2.13     farver_2.1.2               
 [23] compiler_4.4.2              textshaping_0.4.1          
-[25] munsell_0.5.1               GenomeInfoDb_1.42.1        
-[27] htmltools_0.5.8.1           sass_0.4.9                 
-[29] yaml_2.3.10                 pkgdown_2.1.1              
-[31] pillar_1.10.0               crayon_1.5.3               
-[33] jquerylib_0.1.4             SingleCellExperiment_1.28.1
-[35] DelayedArray_0.32.0         cachem_1.1.0               
-[37] abind_1.4-8                 tidyselect_1.2.1           
-[39] digest_0.6.37               dplyr_1.1.4                
-[41] bookdown_0.41               labeling_0.4.3             
-[43] fastmap_1.2.0               grid_4.4.2                 
-[45] colorspace_2.1-1            cli_3.6.3                  
-[47] SparseArray_1.6.0           magrittr_2.0.3             
-[49] S4Arrays_1.6.0              withr_3.0.2                
-[51] UCSC.utils_1.2.0            scales_1.3.0               
-[53] rmarkdown_2.29              XVector_0.46.0             
-[55] httr_1.4.7                  matrixStats_1.4.1          
-[57] ragg_1.3.3                  isotree_0.6.1-1            
-[59] evaluate_1.0.1              knitr_1.49                 
-[61] GenomicRanges_1.58.0        IRanges_2.40.1             
-[63] rlang_1.1.4                 Rcpp_1.0.13-1              
-[65] glue_1.8.0                  BiocManager_1.30.25        
-[67] BiocGenerics_0.52.0         jsonlite_1.8.9             
-[69] R6_2.5.1                    MatrixGenerics_1.18.0      
-[71] systemfonts_1.1.0           fs_1.6.5                   
-[73] zlibbioc_1.52.0            </code></pre>
+[25] RhpcBLASctl_0.23-42         munsell_0.5.1              
+[27] GenomeInfoDb_1.42.1         htmltools_0.5.8.1          
+[29] sass_0.4.9                  yaml_2.3.10                
+[31] pkgdown_2.1.1               pillar_1.10.1              
+[33] crayon_1.5.3                jquerylib_0.1.4            
+[35] SingleCellExperiment_1.28.1 DelayedArray_0.32.0        
+[37] cachem_1.1.0                abind_1.4-8                
+[39] tidyselect_1.2.1            digest_0.6.37              
+[41] dplyr_1.1.4                 bookdown_0.42              
+[43] labeling_0.4.3              fastmap_1.2.0              
+[45] grid_4.4.2                  colorspace_2.1-1           
+[47] cli_3.6.3                   SparseArray_1.6.0          
+[49] magrittr_2.0.3              S4Arrays_1.6.0             
+[51] withr_3.0.2                 UCSC.utils_1.2.0           
+[53] scales_1.3.0                rmarkdown_2.29             
+[55] XVector_0.46.0              httr_1.4.7                 
+[57] matrixStats_1.5.0           ragg_1.3.3                 
+[59] isotree_0.6.1-4             evaluate_1.0.3             
+[61] knitr_1.49                  GenomicRanges_1.58.0       
+[63] IRanges_2.40.1              rlang_1.1.4                
+[65] Rcpp_1.0.14                 glue_1.8.0                 
+[67] BiocManager_1.30.25         BiocGenerics_0.52.0        
+[69] jsonlite_1.8.9              R6_2.5.1                   
+[71] MatrixGenerics_1.18.1       systemfonts_1.1.0          
+[73] fs_1.6.5                    zlibbioc_1.52.0            </code></pre>
 </div>
   </div>
 

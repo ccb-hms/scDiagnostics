@@ -153,29 +153,29 @@ closer to 1 indicates lower similarity.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"query_data"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot the PC data</span></span></span>
-<span class="r-in"><span><span class="va">distance_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculateCellDistances.html">calculateCellDistances</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>, </span></span>
-<span class="r-in"><span>                                        reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span></span>
-<span class="r-in"><span>                                        query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span></span>
+<span class="r-in"><span><span class="va">distance_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="calculateCellDistances.html">calculateCellDistances</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
+<span class="r-in"><span>                                        reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
+<span class="r-in"><span>                                        query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
 <span class="r-in"><span>                                        ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
-<span class="r-in"><span>                                        pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> </span></span>
+<span class="r-in"><span>                                        pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Identify outliers for CD4</span></span></span>
-<span class="r-in"><span><span class="va">cd4_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="detectAnomaly.html">detectAnomaly</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span></span>
-<span class="r-in"><span>                               query_data <span class="op">=</span> <span class="va">query_data</span>, </span></span>
-<span class="r-in"><span>                               query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span></span>
+<span class="r-in"><span><span class="va">cd4_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="detectAnomaly.html">detectAnomaly</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
+<span class="r-in"><span>                               query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
+<span class="r-in"><span>                               query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
 <span class="r-in"><span>                               ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
 <span class="r-in"><span>                               pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span></span>
 <span class="r-in"><span>                               n_tree <span class="op">=</span> <span class="fl">500</span>,</span></span>
-<span class="r-in"><span>                               anomaly_treshold <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                               anomaly_threshold <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cd4_top6_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">cd4_anomalies</span><span class="op">$</span><span class="va">CD4</span><span class="op">$</span><span class="va">query_anomaly_scores</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get overlap measures</span></span></span>
-<span class="r-in"><span><span class="va">overlap_measures</span> <span class="op">&lt;-</span> <span class="fu">calculateCellDistancesSimilarity</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>, </span></span>
-<span class="r-in"><span>                                                     reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span></span>
+<span class="r-in"><span><span class="va">overlap_measures</span> <span class="op">&lt;-</span> <span class="fu">calculateCellDistancesSimilarity</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
+<span class="r-in"><span>                                                     reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
 <span class="r-in"><span>                                                     cell_names <span class="op">=</span> <span class="va">cd4_top6_anomalies</span>,</span></span>
-<span class="r-in"><span>                                                     query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span></span>
+<span class="r-in"><span>                                                     query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
 <span class="r-in"><span>                                                     ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
-<span class="r-in"><span>                                                     pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> </span></span>
+<span class="r-in"><span>                                                     pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">overlap_measures</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $bhattacharyya_coef</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 Cell       CD4       CD8 B_and_plasma   Myeloid</span>
