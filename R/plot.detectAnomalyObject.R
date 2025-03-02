@@ -74,7 +74,28 @@ plot.detectAnomalyObject <- function(x,
     # Check input for data_type
     data_type <- match.arg(data_type)
 
-    # Filter data to include only specified PCs
+    # Helper function to get combined ranges from reference and query data
+    get_combined_ranges <- function(x, cell_type, pc_subset) {
+        x_ranges <- list()
+        ref_data <- x[[cell_type]]$reference_mat_subset[, pc_subset, drop = FALSE]
+        query_data <- NULL
+        if(!is.null(x[[cell_type]]$query_mat_subset)) {
+            query_data <- x[[cell_type]]$query_mat_subset[, pc_subset, drop = FALSE]
+        }
+        for(i in seq_along(pc_subset)) {
+            pc_values <- ref_data[, i]
+            if(!is.null(query_data)) {
+                pc_values <- c(pc_values, query_data[, i])
+            }
+            x_ranges[[i]] <- range(pc_values)
+        }
+        return(x_ranges)
+    }
+
+    # Get combined ranges for all PCs
+    combined_ranges <- get_combined_ranges(x, cell_type, pc_subset)
+
+    # Filter and prepare data based on data type
     if(is.null(x[[cell_type]]$query_mat_subset) && data_type == "query"){
         stop("There is no query data available in the \'detectAnomaly\' object.")
     } else{
@@ -82,7 +103,6 @@ plot.detectAnomalyObject <- function(x,
             data_subset <- x[[cell_type]]$query_mat_subset[, pc_subset,
                                                            drop = FALSE]
             anomaly <- x[[cell_type]]$query_anomaly
-
         } else if(data_type == "reference"){
             data_subset <- x[[cell_type]]$reference_mat_subset[, pc_subset,
                                                                drop = FALSE]
@@ -90,17 +110,17 @@ plot.detectAnomalyObject <- function(x,
         }
     }
 
-    # Modify column names to include percentage of variance explained
+    # Add variance explained to column names
     colnames(data_subset) <- paste0(
         "PC", pc_subset,
         " (", sprintf("%.1f%%", x[[cell_type]]$var_explained[pc_subset]), ")")
 
-    # Create all possible pairs of specified PCs
+    # Create all possible PC pairs
     pc_names <- colnames(data_subset)
     pairs <- expand.grid(x = pc_names, y = pc_names)
     pairs <- pairs[pairs[["x"]] != pairs[["y"]], ]
 
-    # Create a new data frame with all possible pairs of specified PCs
+    # Create data frame with PC pairs
     data_pairs_list <- lapply(seq_len(nrow(pairs)), function(i) {
         x_col <- pairs[["x"]][i]
         y_col <- pairs[["y"]][i]
@@ -112,38 +132,38 @@ plot.detectAnomalyObject <- function(x,
     })
     data_pairs <- do.call(rbind, data_pairs_list)
 
-    # Remove redundant data (to avoid duplicated plots)
+    # Remove redundant pairs to avoid duplicate plots
     data_pairs <- data_pairs[as.numeric(data_pairs[["x"]]) <
                                  as.numeric(data_pairs[["y"]]),]
 
-    # Add anomalies vector to data_pairs dataframe
+    # Add anomaly information
     data_pairs[["anomaly"]] <- factor(
         rep(anomaly, choose(length(pc_subset), 2)),
         levels = c("TRUE", "FALSE"))
 
-    # Create background data
+    # Create background data using combined ranges
     pc_labels <- unique(c(data_pairs[["x"]], data_pairs[["y"]]))
     pc_combns <- combn(pc_subset, 2, simplify = FALSE)
     background_data <- data.frame("x_value" = numeric(0), "y_value" = numeric(0),
                                   "x" = character(0), "y" = character(0),
                                   anomaly_score = numeric(0))
 
-    for(pc_combn in pc_combns){
+    # Generate background grid for each PC combination
+    for(i in seq_along(pc_combns)){
+        pc_combn <- pc_combns[[i]]
 
-        # Range for PC values
-        x_range <- range(
-            data_pairs[data_pairs[["x"]] ==
-                           pc_labels[pc_combn[1]], ][["x_value"]])
-        y_range <- range(
-            data_pairs[data_pairs[["y"]] ==
-                           pc_labels[pc_combn[2]], ][["y_value"]])
+        # Get pre-calculated ranges and add buffer
+        x_range <- combined_ranges[[which(pc_subset == pc_combn[1])]]
+        y_range <- combined_ranges[[which(pc_subset == pc_combn[2])]]
+        x_buffer <- 0.05 * diff(x_range)
+        y_buffer <- 0.05 * diff(y_range)
 
-        # Create grid for background
-        x_seq <- seq(x_range[1] - 1, x_range[2] + 1, length.out = 200)
-        y_seq <- seq(y_range[1] - 1, y_range[2] + 1, length.out = 200)
+        # Create sequences for grid
+        x_seq <- seq(x_range[1] - x_buffer, x_range[2] + x_buffer, length.out = 200)
+        y_seq <- seq(y_range[1] - y_buffer, y_range[2] + y_buffer, length.out = 200)
         grid <- expand.grid(x = x_seq, y = y_seq)
 
-        # Adding isolation forest prediction
+        # Calculate anomaly scores
         isolation_forest <- isotree::isolation.forest(
             x[[cell_type]][["reference_mat_subset"]][, paste0("PC", pc_combn)],
             ntree = n_tree)
@@ -157,32 +177,59 @@ plot.detectAnomalyObject <- function(x,
         background_data <- rbind(background_data, grid)
     }
 
-    # Create the ggplot object with facets
+    # Calculate width and height for tiles based on data ranges with expanded limits
+    tile_sizes <- lapply(pc_combns, function(pc_combn) {
+        x_data <- background_data[background_data$x == pc_labels[which(pc_subset == pc_combn[1])], "x_value"]
+        y_data <- background_data[background_data$y == pc_labels[which(pc_subset == pc_combn[2])], "y_value"]
+
+        # Expand ranges by 5%
+        x_range <- diff(range(x_data))
+        y_range <- diff(range(y_data))
+        x_buffer <- 0.05 * x_range
+        y_buffer <- 0.05 * y_range
+
+        data.frame(
+            x = pc_labels[which(pc_subset == pc_combn[1])],
+            y = pc_labels[which(pc_subset == pc_combn[2])],
+            width = x_range/50,
+            height = y_range/50
+        )
+    })
+    tile_sizes <- do.call(rbind, tile_sizes)
+
+    # Merge tile sizes with background data
+    background_data <- merge(background_data, tile_sizes, by = c("x", "y"))
+
+    # Create final plot
     anomaly_plot <- ggplot2::ggplot() +
         ggplot2::geom_tile(data = background_data,
                            ggplot2::aes(x = .data[["x_value"]],
                                         y = .data[["y_value"]],
-                                        fill = .data[["anomaly_score"]]),
-                           width = 0.15,
-                           height = 0.15) +
+                                        fill = .data[["anomaly_score"]],
+                                        width = .data[["width"]],
+                                        height = .data[["height"]])) +
         ggplot2::scale_fill_gradient2(
-            low = "lightgreen", mid = "lightyellow", high = "lightpink",
-            midpoint = mean(range(background_data[["anomaly_score"]])),
+            low = "lightgreen",
+            mid = "lightyellow",
+            high = "lightpink",
+            midpoint = 0.5,
             guide = "none") +
         ggplot2::facet_grid(rows = ggplot2::vars(.data[["y"]]),
                             cols = ggplot2::vars(.data[["x"]]),
                             scales = "free") +
-        ggplot2::geom_point(data = data_pairs, ggplot2::aes(
-            x = .data[["x_value"]], y = .data[["y_value"]],
-            color = factor(.data[["anomaly"]])),
-            shape = 16,
-            size = 1.5,
-            alpha = 0.45) +
+        ggplot2::geom_point(data = data_pairs,
+                            ggplot2::aes(x = .data[["x_value"]],
+                                         y = .data[["y_value"]],
+                                         color = factor(.data[["anomaly"]])),
+                            shape = 16,
+                            size = 1.5,
+                            alpha = 0.45) +
         ggplot2::scale_color_manual(values = c("TRUE" = "red", "FALSE" = "black"),
                                     breaks = c("TRUE", "FALSE"),
                                     labels = c("TRUE", "FALSE"),
                                     name = "Anomalous") +
-        ggplot2::xlab("") + ggplot2::ylab("") +
+        ggplot2::xlab("") +
+        ggplot2::ylab("") +
         ggplot2::theme_bw() +
         ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
                        panel.grid.major = ggplot2::element_blank(),
@@ -193,9 +240,7 @@ plot.detectAnomalyObject <- function(x,
                        axis.text = ggplot2::element_text(size = 10),
                        legend.position = "right") +
         ggplot2::labs(title = paste0("Isolation Forest Anomaly Plot: ",
-                                     cell_type))  +
-        ggplot2::scale_x_continuous(expand = c(0, 0)) +
-        ggplot2::scale_y_continuous(expand = c(0, 0)) +
-        ggplot2::coord_cartesian(expand = FALSE)
+                                     cell_type))
+
     return(anomaly_plot)
 }

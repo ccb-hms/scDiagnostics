@@ -11,7 +11,8 @@ calculateVarImpOverlap(
   query_cell_type_col = NULL,
   cell_types = NULL,
   n_tree = 500,
-  n_top = 50
+  n_top = 50,
+  assay_name = "logcounts"
 )
 }
 \arguments{
@@ -29,23 +30,25 @@ If NULL, then the variable importance scores are only computed for the reference
 \item{n_tree}{An integer specifying the number of trees to grow in the Random Forest. Default is 500.}
 
 \item{n_top}{An integer specifying the number of top genes to consider when comparing variable importance scores. Default is 50.}
+
+\item{assay_name}{Name of the assay on which to perform computations. Defaults to \code{"logcounts"}.}
 }
 \value{
 A list containing three elements:
-\item{var_imp_ref}{A list of data frames containing variable importance scores for each combination of cell types in the reference 
+\item{var_imp_ref}{A list of data frames containing variable importance scores for each combination of cell types in the reference
 dataset.}
-\item{var_imp_query}{A list of data frames containing variable importance scores for each combination of cell types in the query 
+\item{var_imp_query}{A list of data frames containing variable importance scores for each combination of cell types in the query
 dataset.}
-\item{var_imp_comparison}{A named vector indicating the proportion of top genes that overlap between the reference and query 
+\item{var_imp_comparison}{A named vector indicating the proportion of top genes that overlap between the reference and query
 datasets for each combination of cell types.}
 }
 \description{
-This function identifies and compares the most important genes for differentiating cell types between a query dataset 
+This function identifies and compares the most important genes for differentiating cell types between a query dataset
 and a reference dataset using Random Forest.
 }
 \details{
-This function uses the Random Forest algorithm to calculate the importance of genes in differentiating between cell types 
-within both a reference dataset and a query dataset. The function then compares the top genes identified in both datasets to determine 
+This function uses the Random Forest algorithm to calculate the importance of genes in differentiating between cell types
+within both a reference dataset and a query dataset. The function then compares the top genes identified in both datasets to determine
 the overlap in their importance scores.
 }
 \examples{
@@ -54,10 +57,10 @@ data("reference_data")
 data("query_data")
 
 # Compute important variables for all pairwise cell comparisons
-rf_output <- calculateVarImpOverlap(reference_data = reference_data, 
-                                    query_data = query_data, 
-                                    query_cell_type_col = "SingleR_annotation", 
-                                    ref_cell_type_col = "expert_annotation", 
+rf_output <- calculateVarImpOverlap(reference_data = reference_data,
+                                    query_data = query_data,
+                                    query_cell_type_col = "SingleR_annotation",
+                                    ref_cell_type_col = "expert_annotation",
                                     n_tree = 500,
                                     n_top = 50)
 

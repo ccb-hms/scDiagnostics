@@ -147,7 +147,7 @@ detectAnomaly <- function(reference_data,
 
         # Build isolation forest on reference PCA data for this cell type
         isolation_forest <- isotree::isolation.forest(reference_mat_subset,
-                                                      ntree = n_tree, ...)
+                                                      ntree = n_tree)
 
         # Calculate anomaly scores for query data (scaled by reference path length)
         reference_anomaly_scores <- predict(isolation_forest,
