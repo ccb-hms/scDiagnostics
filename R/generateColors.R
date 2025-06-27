@@ -26,9 +26,9 @@ generateColors <- function(cell_type_names, paired = FALSE){
         if(length(cell_type_names) > 20)
             stop("There can be at most 10 cell types for plot function.")
 
-        full_colors <- c(c("#BAE4B3", "#31A354"),
+        full_colors <- c(c("#BDD7E7", "#3182BD"),
                          c("#FCAE91", "#DE2D26"),
-                         c("#BDD7E7", "#3182BD"),
+                         c("#BAE4B3", "#31A354"),
                          c("#FED766", "#E68E00"),
                          c("#CBC9E2", "#756BB1"),
                          c("#D7B5D8", "#DD1C77"),
