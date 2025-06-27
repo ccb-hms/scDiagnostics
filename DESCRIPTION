@@ -30,7 +30,10 @@ Imports:
     SingleCellExperiment,
     methods,
     isotree,
+    FNN,
+    igraph,
     ggplot2,
+    GGally,
     ggridges,
     SummarizedExperiment,
     ranger,
@@ -39,7 +42,9 @@ Imports:
     cramer,
     rlang,
     bluster,
-    patchwork
+    scales,
+    MASS,
+    stringr
 Suggests:
     AUCell,
     BiocStyle,
@@ -69,3 +74,4 @@ Encoding: UTF-8
 LazyDataCompression: xz
 RoxygenNote: 7.3.2
 Config/testthat/edition: 3
+LazyData: true

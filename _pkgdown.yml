@@ -38,32 +38,19 @@ reference:
       - calculateSIRSpace
       - plotCellTypeMDS
       - plotCellTypePCA
-  - title: Visualization of Marker Expressions
-    contents:
-      - plotGeneExpressionDimred
-      - plotMarkerExpression
-  - title: Visualization of QC and Annotation Scores
-    contents:
-      - histQCvsAnnotation
-      - plotQCvsAnnotation
-      - plotGeneSetScores
   - title: Evaluation of Dataset Alignment
     contents:
-      - compareCCA
+      - calculateGraphIntegration
+      - calculateWassersteinDistance
       - comparePCA
       - comparePCASubspace
       - plotPairwiseDistancesDensity
-      - calculateWassersteinDistance
-  - title: Evaluation of Marker Gene Alignment
-    contents:
-      - calculateHVGOverlap
-      - calculateVarImpOverlap
   - title: Calculation of Statistical Measures to Compare Two Datasets
     contents:
+      - calculateAveragePairwiseCorrelation
       - calculateCramerPValue
       - calculateHotellingPValue
-      - calculateNearestNeighborProbabilities
-      - calculateAveragePairwiseCorrelation
+      - calculateMMDPValue
       - regressPC
   - title: Anomaly Detection (Global and Cell Type-Specific)
     contents:
@@ -73,6 +60,20 @@ reference:
     contents:
       - calculateCellDistances
       - calculateCellDistancesSimilarity
+  - title: Evaluation of Marker Gene Alignment
+    contents:
+      - calculateHVGOverlap
+      - calculateVarImpOverlap
+      - compareMarkers
+  - title: Visualization of Marker Expressions
+    contents:
+      - plotGeneExpressionDimred
+      - plotMarkerExpression
+  - title: Visualization of QC and Annotation Scores
+    contents:
+      - histQCvsAnnotation
+      - plotQCvsAnnotation
+      - plotGeneSetScores
   - title: Misc
     contents:
       - projectPCA
