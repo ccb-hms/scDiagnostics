@@ -85,30 +85,25 @@
 <li><p><code><a href="plotCellTypeMDS.html">plotCellTypeMDS</a></code>: Creates MDS plots for cell types using query and reference datasets.</p></li>
 <li><p><code><a href="plotCellTypePCA.html">plotCellTypePCA</a></code>: Plots principal components for different cell types.</p></li>
 </ul></div>
-    <div id="visualization-of-marker-expressions">
-    <h2>Visualization of Marker Expressions</h2>
-
-
-<p>Functions for to visualize and compare the expression of markers between a reference and a query dataset.</p><ul><li><p><code><a href="plotGeneExpressionDimred.html">plotGeneExpressionDimred</a></code>: Plots gene expression in a dimensionality reduction space.</p></li>
-<li><p><code><a href="plotMarkerExpression.html">plotMarkerExpression</a></code>: Plots marker expression levels.</p></li>
-</ul></div>
-    <div id="visualization-of-qc-and-annotation-scores">
-    <h2>Visualization of QC and Annotation Scores</h2>
-
-
-<p>Functions for visualizing quality control (QC) metrics or other characteristics of the data.</p><ul><li><p><code><a href="histQCvsAnnotation.html">histQCvsAnnotation</a></code>: Plots histograms of QC metrics versus annotations.</p></li>
-<li><p><code><a href="plotGeneSetScores.html">plotGeneSetScores</a></code>: Plots scores of gene sets.</p></li>
-<li><p><code><a href="plotQCvsAnnotation.html">plotQCvsAnnotation</a></code>: Plots QC metrics versus annotations.</p></li>
-</ul></div>
     <div id="evaluation-of-dataset-alignment">
     <h2>Evaluation of Dataset Alignment</h2>
 
 
-<p>Functions for visualizing differences between query and reference datasets for a specific cell type.</p><ul><li><p><code><a href="compareCCA.html">compareCCA</a></code>: Compares CCA results, with a plot method for visualization.</p></li>
+<p>Functions for visualizing differences between query and reference datasets for a specific cell type.</p><ul><li><p><code><a href="calculateGraphIntegration.html">calculateGraphIntegration</a></code>: Calculate a graph network and form communities of cells.</p></li>
+<li><p><code><a href="calculateWassersteinDistance.html">calculateWassersteinDistance</a></code>: Wasserstein distance for different cell types.</p></li>
 <li><p><code><a href="comparePCA.html">comparePCA</a></code>: Compares PCA results, with a plot method for visualization.</p></li>
 <li><p><code><a href="comparePCASubspace.html">comparePCASubspace</a></code>: Compares PCA subspace, with a plot method for visualization.</p></li>
 <li><p><code><a href="plotPairwiseDistancesDensity.html">plotPairwiseDistancesDensity</a></code>: Plots the density of pairwise distances.</p></li>
-<li><p><code><a href="calculateWassersteinDistance.html">calculateWassersteinDistance</a></code>: Wasserstein distance for different cell types.</p></li>
+</ul></div>
+    <div id="calculation-of-statistical-measures-to-compare-two-datasets">
+    <h2>Calculation of Statistical Measures to Compare Two Datasets</h2>
+
+
+<p>Functions to compute statistical measures to compare two datasets.</p><ul><li><p><code><a href="calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation</a></code>: Calculates average pairwise correlation, with a plot method for visualization.</p></li>
+<li><p><code><a href="calculateCramerPValue.html">calculateCramerPValue</a></code>: Calculates the p-value using Cramer's test.</p></li>
+<li><p><code><a href="calculateHotellingPValue.html">calculateHotellingPValue</a></code>: Calculates the p-value using Hotelling's T-squared test.</p></li>
+<li><p><code><a href="calculateMMDPValue.html">calculateMMDPValue</a></code>: Calculates the p-value using maximum mean discrepancy.</p></li>
+<li><p><code><a href="regressPC.html">regressPC</a></code>: Performs regression on principal components, with a plot method for visualization.</p></li>
 </ul></div>
     <div id="evaluation-of-marker-gene-alignment">
     <h2>Evaluation of Marker Gene Alignment</h2>
@@ -116,16 +111,14 @@
 
 <p>Functions for calculating overlap measures of genes between two datasets.</p><ul><li><p><code><a href="calculateHVGOverlap.html">calculateHVGOverlap</a></code>: Calculates overlap of highly variable genes (HVG) between datasets.</p></li>
 <li><p><code><a href="calculateVarImpOverlap.html">calculateVarImpOverlap</a></code>: Calculates overlap of variable importance measures between datasets.</p></li>
+<li><p><code><a href="compareMarkers.html">compareMarkers</a></code>: Compares marker genes between datasets.</p></li>
 </ul></div>
-    <div id="calculation-of-statistical-measures-to-compare-two-datasets">
-    <h2>Calculation of Statistical Measures to Compare Two Datasets</h2>
+    <div id="visualization-of-marker-expressions">
+    <h2>Visualization of Marker Expressions</h2>
 
 
-<p>Functions to compute statistical measures to compare two datasets.</p><ul><li><p><code><a href="calculateCramerPValue.html">calculateCramerPValue</a></code>: Calculates the p-value using Cramer's V.</p></li>
-<li><p><code><a href="calculateHotellingPValue.html">calculateHotellingPValue</a></code>: Calculates the p-value using Hotelling's T-squared test.</p></li>
-<li><p><code><a href="calculateNearestNeighborProbabilities.html">calculateNearestNeighborProbabilities</a></code>: Calculates nearest neighbor probabilities, with a plot method for visualization.</p></li>
-<li><p><code><a href="calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation</a></code>: Calculates average pairwise correlation, with a plot method for visualization.</p></li>
-<li><p><code><a href="regressPC.html">regressPC</a></code>: Performs regression on principal components, with a plot method for visualization.</p></li>
+<p>Functions for to visualize and compare the expression of markers between a reference and a query dataset.</p><ul><li><p><code><a href="plotGeneExpressionDimred.html">plotGeneExpressionDimred</a></code>: Plots gene expression in a dimensionality reduction space.</p></li>
+<li><p><code><a href="plotMarkerExpression.html">plotMarkerExpression</a></code>: Plots marker expression levels.</p></li>
 </ul></div>
     <div id="anomaly-detection-global-and-cell-type-specific-">
     <h2>Anomaly Detection (Global and Cell Type-Specific)</h2>
@@ -141,11 +134,20 @@
 <p>Functions for calculating distances between specific cells and cell populations.</p><ul><li><p><code><a href="calculateCellDistances.html">calculateCellDistances</a></code>: Calculates distances between cells, with a plot method for visualization.</p></li>
 <li><p><code><a href="calculateCellDistancesSimilarity.html">calculateCellDistancesSimilarity</a></code>: Calculates similarity based on cell distances, with a plot method for visualization.</p></li>
 </ul></div>
+    <div id="visualization-of-qc-and-annotation-scores">
+    <h2>Visualization of QC and Annotation Scores</h2>
+
+
+<p>Functions for visualizing quality control (QC) metrics or other characteristics of the data.</p><ul><li><p><code><a href="histQCvsAnnotation.html">histQCvsAnnotation</a></code>: Plots histograms of QC metrics versus annotations.</p></li>
+<li><p><code><a href="plotGeneSetScores.html">plotGeneSetScores</a></code>: Plots scores of gene sets.</p></li>
+<li><p><code><a href="plotQCvsAnnotation.html">plotQCvsAnnotation</a></code>: Plots QC metrics versus annotations.</p></li>
+</ul></div>
     <div id="misc">
     <h2>Misc</h2>
 
 
 <p>Miscellaneous functions for various tasks.</p><ul><li><p><code><a href="projectPCA.html">projectPCA</a></code>: Projects new data into PCA space.</p></li>
+<li><p><code><a href="projectSIR.html">projectSIR</a></code>: Projects new data into SIR space.</p></li>
 <li><p><code><a href="calculateCategorizationEntropy.html">calculateCategorizationEntropy</a></code>: Calculates categorization entropy for clusters.</p></li>
 </ul><p>The package is built to facilitate in-depth analysis and visualization of single-cell data, enhancing the understanding of cell type similarities and differences across datasets.</p>
     </div>
@@ -177,7 +179,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

@@ -102,6 +102,8 @@ anomaly scores.</p>
 <span>  pc_subset <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  data_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"query"</span>, <span class="st">"reference"</span><span class="op">)</span>,</span>
 <span>  n_tree <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>  upper_facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blank"</span>, <span class="st">"contour"</span>, <span class="st">"ellipse"</span><span class="op">)</span>,</span>
+<span>  diagonal_facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"density"</span>, <span class="st">"ridge"</span>, <span class="st">"boxplot"</span>, <span class="st">"blank"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -166,6 +168,14 @@ be a name present in <code>x</code>. If NULL, the "Combined" cell type will be p
 <dt id="arg-data-type">data_type<a class="anchor" aria-label="anchor" href="#arg-data-type"></a></dt>
 <dd><p>A character string specifying whether to plot the "query" data or the "reference" data. Default is "query".</p></dd>
 
+
+<dt id="arg-upper-facet">upper_facet<a class="anchor" aria-label="anchor" href="#arg-upper-facet"></a></dt>
+<dd><p>Either "blank" (default), "contour", or "ellipse" for the upper facet plots.</p></dd>
+
+
+<dt id="arg-diagonal-facet">diagonal_facet<a class="anchor" aria-label="anchor" href="#arg-diagonal-facet"></a></dt>
+<dd><p>Either "density" (default), "ridge", "boxplot" or "blank" for the diagonal plots.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -186,7 +196,7 @@ be a name present in <code>x</code>. If NULL, the "Combined" cell type will be p
 <dd><p>Proportion of variance explained by the retained principal components.</p></dd>
 
 
-</dl><p>The S3 plot method returns a <code>ggplot</code> object representing the PCA plots with anomalies highlighted.</p>
+</dl><p>The S3 plot method returns a <code><a href="https://ggobi.github.io/ggally/reference/ggpairs.html" class="external-link">GGally::ggpairs</a></code> object representing the PCA plots with anomalies highlighted.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -195,14 +205,11 @@ reference data to identify anomalies in the query data based on their PCA projec
 the anomaly scores are computed on the reference data itself. Anomaly scores for the data with all combined cell types are also
 provided as part of the output.</p>
 <p>The function extracts the specified PCs from the given anomaly detection object and generates
-scatter plots for each pair of PCs. It uses <code>ggplot2</code> to create a faceted plot where each facet
-represents a pair of PCs. The plot includes the following elements:</p>
-<p>1. A background gradient: This represents the anomaly scores across the PC space. The gradient
-   ranges from green (low anomaly scores) through yellow to red (high anomaly scores).
-2. Data points: Plotted over the gradient, with different shapes for normal and anomalous points.
-   Anomalous points are represented as 'X', while normal points are solid circles.</p>
-<p>The background gradient provides a visual representation of the anomaly landscape, allowing for
-intuitive interpretation of regions with high or low anomaly scores.</p>
+scatter plots for each pair of PCs. It uses <code>GGally</code> to create a pairs plot where each facet
+represents a pair of PCs. The plot includes:</p>
+<p>1. Lower facets: Scatter plots with a background gradient representing anomaly scores from green (low) to red (high)
+2. Diagonal facets: Density, ridge, boxplot or blank visualizations showing the distribution of each PC, separated by anomaly status
+3. Upper facets: Blank panels by default, or contour/ellipse plots separated by anomaly status if specified</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -256,7 +263,7 @@ intuitive interpretation of regions with high or low anomaly scores.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

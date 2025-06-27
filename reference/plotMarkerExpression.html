@@ -81,7 +81,8 @@ for a specific gene across the overall dataset and within a specified cell type.
 <span>  <span class="va">query_cell_type_col</span>,</span>
 <span>  <span class="va">cell_type</span>,</span>
 <span>  <span class="va">gene_name</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span></span>
+<span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
+<span>  normalization <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"z_score"</span>, <span class="st">"min_max"</span>, <span class="st">"rank"</span>, <span class="st">"none"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -116,24 +117,26 @@ for a specific gene across the overall dataset and within a specified cell type.
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
 <dd><p>Name of the assay on which to perform computations. Default is "logcounts".</p></dd>
 
+
+<dt id="arg-normalization">normalization<a class="anchor" aria-label="anchor" href="#arg-normalization"></a></dt>
+<dd><p>Method for normalizing expression values. Options: "z_score" (default), "min_max", "rank", "none".</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A gtable object containing two arranged density plots as grobs.
-        The first plot shows the overall gene expression distribution,
-        and the second plot displays the cell type-specific expression
-        distribution.</p>
+    <p>A ggplot object containing density plots comparing reference and query distributions.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>This function generates density plots to compare the distribution of a specific marker
 gene between reference and query datasets. The aim is to inspect the alignment of gene expression
 levels as a surrogate for dataset similarity. Similar distributions suggest a good alignment,
-while differences may indicate discrepancies or incompatibilities between the datasets.
-To make the gene expression scales comparable between the datasets, the gene expression values
-are transformed using z-rank normalization. This transformation ranks the expression values
-and then scales the ranks to have a mean of 0 and a standard deviation of 1, which helps
-in standardizing the distributions for comparison.</p>
+while differences may indicate discrepancies or incompatibilities between the datasets.</p>
+<p>Multiple normalization options are available:
+- "z_score": Standard z-score normalization within each dataset
+- "min_max": Min-max scaling to [0,1] range within each dataset
+- "rank": Maps values to quantile ranks (0-100 scale)
+- "none": No transformation (preserves original scale differences)</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -150,9 +153,10 @@ in standardizing the distributions for comparison.</p>
 <span class="r-in"><span><span class="fu">plotMarkerExpression</span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
 <span class="r-in"><span>                     query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
 <span class="r-in"><span>                     ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
-<span class="r-in"><span>                     query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
-<span class="r-in"><span>                     gene_name <span class="op">=</span> <span class="st">"VPREB3"</span>,</span></span>
-<span class="r-in"><span>                     cell_type <span class="op">=</span> <span class="st">"B_and_plasma"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                     query_cell_type_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expert_annotation"</span>, <span class="st">"SingleR_annotation"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>                     gene_name <span class="op">=</span> <span class="st">"CD8A"</span>,</span></span>
+<span class="r-in"><span>                     cell_type <span class="op">=</span> <span class="st">"CD4"</span>,</span></span>
+<span class="r-in"><span>                     normalization <span class="op">=</span> <span class="st">"z_score"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotMarkerExpression-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -169,7 +173,7 @@ in standardizing the distributions for comparison.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

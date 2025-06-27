@@ -18,14 +18,15 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateCellSimilarityPCA.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateCramerPValue.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateDiscriminantSpace.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateGraphIntegration.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateHVGOverlap.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateHotellingPValue.html</loc></url>
-<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateNearestNeighborProbabilities.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateMMDPValue.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateSIRSpace.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateVarImpOverlap.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateWassersteinDistance.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculate_entropy.html</loc></url>
-<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/compareCCA.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/compareMarkers.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/comparePCA.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/comparePCASubspace.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/conditionalMeans.html</loc></url>
@@ -37,7 +38,6 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/inverse_normal_trans.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/ledoitWolf.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/n_elements.html</loc></url>
-<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plot.calculateWassersteinDistanceObject.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotCellTypeMDS.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotCellTypePCA.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotGeneExpressionDimred.html</loc></url>

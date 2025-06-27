@@ -76,7 +76,7 @@
       </tr><tr><td>
           <p><code><a href="calculateDiscriminantSpace.html">calculateDiscriminantSpace()</a></code> <code><a href="calculateDiscriminantSpace.html">plot(<i>&lt;calculateDiscriminantSpaceObject&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Project Query Data onto Discriminant Space of Reference Data</p></td>
+        <td><p>Project Query Data onto a Unified Discriminant Space of Reference Data</p></td>
       </tr><tr><td>
           <p><code><a href="calculateSIRSpace.html">calculateSIRSpace()</a></code> <code><a href="calculateSIRSpace.html">plot(<i>&lt;calculateSIRSpaceObject&gt;</i>)</a></code> </p>
         </td>
@@ -90,41 +90,17 @@
         </td>
         <td><p>Plot Principal Components for Different Cell Types</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="visualization-of-marker-expressions">Visualization of Marker Expressions <a href="#visualization-of-marker-expressions" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr></tbody><tbody><tr><td>
-          <p><code><a href="plotGeneExpressionDimred.html">plotGeneExpressionDimred()</a></code> </p>
-        </td>
-        <td><p>Visualize gene expression on a dimensional reduction plot</p></td>
-      </tr><tr><td>
-          <p><code><a href="plotMarkerExpression.html">plotMarkerExpression()</a></code> </p>
-        </td>
-        <td><p>Plot gene expression distribution from overall and cell type-specific perspective</p></td>
-      </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="visualization-of-qc-and-annotation-scores">Visualization of QC and Annotation Scores <a href="#visualization-of-qc-and-annotation-scores" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr></tbody><tbody><tr><td>
-          <p><code><a href="histQCvsAnnotation.html">histQCvsAnnotation()</a></code> </p>
-        </td>
-        <td><p>Histograms: QC Stats and Annotation Scores Visualization</p></td>
-      </tr><tr><td>
-          <p><code><a href="plotQCvsAnnotation.html">plotQCvsAnnotation()</a></code> </p>
-        </td>
-        <td><p>Scatter plot: QC stats vs Cell Type Annotation Scores</p></td>
-      </tr><tr><td>
-          <p><code><a href="plotGeneSetScores.html">plotGeneSetScores()</a></code> </p>
-        </td>
-        <td><p>Visualization of gene sets or pathway scores on dimensional reduction plot</p></td>
-      </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="evaluation-of-dataset-alignment">Evaluation of Dataset Alignment <a href="#evaluation-of-dataset-alignment" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="compareCCA.html">compareCCA()</a></code> <code><a href="compareCCA.html">plot(<i>&lt;compareCCAObject&gt;</i>)</a></code> </p>
+          <p><code><a href="calculateGraphIntegration.html">calculateGraphIntegration()</a></code> <code><a href="calculateGraphIntegration.html">plot(<i>&lt;calculateGraphIntegrationObject&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Compare Canonical Correlation Analysis (CCA) between Query and Reference Data</p></td>
+        <td><p>Calculate Graph Community Integration Diagnostics</p></td>
+      </tr><tr><td>
+          <p><code><a href="calculateWassersteinDistance.html">calculateWassersteinDistance()</a></code> <code><a href="calculateWassersteinDistance.html">plot(<i>&lt;calculateWassersteinDistanceObject&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Compute Wasserstein Distance Distributions Between Query and Reference Datasets</p></td>
       </tr><tr><td>
           <p><code><a href="comparePCA.html">comparePCA()</a></code> <code><a href="comparePCA.html">plot(<i>&lt;comparePCAObject&gt;</i>)</a></code> </p>
         </td>
@@ -137,27 +113,15 @@
           <p><code><a href="plotPairwiseDistancesDensity.html">plotPairwiseDistancesDensity()</a></code> </p>
         </td>
         <td><p>Ridgeline Plot of Pairwise Distance Analysis</p></td>
-      </tr><tr><td>
-          <p><code><a href="calculateWassersteinDistance.html">calculateWassersteinDistance()</a></code> </p>
-        </td>
-        <td><p>Compute Wasserstein Distances Between Query and Reference Datasets</p></td>
-      </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="evaluation-of-marker-gene-alignment">Evaluation of Marker Gene Alignment <a href="#evaluation-of-marker-gene-alignment" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr></tbody><tbody><tr><td>
-          <p><code><a href="calculateHVGOverlap.html">calculateHVGOverlap()</a></code> </p>
-        </td>
-        <td><p>Calculate the Overlap Coefficient for Highly Variable Genes</p></td>
-      </tr><tr><td>
-          <p><code><a href="calculateVarImpOverlap.html">calculateVarImpOverlap()</a></code> </p>
-        </td>
-        <td><p>Compare Gene Importance Across Datasets Using Random Forest</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="calculation-of-statistical-measures-to-compare-two-datasets">Calculation of Statistical Measures to Compare Two Datasets <a href="#calculation-of-statistical-measures-to-compare-two-datasets" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code> <code><a href="calculateAveragePairwiseCorrelation.html">plot(<i>&lt;calculateAveragePairwiseCorrelationObject&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Compute Average Pairwise Correlation between Cell Types</p></td>
+      </tr><tr><td>
           <p><code><a href="calculateCramerPValue.html">calculateCramerPValue()</a></code> </p>
         </td>
         <td><p>Calculate Cramer Test P-Values for Two-Sample Comparison of Multivariate ECDFs</p></td>
@@ -166,13 +130,9 @@
         </td>
         <td><p>Perform Hotelling's T-squared Test on PCA Scores for Single-cell RNA-seq Data</p></td>
       </tr><tr><td>
-          <p><code><a href="calculateNearestNeighborProbabilities.html">calculateNearestNeighborProbabilities()</a></code> <code><a href="calculateNearestNeighborProbabilities.html">plot(<i>&lt;calculateNearestNeighborProbabilitiesObject&gt;</i>)</a></code> </p>
+          <p><code><a href="calculateMMDPValue.html">calculateMMDPValue()</a></code> </p>
         </td>
-        <td><p>Calculate Nearest Neighbor Diagnostics for Cell Type Classification</p></td>
-      </tr><tr><td>
-          <p><code><a href="calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code> <code><a href="calculateAveragePairwiseCorrelation.html">plot(<i>&lt;calculateAveragePairwiseCorrelationObject&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Compute Average Pairwise Correlation between Cell Types</p></td>
+        <td><p>Calculate Maximum Mean Discrepancy P-Values for Two-Sample Comparison</p></td>
       </tr><tr><td>
           <p><code><a href="regressPC.html">plot(<i>&lt;regressPCObject&gt;</i>)</a></code> <code><a href="regressPC.html">regressPC()</a></code> </p>
         </td>
@@ -201,6 +161,50 @@
           <p><code><a href="calculateCellDistancesSimilarity.html">calculateCellDistancesSimilarity()</a></code> </p>
         </td>
         <td><p>Function to Calculate Bhattacharyya Coefficients and Hellinger Distances</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="evaluation-of-marker-gene-alignment">Evaluation of Marker Gene Alignment <a href="#evaluation-of-marker-gene-alignment" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="calculateHVGOverlap.html">calculateHVGOverlap()</a></code> </p>
+        </td>
+        <td><p>Calculate the Overlap Coefficient for Highly Variable Genes</p></td>
+      </tr><tr><td>
+          <p><code><a href="calculateVarImpOverlap.html">calculateVarImpOverlap()</a></code> </p>
+        </td>
+        <td><p>Compare Gene Importance Across Datasets Using Random Forest</p></td>
+      </tr><tr><td>
+          <p><code><a href="compareMarkers.html">compareMarkers()</a></code> <code><a href="compareMarkers.html">plot(<i>&lt;compareMarkersObject&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Compare Marker Gene Expression between Query and Reference Data</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="visualization-of-marker-expressions">Visualization of Marker Expressions <a href="#visualization-of-marker-expressions" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="plotGeneExpressionDimred.html">plotGeneExpressionDimred()</a></code> </p>
+        </td>
+        <td><p>Visualize gene expression on a dimensional reduction plot</p></td>
+      </tr><tr><td>
+          <p><code><a href="plotMarkerExpression.html">plotMarkerExpression()</a></code> </p>
+        </td>
+        <td><p>Plot gene expression distribution from overall and cell type-specific perspective</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="visualization-of-qc-and-annotation-scores">Visualization of QC and Annotation Scores <a href="#visualization-of-qc-and-annotation-scores" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="histQCvsAnnotation.html">histQCvsAnnotation()</a></code> </p>
+        </td>
+        <td><p>Histograms: QC Stats and Annotation Scores Visualization</p></td>
+      </tr><tr><td>
+          <p><code><a href="plotQCvsAnnotation.html">plotQCvsAnnotation()</a></code> </p>
+        </td>
+        <td><p>Scatter plot: QC stats vs Cell Type Annotation Scores</p></td>
+      </tr><tr><td>
+          <p><code><a href="plotGeneSetScores.html">plotGeneSetScores()</a></code> </p>
+        </td>
+        <td><p>Visualization of gene sets or pathway scores on dimensional reduction plot</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="misc">Misc <a href="#misc" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
@@ -246,7 +250,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

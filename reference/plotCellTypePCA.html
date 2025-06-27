@@ -79,7 +79,10 @@
 <span>  <span class="va">ref_cell_type_col</span>,</span>
 <span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span></span>
+<span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
+<span>  lower_facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"scatter"</span>, <span class="st">"contour"</span>, <span class="st">"ellipse"</span>, <span class="st">"blank"</span><span class="op">)</span>,</span>
+<span>  diagonal_facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ridge"</span>, <span class="st">"density"</span>, <span class="st">"boxplot"</span><span class="op">)</span>,</span>
+<span>  upper_facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blank"</span>, <span class="st">"scatter"</span>, <span class="st">"contour"</span>, <span class="st">"ellipse"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -114,40 +117,30 @@
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
 <dd><p>Name of the assay on which to perform computations. Default is "logcounts".</p></dd>
 
+
+<dt id="arg-lower-facet">lower_facet<a class="anchor" aria-label="anchor" href="#arg-lower-facet"></a></dt>
+<dd><p>Type of plot to use for the lower panels. Either "scatter" (default), "contour", "ellipse", or "blank".</p></dd>
+
+
+<dt id="arg-diagonal-facet">diagonal_facet<a class="anchor" aria-label="anchor" href="#arg-diagonal-facet"></a></dt>
+<dd><p>Type of plot to use for the diagonal panels. Either "ridge" (default), "density", or "boxplot".</p></dd>
+
+
+<dt id="arg-upper-facet">upper_facet<a class="anchor" aria-label="anchor" href="#arg-upper-facet"></a></dt>
+<dd><p>Type of plot to use for the upper panels. Either "blank" (default), "scatter", "contour", or "ellipse".</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A ggplot object representing the boxplots of specified principal components for the given cell types and datasets.</p>
+    <p>A ggmatrix object representing a pairs plot of specified principal components for the given cell types and datasets.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>This function projects the query dataset onto the principal component space of the reference dataset and then plots the
 specified principal components for the specified cell types.
-It uses the `projectPCA` function to perform the projection and <code>ggplot2</code> to create the plots.</p>
-    </div>
-    <div id="author">
-    <h2>Author</h2>
-    <p>Anthony Christidis, <a href="mailto:anthony-alexander_christidis@hms.harvard.edu">anthony-alexander_christidis@hms.harvard.edu</a></p>
+It uses the `projectPCA` function to perform the projection and <code>GGally</code> to create the pairs plot.</p>
     </div>
 
-    <div id="ref-examples">
-    <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load data</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"reference_data"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"query_data"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Plot the PC data</span></span></span>
-<span class="r-in"><span><span class="va">pc_plot</span> <span class="op">&lt;-</span> <span class="fu">plotCellTypePCA</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
-<span class="r-in"><span>                           reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
-<span class="r-in"><span>                           cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                           query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
-<span class="r-in"><span>                           ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
-<span class="r-in"><span>                           pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">pc_plot</span></span></span>
-<span class="r-plt img"><img src="plotCellTypePCA-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span></span></span>
-</code></pre></div>
-    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
@@ -160,7 +153,7 @@ It uses the `projectPCA` function to perform the projection and <code>ggplot2</c
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

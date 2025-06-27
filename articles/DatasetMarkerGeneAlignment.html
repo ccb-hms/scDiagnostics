@@ -139,7 +139,7 @@ similarities and differences in high-dimensional data.</p>
 <h3 id="functions-for-evaluation-of-dataset-alignment">Functions for Evaluation of Dataset Alignment<a class="anchor" aria-label="anchor" href="#functions-for-evaluation-of-dataset-alignment"></a>
 </h3>
 <ul>
-<li><p><code><a href="../reference/compareCCA.html">compareCCA()</a></code>: This function enables the comparison
+<li><p><code>compareCCA()</code>: This function enables the comparison
 of datasets by applying Canonical Correlation Analysis (CCA). It helps
 assess how well two datasets align with each other, providing insights
 into the relationship between different single-cell experiments or
@@ -180,7 +180,7 @@ assess the differences between two groups of observations. It is useful
 for comparing the mean vectors of multiple variables and is commonly
 employed in single-cell data to evaluate group differences in principal
 component space.</p></li>
-<li><p><code><a href="../reference/calculateNearestNeighborProbabilities.html">calculateNearestNeighborProbabilities()</a></code>: This
+<li><p><code>calculateNearestNeighborProbabilities()</code>: This
 function calculates the probability of nearest neighbor assignments in a
 high-dimensional space. It is used to evaluate the likelihood of a cell
 belonging to a specific cluster based on its proximity to neighboring
@@ -243,7 +243,7 @@ annotations across different datasets, offering a reliable standard
 against which other annotations can be assessed.</li>
 <li>
 <code>query_data</code>: This dataset contains cell type annotations
-from both expert assessments and those generated using the <em><a href="https://bioconductor.org/packages/3.20/SingleR" class="external-link">SingleR</a></em>
+from both expert assessments and those generated using the <em><a href="https://bioconductor.org/packages/3.21/SingleR" class="external-link">SingleR</a></em>
 package. By comparing these annotations with those from the reference
 dataset, you can identify discrepancies between manual and automated
 results, highlighting potential inconsistencies or areas requiring
@@ -259,9 +259,9 @@ further investigation.</li>
 <span></span>
 <span><span class="co"># Set seed for reproducibility</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p>Some functions in the vignette are designed to work with <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+<p>Some functions in the vignette are designed to work with <em><a href="https://bioconductor.org/packages/3.21/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects that contain data from only one cell type. We will create
-separate <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+separate <em><a href="https://bioconductor.org/packages/3.21/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects that only CD4 cells, to ensure compatibility with these
 functions.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -292,73 +292,6 @@ functions.</p>
 <h2 id="evaluation-of-dataset-alignment">Evaluation of Dataset Alignment<a class="anchor" aria-label="anchor" href="#evaluation-of-dataset-alignment"></a>
 </h2>
 <div class="section level3">
-<h3 id="comparecca">
-<code>compareCCA()</code><a class="anchor" aria-label="anchor" href="#comparecca"></a>
-</h3>
-<p>In single-cell genomics, datasets from different sources or
-experimental conditions often need to be compared to understand how well
-they align. The <code>compareCCA</code> function facilitates this
-comparison by performing Canonical Correlation Analysis (CCA) between a
-query dataset and a reference dataset. This function is particularly
-useful when datasets have different sample sizes or distributions, and
-it helps in assessing the similarity between them after projecting them
-onto a common principal component space.</p>
-<p><code><a href="../reference/compareCCA.html">compareCCA()</a></code> performs the following steps:</p>
-<ul>
-<li>
-<strong>Project Data</strong>: Project the query dataset onto the
-principal component space of the reference dataset. This ensures that
-both datasets are represented in the same reduced-dimensional space for
-a meaningful comparison.</li>
-<li>
-<strong>Perform CCA</strong>: Conduct Canonical Correlation Analysis
-to find the relationships between the projected datasets. CCA helps to
-identify how the canonical variables derived from the query dataset
-correlate with those from the reference dataset.</li>
-<li>
-<strong>Compare Alignment</strong>: Evaluate the alignment between
-the datasets by computing cosine similarities between the canonical
-correlation vectors derived from the CCA. This provides a measure of how
-well the two datasets correspond to each other in the canonical
-space.</li>
-</ul>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Perform CCA </span></span>
-<span><span class="va">cca_comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareCCA.html">compareCCA</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_cd4</span>, </span>
-<span>                             reference_data <span class="op">=</span> <span class="va">ref_data_cd4</span>, </span>
-<span>                             query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
-<span>                             ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
-<span>                             pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cca_comparison</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/compareCCA.png"></p>
-<p>Canonical Correlation Analysis (CCA) produces several key
-outputs:</p>
-<ul>
-<li>
-<strong>Canonical Variables</strong>: For each dataset, CCA computes
-a set of canonical variables that maximize the correlation between the
-datasets. These variables are linear combinations of the original
-variables.</li>
-<li>
-<strong>Canonical Correlation Coefficients</strong>: These
-coefficients indicate the strength of the correlation between the
-canonical variables of the two datasets. Higher values suggest stronger
-correlations.</li>
-<li>
-<strong>Cosine Similarities</strong>: After obtaining the canonical
-variables, the function computes the cosine similarity between these
-variables from the query and reference datasets. This similarity measure
-helps assess how closely the canonical variables align between the two
-datasets.</li>
-</ul>
-<p>In summary, the <code>compareCCA</code> function allows you to
-compare how well two datasets are aligned by projecting them into a
-shared PCA space, performing CCA, and then evaluating the similarity of
-the canonical variables. This approach is valuable for integrative
-analyses and understanding the relationships between different datasets
-in single-cell studies.</p>
-</div>
-<div class="section level3">
 <h3 id="comparepca">
 <code>comparePCA()</code><a class="anchor" aria-label="anchor" href="#comparepca"></a>
 </h3>
@@ -381,7 +314,7 @@ align.</li>
 <strong>Distance Metrics</strong>: It uses distance metrics based on
 principal angles to quantify the similarity between the datasets.</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Perform PCA </span></span>
 <span><span class="va">pca_comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/comparePCA.html">comparePCA</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data_cd4</span>, </span>
 <span>                             reference_data <span class="op">=</span> <span class="va">ref_data_cd4</span>, </span>
@@ -431,7 +364,7 @@ cosine similarities and the average percentage of variance explained.
 This score provides an overall measure of subspace alignment between the
 datasets.</li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare PCA subspaces between query and reference data</span></span>
 <span><span class="va">subspace_comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/comparePCASubspace.html">comparePCASubspace</a></span><span class="op">(</span></span>
 <span>    query_data <span class="op">=</span> <span class="va">query_data_cd4</span>,</span>
@@ -443,7 +376,7 @@ datasets.</li>
 <span></span>
 <span><span class="co"># View weighted cosine similarity score</span></span>
 <span><span class="va">subspace_comparison</span><span class="op">$</span><span class="va">weighted_cosine_similarity</span></span>
-<span><span class="co">#&gt; [1] 0.2578375</span></span>
+<span><span class="co">#&gt; [1] 0.2620419</span></span>
 <span></span>
 <span><span class="co"># Plot output for PCA subspace comparison (if a plot method is available)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">subspace_comparison</span><span class="op">)</span></span></code></pre></div>
@@ -489,7 +422,7 @@ cell type annotations by comparing their expression profiles.</p>
 <div class="section level4">
 <h4 id="functionality">Functionality<a class="anchor" aria-label="anchor" href="#functionality"></a>
 </h4>
-<p>The function operates on <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+<p>The function operates on <em><a href="https://bioconductor.org/packages/3.21/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects, which are commonly used to store single-cell data, including
 expression matrices and associated metadata. Users specify the cell
 types of interest in both the query and reference datasets, and the
@@ -527,7 +460,7 @@ cell type across the datasets.</p>
 <p>This visual approach offers an intuitive way to diagnose potential
 discrepancies in cell type annotations, identify outliers, or confirm
 the reliability of the cell type assignments.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example usage of the function</span></span>
 <span><span class="fu"><a href="../reference/plotPairwiseDistancesDensity.html">plotPairwiseDistancesDensity</a></span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                             reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
@@ -572,7 +505,7 @@ technical artifacts, or biological questions of interest.</p>
 <div class="section level4">
 <h4 id="code-example">Code Example<a class="anchor" aria-label="anchor" href="#code-example"></a>
 </h4>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate the Wasserstein distance density plot</span></span>
 <span><span class="va">wasserstein_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateWassersteinDistance.html">calculateWassersteinDistance</a></span><span class="op">(</span></span>
 <span>    query_data <span class="op">=</span> <span class="va">query_data_cd4</span>,</span>
@@ -581,7 +514,8 @@ technical artifacts, or biological questions of interest.</p>
 <span>    ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>, </span>
 <span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
 <span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wasserstein_data</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wasserstein_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Picking joint bandwidth of 0.0142</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/plotWassersteinDistance.png"></p>
 <p>The plotting function generates a density plot that provides a clear
 graphical representation of the Wasserstein distances. On the plot,
@@ -623,7 +557,7 @@ components (PCs) differ significantly between the reference and query
 datasets for specific cell types.</p>
 <p>To use this function, you first need to provide two key inputs:
 <code>reference_data</code> and <code>query_data</code>, both of which
-should be <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+should be <em><a href="https://bioconductor.org/packages/3.21/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects containing numeric expression matrices. If
 <code>query_data</code> is not supplied, the function will only use the
 <code>reference_data.</code> You should also specify the column names
@@ -643,7 +577,7 @@ indicates whether there is a significant difference in the distributions
 of PCs between the two datasets.</p>
 <p>Here’s an example of how to use the
 <code><a href="../reference/calculateCramerPValue.html">calculateCramerPValue()</a></code> function:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Perform Cramer test for the specified cell types and principal components</span></span>
 <span><span class="va">cramer_test</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateCramerPValue.html">calculateCramerPValue</a></span><span class="op">(</span></span>
 <span>    reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
@@ -657,7 +591,7 @@ of PCs between the two datasets.</p>
 <span><span class="co"># Display the Cramer test p-values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cramer_test</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          CD4          CD8 B_and_plasma      Myeloid </span></span>
-<span><span class="co">#&gt;    0.0000000    0.0000000    0.1378621    0.4575425</span></span></code></pre></div>
+<span><span class="co">#&gt;   0.08491508   0.00000000   0.13186813   0.92207792</span></span></code></pre></div>
 <p>In this example, the function compares the distributions of the first
 five principal components between the reference and query datasets for
 cell types such as “CD4”, “CD8”, “B_and_plasma”, and “Myeloid”. The
@@ -675,7 +609,7 @@ the context of single-cell RNA-seq data. This statistical test is
 particularly useful for assessing whether the mean vectors of principal
 components (PCs) differ significantly between the two datasets, which
 can be indicative of differences in the cell type distributions.</p>
-<p>To use this function, you need to provide two <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+<p>To use this function, you need to provide two <em><a href="https://bioconductor.org/packages/3.21/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects: <code>query_data</code> and <code>reference_data</code>, each
 containing numeric expression matrices. You also need to specify the
 column names for cell type annotations in both datasets with
@@ -695,7 +629,7 @@ observed differences in means are statistically significant. The result
 is a named numeric vector of p-values for each cell type.</p>
 <p>Here is an example of how to use the
 <code><a href="../reference/calculateHotellingPValue.html">calculateHotellingPValue()</a></code> function:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate Hotelling's T-squared test p-values</span></span>
 <span><span class="va">p_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateHotellingPValue.html">calculateHotellingPValue</a></span><span class="op">(</span></span>
 <span>    query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -708,7 +642,7 @@ is a named numeric vector of p-values for each cell type.</p>
 <span><span class="co"># Display the p-values rounded to five decimal places</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">p_values</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          CD4          CD8 B_and_plasma      Myeloid </span></span>
-<span><span class="co">#&gt;         0.00         0.00         0.09         0.00</span></span></code></pre></div>
+<span><span class="co">#&gt;        0.000        0.000        0.304        0.330</span></span></code></pre></div>
 <p>In this example, the function calculates p-values for Hotelling’s
 T-squared test, focusing on the first ten principal components to assess
 whether the multivariate means differ significantly between the
@@ -723,7 +657,7 @@ significant disparities in cell type distributions.</p>
 <p>The <code><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code> function is
 designed to compute the average pairwise correlations between specified
 cell types in single-cell gene expression data. This function operates
-on <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+on <em><a href="https://bioconductor.org/packages/3.21/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects and is ideal for single-cell analysis workflows. It calculates
 pairwise correlations between query and reference cells using a
 specified correlation method, and then averages these correlations for
@@ -731,7 +665,7 @@ each cell type pair. This helps in assessing the similarity between
 cells in the reference and query datasets and provides insights into the
 reliability of cell type annotations.</p>
 <p>To use the <code><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code>
-function, you need to supply it with two <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+function, you need to supply it with two <em><a href="https://bioconductor.org/packages/3.21/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects: one for the query cells and one for the reference cells. The
 function also requires column names specifying cell type annotations in
 both datasets, and optionally a vector of cell types to include in the
@@ -740,7 +674,7 @@ to use, or use the raw data directly if <code>pc_subset</code> is set to
 <code>NULL</code>. The correlation method can be either “spearman” or
 “pearson”.</p>
 <p>Here’s an example of how to use this function:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute pairwise correlations between specified cell types</span></span>
 <span><span class="va">cor_matrix_avg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation</a></span><span class="op">(</span></span>
 <span>  query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -768,7 +702,7 @@ data correspond to those in the reference data.</p>
 </h3>
 <p>The <code><a href="../reference/regressPC.html">regressPC()</a></code> function performs linear regression of a
 covariate of interest onto one or more principal components using data
-from a <em><a href="https://bioconductor.org/packages/3.20/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+from a <em><a href="https://bioconductor.org/packages/3.21/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 object. This method helps quantify the variance explained by a
 covariate, which can be useful in applications such as quantifying batch
 effects, assessing clustering homogeneity, and evaluating alignment
@@ -782,7 +716,7 @@ the R-squared value. The total variance explained by the covariate is
 obtained by summing these contributions across all principal
 components.</p>
 <p>Here is how you can use the <code><a href="../reference/regressPC.html">regressPC()</a></code> function:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Perform regression analysis using only reference data</span></span>
 <span><span class="va">regress_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/regressPC.html">regressPC</a></span><span class="op">(</span></span>
 <span>    reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
@@ -794,7 +728,7 @@ components.</p>
 <span><span class="co"># Plot results showing R-squared values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC1.png"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot results showing p-values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"p-value"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC2.png"></p>
@@ -804,7 +738,7 @@ dataset. The results are then visualized using plots showing the
 R-squared values and p-values.</p>
 <p>If you also have a query dataset and want to compare it with the
 reference dataset, you can include it in the analysis:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Perform regression analysis using both reference and query data</span></span>
 <span><span class="va">regress_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/regressPC.html">regressPC</a></span><span class="op">(</span></span>
 <span>    reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
@@ -818,7 +752,7 @@ reference dataset, you can include it in the analysis:</p>
 <span><span class="co"># Plot results showing R-squared values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC3.png"></p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot results showing p-values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"p-value"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC4.png"></p>
@@ -877,7 +811,7 @@ are less comparable.</p>
 <div class="section level4">
 <h4 id="code-example-1">Code Example<a class="anchor" aria-label="anchor" href="#code-example-1"></a>
 </h4>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load library to get top HVGs</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/MarioniLab/scran/" class="external-link">scran</a></span><span class="op">)</span></span>
 <span></span>
@@ -928,7 +862,7 @@ expression data and cell type annotations, stored in columns named
 You want to calculate the importance of genes using 500 trees and
 compare the top 50 genes between the datasets.</p>
 <p>Here’s how you would use the function:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># RF function to compare which genes are best at differentiating cell types</span></span>
 <span><span class="va">rf_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateVarImpOverlap.html">calculateVarImpOverlap</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
 <span>                                    query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -940,9 +874,9 @@ compare the top 50 genes between the datasets.</p>
 <span><span class="co"># Comparison table</span></span>
 <span><span class="va">rf_output</span><span class="op">$</span><span class="va">var_imp_comparison</span></span>
 <span><span class="co">#&gt;              CD4-CD8     CD4-B_and_plasma          CD4-Myeloid </span></span>
-<span><span class="co">#&gt;                 0.84                 0.84                 0.88 </span></span>
+<span><span class="co">#&gt;                 0.84                 0.80                 0.82 </span></span>
 <span><span class="co">#&gt;     CD8-B_and_plasma          CD8-Myeloid B_and_plasma-Myeloid </span></span>
-<span><span class="co">#&gt;                 0.84                 0.80                 0.76</span></span></code></pre></div>
+<span><span class="co">#&gt;                 0.88                 0.86                 0.86</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="interpretation-2">Interpretation:<a class="anchor" aria-label="anchor" href="#interpretation-2"></a>
@@ -965,7 +899,7 @@ robust markers.</p>
 <div class="section level2">
 <h2 id="r-session-info">R Session Info<a class="anchor" aria-label="anchor" href="#r-session-info"></a>
 </h2>
-<pre><code>R version 4.4.3 (2025-02-28)
+<pre><code>R version 4.5.1 (2025-06-13)
 Platform: x86_64-pc-linux-gnu
 Running under: Ubuntu 24.04.2 LTS
 
@@ -987,47 +921,48 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] scater_1.34.0               ggplot2_3.5.1              
- [3] scran_1.34.0                scuttle_1.16.0             
- [5] SingleCellExperiment_1.28.1 SummarizedExperiment_1.36.0
- [7] Biobase_2.66.0              GenomicRanges_1.58.0       
- [9] GenomeInfoDb_1.42.3         IRanges_2.40.1             
-[11] S4Vectors_0.44.0            BiocGenerics_0.52.0        
-[13] MatrixGenerics_1.18.1       matrixStats_1.5.0          
-[15] scDiagnostics_1.1.0         BiocStyle_2.34.0           
+ [1] scater_1.36.0               ggplot2_3.5.2              
+ [3] scran_1.36.0                scuttle_1.18.0             
+ [5] SingleCellExperiment_1.30.1 SummarizedExperiment_1.38.1
+ [7] Biobase_2.68.0              GenomicRanges_1.60.0       
+ [9] GenomeInfoDb_1.44.0         IRanges_2.42.0             
+[11] S4Vectors_0.46.0            BiocGenerics_0.54.0        
+[13] generics_0.1.4              MatrixGenerics_1.20.0      
+[15] matrixStats_1.5.0           scDiagnostics_1.1.0        
+[17] BiocStyle_2.36.0           
 
 loaded via a namespace (and not attached):
  [1] DBI_1.2.3               gridExtra_2.3           cramer_0.9-4           
- [4] rlang_1.1.5             magrittr_2.0.3          ggridges_0.5.6         
- [7] compiler_4.4.3          systemfonts_1.2.1       vctrs_0.6.5            
-[10] pkgconfig_2.0.3         crayon_1.5.3            fastmap_1.2.0          
-[13] XVector_0.46.0          labeling_0.4.3          rmarkdown_2.29         
-[16] UCSC.utils_1.2.0        ggbeeswarm_0.7.2        ragg_1.3.3             
-[19] xfun_0.51               bluster_1.16.0          zlibbioc_1.52.0        
-[22] cachem_1.1.0            beachmat_2.22.0         jsonlite_1.9.0         
-[25] DelayedArray_0.32.0     BiocParallel_1.40.0     irlba_2.3.5.1          
-[28] parallel_4.4.3          cluster_2.1.8           biglm_0.9-3            
-[31] R6_2.6.1                bslib_0.9.0             ranger_0.17.0          
-[34] limma_3.62.2            boot_1.3-31             jquerylib_0.1.4        
-[37] Rcpp_1.0.14             bookdown_0.42           knitr_1.49             
-[40] Matrix_1.7-2            igraph_2.1.4            tidyselect_1.2.1       
-[43] abind_1.4-8             yaml_2.3.10             viridis_0.6.5          
-[46] codetools_0.2-20        lattice_0.22-6          tibble_3.2.1           
-[49] withr_3.0.2             evaluate_1.0.3          desc_1.4.3             
-[52] pillar_1.10.1           BiocManager_1.30.25     generics_0.1.3         
-[55] munsell_0.5.1           scales_1.3.0            glue_1.8.0             
-[58] metapod_1.14.0          tools_4.4.3             speedglm_0.3-5         
-[61] BiocNeighbors_2.0.1     data.table_1.17.0       ScaledMatrix_1.14.0    
-[64] locfit_1.5-9.11         fs_1.6.5                grid_4.4.3             
-[67] edgeR_4.4.2             colorspace_2.1-1        GenomeInfoDbData_1.2.13
-[70] beeswarm_0.4.0          BiocSingular_1.22.0     vipor_0.4.7            
-[73] cli_3.6.4               rsvd_1.0.5              textshaping_1.0.0      
-[76] S4Arrays_1.6.0          viridisLite_0.4.2       dplyr_1.1.4            
-[79] gtable_0.3.6            sass_0.4.9              digest_0.6.37          
-[82] SparseArray_1.6.2       ggrepel_0.9.6           dqrng_0.4.1            
-[85] htmlwidgets_1.6.4       farver_2.1.2            htmltools_0.5.8.1      
-[88] pkgdown_2.1.1           lifecycle_1.0.4         httr_1.4.7             
-[91] statmod_1.5.0           transport_0.15-4        MASS_7.3-64            </code></pre>
+ [4] rlang_1.1.6             magrittr_2.0.3          ggridges_0.5.6         
+ [7] compiler_4.5.1          systemfonts_1.2.3       vctrs_0.6.5            
+[10] stringr_1.5.1           pkgconfig_2.0.3         crayon_1.5.3           
+[13] fastmap_1.2.0           XVector_0.48.0          labeling_0.4.3         
+[16] rmarkdown_2.29          UCSC.utils_1.4.0        ggbeeswarm_0.7.2       
+[19] ragg_1.4.0              xfun_0.52               bluster_1.18.0         
+[22] cachem_1.1.0            beachmat_2.24.0         jsonlite_2.0.0         
+[25] DelayedArray_0.34.1     BiocParallel_1.42.1     irlba_2.3.5.1          
+[28] parallel_4.5.1          cluster_2.1.8.1         biglm_0.9-3            
+[31] R6_2.6.1                bslib_0.9.0             stringi_1.8.7          
+[34] RColorBrewer_1.1-3      ranger_0.17.0           limma_3.64.1           
+[37] boot_1.3-31             jquerylib_0.1.4         Rcpp_1.0.14            
+[40] bookdown_0.43           knitr_1.50              Matrix_1.7-3           
+[43] igraph_2.1.4            tidyselect_1.2.1        abind_1.4-8            
+[46] yaml_2.3.10             viridis_0.6.5           codetools_0.2-20       
+[49] lattice_0.22-7          tibble_3.3.0            withr_3.0.2            
+[52] evaluate_1.0.4          desc_1.4.3              pillar_1.10.2          
+[55] BiocManager_1.30.26     scales_1.4.0            glue_1.8.0             
+[58] metapod_1.16.0          tools_4.5.1             speedglm_0.3-5         
+[61] BiocNeighbors_2.2.0     data.table_1.17.6       ScaledMatrix_1.16.0    
+[64] locfit_1.5-9.12         fs_1.6.6                grid_4.5.1             
+[67] edgeR_4.6.2             GenomeInfoDbData_1.2.14 beeswarm_0.4.0         
+[70] BiocSingular_1.24.0     vipor_0.4.7             cli_3.6.5              
+[73] rsvd_1.0.5              textshaping_1.0.1       S4Arrays_1.8.1         
+[76] viridisLite_0.4.2       dplyr_1.1.4             gtable_0.3.6           
+[79] sass_0.4.10             digest_0.6.37           SparseArray_1.8.0      
+[82] ggrepel_0.9.6           dqrng_0.4.1             htmlwidgets_1.6.4      
+[85] farver_2.1.2            htmltools_0.5.8.1       pkgdown_2.1.3          
+[88] lifecycle_1.0.4         httr_1.4.7              statmod_1.5.0          
+[91] transport_0.15-4        MASS_7.3-65            </code></pre>
 </div>
   </div>
 
@@ -1046,7 +981,7 @@ loaded via a namespace (and not attached):
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer>
