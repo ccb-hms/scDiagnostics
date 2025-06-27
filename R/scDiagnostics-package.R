@@ -15,29 +15,24 @@
 #'   \item \code{\link{plotCellTypePCA}}: Plots principal components for different cell types.
 #' }
 #'
-#' @section Visualization of Marker Expressions:
-#' Functions for to visualize and compare the expression of markers between a reference and a query dataset.
-#' \itemize{
-#'   \item \code{\link{plotGeneExpressionDimred}}: Plots gene expression in a dimensionality reduction space.
-#'   \item \code{\link{plotMarkerExpression}}: Plots marker expression levels.
-#' }
-#'
-#' @section Visualization of QC and Annotation Scores:
-#' Functions for visualizing quality control (QC) metrics or other characteristics of the data.
-#' \itemize{
-#'   \item \code{\link{histQCvsAnnotation}}: Plots histograms of QC metrics versus annotations.
-#'   \item \code{\link{plotGeneSetScores}}: Plots scores of gene sets.
-#'   \item \code{\link{plotQCvsAnnotation}}: Plots QC metrics versus annotations.
-#' }
-#'
 #' @section Evaluation of Dataset Alignment:
 #' Functions for visualizing differences between query and reference datasets for a specific cell type.
 #' \itemize{
-#'   \item \code{\link{compareCCA}}: Compares CCA results, with a plot method for visualization.
+#'   \item \code{\link{calculateGraphIntegration}}: Calculate a graph network and form communities of cells.
+#'   \item \code{\link{calculateWassersteinDistance}}: Wasserstein distance for different cell types.
 #'   \item \code{\link{comparePCA}}: Compares PCA results, with a plot method for visualization.
 #'   \item \code{\link{comparePCASubspace}}: Compares PCA subspace, with a plot method for visualization.
 #'   \item \code{\link{plotPairwiseDistancesDensity}}: Plots the density of pairwise distances.
-#'   \item \code{\link{calculateWassersteinDistance}}: Wasserstein distance for different cell types.
+#' }
+#'
+#' @section Calculation of Statistical Measures to Compare Two Datasets:
+#' Functions to compute statistical measures to compare two datasets.
+#' \itemize{
+#'   \item \code{\link{calculateAveragePairwiseCorrelation}}: Calculates average pairwise correlation, with a plot method for visualization.
+#'   \item \code{\link{calculateCramerPValue}}: Calculates the p-value using Cramer's test.
+#'   \item \code{\link{calculateHotellingPValue}}: Calculates the p-value using Hotelling's T-squared test.
+#'   \item \code{\link{calculateMMDPValue}}: Calculates the p-value using maximum mean discrepancy.
+#'   \item \code{\link{regressPC}}: Performs regression on principal components, with a plot method for visualization.
 #' }
 #'
 #' @section Evaluation of Marker Gene Alignment:
@@ -45,16 +40,14 @@
 #' \itemize{
 #'   \item \code{\link{calculateHVGOverlap}}: Calculates overlap of highly variable genes (HVG) between datasets.
 #'   \item \code{\link{calculateVarImpOverlap}}: Calculates overlap of variable importance measures between datasets.
+#'   \item \code{\link{compareMarkers}}: Compares marker genes between datasets.
 #' }
 #'
-#' @section Calculation of Statistical Measures to Compare Two Datasets:
-#' Functions to compute statistical measures to compare two datasets.
+#' @section Visualization of Marker Expressions:
+#' Functions for to visualize and compare the expression of markers between a reference and a query dataset.
 #' \itemize{
-#'   \item \code{\link{calculateCramerPValue}}: Calculates the p-value using Cramer's V.
-#'   \item \code{\link{calculateHotellingPValue}}: Calculates the p-value using Hotelling's T-squared test.
-#'   \item \code{\link{calculateNearestNeighborProbabilities}}: Calculates nearest neighbor probabilities, with a plot method for visualization.
-#'   \item \code{\link{calculateAveragePairwiseCorrelation}}: Calculates average pairwise correlation, with a plot method for visualization.
-#'   \item \code{\link{regressPC}}: Performs regression on principal components, with a plot method for visualization.
+#'   \item \code{\link{plotGeneExpressionDimred}}: Plots gene expression in a dimensionality reduction space.
+#'   \item \code{\link{plotMarkerExpression}}: Plots marker expression levels.
 #' }
 #'
 #' @section Anomaly Detection (Global and Cell Type-Specific):
@@ -71,10 +64,19 @@
 #'   \item \code{\link{calculateCellDistancesSimilarity}}: Calculates similarity based on cell distances, with a plot method for visualization.
 #' }
 #'
+#' @section Visualization of QC and Annotation Scores:
+#' Functions for visualizing quality control (QC) metrics or other characteristics of the data.
+#' \itemize{
+#'   \item \code{\link{histQCvsAnnotation}}: Plots histograms of QC metrics versus annotations.
+#'   \item \code{\link{plotGeneSetScores}}: Plots scores of gene sets.
+#'   \item \code{\link{plotQCvsAnnotation}}: Plots QC metrics versus annotations.
+#' }
+#'
 #' @section Misc:
 #' Miscellaneous functions for various tasks.
 #' \itemize{
 #'   \item \code{\link{projectPCA}}: Projects new data into PCA space.
+#'   \item \code{\link{projectSIR}}: Projects new data into SIR space.
 #'   \item \code{\link{calculateCategorizationEntropy}}: Calculates categorization entropy for clusters.
 #' }
 #'

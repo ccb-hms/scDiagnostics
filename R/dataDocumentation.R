@@ -35,7 +35,7 @@
 #'
 #' @description
 #' This dataset contains the processed query dataset from the HeOrganAtlas dataset for Marrow tissue.
-#' It has been preprocessed to include log-normalized counts, specific metadata columns, annotations 
+#' It has been preprocessed to include log-normalized counts, specific metadata columns, annotations
 #' based on SingleR cell type scoring, and PCA, t-SNE, and UMAP results.
 #'
 #' @details
@@ -45,13 +45,20 @@
 #'   \item Divides the loaded dataset into a query dataset used for downstream analysis.
 #'   \item Performs log normalization on the query dataset using the function \code{logNormCounts} from the \code{scuttle} package.
 #'   \item Selects specific columns (\code{percent_mito}, \code{expert_annotation}) from the cell metadata for downstream analysis.
-#'   \item Adds SingleR annotations (\code{SingleR_annotation}) and annotation scores (\code{annotation_scores}) to the query dataset using the function \code{SingleR} from the \code{SingleR} package.
-#'   \item Computes AUC gene set scores using the function \code{AUCell_calcAUC} from the \code{AUCell} package and adds these scores to the query dataset.
 #'   \item Selects highly variable genes (HVGs) using the function \code{getTopHVGs} from the \code{scran} package on the query dataset.
+#'   \item Computes AUC gene set scores using the function \code{AUCell_calcAUC} from the \code{AUCell} package based on a CD4 T cell
+#'         signature containing 12 known CD4 T cell marker genes (IL7R, CCR7, SELL, LEF1, TCF7, LTB, KLF2, IL32, CD2, CD3D, CD3E, CD3G)
+#'         and adds these scores to the query dataset as \code{gene_set_scores}.
 #'   \item Intersects the highly variable genes between the query and reference datasets to obtain common genes for analysis.
-#'   \item Performs Principal Component Analysis (PCA) on the query dataset using the function \code{runPCA} from the \code{scater} package.
-#'   \item Performs t-Distributed Stochastic Neighbor Embedding (t-SNE) on the query dataset using the function \code{runTSNE} from the \code{scater} package.
-#'   \item Performs Uniform Manifold Approximation and Projection (UMAP) on the query dataset using the function \code{runUMAP} from the \code{scater} package.
+#'   \item Performs Principal Component Analysis (PCA) on the query dataset using the function \code{runPCA} from the \code{scater}
+#'         package.
+#'   \item Performs t-Distributed Stochastic Neighbor Embedding (t-SNE) on the query dataset using the function \code{runTSNE} from the
+#'         \code{scater} package.
+#'   \item Performs Uniform Manifold Approximation and Projection (UMAP) on the query dataset using the function \code{runUMAP} from the
+#'         \code{scater} package.
+#'   \item Adds SingleR annotations (\code{SingleR_annotation}) and annotation scores (\code{annotation_scores}) to the query dataset
+#'         using the function \code{SingleR} from the \code{SingleR} package.
+
 #' }
 #'
 #' @seealso
@@ -72,8 +79,8 @@
 #' @title Quality Control Single-Cell RNA-Seq Dataset
 #'
 #' @description
-#' This dataset contains the processed query dataset from the Bunis haematopoietic stem and progenitor cell data. 
-#' It has been preprocessed to include log-normalized counts, QC metrics, SingleR cell type predictions, 
+#' This dataset contains the processed query dataset from the Bunis haematopoietic stem and progenitor cell data.
+#' It has been preprocessed to include log-normalized counts, QC metrics, SingleR cell type predictions,
 #' and annotation scores.
 #'
 #' @details
