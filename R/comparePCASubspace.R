@@ -21,8 +21,11 @@
 #' @param n_top_vars An integer indicating the number of top loading variables to consider for each PC. Default is 50.
 #'
 #' @return A list containing the following components:
-#'   \item{principal_angles_cosines}{A numeric vector of cosine values of principal angles.}
-#'   \item{average_variance_explained}{A numeric vector of average variance explained by each PC.}
+#'   \item{cosine_similarity}{A numeric vector of cosine values of principal angles.}
+#'   \item{cosine_id}{A matrix showing which reference and query PCs were matched.}
+#'   \item{var_explained_ref}{A numeric vector of variance explained by reference PCs.}
+#'   \item{var_explained_query}{A numeric vector of variance explained by query PCs.}
+#'   \item{var_explained_avg}{A numeric vector of average variance explained by each PC pair.}
 #'   \item{weighted_cosine_similarity}{A numeric value representing the weighted cosine similarity.}
 #'
 #' @export
@@ -93,13 +96,16 @@ comparePCASubspace <- function(reference_data,
     }
 
     # Compute the cosine similarity (cosine of principal angle)
-    cosine_similarity <- comparePCA(query_data = query_data,
-                                    reference_data = reference_data,
-                                    query_cell_type_col = query_cell_type_col,
-                                    ref_cell_type_col = ref_cell_type_col,
-                                    pc_subset = pc_subset,
-                                    n_top_vars = n_top_vars,
-                                    metric = "cosine")
+    cosine_similarity_result <- comparePCA(query_data = query_data,
+                                           reference_data = reference_data,
+                                           query_cell_type_col = query_cell_type_col,
+                                           ref_cell_type_col = ref_cell_type_col,
+                                           pc_subset = pc_subset,
+                                           n_top_vars = n_top_vars,
+                                           metric = "cosine")
+
+    # Extract similarity matrix from the result
+    cosine_similarity <- cosine_similarity_result[["similarity_matrix"]]
 
     # Vector to store top cosine similarities
     top_cosine <- numeric(length(pc_subset))
@@ -121,13 +127,16 @@ comparePCASubspace <- function(reference_data,
         cosine_similarity[, top_query] <- 0
     }
 
-    # Vector of variance explained
-    var_explained_ref <- attributes(
+    # Vector of variance explained - FIXED BUG AND ADDED INDIVIDUAL VALUES
+    var_explained_ref_all <- attributes(
         reducedDim(reference_data, "PCA"))[["percentVar"]][pc_subset]
-    var_explained_query <- attributes(
-        reducedDim(reference_data, "PCA"))[["percentVar"]][pc_subset]
-    var_explained_avg <- (var_explained_ref[cosine_id[, 1]] +
-                              var_explained_query[cosine_id[, 2]]) / 2
+    var_explained_query_all <- attributes(
+        reducedDim(query_data, "PCA"))[["percentVar"]][pc_subset]
+
+    # Get variance explained for the matched PCs
+    var_explained_ref <- var_explained_ref_all[cosine_id[, 1]]
+    var_explained_query <- var_explained_query_all[cosine_id[, 2]]
+    var_explained_avg <- (var_explained_ref + var_explained_query) / 2
 
     # Weighted cosine similarity score
     weighted_cosine_similarity <- sum(top_cosine * var_explained_avg)/100
@@ -135,6 +144,8 @@ comparePCASubspace <- function(reference_data,
     # Update class of return output
     output <- list(cosine_similarity = top_cosine,
                    cosine_id = cosine_id,
+                   var_explained_ref = var_explained_ref,
+                   var_explained_query = var_explained_query,
                    var_explained_avg = var_explained_avg,
                    weighted_cosine_similarity = weighted_cosine_similarity)
     class(output) <- c(class(output), "comparePCASubspaceObject")
@@ -142,4 +153,3 @@ comparePCASubspace <- function(reference_data,
     # Return cosine similarity output
     return(output)
 }
-
