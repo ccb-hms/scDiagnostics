@@ -272,7 +272,7 @@ plot.detectAnomalyObject <- function(x,
                                  ggplot2::aes(x = .data[["value"]],
                                               y = .data[["anomaly"]],
                                               fill = .data[["anomaly"]],
-                                              color = .data["anomaly"])) +
+                                              color = .data[["anomaly"]])) +
                 ggridges::geom_density_ridges(
                     alpha = 0.6,
                     scale = 1.8,
