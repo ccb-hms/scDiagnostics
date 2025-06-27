@@ -11,7 +11,10 @@ plotCellTypePCA(
   ref_cell_type_col,
   cell_types = NULL,
   pc_subset = 1:5,
-  assay_name = "logcounts"
+  assay_name = "logcounts",
+  lower_facet = c("scatter", "contour", "ellipse", "blank"),
+  diagonal_facet = c("ridge", "density", "boxplot"),
+  upper_facet = c("blank", "scatter", "contour", "ellipse")
 )
 }
 \arguments{
@@ -28,9 +31,15 @@ plotCellTypePCA(
 \item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is 1:5.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+
+\item{lower_facet}{Type of plot to use for the lower panels. Either "scatter" (default), "contour", "ellipse", or "blank".}
+
+\item{diagonal_facet}{Type of plot to use for the diagonal panels. Either "ridge" (default), "density", or "boxplot".}
+
+\item{upper_facet}{Type of plot to use for the upper panels. Either "blank" (default), "scatter", "contour", or "ellipse".}
 }
 \value{
-A ggplot object representing the boxplots of specified principal components for the given cell types and datasets.
+A ggmatrix object representing a pairs plot of specified principal components for the given cell types and datasets.
 }
 \description{
 This function plots the principal components for different cell types in the query and reference datasets.
@@ -38,23 +47,5 @@ This function plots the principal components for different cell types in the que
 \details{
 This function projects the query dataset onto the principal component space of the reference dataset and then plots the
 specified principal components for the specified cell types.
-It uses the `projectPCA` function to perform the projection and \code{ggplot2} to create the plots.
-}
-\examples{
-# Load data
-data("reference_data")
-data("query_data")
-
-# Plot the PC data
-pc_plot <- plotCellTypePCA(query_data = query_data,
-                           reference_data = reference_data,
-                           cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                           query_cell_type_col = "expert_annotation",
-                           ref_cell_type_col = "expert_annotation",
-                           pc_subset = 1:5)
-pc_plot
-
-}
-\author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+It uses the `projectPCA` function to perform the projection and \code{GGally} to create the pairs plot.
 }
