@@ -81,10 +81,11 @@ calculateCellSimilarityPCA <- function(se_object,
         high_loading_vars <- lapply(
             seq_len(ncol(rotation_mat)), function(pc) {
                 abs_loadings <- abs(rotation_mat[, pc])
-                top_vars <- names(sort(abs_loadings,
-                                       decreasing = TRUE))[seq_len(n_top_vars)]
-            return(top_vars)
-        })
+                top_vars <-
+                    names(sort(abs_loadings,
+                               decreasing = TRUE))[seq_len(n_top_vars)]
+                return(top_vars)
+            })
         return(high_loading_vars)
     }
 
@@ -93,7 +94,8 @@ calculateCellSimilarityPCA <- function(se_object,
 
     # Function to compute cosine similarity
     .cosine_similarity <- function(vector1, vector2) {
-        sum(vector1 * vector2) / (sqrt(sum(vector1^2)) * sqrt(sum(vector2^2)))
+        sum(vector1 * vector2) / (sqrt(sum(vector1^2)) *
+                                      sqrt(sum(vector2^2)))
     }
 
     # Function to compute cosine similarity for each PC using high-loading variables
@@ -105,8 +107,9 @@ calculateCellSimilarityPCA <- function(se_object,
                 vars <- high_loading_vars[[pc]]
                 cell_subset <- cell_names[, vars, drop = FALSE]
                 pc_vector <- rotation_mat[vars, pc]
-                apply(cell_subset, 1, .cosine_similarity, vector2 = pc_vector)
-        })
+                apply(cell_subset, 1, .cosine_similarity,
+                      vector2 = pc_vector)
+            })
         return(similarities)
     }
 

@@ -118,8 +118,10 @@ calculateCellDistances <- function(query_data,
 
         # Compute distances from each query cell to all reference cells
         query_to_ref_distances <- apply(
-            query_subset_scores, 1, function(query_cell, ref_subset_scores) {
-                .compute_distances(ref_subset_scores, query_cell)
+            query_subset_scores, 1, function(query_cell,
+                                             ref_subset_scores) {
+                .compute_distances(ref_subset_scores,
+                                   query_cell)
                 }, ref_subset_scores = ref_subset_scores)
 
         # Store the distances
@@ -130,7 +132,8 @@ calculateCellDistances <- function(query_data,
     }
 
     # Add class of object
-    class(distance_data) <- c(class(distance_data), "calculateCellDistancesObject")
+    class(distance_data) <- c(class(distance_data),
+                              "calculateCellDistancesObject")
 
     # Return the distance data
     return(distance_data)

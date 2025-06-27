@@ -80,20 +80,24 @@ plot.calculateCellDistancesObject <- function(x, ref_cell_type, cell_names, ...)
         x = .data[["Distance"]], fill = .data[["Distance_Type"]])) +
         ggplot2::geom_density(alpha = 0.5) +
         ggplot2::labs(title = NULL,
-            x = "Distance", y = "Density",
-            fill = "Distance Type") +
+                      x = "Distance", y = "Density",
+                      fill = "Distance Type") +
         ggplot2::facet_wrap(~ .data[["Query"]], scales = "free_y") +
         ggplot2::theme_bw() +
-        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(
-                           color = "gray",
-                           linetype = "dotted"),
-                       plot.title = ggplot2::element_text(size = 14,
-                                                          face = "bold",
-                                                          hjust = 0.5),
-                       axis.title = ggplot2::element_text(size = 12),
-                       axis.text = ggplot2::element_text(size = 10),
-                       legend.position = "bottom")
+        ggplot2::theme(
+            strip.background = ggplot2::element_rect(fill = "white",
+                                                     color = "black",
+                                                     linewidth = 0.5),
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_line(
+                color = "gray",
+                linetype = "dotted"),
+            plot.title = ggplot2::element_text(size = 14,
+                                               face = "bold",
+                                               hjust = 0.5),
+            axis.title = ggplot2::element_text(size = 12),
+            axis.text = ggplot2::element_text(size = 10),
+            legend.position = "bottom")
     return(density_plot)
 }
 
