@@ -1,12 +1,12 @@
 #' @title Plot Principal Components for Different Cell Types
 #'
-#' @description This function generates a \code{ggplot2} boxplot visualization of principal components (PCs) for different
-#' cell types across two datasets (query and reference).
+#' @description This function generates a \code{ggplot2} visualization of principal components (PCs) for different
+#' cell types across two datasets (query and reference), using either boxplots or violin plots.
 #'
 #' @details
 #' The function \code{boxplotPCA} is designed to provide a visualization of principal component analysis (PCA) results. It projects
 #' the query dataset onto the principal components obtained from the reference dataset. The results are then visualized
-#' as boxplots, grouped by cell types and datasets (query and reference). This allows for a comparative analysis of the
+#' as boxplots or violin plots, grouped by cell types and datasets (query and reference). This allows for a comparative analysis of the
 #' distributions of the principal components across different cell types and datasets. The function internally calls \code{projectPCA}
 #' to perform the PCA projection. It then reshapes the output data into a long format suitable for ggplot2 plotting.
 #'
@@ -16,9 +16,10 @@
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
+#' @param shape Character string indicating the plot type: "box" for boxplots or "violin" for violin plots. Default is "box".
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #'
-#' @return A ggplot object representing the boxplots of specified principal components for the given cell types and datasets.
+#' @return A ggplot object representing the boxplots or violin plots of specified principal components for the given cell types and datasets.
 #'
 #' @export
 #'
@@ -29,7 +30,7 @@
 #' data("reference_data")
 #' data("query_data")
 #'
-#' # Plot the PC data
+#' # Plot the PC data with boxplots (default)
 #' pc_plot <- boxplotPCA(query_data = query_data,
 #'                       reference_data = reference_data,
 #'                       cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
@@ -37,6 +38,16 @@
 #'                       ref_cell_type_col = "expert_annotation",
 #'                       pc_subset = 1:6)
 #' pc_plot
+#'
+#' # Plot the PC data with violin plots
+#' pc_violin <- boxplotPCA(query_data = query_data,
+#'                         reference_data = reference_data,
+#'                         cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+#'                         query_cell_type_col = "SingleR_annotation",
+#'                         ref_cell_type_col = "expert_annotation",
+#'                         pc_subset = 1:6,
+#'                         shape = "violin")
+#' pc_violin
 #'
 #' @importFrom stats approxfun cancor density setNames
 #' @importFrom utils combn
@@ -48,7 +59,11 @@ boxplotPCA <- function(query_data,
                        ref_cell_type_col,
                        cell_types = NULL,
                        pc_subset = 1:5,
+                       shape = c("box", "violin"),
                        assay_name = "logcounts"){
+
+    # Match the shape argument
+    shape <- match.arg(shape)
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -115,22 +130,40 @@ boxplotPCA <- function(query_data,
     plot <- ggplot2::ggplot(pca_long, ggplot2::aes(
         x = .data[["cell_type"]],
         y = .data[["Value"]],
-        fill = .data[["cell_type_dataset"]])) +
-        ggplot2::geom_boxplot(alpha = 0.7, outlier.shape = NA, width = 0.7) +
+        fill = .data[["cell_type_dataset"]]))
+
+    # Add either boxplot or violin plot based on the shape parameter
+    if(shape == "box") {
+        plot <- plot + ggplot2::geom_boxplot(alpha = 0.7,
+                                             outlier.shape = NA,
+                                             width = 0.7)
+    } else { # shape == "violin"
+        plot <- plot + ggplot2::geom_violin(alpha = 0.7,
+                                            trim = FALSE,
+                                            width = 0.7)
+    }
+
+    # Continue with common plot elements
+    plot <- plot +
         ggplot2::facet_wrap(~ .data[["PC"]], scales = "free") +
         ggplot2::scale_fill_manual(values = cell_type_colors,
                                    name = "Cell Types") +
         ggplot2::labs(x = "", y = "PCA Score") +
         ggplot2::theme_bw() +
         ggplot2::theme(
+            strip.background = ggplot2::element_rect(
+                fill = "white", color = "black", linewidth = 0.5),
             panel.grid.minor = ggplot2::element_blank(),
-            panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-            plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-            axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
-            axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10))
+            panel.grid.major = ggplot2::element_line(color = "gray",
+                                                     linetype = "dotted"),
+            plot.title = ggplot2::element_text(size = 14,
+                                               face = "bold", hjust = 0.5),
+            axis.title = ggplot2::element_text(size = 12),
+            axis.text = ggplot2::element_text(size = 10),
+            axis.text.x = ggplot2::element_text(angle = 45,
+                                                hjust = 1,
+                                                size = 10))
 
     # Return the plot
     return(plot)
 }
-
-
