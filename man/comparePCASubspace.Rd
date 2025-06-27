@@ -37,11 +37,14 @@ cosine similarities between query and reference principal components.}
 }
 \value{
 A list containing the following components:
-  \item{principal_angles_cosines}{A numeric vector of cosine values of principal angles.}
-  \item{average_variance_explained}{A numeric vector of average variance explained by each PC.}
+  \item{cosine_similarity}{A numeric vector of cosine values of principal angles.}
+  \item{cosine_id}{A matrix showing which reference and query PCs were matched.}
+  \item{var_explained_ref}{A numeric vector of variance explained by reference PCs.}
+  \item{var_explained_query}{A numeric vector of variance explained by query PCs.}
+  \item{var_explained_avg}{A numeric vector of average variance explained by each PC pair.}
   \item{weighted_cosine_similarity}{A numeric value representing the weighted cosine similarity.}
 
-The S3 plot method returns a \code{ggplot} object representing the heatmap of cosine similarities.
+The S3 plot method returns a \code{ggplot} object representing the cosine similarities with variance information.
 }
 \description{
 This function compares the subspace spanned by the top principal components (PCs) in a reference dataset to that
@@ -50,7 +53,7 @@ both datasets and provides a weighted cosine similarity score.
 
 The S3 plot method generates a visualization of the output from the \code{comparePCASubspace} function.
 The plot shows the cosine of principal angles between reference and query principal components,
-with point sizes representing the variance explained.
+with point sizes representing the variance explained and colors showing the difference in variance between datasets.
 }
 \details{
 This function compares the subspace spanned by the top principal components (PCs) in a reference dataset
@@ -62,7 +65,8 @@ and the average percentage of variance explained.
 
 The S3 plot method converts the input list into a data frame suitable for plotting with \code{ggplot2}.
 Each point in the scatter plot represents the cosine of a principal angle, with the size of the point
-indicating the average variance explained by the corresponding principal components.
+indicating the average variance explained by the corresponding principal components. The color represents
+the difference in variance explained between reference and query datasets.
 }
 \examples{
 # Load libraries

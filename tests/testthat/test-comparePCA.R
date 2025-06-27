@@ -26,23 +26,23 @@ query_data_subset <- scater::runPCA(query_data_subset)
 # Unit tests for comparePCA
 test_that("comparePCA returns expected output structure", {
     # Run the comparePCA function
-    similarity_matrix <- comparePCA(query_data = query_data_subset,
-                                    reference_data = reference_data_subset,
-                                    query_cell_type_col = "expert_annotation",
-                                    ref_cell_type_col = "expert_annotation",
-                                    pc_subset = 1:5,
-                                    n_top_vars = 50,
-                                    metric = "cosine",
-                                    correlation_method = "spearman")
+    result <- comparePCA(query_data = query_data_subset,
+                         reference_data = reference_data_subset,
+                         query_cell_type_col = "expert_annotation",
+                         ref_cell_type_col = "expert_annotation",
+                         pc_subset = 1:5,
+                         n_top_vars = 50,
+                         metric = "cosine",
+                         correlation_method = "spearman")
 
     # Check the class of the output
-    expect_s3_class(similarity_matrix, "comparePCAObject")
+    expect_s3_class(result, "comparePCAObject")
 
     # Check the dimensions of the similarity matrix
-    expect_equal(dim(similarity_matrix), c(5, 5))
+    expect_equal(dim(result$similarity_matrix), c(5, 5))
 
     # Check that the matrix contains numeric values
-    expect_type(similarity_matrix, "double")
+    expect_type(result$similarity_matrix, "double")
 })
 
 test_that("comparePCA handles invalid n_top_vars argument", {
@@ -83,57 +83,57 @@ test_that("comparePCA handles invalid correlation_method argument", {
 
 test_that("comparePCA works with correlation metric", {
     # Run the comparePCA function with correlation metric
-    similarity_matrix <- comparePCA(query_data = query_data_subset,
-                                    reference_data = reference_data_subset,
-                                    query_cell_type_col = "expert_annotation",
-                                    ref_cell_type_col = "expert_annotation",
-                                    pc_subset = 1:5,
-                                    n_top_vars = 50,
-                                    metric = "correlation",
-                                    correlation_method = "spearman")
+    result <- comparePCA(query_data = query_data_subset,
+                         reference_data = reference_data_subset,
+                         query_cell_type_col = "expert_annotation",
+                         ref_cell_type_col = "expert_annotation",
+                         pc_subset = 1:5,
+                         n_top_vars = 50,
+                         metric = "correlation",
+                         correlation_method = "spearman")
 
     # Check the class of the output
-    expect_s3_class(similarity_matrix, "comparePCAObject")
+    expect_s3_class(result, "comparePCAObject")
 
     # Check the dimensions of the similarity matrix
-    expect_equal(dim(similarity_matrix), c(5, 5))
+    expect_equal(dim(result$similarity_matrix), c(5, 5))
 
     # Check that the matrix contains numeric values
-    expect_type(similarity_matrix, "double")
+    expect_type(result$similarity_matrix, "double")
 })
 
 test_that("comparePCA works with different correlation methods", {
     # Run the comparePCA function with pearson correlation
-    similarity_matrix <- comparePCA(query_data = query_data_subset,
-                                    reference_data = reference_data_subset,
-                                    query_cell_type_col = "expert_annotation",
-                                    ref_cell_type_col = "expert_annotation",
-                                    pc_subset = 1:5,
-                                    n_top_vars = 50,
-                                    metric = "correlation",
-                                    correlation_method = "pearson")
+    result <- comparePCA(query_data = query_data_subset,
+                         reference_data = reference_data_subset,
+                         query_cell_type_col = "expert_annotation",
+                         ref_cell_type_col = "expert_annotation",
+                         pc_subset = 1:5,
+                         n_top_vars = 50,
+                         metric = "correlation",
+                         correlation_method = "pearson")
 
     # Check the class of the output
-    expect_s3_class(similarity_matrix, "comparePCAObject")
+    expect_s3_class(result, "comparePCAObject")
 
     # Check the dimensions of the similarity matrix
-    expect_equal(dim(similarity_matrix), c(5, 5))
+    expect_equal(dim(result$similarity_matrix), c(5, 5))
 
     # Check that the matrix contains numeric values
-    expect_type(similarity_matrix, "double")
+    expect_type(result$similarity_matrix, "double")
 })
 
 test_that("comparePCA produces expected results", {
     # Run the comparePCA function with correlation similarity
-    similarity_matrix_corr <- comparePCA(query_data = query_data_subset,
-                                         reference_data = reference_data_subset,
-                                         query_cell_type_col = "expert_annotation",
-                                         ref_cell_type_col = "expert_annotation",
-                                         pc_subset = 1:5,
-                                         n_top_vars = 50,
-                                         metric = "correlation",
-                                         correlation_method = "spearman")
+    result <- comparePCA(query_data = query_data_subset,
+                         reference_data = reference_data_subset,
+                         query_cell_type_col = "expert_annotation",
+                         ref_cell_type_col = "expert_annotation",
+                         pc_subset = 1:5,
+                         n_top_vars = 50,
+                         metric = "correlation",
+                         correlation_method = "spearman")
 
     # Check if the correlation values are in the range [-1, 1]
-    expect_true(all(similarity_matrix_corr >= -1 & similarity_matrix_corr <= 1))
+    expect_true(all(result$similarity_matrix >= -1 & result$similarity_matrix <= 1))
 })
