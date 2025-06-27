@@ -9,10 +9,12 @@
 #' gene between reference and query datasets. The aim is to inspect the alignment of gene expression
 #' levels as a surrogate for dataset similarity. Similar distributions suggest a good alignment,
 #' while differences may indicate discrepancies or incompatibilities between the datasets.
-#' To make the gene expression scales comparable between the datasets, the gene expression values
-#' are transformed using z-rank normalization. This transformation ranks the expression values
-#' and then scales the ranks to have a mean of 0 and a standard deviation of 1, which helps
-#' in standardizing the distributions for comparison.
+#'
+#' Multiple normalization options are available:
+#' - "z_score": Standard z-score normalization within each dataset
+#' - "min_max": Min-max scaling to [0,1] range within each dataset
+#' - "rank": Maps values to quantile ranks (0-100 scale)
+#' - "none": No transformation (preserves original scale differences)
 #'
 #' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
@@ -21,11 +23,11 @@
 #' @param cell_type A vector of cell type cell_types to plot (e.g., c("T-cell", "B-cell")).
 #' @param gene_name The gene name for which the distribution is to be visualized.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param normalization Method for normalizing expression values. Options: "z_score" (default), "min_max", "rank", "none".
 #'
-#' @return A gtable object containing two arranged density plots as grobs.
-#'         The first plot shows the overall gene expression distribution,
-#'         and the second plot displays the cell type-specific expression
-#'         distribution.
+#' @return A ggplot object containing density plots comparing reference and query distributions.
+#'
+#' @export
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
@@ -38,21 +40,27 @@
 #' plotMarkerExpression(reference_data = reference_data,
 #'                      query_data = query_data,
 #'                      ref_cell_type_col = "expert_annotation",
-#'                      query_cell_type_col = "SingleR_annotation",
-#'                      gene_name = "VPREB3",
-#'                      cell_type = "B_and_plasma")
+#'                      query_cell_type_col = c("expert_annotation", "SingleR_annotation")[1],
+#'                      gene_name = "CD8A",
+#'                      cell_type = "CD4",
+#'                      normalization = "z_score")
 #'
 #' @importFrom SummarizedExperiment assay
 #' @importFrom stats sd
 #' @import SingleCellExperiment
-#' @export
+#'
+# Function to plot the expression of a marker
 plotMarkerExpression <- function(reference_data,
                                  query_data,
                                  ref_cell_type_col,
                                  query_cell_type_col,
                                  cell_type,
                                  gene_name,
-                                 assay_name = "logcounts") {
+                                 assay_name = "logcounts",
+                                 normalization = c("z_score", "min_max", "rank", "none")) {
+
+    # Match normalization argument
+    normalization <- match.arg(normalization)
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -88,59 +96,112 @@ plotMarkerExpression <- function(reference_data,
                                 which(query_data[[query_cell_type_col]] %in%
                                           cell_type)]
 
-    # Z-rank transformation
-    .rankTransformation <- function(x) {
-        ranks <- rank(x, ties.method = "average")
-        z_ranks <- (ranks - mean(ranks)) / sd(ranks)
-        return(z_ranks)
+    # Transformation functions
+    .quantileTransformation <- function(x) {
+        return(100 * rank(x, ties.method = "average") / length(x))
     }
-    ref_gene_expression_zr <- .rankTransformation(
-        ref_gene_expression)
-    query_gene_expression_zr <- .rankTransformation(
-        query_gene_expression)
-    ref_gene_expression_specific_zr <- .rankTransformation(
-        ref_gene_expression_specific)
-    query_gene_expression_specific_zr <- .rankTransformation(
-        query_gene_expression_specific)
+
+    .zScoreTransformation <- function(x) {
+        if(sd(x) == 0) return(rep(0, length(x)))
+        return((x - mean(x)) / sd(x))
+    }
+
+    .minMaxTransformation <- function(x) {
+        if(max(x) == min(x)) return(rep(0.5, length(x)))
+        return((x - min(x)) / (max(x) - min(x)))
+    }
+
+    # Apply selected normalization
+    if (normalization == "rank") {
+        ref_gene_expression_norm <-
+            .quantileTransformation(ref_gene_expression)
+        query_gene_expression_norm <-
+            .quantileTransformation(query_gene_expression)
+        ref_gene_expression_specific_norm <-
+            .quantileTransformation(ref_gene_expression_specific)
+        query_gene_expression_specific_norm <-
+            .quantileTransformation(query_gene_expression_specific)
+        x_label <-
+            paste("Quantile Rank Normalized Gene Expression:", gene_name)
+
+    } else if (normalization == "z_score") {
+        ref_gene_expression_norm <-
+            .zScoreTransformation(ref_gene_expression)
+        query_gene_expression_norm <-
+            .zScoreTransformation(query_gene_expression)
+        ref_gene_expression_specific_norm <-
+            .zScoreTransformation(ref_gene_expression_specific)
+        query_gene_expression_specific_norm <-
+            .zScoreTransformation(query_gene_expression_specific)
+        x_label <-
+            paste("Z-Score Normalized Gene Expression:", gene_name)
+
+    } else if (normalization == "min_max") {
+        ref_gene_expression_norm <-
+            .minMaxTransformation(ref_gene_expression)
+        query_gene_expression_norm <-
+            .minMaxTransformation(query_gene_expression)
+        ref_gene_expression_specific_norm <-
+            .minMaxTransformation(ref_gene_expression_specific)
+        query_gene_expression_specific_norm <-
+            .minMaxTransformation(query_gene_expression_specific)
+        x_label <- paste("Min-Max Normalized Gene Expression:", gene_name)
+    } else if (normalization == "none") {
+        ref_gene_expression_norm <-
+            ref_gene_expression
+        query_gene_expression_norm <-
+            query_gene_expression
+        ref_gene_expression_specific_norm <-
+            ref_gene_expression_specific
+        query_gene_expression_specific_norm <-
+            query_gene_expression_specific
+        x_label <-
+            paste("Log-Normalized Gene Expression:", gene_name)
+
+    }
 
     # Create a combined vector of gene expression values
-    combined_gene_expression <- c(ref_gene_expression_zr,
-                                  query_gene_expression_zr,
-                                  ref_gene_expression_specific_zr,
-                                  query_gene_expression_specific_zr)
+    combined_gene_expression <- c(
+        ref_gene_expression_norm,
+        query_gene_expression_norm,
+        ref_gene_expression_specific_norm,
+        query_gene_expression_specific_norm)
 
-    # Create a grouping vector for dataset cell_types
-    dataset_cell_types <- rep(c("Reference", "Query", "Reference", "Query"),
-                              times = c(length(ref_gene_expression),
-                                        length(query_gene_expression),
-                                        length(ref_gene_expression_specific),
-                                        length(query_gene_expression_specific)))
+    # Create a grouping vector for dataset types
+    dataset_types <- rep(c("Reference", "Query", "Reference", "Query"),
+                         times = c(
+                             length(ref_gene_expression),
+                             length(query_gene_expression),
+                             length(ref_gene_expression_specific),
+                             length(query_gene_expression_specific)))
 
-    # Combine the gene expression values and dataset cell_types
-    data <- data.frame(GeneExpression = combined_gene_expression,
-                       Dataset = dataset_cell_types,
-                       plot_type = rep(c("Overall Distribution", "Cell Type-Specific Distribution"),
-                                       times = c(length(ref_gene_expression) +
-                                                     length(query_gene_expression),
-                                                 length(ref_gene_expression_specific) +
-                                                     length(query_gene_expression_specific))))
+    # Combine the gene expression values and dataset types
+    data <- data.frame(
+        GeneExpression = combined_gene_expression,
+        Dataset = dataset_types,
+        plot_type = rep(c("Overall Distribution", "Cell Type-Specific Distribution"),
+                        times = c(length(ref_gene_expression) +
+                                      length(query_gene_expression),
+                                  length(ref_gene_expression_specific) +
+                                      length(query_gene_expression_specific))))
 
-    # Create a stacked density plot using ggplot2 for overall dataset
-    plot_obj <- ggplot2::ggplot(data,
-                                ggplot2::aes(x = .data[["GeneExpression"]],
-                                             fill = .data[["Dataset"]])) +
+    # Create a stacked density plot
+    plot_obj <- ggplot2::ggplot(
+        data,
+        ggplot2::aes(x = .data[["GeneExpression"]],
+                     fill = .data[["Dataset"]])) +
         ggplot2::geom_density(alpha = 0.5) +
         ggplot2::facet_wrap(~ .data[["plot_type"]], scales = "free") +
         ggplot2::labs(title = NULL,
-                      x = paste("Log Gene Expression", gene_name),
+                      x = x_label,
                       y = "Density") +
         ggplot2::theme_bw() +
         ggplot2::theme(
             panel.grid.minor = ggplot2::element_blank(),
             panel.grid.major = ggplot2::element_line(color = "gray",
                                                      linetype = "dotted"),
-            plot.title = ggplot2::element_text(size = 14,
-                                               face = "bold", hjust = 0.5),
+            strip.background = ggplot2::element_rect(fill = "white",
+                                                     color = "black"),
             axis.title = ggplot2::element_text(size = 12),
             axis.text = ggplot2::element_text(size = 10))
     return(plot_obj)
