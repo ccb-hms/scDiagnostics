@@ -35,14 +35,25 @@
 #' # Compute important variables for all pairwise cell comparisons
 #' sir_output <- calculateSIRSpace(reference_data = reference_data,
 #'                                 query_data = query_data,
-#'                                 query_cell_type_col = "SingleR_annotation",
+#'                                 query_cell_type_col = "expert_annotation",
 #'                                 ref_cell_type_col = "expert_annotation",
 #'                                 multiple_cond_means = TRUE,
 #'                                 cumulative_variance_threshold = 0.9,
 #'                                 n_neighbor = 1)
 #'
-#' # Generate boxplot of SIR projections
-#' plot(sir_output, plot_type = "boxplot", sir_subset = 1:6)
+#' # Generate plots SIR projections
+#' plot(sir_output,
+#'      sir_subset = 1:5,
+#'      cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+#'      lower_facet = "scatter",
+#'      diagonal_facet = "boxplot",
+#'      upper_facet = "blank")
+#'
+#' # Plot top loadings
+#' plot(sir_output,
+#'      sir_subset = 1:5,
+#'      plot_type = "loadings",
+#'      n_top = 10)
 #'
 # Function to plot cell types in SIR space
 calculateSIRSpace <- function(query_data,
@@ -70,7 +81,8 @@ calculateSIRSpace <- function(query_data,
     }
 
     # Check if n_neighbor is a positive integer
-    if (!is.numeric(n_neighbor) || n_neighbor <= 0 || n_neighbor != as.integer(n_neighbor)) {
+    if (!is.numeric(n_neighbor) || n_neighbor <= 0 ||
+        n_neighbor != as.integer(n_neighbor)) {
         stop("n_neighbor must be a positive integer.")
     }
 
