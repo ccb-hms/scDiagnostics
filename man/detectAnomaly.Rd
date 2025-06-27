@@ -24,6 +24,8 @@ detectAnomaly(
   pc_subset = NULL,
   data_type = c("query", "reference"),
   n_tree = 500,
+  upper_facet = c("blank", "contour", "ellipse"),
+  diagonal_facet = c("density", "ridge", "boxplot", "blank"),
   ...
 )
 }
@@ -58,6 +60,10 @@ Each element of the list should correspond to a cell type and contain \code{refe
 be a name present in \code{x}. If NULL, the "Combined" cell type will be plotted. Default is NULL.}
 
 \item{data_type}{A character string specifying whether to plot the "query" data or the "reference" data. Default is "query".}
+
+\item{upper_facet}{Either "blank" (default), "contour", or "ellipse" for the upper facet plots.}
+
+\item{diagonal_facet}{Either "density" (default), "ridge", "boxplot" or "blank" for the diagonal plots.}
 }
 \value{
 A list containing the following components for each cell type and the combined data:
@@ -67,7 +73,7 @@ A list containing the following components for each cell type and the combined d
 \item{query_mat_subset}{PCA projections of the query data (if provided).}
 \item{var_explained}{Proportion of variance explained by the retained principal components.}
 
-The S3 plot method returns a \code{ggplot} object representing the PCA plots with anomalies highlighted.
+The S3 plot method returns a \code{GGally::ggpairs} object representing the PCA plots with anomalies highlighted.
 }
 \description{
 This function detects anomalies in single-cell data by projecting the data onto a PCA space and using an isolation forest
@@ -85,16 +91,12 @@ the anomaly scores are computed on the reference data itself. Anomaly scores for
 provided as part of the output.
 
 The function extracts the specified PCs from the given anomaly detection object and generates
-scatter plots for each pair of PCs. It uses \code{ggplot2} to create a faceted plot where each facet
-represents a pair of PCs. The plot includes the following elements:
+scatter plots for each pair of PCs. It uses \code{GGally} to create a pairs plot where each facet
+represents a pair of PCs. The plot includes:
 
-1. A background gradient: This represents the anomaly scores across the PC space. The gradient
-   ranges from green (low anomaly scores) through yellow to red (high anomaly scores).
-2. Data points: Plotted over the gradient, with different shapes for normal and anomalous points.
-   Anomalous points are represented as 'X', while normal points are solid circles.
-
-The background gradient provides a visual representation of the anomaly landscape, allowing for
-intuitive interpretation of regions with high or low anomaly scores.
+1. Lower facets: Scatter plots with a background gradient representing anomaly scores from green (low) to red (high)
+2. Diagonal facets: Density, ridge, boxplot or blank visualizations showing the distribution of each PC, separated by anomaly status
+3. Upper facets: Blank panels by default, or contour/ellipse plots separated by anomaly status if specified
 }
 \examples{
 # Load data
@@ -131,4 +133,3 @@ plot(anomaly_output,
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 }
-\keyword{internal}
