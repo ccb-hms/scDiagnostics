@@ -34,12 +34,14 @@ test_that("calculateWassersteinDistance returns correct object structure", {
     )
 
     expect_true(is.list(result))
-    expect_named(result, c("null_dist", "query_dist", "cell_type"))
+    expect_named(result, c("ref_ref_dist", "ref_query_dist", "probability_superiority", "cell_types"))
+    expect_s3_class(result, "calculateWassersteinDistanceObject")
 
     # Check components of the result
-    expect_type(result$null_dist, "double")
-    expect_type(result$query_dist, "double")
-    expect_type(result$cell_type, "character")
+    expect_type(result$ref_ref_dist, "list")
+    expect_type(result$ref_query_dist, "list")
+    expect_type(result$probability_superiority, "double")
+    expect_type(result$cell_types, "character")
 })
 
 # Test to ensure that calculateWassersteinDistance correctly identifies a specific number of unique cell types
@@ -53,7 +55,8 @@ test_that("calculateWassersteinDistance finds the right number of cell types", {
         n_resamples = 100
     )
 
-    expect_equal(length(result$cell_type), length(unique(ref_data_subset$expert_annotation)))
+    expect_equal(length(result$cell_types), length(unique(ref_data_subset$expert_annotation)))
+    expect_equal(length(result$probability_superiority), length(result$cell_types))
 })
 
 # Test to ensure that the function can run with default parameters
@@ -65,6 +68,45 @@ test_that("calculateWassersteinDistance works with default parameters", {
         ref_cell_type_col = "expert_annotation"
     )
 
-    expect_type(result$null_dist, "double")
-    expect_type(result$query_dist, "double")
+    expect_type(result$ref_ref_dist, "list")
+    expect_type(result$ref_query_dist, "list")
+    expect_type(result$probability_superiority, "double")
+})
+
+# Test parameter validation
+test_that("calculateWassersteinDistance validates parameters correctly", {
+    # Test invalid n_resamples
+    expect_error(calculateWassersteinDistance(
+        query_data = query_data_subset,
+        reference_data = ref_data_subset,
+        query_cell_type_col = "expert_annotation",
+        ref_cell_type_col = "expert_annotation",
+        n_resamples = -10
+    ), "n_resamples.*should be an integer, greater than zero")
+
+    expect_error(calculateWassersteinDistance(
+        query_data = query_data_subset,
+        reference_data = ref_data_subset,
+        query_cell_type_col = "expert_annotation",
+        ref_cell_type_col = "expert_annotation",
+        n_resamples = "invalid"
+    ), "n_resamples.*should be numeric")
+})
+
+# Test with specific cell types
+test_that("calculateWassersteinDistance works with specific cell types", {
+    result <- calculateWassersteinDistance(
+        query_data = query_data_subset,
+        reference_data = ref_data_subset,
+        query_cell_type_col = "expert_annotation",
+        ref_cell_type_col = "expert_annotation",
+        cell_types = "CD4",
+        pc_subset = 1:5,
+        n_resamples = 50
+    )
+
+    expect_equal(result$cell_types, "CD4")
+    expect_equal(length(result$ref_ref_dist), 1)
+    expect_equal(length(result$ref_query_dist), 1)
+    expect_equal(length(result$probability_superiority), 1)
 })
