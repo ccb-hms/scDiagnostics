@@ -8,7 +8,9 @@ plotGeneSetScores(
   se_object,
   method = c("PCA", "TSNE", "UMAP"),
   score_col,
-  pc_subset = 1:5
+  pc_subset = 1:5,
+  cell_type_col = NULL,
+  cell_types = NULL
 )
 }
 \arguments{
@@ -21,6 +23,10 @@ It can be either a reference or query dataset.}
 
 \item{pc_subset}{An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA".
 Default is 1:5.}
+
+\item{cell_type_col}{The column name in the \code{colData} of \code{se_object} that identifies the cell types.}
+
+\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
 }
 \value{
 A ggplot2 object representing the gene set scores plotted on the specified reduced dimensions.
@@ -30,7 +36,7 @@ Plot gene sets or pathway scores on PCA, TSNE, or UMAP. Single cells are color-c
 }
 \details{
 This function plots gene set scores on reduced dimensions such as PCA, t-SNE, or UMAP.
-It extracts the reduced dimensions from the provided SingleCellExperiment object.
+It extracts the reduced dimensions from the provided \code{\linkS4class{SingleCellExperiment}} object.
 Gene set scores are visualized as a scatter plot with colors indicating the scores.
 For PCA, the function automatically includes the percentage of variance explained
 in the plot's legend.
@@ -43,10 +49,9 @@ data("query_data")
 plotGeneSetScores(se_object = query_data,
                   method = "PCA",
                   score_col = "gene_set_scores",
-                  pc_subset = 1:5)
-
-# Note: Users can provide their own gene set scores in the colData of the 'se_object' object,
-# using any dimension reduction of their choice.
+                  pc_subset = 1:5,
+                  cell_types = "CD8",
+                  cell_type_col = "SingleR_annotation")
 
 }
 \author{
