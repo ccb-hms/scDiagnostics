@@ -1,23 +1,24 @@
-#' @title Plot Projected Data on Discriminant Spaces
+#' @title Plot SIR Components for Different Cell Types
 #'
 #' @description
-#' The S3 plot method visualizes the projected reference and query data on discriminant spaces using either a scatterplot, boxplot, or varplot.
+#' This function plots the Sliced Inverse Regression (SIR) components for different cell types in query and reference datasets.
 #'
 #' @details
-#' - **Scatterplot**: Displays projected data points, with colors used to differentiate between cell types and datasets.
-#' - **Boxplot**: Shows the distribution of projected data values for each cell type, separated by datasets.
-#' - **Varplot**: Highlights the top contributing variables for each discriminant axis, differentiating between positive and negative loadings.
+#' This function visualizes the SIR projections for specified cell types, providing a pairs plot of the SIR components.
+#' It offers various visualization options for different facets of the plot including scatter plots, contours, ellipses, and density plots.
+#' When plot_type is "loadings", it creates horizontal bar plots showing the n_top contributing variables for each SIR component.
 #'
-#' @param x An object of class \code{calculateSIRSpace}, which contains projected data on the discriminant space.
-#' Each element should include 'ref_proj' and 'query_proj' data frames representing reference and query projections.
-#' @param plot_type A character string indicating the type of plot to generate. Options are "scatterplot", "boxplot", or "varplot". Default is "scatterplot".
-#' @param sir_subset A numeric vector specifying which discriminant axes (SIR components) to include in the plot. Default is the first 5 axes.
-#' @param n_top_vars Number of top contributing variables to display in varplot. Default is 5.
-#' @param ... Additional arguments to be passed to the plotting functions.
+#' @param x An object of class \code{calculateSIRSpaceObject} containing SIR projections.
+#' @param plot_type A character string specifying the type of plot. Either "scores" (default) for SIR projections or "loadings" for variable loadings.
+#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included. Only used when plot_type = "scores".
+#' @param sir_subset A numeric vector specifying which SIR components to include in the plot. Default is 1:5.
+#' @param lower_facet Type of plot to use for the lower panels. Either "scatter" (default), "contour", "ellipse", or "blank". Only used when plot_type = "scores".
+#' @param diagonal_facet Type of plot to use for the diagonal panels. Either "ridge" (default), "density", "boxplot" or "blank". Only used when plot_type = "scores".
+#' @param upper_facet Type of plot to use for the upper panels. Either "blank" (default), "scatter", "contour", or "ellipse". Only used when plot_type = "scores".
+#' @param n_top A numeric value specifying the number of n_top variables (by absolute loading value) to display. Default is 10 Only used when plot_type = "loadings".
+#' @param ... Additional arguments passed to the plotting function.
 #'
-#' @keywords internal
-#'
-#' @return A \code{ggplot} object representing the chosen visualization (scatterplot, boxplot, or varplot) of the projected data.
+#' @return A ggmatrix object representing a pairs plot of specified SIR components for the given cell types and datasets when plot_type = "scores", or a ggplot object showing loadings when plot_type = "loadings".
 #'
 #' @export
 #'
@@ -27,228 +28,535 @@
 #'
 #' @rdname calculateSIRSpace
 #'
-#' @importFrom utils head
-#'
-# This function plots the SIR output either as a scatterplot for a boxplot
-plot.calculateSIRSpaceObject <- function(
-        x,
-        plot_type = c("scatterplot", "boxplot", "varplot"),
-        sir_subset = NULL,
-        n_top_vars = 5,
-        ...){
+# Function to plot data projected onto SIR space
+plot.calculateSIRSpaceObject <- function(x,
+                                         plot_type = c("scores", "loadings"),
+                                         cell_types = NULL,
+                                         sir_subset = 1:5,
+                                         lower_facet = c("scatter", "contour", "ellipse", "blank"),
+                                         diagonal_facet = c("ridge", "density", "boxplot", "blank"),
+                                         upper_facet = c("blank", "scatter", "contour", "ellipse"),
+                                         n_top = 10,
+                                         ...) {
 
-    # Match argument for plot type
+    # Match arguments
     plot_type <- match.arg(plot_type)
+    lower_facet <- match.arg(lower_facet)
+    diagonal_facet <- match.arg(diagonal_facet)
+    upper_facet <- match.arg(upper_facet)
 
-    # Value for SIR subset
-    if(is.null(sir_subset)){
-        sir_subset <- seq_len(min(5, ncol(x[["rotation_mat"]])))
+    # Check sir_subset against available SIR components
+    if (any(!(sir_subset %in% seq_len(ncol(x[["rotation_mat"]]))))) {
+        stop("sir_subset contains values outside the range of available SIR components")
     }
 
-    # Check input for SIR subset
-    if(any(!(sir_subset %in% seq_len(ncol(x[["rotation_mat"]]))))){
-        stop("\"sir_subset\" is out of range.")
+    # Check n_top parameter for loadings plot
+    if (plot_type == "loadings") {
+        if (!is.numeric(n_top) || n_top <= 0 || n_top != as.integer(n_top)) {
+            stop("n_top must be a positive integer.")
+        }
     }
 
-    # Identify cell types
-    cell_types <- unique(rownames(x[["cond_means"]]))
+    # Helper function to plot scores (original functionality)
+    .plotScores <- function(x, cell_types,
+                            sir_subset,
+                            lower_facet,
+                            diagonal_facet,
+                            upper_facet) {
 
-    if(plot_type == "scatterplot"){
-
-        # Remove cells with NA cell type
+        # Get SIR projections data
         sir_projections <- na.omit(x[["sir_projections"]])
 
-        # Create a subset of plot names for the SIR subset
+        # Get available cell types if not specified by user
+        if (is.null(cell_types)) {
+            cell_types <- unique(sir_projections[["cell_type"]])
+        } else {
+            # Check if specified cell types exist in the data
+            if (!all(cell_types %in% sir_projections[["cell_type"]])) {
+                stop("One or more specified cell types not found in the data")
+            }
+            # Filter projections to include only specified cell types
+            sir_projections <- sir_projections[sir_projections[["cell_type"]] %in%
+                                                   cell_types, ]
+        }
+
+        # Create SIR column names with variance explained
         plot_names <- paste0(
             "SIR", sir_subset, " (",
             sprintf("%.1f%%", x[["percent_var"]][sir_subset]), ")")
 
-        # Create all possible pairs of the specified PCs in the subset
-        pairs <- expand.grid(x = sir_subset, y = sir_subset)
-        pairs <- pairs[pairs[["x"]] < pairs[["y"]], ]
+        # Create a new data frame with selected SIR components
+        sir_df <- data.frame(matrix(0, nrow = nrow(sir_projections),
+                                    ncol = length(sir_subset)))
+        colnames(sir_df) <- plot_names
 
-        # Create a new data frame with all possible pairs of specified PCs
-        data_pairs_list <- lapply(seq_len(nrow(pairs)), function(i) {
-            x_col <- pairs[["x"]][i]
-            y_col <- pairs[["y"]][i]
+        for (i in 1:length(sir_subset)) {
+            sir_df[, i] <- sir_projections[, sir_subset[i]]
+        }
 
-            # Properly subset the projection data using sir_subset indices
-            data_frame <- data.frame(
-                sir_projections[, c(x_col, y_col)],
-                paste(sir_projections[["dataset"]], sir_projections[["cell_type"]], sep = " "))
-
-            colnames(data_frame) <- c("x_value", "y_value", "cell_type_dataset")
-            data_frame[["x"]] <- plot_names[match(x_col, sir_subset)]
-            data_frame[["y"]] <- plot_names[match(y_col, sir_subset)]
-
-            return(data_frame)
-        })
-
-        # Combine all pairs into one data frame
-        data_pairs <- do.call(rbind, data_pairs_list)
-        data_pairs[["x"]] <- factor(data_pairs[["x"]],
-                                    levels = plot_names)
-        data_pairs[["y"]] <- factor(data_pairs[["y"]],
-                                    levels = plot_names)
+        # Create a cell type dataset column for coloring
+        cell_type_dataset <- paste(sir_projections[["dataset"]],
+                                   sir_projections[["cell_type"]], sep = " ")
 
         # Define the order of cell type and dataset combinations
-        order_combinations <- paste(rep(c("Reference", "Query"), length(cell_types)), rep(sort(cell_types), each = 2))
-        data_pairs[["cell_type_dataset"]] <- factor(data_pairs[["cell_type_dataset"]], levels = order_combinations)
+        order_combinations <- paste(
+            rep(c("Reference", "Query"),
+                length(cell_types)),
+            rep(sort(cell_types), each = 2))
+
+        cell_type_dataset <- factor(cell_type_dataset,
+                                    levels = order_combinations)
+
+        # Generate colors for cell types and datasets
         cell_type_colors <- generateColors(order_combinations, paired = TRUE)
 
-        # Set SIR identity as factor
-        data_pairs[["x"]] <- factor(data_pairs[["x"]], levels = unique(data_pairs[["x"]]))
-        data_pairs[["y"]] <- factor(data_pairs[["y"]], levels = unique(data_pairs[["y"]]))
+        # Add the cell type dataset and colors columns to the SIR data frame
+        sir_df[["cell_type_dataset"]] <- cell_type_dataset
 
-        # Create the ggplot object (with facets if PCA)
-        plot_obj <- ggplot2::ggplot(
-            data_pairs, ggplot2::aes(x = .data[["x_value"]],
-                                     y = .data[["y_value"]],
-                                     color = .data[["cell_type_dataset"]])) +
-            ggplot2::geom_point(alpha = 0.5, size = 1) +
+        # Create a simple plot to extract the legend using GGally::grab_legend
+        legend_plot <- ggplot2::ggplot(sir_df,
+                                       ggplot2::aes(x = sir_df[, 1],
+                                                    y = sir_df[, 2])) +
+            ggplot2::geom_point(ggplot2::aes(color = .data[["cell_type_dataset"]])) +
             ggplot2::scale_color_manual(values = cell_type_colors,
-                                        name = "Cell Types") +
-            ggplot2::facet_grid(rows = ggplot2::vars(.data[["y"]]),
-                                cols = ggplot2::vars(.data[["x"]]),
-                                scales = "free") +
-            ggplot2::xlab("") + ggplot2::ylab("") +
-            ggplot2::theme_bw() +
+                                        name = "Cell Type") +
             ggplot2::theme(
-                panel.grid.minor = ggplot2::element_blank(),
-                panel.grid.major = ggplot2::element_line(color = "gray",
-                                                         linetype = "dotted"),
-                plot.title = ggplot2::element_text(size = 14,
-                                                   face = "bold",
-                                                   hjust = 0.5),
-                axis.title = ggplot2::element_text(size = 12),
-                axis.text = ggplot2::element_text(size = 10))
+                legend.position = "right",
+                legend.box = "vertical",
+                legend.key = ggplot2::element_rect(fill = "white"),
+                legend.background = ggplot2::element_blank()
+            ) +
+            ggplot2::guides(color = ggplot2::guide_legend(ncol = 1))
 
-    } else if (plot_type == "boxplot"){
+        # [All the helper functions for plotting remain the same]
+        # Scatterplot facet function
+        .scatterFunc <- function(data, mapping, ...) {
 
-        # Remove cells with NA cell type
-        sir_projections <- na.omit(x[["sir_projections"]])
-
-        # Create the long format data frame manually
-        sir_projections <- sir_projections[!is.na(sir_projections[["cell_type"]]),]
-        if(!is.null(cell_types)){
-            if(all(cell_types %in% sir_projections[["cell_type"]])){
-                sir_projections <- sir_projections[which(sir_projections[["cell_type"]] %in%
-                                                             cell_types),]
-            } else{
-                stop("One or more of the specified \'cell_types\' are not available.")
-            }
+            ggplot2::ggplot(data = data, mapping = mapping) +
+                ggplot2::geom_point(alpha = 0.5, size = 1,
+                                    ggplot2::aes(color = cell_type_dataset)) +
+                ggplot2::scale_color_manual(values = cell_type_colors) +
+                ggplot2::theme_minimal() +
+                ggplot2::theme(
+                    panel.border = ggplot2::element_rect(
+                        color = "black",
+                        fill = NA,
+                        linewidth = 0.5))
         }
-        sir_long <- data.frame(SIR = rep(paste0("sir", sir_subset),
-                                         each = nrow(sir_projections)),
-                               Value = unlist(c(sir_projections[, sir_subset])),
-                               dataset = rep(sir_projections[["dataset"]],
-                                             length(sir_subset)),
-                               cell_type = rep(sir_projections[["cell_type"]],
-                                               length(sir_subset)))
-        sir_long[["SIR"]] <- toupper(sir_long[["SIR"]])
 
-        # Create a new variable representing the combination of cell type and dataset
-        sir_long[["cell_type_dataset"]] <- paste(sir_long[["dataset"]],
-                                                 sir_long[["cell_type"]],
-                                                 sep = " ")
+        # Contour facet function
+        .smoothContourFunc <- function(data, mapping, ...) {
 
-        # Define the order of cell type and dataset combinations
-        order_combinations <- paste(rep(c("Reference", "Query"),
-                                        length(unique(sir_long[["cell_type"]]))),
-                                    rep(sort(unique(sir_long[["cell_type"]])),
-                                        each = 2))
+            x_name <- rlang::as_name(mapping[["x"]])
+            y_name <- rlang::as_name(mapping[["y"]])
 
-        # Reorder the levels of cell type and dataset factor
-        sir_long[["cell_type_dataset"]] <- factor(sir_long[["cell_type_dataset"]],
-                                                  levels = order_combinations)
+            # Start with empty plot
+            p <- ggplot2::ggplot() +
+                ggplot2::theme_minimal()
 
-        # Set SIR identity as factor
-        sir_long[["SIR"]] <- factor(sir_long[["SIR"]], levels = paste0("SIR", sir_subset))
+            # Process each cell type separately
+            for (ct in unique(data[["cell_type_dataset"]])) {
+                subset_data <- data[data[["cell_type_dataset"]] == ct, ]
 
-        # Define the colors for cell types
-        cell_type_colors <- generateColors(order_combinations,
-                                           paired = TRUE)
+                # Skip if too few points
+                if (nrow(subset_data) < 10) next
 
-        # Create the ggplot
-        plot_obj <- ggplot2::ggplot(sir_long, ggplot2::aes(
-            x = .data[["cell_type"]],
-            y = .data[["Value"]],
-            fill = .data[["cell_type_dataset"]])) +
-            ggplot2::geom_boxplot(alpha = 0.7, outlier.shape = NA, width = 0.7) +
-            ggplot2::facet_wrap(~ .data[["SIR"]], scales = "free") +
-            ggplot2::scale_fill_manual(values = cell_type_colors,
-                                       name = "Cell Types") +
-            ggplot2::labs(x = "", y = "SIR Score") +
-            ggplot2::theme_bw() +
-            ggplot2::theme(
-                panel.grid.minor = ggplot2::element_blank(),
-                panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
-                axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10))
+                # Use larger adjustment factor for smoother contours
+                adjust_factor <- 1.5
 
-    } else if (plot_type == "varplot"){
-
-        # Rotation matrix
-        rotation_mat <- x[["rotation_mat"]][, sir_subset, drop = FALSE]
-
-        # Create an empty list to store individual ggplot objects
-        plot_list <- list()
-
-        # For each SIR vector (each column of rotation_mat)
-        for (i in seq_len(ncol(rotation_mat))) {
-
-            sir_vector <- rotation_mat[, i]
-
-            # Ensure that the vector has names
-            if (is.null(names(sir_vector))) {
-                names(sir_vector) <- rownames(rotation_mat)
+                # Add smoother contours with fewer levels
+                p <- p + ggplot2::stat_density_2d(
+                    data = subset_data,
+                    mapping = ggplot2::aes(
+                        x = !!rlang::sym(x_name),
+                        y = !!rlang::sym(y_name)
+                    ),
+                    contour = TRUE,
+                    adjust = adjust_factor,
+                    bins = 5,
+                    color = cell_type_colors[which(
+                        levels(data[["cell_type_dataset"]]) == ct)],
+                    linewidth = 0.5,
+                    na.rm = TRUE
+                )
             }
 
-            # Find the top 5 positive and top 5 negative markers
-            sorted_positive <- sort(sir_vector[sir_vector > 0], decreasing = TRUE)
-            sorted_negative <- sort(sir_vector[sir_vector < 0], decreasing = FALSE)
+            # Apply theme elements
+            p + ggplot2::theme_minimal() +
+                ggplot2::theme(
+                    panel.border = ggplot2::element_rect(
+                        color = "black", fill = NA, linewidth = 0.5),
+                    legend.position = "none",
+                    axis.text = ggplot2::element_blank(),
+                    axis.ticks = ggplot2::element_blank(),
+                    axis.title = ggplot2::element_blank()
+                )
+        }
 
-            top_positive <- head(sorted_positive, n_top_vars)
-            top_negative <- head(sorted_negative, n_top_vars)
+        # Ellipse facet function
+        .robustEllipseFunc <- function(data, mapping, ...) {
 
-            # Create a data frame for this SIR vector with marker names and loadings
-            df <- data.frame(
-                marker = c(names(top_positive), names(top_negative)),
-                loading = c(top_positive, top_negative),
-                SIR = rep(paste0("SIR", i), length(c(top_positive, top_negative))),
-                Direction = c(rep("Positive", length(top_positive)), rep("Negative", length(top_negative)))
+            # Function to calculate robust ellipses through bootstrapping
+            createEllipse <- function(d) {
+                if (nrow(d) < 10) return(NULL)
+
+                x_var <- rlang::as_name(mapping[["x"]])
+                y_var <- rlang::as_name(mapping[["y"]])
+
+                # Extract variables
+                x <- d[[x_var]]
+                y <- d[[y_var]]
+
+                # Calculate robust center and covariance
+                cov_mat <- cov(cbind(x, y), use = "pairwise.complete.obs")
+                center <- c(mean(x, na.rm = TRUE), mean(y, na.rm = TRUE))
+
+                # Calculate ellipse points
+                theta <- seq(0, 2 * pi, length.out = 100)
+                ellipse <- MASS::cov.trob(cbind(x, y))
+
+                # Get ellipse coordinates
+                ev <- eigen(ellipse[["cov"]])
+                a <- sqrt(ev[["values"]][1]) * 2.45
+                b <- sqrt(ev[["values"]][2]) * 2.45
+
+                # Create ellipse coordinates
+                angle <- atan2(ev[["vectors"]][2,1], ev[["vectors"]][1,1])
+                ellipse_x <- center[1] + a * cos(theta) * cos(angle) -
+                    b * sin(theta) * sin(angle)
+                ellipse_y <- center[2] + a * cos(theta) * sin(angle) +
+                    b * sin(theta) * cos(angle)
+
+                return(data.frame(x = ellipse_x, y = ellipse_y))
+            }
+
+            p <- ggplot2::ggplot(data, mapping)
+
+            # Split by cell type and create robust ellipses
+            for (ct in unique(data[["cell_type_dataset"]])) {
+                subset_data <- data[data[["cell_type_dataset"]] == ct,]
+                ellipse_data <- createEllipse(subset_data)
+
+                if (!is.null(ellipse_data)) {
+                    p <- p + ggplot2::geom_path(
+                        data = ellipse_data,
+                        ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
+                        color = cell_type_colors[
+                            which(levels(data[["cell_type_dataset"]]) == ct)],
+                        linewidth = 0.7
+                    )
+                }
+            }
+
+            p + ggplot2::theme_minimal() +
+                ggplot2::theme(
+                    panel.border = ggplot2::element_rect(
+                        color = "black", fill = NA,
+                        linewidth = 0.5),
+                    legend.position = "none",
+                    axis.text = ggplot2::element_blank(),
+                    axis.ticks = ggplot2::element_blank(),
+                    axis.title = ggplot2::element_blank()
+                )
+        }
+
+        # Blank facet function
+        .blankFunc <- function(data, mapping, ...) {
+
+            ggplot2::ggplot() +
+                ggplot2::theme_minimal() +
+                ggplot2::theme(
+                    panel.border = ggplot2::element_rect(
+                        color = "black", fill = NA,
+                        linewidth = 0.5),
+                    legend.position = "none",
+                    axis.text = ggplot2::element_blank(),
+                    axis.ticks = ggplot2::element_blank(),
+                    axis.title = ggplot2::element_blank(),
+                    panel.grid = ggplot2::element_blank()
+                )
+        }
+
+        # Ridge diagonal facet
+        .ridgeFunc <- function(data, mapping, ...) {
+
+            # Get current mapping info
+            x_var_name <- rlang::as_name(mapping[["x"]])
+
+            # Create a long-format data frame for ridge plot
+            plot_data <- data.frame(
+                value = data[[x_var_name]],
+                group = data[["cell_type_dataset"]]
             )
 
-            # Ensure that 'marker' is treated as a factor, preserving the original order
-            df[["marker"]] <- factor(df[["marker"]], levels = df[["marker"]])
+            # Create ridge plot with ggridges
+            suppressMessages({
+                p <- ggplot2::ggplot(plot_data,
+                                     ggplot2::aes(x = .data[["value"]],
+                                                  y = .data[["group"]],
+                                                  fill = .data[["group"]])) +
+                    ggridges::geom_density_ridges(
+                        alpha = 0.7,
+                        scale = 2,
+                        rel_min_height = 0.01,
+                        quantile_lines = FALSE
+                    ) +
+                    ggplot2::scale_fill_manual(values = cell_type_colors) +
+                    ggplot2::scale_y_discrete(
+                        limits = rev(levels(cell_type_dataset))) +
+                    ggplot2::theme_minimal() +
+                    ggplot2::theme(
+                        panel.border = ggplot2::element_rect(color = "black",
+                                                             fill = NA,
+                                                             linewidth = 0.5),
+                        axis.title = ggplot2::element_blank(),
+                        axis.text.y = ggplot2::element_blank(),
+                        axis.ticks.y = ggplot2::element_blank(),
+                        legend.position = "none"
+                    )
+            })
 
-            # Set SIR identity as factor
-            df[["SIR"]] <- factor(df[["SIR"]], levels = paste0("SIR", sir_subset))
-
-            # Create a plot for this SIR vector
-            plot_list[[i]] <- ggplot2::ggplot(df, ggplot2::aes(
-                x = .data[["marker"]],
-                y = .data[["loading"]],
-                fill = .data[["Direction"]])) +
-                ggplot2::geom_bar(stat = "identity") +
-                ggplot2::facet_wrap(~ .data[["SIR"]], scales = "free_y") +
-                ggplot2::coord_flip() +
-                ggplot2::labs(x = NULL, y = "SIR Loading", title = NULL) +
-                ggplot2::theme_bw() +
-                ggplot2::theme(
-                    legend.position = "none",
-                    panel.grid.minor = ggplot2::element_blank(),
-                    panel.grid.major = ggplot2::element_line(color = "gray", linetype = "dotted"),
-                    plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
-                    axis.title = ggplot2::element_text(size = 12), axis.text = ggplot2::element_text(size = 10),
-                    axis.text.x = ggplot2::element_text(hjust = 1, size = 10))
+            return(p)
         }
 
-        # Combine all plots into a grid
-        plot_obj <- patchwork::wrap_plots(plot_list, ncol = 3)
+        # Density diagonal facet
+        .densityFunc <- function(data, mapping, ...) {
+
+            # Get current mapping info
+            x_var_name <- rlang::as_name(mapping[["x"]])
+
+            ggplot2::ggplot(data = data, mapping = mapping) +
+                ggplot2::geom_density(ggplot2::aes(fill = cell_type_dataset,
+                                                   color = cell_type_dataset),
+                                      alpha = 0.5) +
+                ggplot2::scale_fill_manual(values = cell_type_colors) +
+                ggplot2::scale_color_manual(values = cell_type_colors) +
+                ggplot2::theme_minimal() +
+                ggplot2::theme(
+                    panel.border = ggplot2::element_rect(color = "black",
+                                                         fill = NA,
+                                                         linewidth = 0.5),
+                    axis.title.y = ggplot2::element_blank(),
+                    axis.text.y = ggplot2::element_blank(),
+                    axis.ticks.y = ggplot2::element_blank()
+                )
+        }
+
+        # Boxplot diagonal facet
+        .boxplotFunc <- function(data, mapping, ...) {
+
+            # Extract the x variable name for the boxplot title
+            x_name <- rlang::as_name(mapping[["x"]])
+
+            # Create a long-format data frame for horizontal boxplot
+            plot_data <- data.frame(
+                value = data[[x_name]],
+                group = data[["cell_type_dataset"]]
+            )
+
+            # Create horizontal boxplot
+            ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["value"]],
+                                                    y = .data[["group"]],
+                                                    fill = .data[["group"]])) +
+                ggplot2::geom_boxplot(alpha = 0.7,
+                                      outlier.size = 0.5,
+                                      width = 0.6) +
+                ggplot2::scale_fill_manual(values = cell_type_colors) +
+                ggplot2::scale_y_discrete(limits = rev(
+                    levels(cell_type_dataset))) +
+                ggplot2::labs(x = "", y = "") +
+                ggplot2::theme_minimal() +
+                ggplot2::theme(
+                    panel.border = ggplot2::element_rect(color = "black",
+                                                         fill = NA,
+                                                         linewidth = 0.5),
+                    axis.title.x = ggplot2::element_blank(),
+                    legend.position = "none",
+                    axis.title.y = ggplot2::element_blank(),
+                    axis.text.y = ggplot2::element_blank(),
+                    axis.ticks.y = ggplot2::element_blank()
+                )
+        }
+
+        # Select the lower facet plot type based on user input
+        if (lower_facet == "scatter") {
+            lower_plot <- .scatterFunc
+        } else if (lower_facet == "contour") {
+            lower_plot <- .smoothContourFunc
+        } else if (lower_facet == "ellipse") {
+            lower_plot <- .robustEllipseFunc
+        } else if (lower_facet == "blank") {
+            lower_plot <- .blankFunc
+        }
+
+        # Select the diagonal plot type based on user input
+        if (diagonal_facet == "density") {
+            diag_plot <- .densityFunc
+        } else if (diagonal_facet == "boxplot") {
+            diag_plot <- .boxplotFunc
+        } else if (diagonal_facet == "ridge") {
+            diag_plot <- .ridgeFunc
+        }
+
+        # Select the upper facet plot type based on user input
+        if (upper_facet == "blank") {
+            upper_plot <- .blankFunc
+        } else if (upper_facet == "scatter") {
+            upper_plot <- .scatterFunc
+        } else if (upper_facet == "contour") {
+            upper_plot <- .smoothContourFunc
+        } else if (upper_facet == "ellipse") {
+            upper_plot <- .robustEllipseFunc
+        }
+
+        # Create pairs plot using GGally
+        plot_obj <- suppressMessages(
+            GGally::ggpairs(
+                sir_df,
+                columns = seq_len(length(sir_subset)),
+                mapping = ggplot2::aes(color = cell_type_dataset),
+                lower = list(continuous = lower_plot),
+                upper = list(continuous = upper_plot),
+                diag = list(continuous = diag_plot),
+                progress = FALSE,
+                legend = GGally::grab_legend(legend_plot)
+            )
+        )
+
+        # Add black frame around facet titles
+        plot_obj <- plot_obj +
+            ggplot2::theme(
+                strip.background = ggplot2::element_rect(
+                    fill = "white", color = "black", linewidth = 0.5),
+                strip.text = ggplot2::element_text(color = "black")
+            )
+
+        # Return the plot
+        return(plot_obj)
     }
 
-    # Return plot object
-    return(plot_obj)
+    # Helper function to plot loadings
+    .plotLoadings <- function(x, sir_subset, n_top) {
+
+        # Get rotation matrix (loadings)
+        rotation_mat <- x[["rotation_mat"]]
+
+        # Check if rotation matrix exists
+        if (is.null(rotation_mat)) {
+            stop("No rotation matrix found in the SIR object.")
+        }
+
+        # Get variable names
+        var_names <- rownames(rotation_mat)
+        if (is.null(var_names)) {
+            var_names <- paste0("Var_", seq_len(nrow(rotation_mat)))
+        }
+
+        # Create a combined data frame for all SIR components
+        all_loadings_list <- list()
+
+        for (i in seq_along(sir_subset)) {
+            sir_comp <- sir_subset[i]
+
+            # Get loadings for this component
+            loadings <- rotation_mat[, sir_comp]
+
+            # Create data frame with variable names and loadings
+            loading_df <- data.frame(
+                variable = var_names,
+                loading = loadings,
+                abs_loading = abs(loadings),
+                sir_component = paste0("SIR", sir_comp, " (",
+                                       sprintf("%.1f%%",
+                                               x[["percent_var"]][sir_comp]),
+                                       ")"),
+                sir_order = i,
+                stringsAsFactors = FALSE
+            )
+
+            # Sort by absolute loading and take n_top variables
+            loading_df <- loading_df[order(loading_df[["abs_loading"]],
+                                           decreasing = TRUE), ]
+            loading_df <- loading_df[seq_len(min(n_top,
+                                                 nrow(loading_df))), ]
+
+            # Order variables for plotting (highest absolute loading at n_top of each facet)
+            loading_df <- loading_df[order(loading_df[["abs_loading"]]), ]
+            loading_df[["variable_facet"]] <- factor(loading_df[["variable"]],
+                                                     levels = loading_df[["variable"]])
+
+            # Create color based on sign of loading
+            loading_df[["color"]] <- ifelse(loading_df[["loading"]] >= 0,
+                                            "Positive", "Negative")
+
+            all_loadings_list[[i]] <- loading_df
+        }
+
+        # Combine all data frames
+        all_loadings <- do.call(rbind, all_loadings_list)
+
+        # Create factor for SIR components to control facet order
+        sir_component_levels <- unique(all_loadings[["sir_component"]][
+            order(all_loadings[["sir_order"]])])
+        all_loadings[["sir_component"]] <- factor(
+            all_loadings[["sir_component"]],
+            levels = sir_component_levels)
+
+        # Create the faceted plot
+        p <- ggplot2::ggplot(all_loadings, ggplot2::aes(
+            x = .data[["loading"]],
+            y = .data[["variable_facet"]],
+            fill = .data[["color"]])) +
+            ggplot2::geom_col(alpha = 0.8, width = 0.6) +
+            ggplot2::facet_wrap(~ sir_component, scales = "free_y",
+                                ncol = length(sir_subset)) +
+            ggplot2::scale_fill_manual(values = c("Positive" = "#2166ac",
+                                                  "Negative" = "#d6604d"),
+                                       name = "Loading") +
+            ggplot2::labs(
+                title = "SIR Component Loadings",
+                x = "Loading Value",
+                y = "Variables"
+            ) +
+            ggplot2::theme_minimal() +
+            ggplot2::theme(
+                panel.grid.major.y = ggplot2::element_blank(),
+                panel.grid.minor = ggplot2::element_blank(),
+                panel.border = ggplot2::element_rect(color = "black",
+                                                     fill = NA,
+                                                     linewidth = 0.5),
+                strip.background = ggplot2::element_rect(fill = "white",
+                                                         color = "black",
+                                                         linewidth = 0.5),
+                strip.text = ggplot2::element_text(size = 10,
+                                                   face = "bold"),
+                plot.title = ggplot2::element_text(hjust = 0.5,
+                                                   size = 14,
+                                                   face = "bold"),
+                axis.text.y = ggplot2::element_text(size = 8),
+                legend.position = "bottom"
+            ) +
+            ggplot2::geom_vline(xintercept = 0,
+                                linetype = "dashed",
+                                color = "gray50",
+                                alpha = 0.7)
+
+        return(p)
+    }
+
+
+    # Branch based on plot type
+    if (plot_type == "scores") {
+        return(.plotScores(x,
+                           cell_types,
+                           sir_subset,
+                           lower_facet,
+                           diagonal_facet,
+                           upper_facet))
+    } else {
+        return(.plotLoadings(x,
+                             sir_subset,
+                             n_top))
+    }
 }
+

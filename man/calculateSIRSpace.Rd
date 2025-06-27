@@ -20,9 +20,13 @@ calculateSIRSpace(
 
 \method{plot}{calculateSIRSpaceObject}(
   x,
-  plot_type = c("scatterplot", "boxplot", "varplot"),
-  sir_subset = NULL,
-  n_top_vars = 5,
+  plot_type = c("scores", "loadings"),
+  cell_types = NULL,
+  sir_subset = 1:5,
+  lower_facet = c("scatter", "contour", "ellipse", "blank"),
+  diagonal_facet = c("ridge", "density", "boxplot", "blank"),
+  upper_facet = c("blank", "scatter", "contour", "ellipse"),
+  n_top = 10,
   ...
 )
 }
@@ -35,7 +39,7 @@ calculateSIRSpace(
 
 \item{ref_cell_type_col}{A character string specifying the column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the analysis. If NULL, all common cell types between the query and reference data will be used.}
+\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included. Only used when plot_type = "scores".}
 
 \item{multiple_cond_means}{Logical. Whether to compute conditional means for multiple conditions in the reference dataset. Default is TRUE.}
 
@@ -45,26 +49,31 @@ calculateSIRSpace(
 
 \item{n_neighbor}{A numeric value specifying the number of neighbors for computing the SIR space. Default is 1.}
 
-\item{x}{An object of class \code{calculateSIRSpace}, which contains projected data on the discriminant space.
-Each element should include 'ref_proj' and 'query_proj' data frames representing reference and query projections.}
+\item{x}{An object of class \code{calculateSIRSpaceObject} containing SIR projections.}
 
-\item{plot_type}{A character string indicating the type of plot to generate. Options are "scatterplot", "boxplot", or "varplot". Default is "scatterplot".}
+\item{plot_type}{A character string specifying the type of plot. Either "scores" (default) for SIR projections or "loadings" for variable loadings.}
 
-\item{sir_subset}{A numeric vector specifying which discriminant axes (SIR components) to include in the plot. Default is the first 5 axes.}
+\item{sir_subset}{A numeric vector specifying which SIR components to include in the plot. Default is 1:5.}
 
-\item{n_top_vars}{Number of top contributing variables to display in varplot. Default is 5.}
+\item{lower_facet}{Type of plot to use for the lower panels. Either "scatter" (default), "contour", "ellipse", or "blank". Only used when plot_type = "scores".}
 
-\item{...}{Additional arguments to be passed to the plotting functions.}
+\item{diagonal_facet}{Type of plot to use for the diagonal panels. Either "ridge" (default), "density", "boxplot" or "blank". Only used when plot_type = "scores".}
+
+\item{upper_facet}{Type of plot to use for the upper panels. Either "blank" (default), "scatter", "contour", or "ellipse". Only used when plot_type = "scores".}
+
+\item{n_top}{A numeric value specifying the number of n_top variables (by absolute loading value) to display. Default is 10 Only used when plot_type = "loadings".}
+
+\item{...}{Additional arguments passed to the plotting function.}
 }
 \value{
 A list containing the SIR projections, rotation matrix, and percentage of variance explained for the given cell types.
 
-A \code{ggplot} object representing the chosen visualization (scatterplot, boxplot, or varplot) of the projected data.
+A ggmatrix object representing a pairs plot of specified SIR components for the given cell types and datasets when plot_type = "scores", or a ggplot object showing loadings when plot_type = "loadings".
 }
 \description{
 This function calculates the SIR space projections for different cell types in the query and reference datasets.
 
-The S3 plot method visualizes the projected reference and query data on discriminant spaces using either a scatterplot, boxplot, or varplot.
+This function plots the Sliced Inverse Regression (SIR) components for different cell types in query and reference datasets.
 }
 \details{
 The function projects the query dataset onto the SIR space of the reference dataset based on shared cell types.
@@ -72,9 +81,9 @@ It computes conditional means for the reference dataset, extracts the SVD compon
 of both the query and reference data. It uses the `projectSIR` function to perform the actual projection and
 allows the user to specify particular cell types for analysis.
 
-- **Scatterplot**: Displays projected data points, with colors used to differentiate between cell types and datasets.
-- **Boxplot**: Shows the distribution of projected data values for each cell type, separated by datasets.
-- **Varplot**: Highlights the top contributing variables for each discriminant axis, differentiating between positive and negative loadings.
+This function visualizes the SIR projections for specified cell types, providing a pairs plot of the SIR components.
+It offers various visualization options for different facets of the plot including scatter plots, contours, ellipses, and density plots.
+When plot_type is "loadings", it creates horizontal bar plots showing the n_top contributing variables for each SIR component.
 }
 \examples{
 # Load data
@@ -84,14 +93,25 @@ data("query_data")
 # Compute important variables for all pairwise cell comparisons
 sir_output <- calculateSIRSpace(reference_data = reference_data,
                                 query_data = query_data,
-                                query_cell_type_col = "SingleR_annotation",
+                                query_cell_type_col = "expert_annotation",
                                 ref_cell_type_col = "expert_annotation",
                                 multiple_cond_means = TRUE,
                                 cumulative_variance_threshold = 0.9,
                                 n_neighbor = 1)
 
-# Generate boxplot of SIR projections
-plot(sir_output, plot_type = "boxplot", sir_subset = 1:6)
+# Generate plots SIR projections
+plot(sir_output,
+     sir_subset = 1:5,
+     cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+     lower_facet = "scatter",
+     diagonal_facet = "boxplot",
+     upper_facet = "blank")
+
+# Plot top loadings
+plot(sir_output,
+     sir_subset = 1:5,
+     plot_type = "loadings",
+     n_top = 10)
 
 }
 \seealso{
@@ -102,4 +122,3 @@ plot(sir_output, plot_type = "boxplot", sir_subset = 1:6)
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 }
-\keyword{internal}
