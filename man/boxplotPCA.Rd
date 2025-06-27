@@ -11,6 +11,7 @@ boxplotPCA(
   ref_cell_type_col,
   cell_types = NULL,
   pc_subset = 1:5,
+  shape = c("box", "violin"),
   assay_name = "logcounts"
 )
 }
@@ -27,19 +28,21 @@ boxplotPCA(
 
 \item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.}
 
+\item{shape}{Character string indicating the plot type: "box" for boxplots or "violin" for violin plots. Default is "box".}
+
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 }
 \value{
-A ggplot object representing the boxplots of specified principal components for the given cell types and datasets.
+A ggplot object representing the boxplots or violin plots of specified principal components for the given cell types and datasets.
 }
 \description{
-This function generates a \code{ggplot2} boxplot visualization of principal components (PCs) for different
-cell types across two datasets (query and reference).
+This function generates a \code{ggplot2} visualization of principal components (PCs) for different
+cell types across two datasets (query and reference), using either boxplots or violin plots.
 }
 \details{
 The function \code{boxplotPCA} is designed to provide a visualization of principal component analysis (PCA) results. It projects
 the query dataset onto the principal components obtained from the reference dataset. The results are then visualized
-as boxplots, grouped by cell types and datasets (query and reference). This allows for a comparative analysis of the
+as boxplots or violin plots, grouped by cell types and datasets (query and reference). This allows for a comparative analysis of the
 distributions of the principal components across different cell types and datasets. The function internally calls \code{projectPCA}
 to perform the PCA projection. It then reshapes the output data into a long format suitable for ggplot2 plotting.
 }
@@ -48,7 +51,7 @@ to perform the PCA projection. It then reshapes the output data into a long form
 data("reference_data")
 data("query_data")
 
-# Plot the PC data
+# Plot the PC data with boxplots (default)
 pc_plot <- boxplotPCA(query_data = query_data,
                       reference_data = reference_data,
                       cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
@@ -56,6 +59,16 @@ pc_plot <- boxplotPCA(query_data = query_data,
                       ref_cell_type_col = "expert_annotation",
                       pc_subset = 1:6)
 pc_plot
+
+# Plot the PC data with violin plots
+pc_violin <- boxplotPCA(query_data = query_data,
+                        reference_data = reference_data,
+                        cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+                        query_cell_type_col = "SingleR_annotation",
+                        ref_cell_type_col = "expert_annotation",
+                        pc_subset = 1:6,
+                        shape = "violin")
+pc_violin
 
 }
 \author{
