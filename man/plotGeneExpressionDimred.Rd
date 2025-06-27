@@ -9,6 +9,8 @@ plotGeneExpressionDimred(
   method = c("TSNE", "UMAP", "PCA"),
   pc_subset = 1:5,
   feature,
+  cell_type_col = NULL,
+  cell_types = NULL,
   assay_name = "logcounts"
 )
 }
@@ -18,10 +20,14 @@ It can be either a reference or query dataset.}
 
 \item{method}{The reduction method to use for visualization. It should be one of the supported methods: "TSNE", "UMAP", or "PCA".}
 
-\item{pc_subset}{An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA". 
+\item{pc_subset}{An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA".
 Default is 1:5.}
 
 \item{feature}{A character string representing the name of the gene or feature to be visualized.}
+
+\item{cell_type_col}{The column name in the \code{colData} of \code{se_object} that identifies the cell types.}
+
+\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 }
@@ -36,12 +42,11 @@ This function plots gene expression on a dimensional reduction plot using method
 data("query_data")
 
 # Plot gene expression on PCA plot
-plotGeneExpressionDimred(se_object = query_data, 
-                         method = "PCA", 
-                         pc_subset = 1:5, 
-                         feature = "VPREB3")
+plotGeneExpressionDimred(se_object = query_data,
+                         cell_type_col = "SingleR_annotation",
+                         method = "PCA",
+                         pc_subset = 1:5,
+                         feature = "CD8A",
+                         cell_types = "CD4")
 
-}
-\author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 }

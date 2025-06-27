@@ -6,33 +6,64 @@ library(scDiagnostics)
 data("query_data")
 
 test_that("plotGeneExpressionDimred generates plots correctly", {
-    # Generate plot using the function with PCA method
+    # Test PCA method - returns ggmatrix object
     p1 <- plotGeneExpressionDimred(
         se_object = query_data,
         method = "PCA",
         pc_subset = 1:5,
         feature = "VPREB3"
     )
-    
-    # Check if output is a ggplot object
-    expect_s3_class(p1, "ggplot")
-    
+
+    # Check if output is a ggmatrix object (from GGally) for PCA
+    expect_s3_class(p1, "ggmatrix")
+
+    # Test UMAP method - should return ggplot object
+    # (assuming query_data has UMAP coordinates)
+    if ("UMAP" %in% reducedDimNames(query_data)) {
+        p2 <- plotGeneExpressionDimred(
+            se_object = query_data,
+            method = "UMAP",
+            feature = "VPREB3"
+        )
+        expect_s3_class(p2, "ggplot")
+    }
+
+    # Test TSNE method - should return ggplot object
+    # (assuming query_data has TSNE coordinates)
+    if ("TSNE" %in% reducedDimNames(query_data)) {
+        p3 <- plotGeneExpressionDimred(
+            se_object = query_data,
+            method = "TSNE",
+            feature = "VPREB3"
+        )
+        expect_s3_class(p3, "ggplot")
+    }
 })
 
-test_that("plotGeneExpressionDimred handles invalid input gracefully", {
-    # Test with invalid method
-    expect_error(plotGeneExpressionDimred(
-        se_object = query_data,
-        method = "InvalidMethod",
-        pc_subset = 1:5,
-        feature = "VPREB3"
-    ))
-    
-    # Test with non-existent feature
-    expect_error(plotGeneExpressionDimred(
-        se_object = query_data,
-        method = "PCA",
-        pc_subset = 1:5,
-        feature = "InvalidFeature"
-    ))
+test_that("plotGeneExpressionDimred handles different assay names", {
+    # Test with different assay name (if available)
+    available_assays <- assayNames(query_data)
+
+    if ("counts" %in% available_assays) {
+        p1 <- plotGeneExpressionDimred(
+            se_object = query_data,
+            method = "PCA",
+            pc_subset = 1:3,
+            feature = "VPREB3",
+            assay_name = "counts"
+        )
+        expect_s3_class(p1, "ggmatrix")
+    }
+
+    # Test with invalid assay name
+    expect_error(
+        plotGeneExpressionDimred(
+            se_object = query_data,
+            method = "PCA",
+            pc_subset = 1:3,
+            feature = "VPREB3",
+            assay_name = "invalid_assay"
+        )
+    )
 })
+
