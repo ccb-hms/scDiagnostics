@@ -1,18 +1,18 @@
-#' @title Project Query Data onto Discriminant Space of Reference Data
+#' @title Project Query Data onto a Unified Discriminant Space of Reference Data
 #'
 #' @description
-#' This function projects query single-cell RNA-seq data onto the discriminant space defined by reference data. The reference data
-#' is used to identify important variables and compute discriminant vectors, which are then used to project both reference and query
-#' data. Similarity between the query and reference projections is assessed using cosine similarity and Mahalanobis distance.
+#' This function projects query single-cell RNA-seq data onto a unified discriminant space defined by reference data. The reference data
+#' is used to identify important variables across all cell types and compute discriminant vectors, which are then used to project both reference and query
+#' data. Similarity between the query and reference projections can be assessed using cosine similarity and Mahalanobis distance.
 #'
 #' @details
-#' The function performs the following steps for each pairwise combination of cell types:
+#' The function performs the following steps:
 #' \itemize{
-#'   \item Identifies the top important variables to distinguish the two cell types from the reference data.
-#'   \item Computes the Ledoit-Wolf shrinkage estimate of the covariance matrix for each cell type using the top important genes.
+#'   \item Identifies the top important variables to distinguish cell types from the reference data by taking the union of important variables from pairwise comparisons.
+#'   \item Computes the Ledoit-Wolf shrinkage estimate of the covariance matrix for each cell type using these important genes.
 #'   \item Constructs within-class and between-class scatter matrices.
 #'   \item Solves the generalized eigenvalue problem to obtain discriminant vectors.
-#'   \item Projects both reference and query data onto the discriminant space.
+#'   \item Projects both reference and query data onto the unified discriminant space.
 #'   \item Assesses similarity of the query data projection to the reference data using cosine similarity and Mahalanobis distance.
 #' }
 #'
@@ -21,22 +21,22 @@
 #' If NULL, only the projected reference data is returned. Default is NULL.
 #' @param ref_cell_type_col The column name in \code{reference_data} indicating cell type labels.
 #' @param query_cell_type_col The column name in \code{query_data} indicating cell type labels.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
+#' @param cell_types A character vector specifying the cell types to include in the analysis. If NULL, all cell types are included.
 #' @param n_tree An integer specifying the number of trees for the random forest used in variable importance calculation.
-#' @param n_top An integer specifying the number of top variables to select based on importance scores.
+#' @param n_top An integer specifying the number of top variables to select based on importance scores from each pairwise comparison.
 #' @param eigen_threshold A numeric value specifying the threshold for retaining eigenvalues in discriminant analysis.
 #' @param calculate_metrics Parameter to determine if cosine similarity and Mahalanobis distance metrics should be computed. Default is FALSE.
 #' @param alpha A numeric value specifying the significance level for Mahalanobis distance cutoff.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #'
-#' @return A list with the following components for each cell type combination:
+#' @return A list with the following components:
 #' \item{discriminant_eigenvalues}{Eigenvalues from the discriminant analysis.}
 #' \item{discriminant_eigenvectors}{Eigenvectors from the discriminant analysis.}
 #' \item{ref_proj}{Reference data projected onto the discriminant space.}
-#' \item{query_proj}{Query data projected onto the discriminant space.}
-#' \item{query_mahalanobis_dist}{Mahalanobis distances of query projections.}
-#' \item{mahalanobis_crit}{Cutoff value for Mahalanobis distance significance.}
-#' \item{query_cosine_similarity}{Cosine similarity scores of query projections.}
+#' \item{query_proj}{Query data projected onto the discriminant space (if query_data is provided).}
+#' \item{query_mahalanobis_dist}{Mahalanobis distances of query projections (if calculate_metrics is TRUE).}
+#' \item{mahalanobis_crit}{Cutoff value for Mahalanobis distance significance (if calculate_metrics is TRUE).}
+#' \item{query_cosine_similarity}{Cosine similarity scores of query projections (if calculate_metrics is TRUE).}
 #'
 #' @references
 #' \itemize{
@@ -59,7 +59,7 @@
 #' data("reference_data")
 #' data("query_data")
 #'
-#' # Compute important variables for all pairwise cell comparisons
+#' # Compute discriminant space using unified model across all cell types
 #' disc_output <- calculateDiscriminantSpace(reference_data = reference_data,
 #'                                           query_data = query_data,
 #'                                           query_cell_type_col = "SingleR_annotation",
@@ -75,13 +75,13 @@
 #' plot(disc_output, cell_types = c("CD4", "CD8"), plot_type = "boxplot")
 #'
 #' # Check comparison
-#' table(Expert_Annotation = query_data$expert_annotation, SingleR = query_data$SingleR_annotation)
+#' table(Expert_Annotation = query_data$expert_annotation,
+#'       SingleR = query_data$SingleR_annotation)
 #'
 #' @importFrom stats cov qchisq mahalanobis
 #'
-# Function to get the discriminant spaces for each pairwise combination of cell types and the projected reference/query data on
-# the discriminant space. Similarity measures (cosine similarity/Mahalanobis distance) for the projected query data are also
-# available.
+# Function to get the discriminant spaces and the projected reference/query data on the discriminant space.
+# Similarity measures (cosine similarity/Mahalanobis distance) for the projected query data are also available.
 calculateDiscriminantSpace <- function(reference_data,
                                        query_data = NULL,
                                        ref_cell_type_col,
@@ -110,7 +110,7 @@ calculateDiscriminantSpace <- function(reference_data,
         } else{
             cell_types <- na.omit(
                 unique(c(reference_data[[ref_cell_type_col]],
-                                           query_data[[query_cell_type_col]])))
+                         query_data[[query_cell_type_col]])))
         }
     }
 
@@ -140,109 +140,139 @@ calculateDiscriminantSpace <- function(reference_data,
                                       n_tree = n_tree,
                                       n_top = n_top)
 
-    # Projected data onto discriminant space
-    discriminant_output <- vector("list", length = length(var_imp[["var_imp_ref"]]))
-    names(discriminant_output) <- names(var_imp[["var_imp_ref"]])
-    for(combination_name in names(var_imp[["var_imp_ref"]])){
+    # Get union of top n_top genes from all pairwise combinations
+    all_top_genes <- unique(unlist(
+        lapply(var_imp[["var_imp_ref"]], function(x) {
+            x[["Gene"]][seq_len(n_top)]
+        })))
 
-        # Extract reference matrix using top genes
-        top_genes <- var_imp[["var_imp_ref"]][[combination_name]]$Gene[seq_len(n_top)]
-        ref_mat <- t(
-            as.matrix(assay(reference_data, assay_name)))[, top_genes]
+    # Create a single discriminant model using all_top_genes
+    # Extract reference matrix using top genes
+    ref_mat <- t(as.matrix(assay(reference_data, assay_name)))[, all_top_genes]
 
-        # Compute within-class and between-class scatter matrix
-        sw <- sb <- matrix(0, length(top_genes), length(top_genes))
-        overall_mean <- colMeans(ref_mat)
-        cell_types <- unlist(strsplit(combination_name, "-"))
-        for(cell_type in cell_types){
+    # Compute within-class and between-class scatter matrix
+    sw <- sb <- matrix(0, length(all_top_genes), length(all_top_genes))
+    overall_mean <- colMeans(ref_mat)
 
-            # Extract matrix for cell type
-            ref_mat_subset <- ref_mat[which(
-                reference_data[[ref_cell_type_col]] == cell_type),]
+    for(cell_type in cell_types){
+        # Extract matrix for cell type
+        ref_mat_subset <- ref_mat[which(
+            reference_data[[ref_cell_type_col]] == cell_type),]
 
-            # Ledoit-Wolf estimation for the current class
-            lw_cov <- ledoitWolf(ref_mat_subset)
-            # Update within-class scatter matrix
-            sw <- sw + (nrow(ref_mat_subset) - 1) * lw_cov
+        # Ledoit-Wolf estimation for the current class
+        lw_cov <- ledoitWolf(ref_mat_subset)
+        # Update within-class scatter matrix
+        sw <- sw + (nrow(ref_mat_subset) - 1) * lw_cov
 
-            # Update within-class scatter matrix
-            class_mean <- colMeans(ref_mat_subset)
-            sb <- sb + nrow(ref_mat_subset) * (class_mean - overall_mean) %*%
-                t(class_mean - overall_mean)
-        }
+        # Update between-class scatter matrix
+        class_mean <- colMeans(ref_mat_subset)
+        sb <- sb + nrow(ref_mat_subset) * (class_mean - overall_mean) %*%
+            t(class_mean - overall_mean)
+    }
 
-        # Ensure symmetry of sw
-        sw <- (sw + t(sw)) / 2
-        # Solve generalized eigenvalue problem
-        eig <- eigen(solve(sw) %*% sb)
-        # Sort eigenvectors by eigenvalues
-        discriminant_eigenvalues <- Re(
-            eig$values[which(Re(eig$values) > eigen_threshold),
-                       drop = FALSE])
-        discriminant_eigenvectors <- Re(
-            eig$vectors[, which(Re(eig$values) > eigen_threshold),
+    # Ensure symmetry of sw
+    sw <- (sw + t(sw)) / 2
+
+    # Solve generalized eigenvalue problem
+    eig <- eigen(solve(sw) %*% sb)
+
+    # Sort eigenvectors by eigenvalues
+    discriminant_eigenvalues <- Re(
+        eig[["values"]][which(Re(eig[["values"]]) > eigen_threshold),
                         drop = FALSE])
-        rownames(discriminant_eigenvectors) <- top_genes
-        colnames(discriminant_eigenvectors) <- paste0(
-            "DV", seq_len(ncol(discriminant_eigenvectors)))
-        # Compute projected data
-        ref_proj <- data.frame(
-            ref_mat[which(reference_data[[ref_cell_type_col]] %in%
-                              cell_types),] %*% discriminant_eigenvectors,
-            reference_data[[ref_cell_type_col]][reference_data[[ref_cell_type_col]] %in% cell_types])
-        colnames(ref_proj) <- c(
+    discriminant_eigenvectors <- Re(
+        eig[["vectors"]][, which(Re(eig[["values"]]) > eigen_threshold),
+                         drop = FALSE])
+    rownames(discriminant_eigenvectors) <- all_top_genes
+    colnames(discriminant_eigenvectors) <- paste0(
+        "DV", seq_len(ncol(discriminant_eigenvectors)))
+
+    # Compute projected data for reference
+    ref_proj <- data.frame(
+        ref_mat[which(reference_data[[ref_cell_type_col]] %in% cell_types),] %*%
+            discriminant_eigenvectors,
+        reference_data[[ref_cell_type_col]][reference_data[[ref_cell_type_col]] %in%
+                                                cell_types])
+    colnames(ref_proj) <- c(
+        paste0("DV", seq_len(ncol(discriminant_eigenvectors))),
+        "cell_type")
+
+    # Create a single entry in discriminant_output
+    discriminant_output <- list()
+    discriminant_output <- list()
+    discriminant_output[["discriminant_eigenvalues"]] <- discriminant_eigenvalues
+    discriminant_output[["discriminant_eigenvectors"]] <- discriminant_eigenvectors
+    discriminant_output[["ref_proj"]] <- ref_proj
+
+    # Computations for query data
+    if(!is.null(query_data)){
+
+        # Projection on discriminant space
+        query_mat <- t(as.matrix(assay(query_data, assay_name)))[, all_top_genes]
+        query_proj <- data.frame(
+            query_mat[which(query_data[[query_cell_type_col]] %in%
+                                cell_types),] %*% discriminant_eigenvectors,
+            query_data[[query_cell_type_col]][query_data[[query_cell_type_col]] %in%
+                                                  cell_types])
+        colnames(query_proj) <- c(
             paste0("DV", seq_len(ncol(discriminant_eigenvectors))), "cell_type")
-        discriminant_output[[combination_name]][["discriminant_eigenvalues"]] <- discriminant_eigenvalues
-        discriminant_output[[combination_name]][["discriminant_eigenvectors"]] <- discriminant_eigenvectors
-        discriminant_output[[combination_name]][["ref_proj"]] <- ref_proj
+        discriminant_output[["query_proj"]] <- query_proj
 
-        # Computations for query data
-        if(!is.null(query_data)){
+        if(calculate_metrics){
 
-            # Projection on discriminant space
-            query_mat <- t(
-                as.matrix(assay(query_data, assay_name)))[, top_genes]
-            query_proj <- data.frame(
-                query_mat[which(query_data[[query_cell_type_col]] %in%
-                                    cell_types),] %*% discriminant_eigenvectors,
-                query_data[[query_cell_type_col]][query_data[[query_cell_type_col]] %in% cell_types])
-            colnames(query_proj) <- c(
-                paste0("DV", seq_len(ncol(discriminant_eigenvectors))),
-                "cell_type")
-            discriminant_output[[combination_name]][["query_proj"]] <-
-                query_proj
+            # Cosine similarity between mean vector of reference projection
+            # Mahalanobis distance between each query cell projected on reference discriminant space
+            # and reference data projected on reference discriminant space
+            cosine_similarity <- mahalanobis_dist <- numeric(nrow(query_proj))
+            mahalanobis_crit <- numeric(length(cell_types))
+            for(type_idx in seq_along(cell_types)){
+                type <- cell_types[type_idx]
+                query_cells_of_type <- query_proj[
+                    query_proj[, "cell_type"] == type,
+                    paste0("DV",
+                           seq_len(length(discriminant_eigenvalues)))]
+                ref_cells_of_type <- ref_proj[
+                    ref_proj[, "cell_type"] == type,
+                    paste0("DV",
+                           seq_len(length(discriminant_eigenvalues)))]
 
-            if(calculate_metrics){
-
-                # Cosine similarity between mean vector of reference projection
-                # Mahalanobis distance between each query cell projected on reference discriminant space and reference data projected on reference discriminant space
-                cosine_similarity <- mahalanobis_dist <-
-                    numeric(nrow(query_proj))
-                mahalanobis_crit <- numeric(length(cell_types))
-                for(type in c(1:2)){
-                    mahalanobis_dist[query_proj[, "cell_type"] == cell_types[type]] <-
-                        mahalanobis(
-                            query_proj[query_proj[, "cell_type"] == cell_types[type],
-                                       paste0("DV", seq_len(length(discriminant_eigenvalues)))],
-                            colMeans(ref_proj[ref_proj[, "cell_type"] == cell_types[type],
-                                              paste0("DV", seq_len(length(discriminant_eigenvalues)))]),
-                            cov(ref_proj[ref_proj[, "cell_type"] == cell_types[type],
-                                         paste0("DV", seq_len(length(discriminant_eigenvalues)))]))
-                    cosine_similarity[query_proj[, "cell_type"] == cell_types[type]] <-
-                        apply(query_proj[query_proj[, "cell_type"] == cell_types[type],
-                                         paste0("DV", seq_len(length(discriminant_eigenvalues)))], 1,
-                              function(x, y) return(sum(x * y) / (sqrt(sum(x^2)) * sqrt(sum(y^2)))),
-                              y = colMeans(ref_proj[ref_proj[, "cell_type"] == cell_types[type],
-                                                    paste0("DV", seq_len(length(discriminant_eigenvalues)))]))
+                # Skip if we have no cells of this type
+                if(nrow(query_cells_of_type) == 0 || nrow(ref_cells_of_type) == 0) {
+                    next
                 }
-                discriminant_output[[combination_name]][["query_mahalanobis_dist"]] <- mahalanobis_dist
-                discriminant_output[[combination_name]][["mahalanobis_crit"]] <- qchisq(1 - alpha, df = length(cell_types))
-                discriminant_output[[combination_name]][["query_cosine_similarity"]] <- cosine_similarity
+
+                # Calculate mean of reference projection for this cell type
+                ref_mean <- colMeans(ref_cells_of_type)
+
+                # Calculate covariance of reference projection for this cell type
+                ref_cov <- cov(ref_cells_of_type)
+
+                # Check if covariance matrix is invertible
+                if(any(is.na(ref_cov)) || determinant(ref_cov)[["modulus"]][1] <= 0) {
+                    # If not invertible, use a regularized version
+                    ref_cov <- ledoitWolf(ref_cells_of_type)
+                }
+
+                # Calculate Mahalanobis distance
+                mahalanobis_dist[query_proj[, "cell_type"] == type] <- mahalanobis(
+                    query_cells_of_type, ref_mean, ref_cov)
+
+                # Calculate cosine similarity
+                cosine_similarity[query_proj[, "cell_type"] == type] <-
+                    apply(query_cells_of_type, 1,
+                          function(x, y) return(sum(x * y) / (sqrt(sum(x^2)) * sqrt(sum(y^2)))),
+                          y = ref_mean)
             }
+            discriminant_output[["query_mahalanobis_dist"]] <-
+                mahalanobis_dist
+            discriminant_output[["mahalanobis_crit"]] <-
+                qchisq(1 - alpha, df = length(cell_types))
+            discriminant_output[["query_cosine_similarity"]] <-
+                cosine_similarity
         }
     }
 
-    # Return data projected onto (reference) discriminant space for each combination of cell types
+    # Return data projected onto (reference) discriminant space for single combined model
     class(discriminant_output) <- c(class(discriminant_output),
                                     "calculateDiscriminantSpaceObject")
     return(discriminant_output)
@@ -281,10 +311,12 @@ ledoitWolf <- function(class_data) {
 
     # Calculate the shrinkage target (identity matrix scaled by the average variance)
     mean_variance <- mean(diag(sample_cov))
-    shrinkage_target <- diag(mean_variance, ncol(class_data), ncol(class_data))
+    shrinkage_target <- diag(mean_variance, ncol(class_data),
+                             ncol(class_data))
 
     # Calculate the shrinkage intensity
-    phi_hat <- sum((class_data - col_means) ^ 2) / (nrow(class_data) - 1)
+    phi_hat <- sum((class_data - col_means) ^ 2) /
+        (nrow(class_data) - 1)
     shrinkage_intensity <- (1 / nrow(class_data)) *
         min(phi_hat, mean_variance ^ 2)
 
