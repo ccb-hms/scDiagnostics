@@ -4,7 +4,8 @@
 #' This function detects anomalies in single-cell data by projecting the data onto a PCA space and using an isolation forest
 #' algorithm to identify anomalies.
 #'
-#' @details This function projects the query data onto the PCA space of the reference data. An isolation forest is then built on the
+#' @details
+#' This function projects the query data onto the PCA space of the reference data. An isolation forest is then built on the
 #' reference data to identify anomalies in the query data based on their PCA projections. If no query dataset is provided by the user,
 #' the anomaly scores are computed on the reference data itself. Anomaly scores for the data with all combined cell types are also
 #' provided as part of the output.
