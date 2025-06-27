@@ -338,9 +338,14 @@ factors might influence or correlate with the assigned cell type
 annotations.
 
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Remove cell types with very few cells
+qc_data_subset <- qc_data[, !(qc_data$SingleR_annotation 
+                              %in% c("Chondrocytes", "DC", 
+                                     "Neurons","Platelets"))]
+
 # Generate scatter plot
 library(ggplot2)
-p1 <- plotQCvsAnnotation(se_object = qc_data,
+p1 <- plotQCvsAnnotation(se_object = qc_data_subset,
                          cell_type_col = "SingleR_annotation",
                          qc_col = "total",
                          score_col = "annotation_scores")

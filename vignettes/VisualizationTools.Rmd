@@ -180,10 +180,10 @@ discriminant_results <- calculateDiscriminantSpace(
 You can extract and analyze the Mahalanobis distances of query cells relative to reference cell types. High Mahalanobis distances may indicate potential anomalies or novel cell states.
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Extract Mahalanobis distances
-mahalanobis_distances <- discriminant_results$`CD4-CD8`$query_mahalanobis_dist
+mahalanobis_distances <- discriminant_results$query_mahalanobis_dist
 
 # Identify anomalies based on a threshold
-threshold <- discriminant_results$`CD4-CD8`$mahalanobis_crit  # Use the computed cutoff value
+threshold <- discriminant_results$mahalanobis_crit  # Use the computed cutoff value
 anomalies <- mahalanobis_distances[mahalanobis_distances > threshold]
 ```
 
@@ -229,9 +229,12 @@ sir_output <- calculateSIRSpace(
 )
 
 # Plot the SIR space projections
-plot(sir_output, 
-     plot_type = "boxplot", 
-     sir_subset = 1:3)
+plot(sir_output,
+     sir_subset = 1:5,
+     cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+     lower_facet = "scatter",
+     diagonal_facet = "boxplot",
+     upper_facet = "blank")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/VisualizationTools/calculateSIRSpace1.png)
 
@@ -242,9 +245,9 @@ The plot below visualizes the contribution of different markers to the variance 
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot the top contributing markers
 plot(sir_output, 
-     plot_type = "varplot", 
-     sir_subset = 1:3,
-     n_top_vars = 10)
+     plot_type = "loadings", 
+     sir_subset = 1:5,
+     n_top = 10)
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/VisualizationTools/calculateSIRSpace2.png)
 
@@ -255,19 +258,21 @@ plot(sir_output,
 The `plotGeneExpressionDimred()` function plots the expression of a specific gene on a dimensional reduction plot. This function is useful for exploring how gene expression varies across cells in the context of reduced dimensions, such as those derived from PCA, t-SNE, or UMAP. Each point on the plot represents a single cell, color-coded according to the expression level of the specified gene.
 
 
-Let's visualize the expression of the gene **VPREB3** on a PCA plot:
+Let's visualize the expression of the gene **NKG7** for CD4 on a PCA plot:
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Visualize VPREB3 gene on a PCA plot
-plotGeneExpressionDimred(se_object = query_data, 
-                         method = "PCA", 
-                         pc_subset = 1:3, 
-                         feature = "VPREB3")
+plotGeneExpressionDimred(se_object = query_data,
+                         method = "PCA",
+                         pc_subset = 1:5,
+                         feature = "NKG7",
+                         cell_types = "CD4",
+                         cell_type_col = "SingleR_annotation")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/VisualizationTools/plotGeneExpressionDimred.png)
 
-In this example, we visualize the expression of the **VPREB3** gene on a PCA plot derived from the `query_data` dataset. The `method` argument specifies the dimensional reduction technique, which in this case is "PCA." The `pc_subset` argument allows us to focus on specific principal components (PCs), here selecting the first five. The `feature` argument is the name of the gene we want to visualize.
+In this example, we visualize the expression of the **NKG7** gene on a PCA plot derived from the `query_data` dataset. The `method` argument specifies the dimensional reduction technique, which in this case is "PCA." The `pc_subset` argument allows us to focus on specific principal components (PCs), here selecting the first five. The `feature` argument is the name of the gene we want to visualize.
 
-When executed, this function generates a scatter plot with cells colored by their expression levels of **VPREB3**. The resulting plot can help identify clusters of cells with similar expression patterns or highlight how expression varies across the dataset.
+When executed, this function generates a scatter plot with cells colored by their expression levels of **NKG7**. The resulting plot can help identify clusters of cells with similar expression patterns or highlight how expression varies across the dataset.
 
 You can also visualize gene expression using other dimensional reduction methods, such as t-SNE or UMAP.
 
@@ -277,12 +282,13 @@ You can also visualize gene expression using other dimensional reduction methods
 The `plotMarkerExpression()` function compares the distribution of a specific gene's expression across an overall dataset and within specific cell types. It generates density plots to visualize these distributions, providing a graphical means of assessing the similarity between reference and query datasets. The function also applies a z-rank normalization to make expression values comparable between datasets.
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 plotMarkerExpression(
-  reference_data = reference_data, 
-  query_data = query_data, 
-  ref_cell_type_col = "expert_annotation", 
-  query_cell_type_col = "SingleR_annotation", 
-  gene_name = "VPREB3", 
-  cell_type = "B_and_plasma"
+    reference_data = reference_data,
+    query_data = query_data,
+    ref_cell_type_col = "expert_annotation",
+    query_cell_type_col = "SingleR_annotation",
+    gene_name = "NKG7",
+    cell_type = "CD4",
+    normalization = "z_score"
 )
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/VisualizationTools/plotMarkerExpression.png)
@@ -299,8 +305,13 @@ The scatter plot visualizes the relationship between QC statistics (e.g., total 
 
 
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Remove cell types with very few cells
+qc_data_subset <- qc_data[, !(qc_data$SingleR_annotation 
+                              %in% c("Chondrocytes", "DC", 
+                                     "Neurons","Platelets"))]
+
 # Generate scatter plot
-p1 <- plotQCvsAnnotation(se_object = qc_data,
+p1 <- plotQCvsAnnotation(se_object = qc_data_subset,
                          cell_type_col = "SingleR_annotation",
                          qc_col = "total",
                          score_col = "annotation_scores")

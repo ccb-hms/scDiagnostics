@@ -142,36 +142,6 @@ query_data_cd4 <- runPCA(query_data_cd4)
 
 # Evaluation of Dataset Alignment
 
-## `compareCCA()`
-
-In single-cell genomics, datasets from different sources or experimental conditions often need to be compared to understand how well they align. The `compareCCA` function facilitates this comparison by performing Canonical Correlation Analysis (CCA) between a query dataset and a reference dataset. This function is particularly useful when datasets have different sample sizes or distributions, and it helps in assessing the similarity between them after projecting them onto a common principal component space.
-
-
-`compareCCA()` performs the following steps:
-
-- **Project Data**: Project the query dataset onto the principal component space of the reference dataset. This ensures that both datasets are represented in the same reduced-dimensional space for a meaningful comparison.
-- **Perform CCA**: Conduct Canonical Correlation Analysis to find the relationships between the projected datasets. CCA helps to identify how the canonical variables derived from the query dataset correlate with those from the reference dataset.
-- **Compare Alignment**: Evaluate the alignment between the datasets by computing cosine similarities between the canonical correlation vectors derived from the CCA. This provides a measure of how well the two datasets correspond to each other in the canonical space.
-
-```{r, fig.height=5, fig.width=10, fig.show='hide'}
-# Perform CCA 
-cca_comparison <- compareCCA(query_data = query_data_cd4, 
-                             reference_data = ref_data_cd4, 
-                             query_cell_type_col = "expert_annotation", 
-                             ref_cell_type_col = "expert_annotation", 
-                             pc_subset = 1:5)
-plot(cca_comparison)
-```
-![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/compareCCA.png)
-
-Canonical Correlation Analysis (CCA) produces several key outputs:
-
-- **Canonical Variables**: For each dataset, CCA computes a set of canonical variables that maximize the correlation between the datasets. These variables are linear combinations of the original variables.
-- **Canonical Correlation Coefficients**: These coefficients indicate the strength of the correlation between the canonical variables of the two datasets. Higher values suggest stronger correlations.
-- **Cosine Similarities**: After obtaining the canonical variables, the function computes the cosine similarity between these variables from the query and reference datasets. This similarity measure helps assess how closely the canonical variables align between the two datasets.
-
-In summary, the `compareCCA` function allows you to compare how well two datasets are aligned by projecting them into a shared PCA space, performing CCA, and then evaluating the similarity of the canonical variables. This approach is valuable for integrative analyses and understanding the relationships between different datasets in single-cell studies.
-
 ## `comparePCA()`
 
 The `comparePCA()` function compares the PCA subspaces between the query and reference datasets. It calculates the principal angles between the PCA subspaces to assess the alignment and similarity between them. This is useful for understanding how well the dimensionality reduction spaces of your datasets match.
