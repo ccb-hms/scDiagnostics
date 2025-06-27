@@ -154,7 +154,8 @@ plotPairwiseDistancesDensity <- function(
         dist_df, ggplot2::aes(
             x = .data[["Distance"]], y = .data[["Comparison"]],
             fill = .data[["Comparison"]])) +
-        ggridges::geom_density_ridges(scale = 1.5, bandwidth = bandwidth) +
+        ggridges::geom_density_ridges(scale = 1.5,
+                                      bandwidth = bandwidth) +
         ggplot2::scale_fill_manual(values = setNames(
             c("#5DADE2", "#BA55D3", "#D9534F"),
             c(ref_ref_name, query_query_name, query_ref_name)
@@ -178,8 +179,10 @@ plotPairwiseDistancesDensity <- function(
                                                face = "bold",
                                                hjust = 0.5),
             axis.title = ggplot2::element_text(size = 12),
-            axis.text = ggplot2::element_text(size = 10)) +
-        ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE))
+            axis.text = ggplot2::element_text(size = 10),
+            legend.position = "bottom") +
+        ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE,
+                                                     nrow = 3))
 
     # Adjust x-axis if correlation is used
     if(distance_metric == "correlation"){
