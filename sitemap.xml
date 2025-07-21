@@ -31,6 +31,7 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/comparePCASubspace.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/conditionalMeans.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/detectAnomaly.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/downsampleSCE.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/generateColors.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/histQCvsAnnotation.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/hotellingT2.html</loc></url>
@@ -45,6 +46,7 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotMarkerExpression.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotPairwiseDistancesDensity.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotQCvsAnnotation.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/processPCA.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/projectPCA.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/projectSIR.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/qc_data.html</loc></url>

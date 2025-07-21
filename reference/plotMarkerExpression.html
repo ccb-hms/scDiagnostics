@@ -75,14 +75,15 @@ for a specific gene across the overall dataset and within a specified cell type.
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotMarkerExpression</span><span class="op">(</span></span>
-<span>  <span class="va">reference_data</span>,</span>
 <span>  <span class="va">query_data</span>,</span>
+<span>  <span class="va">reference_data</span>,</span>
 <span>  <span class="va">ref_cell_type_col</span>,</span>
 <span>  <span class="va">query_cell_type_col</span>,</span>
 <span>  <span class="va">cell_type</span>,</span>
 <span>  <span class="va">gene_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
-<span>  normalization <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"z_score"</span>, <span class="st">"min_max"</span>, <span class="st">"rank"</span>, <span class="st">"none"</span><span class="op">)</span></span>
+<span>  normalization <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"z_score"</span>, <span class="st">"min_max"</span>, <span class="st">"rank"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  max_cells <span class="op">=</span> <span class="fl">2500</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -90,12 +91,12 @@ for a specific gene across the overall dataset and within a specified cell type.
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-reference-data">reference_data<a class="anchor" aria-label="anchor" href="#arg-reference-data"></a></dt>
-<dd><p>A <code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></code> object containing numeric expression matrix for the reference cells.</p></dd>
-
-
-<dt id="arg-query-data">query_data<a class="anchor" aria-label="anchor" href="#arg-query-data"></a></dt>
+<dl><dt id="arg-query-data">query_data<a class="anchor" aria-label="anchor" href="#arg-query-data"></a></dt>
 <dd><p>A <code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></code> object containing numeric expression matrix for the query cells.</p></dd>
+
+
+<dt id="arg-reference-data">reference_data<a class="anchor" aria-label="anchor" href="#arg-reference-data"></a></dt>
+<dd><p>A <code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></code> object containing numeric expression matrix for the reference cells.</p></dd>
 
 
 <dt id="arg-ref-cell-type-col">ref_cell_type_col<a class="anchor" aria-label="anchor" href="#arg-ref-cell-type-col"></a></dt>
@@ -120,6 +121,11 @@ for a specific gene across the overall dataset and within a specified cell type.
 
 <dt id="arg-normalization">normalization<a class="anchor" aria-label="anchor" href="#arg-normalization"></a></dt>
 <dd><p>Method for normalizing expression values. Options: "z_score" (default), "min_max", "rank", "none".</p></dd>
+
+
+<dt id="arg-max-cells">max_cells<a class="anchor" aria-label="anchor" href="#arg-max-cells"></a></dt>
+<dd><p>Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.</p></dd>
 
 </dl></div>
     <div id="value">

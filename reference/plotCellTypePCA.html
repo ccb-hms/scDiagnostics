@@ -82,7 +82,8 @@
 <span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
 <span>  lower_facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"scatter"</span>, <span class="st">"contour"</span>, <span class="st">"ellipse"</span>, <span class="st">"blank"</span><span class="op">)</span>,</span>
 <span>  diagonal_facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ridge"</span>, <span class="st">"density"</span>, <span class="st">"boxplot"</span><span class="op">)</span>,</span>
-<span>  upper_facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blank"</span>, <span class="st">"scatter"</span>, <span class="st">"contour"</span>, <span class="st">"ellipse"</span><span class="op">)</span></span>
+<span>  upper_facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blank"</span>, <span class="st">"scatter"</span>, <span class="st">"contour"</span>, <span class="st">"ellipse"</span><span class="op">)</span>,</span>
+<span>  max_cells <span class="op">=</span> <span class="fl">2500</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -128,6 +129,11 @@
 
 <dt id="arg-upper-facet">upper_facet<a class="anchor" aria-label="anchor" href="#arg-upper-facet"></a></dt>
 <dd><p>Type of plot to use for the upper panels. Either "blank" (default), "scatter", "contour", or "ellipse".</p></dd>
+
+
+<dt id="arg-max-cells">max_cells<a class="anchor" aria-label="anchor" href="#arg-max-cells"></a></dt>
+<dd><p>Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.</p></dd>
 
 </dl></div>
     <div id="value">

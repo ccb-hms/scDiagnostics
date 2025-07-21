@@ -82,7 +82,8 @@ and stored within the object.</p>
 <span>  <span class="va">query_cell_type_col</span>,</span>
 <span>  <span class="va">ref_cell_type_col</span>,</span>
 <span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span></span>
+<span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
+<span>  max_cells <span class="op">=</span> <span class="fl">2500</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -116,6 +117,11 @@ that identifies the cell types.</p></dd>
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
 <dd><p>Name of the assay on which to perform computations. Defaults to <code>"logcounts"</code>.</p></dd>
+
+
+<dt id="arg-max-cells">max_cells<a class="anchor" aria-label="anchor" href="#arg-max-cells"></a></dt>
+<dd><p>Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.</p></dd>
 
 </dl></div>
     <div id="value">

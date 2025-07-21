@@ -82,7 +82,8 @@ cell types across two datasets (query and reference), using either boxplots or v
 <span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  shape <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"box"</span>, <span class="st">"violin"</span><span class="op">)</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span></span>
+<span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
+<span>  max_cells <span class="op">=</span> <span class="fl">2500</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -91,11 +92,13 @@ cell types across two datasets (query and reference), using either boxplots or v
 
 
 <dl><dt id="arg-query-data">query_data<a class="anchor" aria-label="anchor" href="#arg-query-data"></a></dt>
-<dd><p>A <code>SingleCellExperiment</code> object containing numeric expression matrix for the query cells.</p></dd>
+<dd><p>A <code>SingleCellExperiment</code> object containing numeric expression matrix for the
+query cells.</p></dd>
 
 
 <dt id="arg-reference-data">reference_data<a class="anchor" aria-label="anchor" href="#arg-reference-data"></a></dt>
-<dd><p>A <code>SingleCellExperiment</code> object containing numeric expression matrix for the reference cells.</p></dd>
+<dd><p>A <code>SingleCellExperiment</code> object containing numeric expression matrix for
+the reference cells.</p></dd>
 
 
 <dt id="arg-query-cell-type-col">query_cell_type_col<a class="anchor" aria-label="anchor" href="#arg-query-cell-type-col"></a></dt>
@@ -107,7 +110,8 @@ cell types across two datasets (query and reference), using either boxplots or v
 
 
 <dt id="arg-cell-types">cell_types<a class="anchor" aria-label="anchor" href="#arg-cell-types"></a></dt>
-<dd><p>A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.</p></dd>
+<dd><p>A character vector specifying the cell types to include in the plot. If NULL, all cell types are
+included.</p></dd>
 
 
 <dt id="arg-pc-subset">pc_subset<a class="anchor" aria-label="anchor" href="#arg-pc-subset"></a></dt>
@@ -115,16 +119,23 @@ cell types across two datasets (query and reference), using either boxplots or v
 
 
 <dt id="arg-shape">shape<a class="anchor" aria-label="anchor" href="#arg-shape"></a></dt>
-<dd><p>Character string indicating the plot type: "box" for boxplots or "violin" for violin plots. Default is "box".</p></dd>
+<dd><p>Character string indicating the plot type: "box" for boxplots or "violin" for violin plots.
+Default is "box".</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
 <dd><p>Name of the assay on which to perform computations. Default is "logcounts".</p></dd>
 
+
+<dt id="arg-max-cells">max_cells<a class="anchor" aria-label="anchor" href="#arg-max-cells"></a></dt>
+<dd><p>Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A ggplot object representing the boxplots or violin plots of specified principal components for the given cell types and datasets.</p>
+    <p>A ggplot object representing the boxplots or violin plots of specified principal components for the given
+        cell types and datasets.</p>
     </div>
     <div id="details">
     <h2>Details</h2>

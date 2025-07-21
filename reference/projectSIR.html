@@ -85,9 +85,10 @@ components.</p>
 <span>  <span class="va">ref_cell_type_col</span>,</span>
 <span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  multiple_cond_means <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
 <span>  cumulative_variance_threshold <span class="op">=</span> <span class="fl">0.7</span>,</span>
-<span>  n_neighbor <span class="op">=</span> <span class="fl">1</span></span>
+<span>  n_neighbor <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
+<span>  max_cells <span class="op">=</span> <span class="fl">2500</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -122,10 +123,6 @@ that identifies the cell types.</p></dd>
 (through PCA and clustering). Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>A character string specifying the assay name on which to perform computations. Defaults to <code>"logcounts"</code>.</p></dd>
-
-
 <dt id="arg-cumulative-variance-threshold">cumulative_variance_threshold<a class="anchor" aria-label="anchor" href="#arg-cumulative-variance-threshold"></a></dt>
 <dd><p>A numeric value between 0 and 1 specifying the variance threshold for PCA
 when computing multiple conditional means. Defaults to <code>0.7</code>.</p></dd>
@@ -134,6 +131,15 @@ when computing multiple conditional means. Defaults to <code>0.7</code>.</p></dd
 <dt id="arg-n-neighbor">n_neighbor<a class="anchor" aria-label="anchor" href="#arg-n-neighbor"></a></dt>
 <dd><p>An integer specifying the number of nearest neighbors for clustering when computing multiple
 conditional means. Defaults to <code>1</code>.</p></dd>
+
+
+<dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
+<dd><p>A character string specifying the assay name on which to perform computations. Defaults to <code>"logcounts"</code>.</p></dd>
+
+
+<dt id="arg-max-cells">max_cells<a class="anchor" aria-label="anchor" href="#arg-max-cells"></a></dt>
+<dd><p>Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.</p></dd>
 
 </dl></div>
     <div id="value">
