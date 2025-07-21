@@ -21,6 +21,8 @@
 #' @param n_tree An integer specifying the number of trees for the isolation forest. Default is 500
 #' @param anomaly_threshold A numeric value specifying the threshold for identifying anomalies, Default is 0.6.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #' @param ... Additional arguments passed to the `isolation.forest` function.
 #'
 #' @return A list containing the following components for each cell type and the combined data:
@@ -76,6 +78,7 @@ detectAnomaly <- function(reference_data,
                           n_tree = 500,
                           anomaly_threshold = 0.6,
                           assay_name = "logcounts",
+                          max_cells = 2500,
                           ...) {
 
     # Check standard input arguments
@@ -86,6 +89,14 @@ detectAnomaly <- function(reference_data,
                   cell_types = cell_types,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
+
+    # Downsample reference and query data
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
+    if(!is.null(query_data)){
+        query_data <- downsampleSCE(sce = query_data,
+                                    max_cells = max_cells)
+    }
 
     # Get common cell types if they are not specified by user
     reference_labels <- reference_data[[ref_cell_type_col]]

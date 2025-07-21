@@ -12,7 +12,8 @@ calculateVarImpOverlap(
   cell_types = NULL,
   n_tree = 500,
   n_top = 50,
-  assay_name = "logcounts"
+  assay_name = "logcounts",
+  max_cells = 2500
 )
 }
 \arguments{
@@ -32,6 +33,9 @@ If NULL, then the variable importance scores are only computed for the reference
 \item{n_top}{An integer specifying the number of top genes to consider when comparing variable importance scores. Default is 50.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Defaults to \code{"logcounts"}.}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 }
 \value{
 A list containing three elements:

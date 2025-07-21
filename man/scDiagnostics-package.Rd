@@ -97,6 +97,7 @@ Functions for visualizing quality control (QC) metrics or other characteristics 
 
 Miscellaneous functions for various tasks.
 \itemize{
+  \item \code{\link{processPCA}}: Process \code{\linkS4class{SingleCellExperiment}} objects to compute PCA.
   \item \code{\link{projectPCA}}: Projects new data into PCA space.
   \item \code{\link{projectSIR}}: Projects new data into SIR space.
   \item \code{\link{calculateCategorizationEntropy}}: Calculates categorization entropy for clusters.

@@ -14,7 +14,8 @@ plotCellTypePCA(
   assay_name = "logcounts",
   lower_facet = c("scatter", "contour", "ellipse", "blank"),
   diagonal_facet = c("ridge", "density", "boxplot"),
-  upper_facet = c("blank", "scatter", "contour", "ellipse")
+  upper_facet = c("blank", "scatter", "contour", "ellipse"),
+  max_cells = 2500
 )
 }
 \arguments{
@@ -37,6 +38,9 @@ plotCellTypePCA(
 \item{diagonal_facet}{Type of plot to use for the diagonal panels. Either "ridge" (default), "density", or "boxplot".}
 
 \item{upper_facet}{Type of plot to use for the upper panels. Either "blank" (default), "scatter", "contour", or "ellipse".}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 }
 \value{
 A ggmatrix object representing a pairs plot of specified principal components for the given cell types and datasets.

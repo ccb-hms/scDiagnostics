@@ -22,8 +22,10 @@
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
 #' @param cell_type A vector of cell type cell_types to plot (e.g., c("T-cell", "B-cell")).
 #' @param gene_name The gene name for which the distribution is to be visualized.
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #' @param normalization Method for normalizing expression values. Options: "z_score" (default), "min_max", "rank", "none".
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A ggplot object containing density plots comparing reference and query distributions.
 #'
@@ -50,14 +52,15 @@
 #' @import SingleCellExperiment
 #'
 # Function to plot the expression of a marker
-plotMarkerExpression <- function(reference_data,
-                                 query_data,
+plotMarkerExpression <- function(query_data,
+                                 reference_data,
                                  ref_cell_type_col,
                                  query_cell_type_col,
                                  cell_type,
                                  gene_name,
                                  assay_name = "logcounts",
-                                 normalization = c("z_score", "min_max", "rank", "none")) {
+                                 normalization = c("z_score", "min_max", "rank", "none"),
+                                 max_cells = 2500) {
 
     # Match normalization argument
     normalization <- match.arg(normalization)
@@ -69,6 +72,12 @@ plotMarkerExpression <- function(reference_data,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_types = cell_type,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Get common cell types if they are not specified by user
     if(is.null(cell_type)){

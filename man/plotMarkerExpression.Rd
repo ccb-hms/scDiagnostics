@@ -5,20 +5,21 @@
 \title{Plot gene expression distribution from overall and cell type-specific perspective}
 \usage{
 plotMarkerExpression(
-  reference_data,
   query_data,
+  reference_data,
   ref_cell_type_col,
   query_cell_type_col,
   cell_type,
   gene_name,
   assay_name = "logcounts",
-  normalization = c("z_score", "min_max", "rank", "none")
+  normalization = c("z_score", "min_max", "rank", "none"),
+  max_cells = 2500
 )
 }
 \arguments{
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
-
 \item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
 \item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
 
@@ -31,6 +32,9 @@ plotMarkerExpression(
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
 \item{normalization}{Method for normalizing expression values. Options: "z_score" (default), "min_max", "rank", "none".}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 }
 \value{
 A ggplot object containing density plots comparing reference and query distributions.

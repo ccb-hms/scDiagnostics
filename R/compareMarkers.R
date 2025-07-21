@@ -23,12 +23,14 @@
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing reference cells.
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
-#' @param assay_name Name of the assay to use for computations. Default is "logcounts".
 #' @param n_markers Number of top marker genes to consider for each cell type. Default is 50.
 #' @param min_cells Minimum number of cells required per cell type for marker identification. Default is 10.
 #' @param anomaly_filter Character string specifying how to filter query cells based on anomaly detection.
 #'                       Options: "none" (default), "anomalous_only", "non_anomalous_only".
 #' @param cell_types Character vector specifying which cell types to analyze. If NULL, all common cell types are used.
+#' @param assay_name Name of the assay to use for computations. Default is "logcounts".
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #' @param ... Additional arguments passed to the \code{detectAnomaly} function.
 #'
 #' @return A list containing the following elements:
@@ -81,11 +83,12 @@ compareMarkers <- function(query_data,
                            reference_data,
                            query_cell_type_col,
                            ref_cell_type_col,
-                           assay_name = "logcounts",
                            n_markers = 50,
                            min_cells = 10,
                            anomaly_filter = c("none", "anomalous_only", "non_anomalous_only"),
                            cell_types = NULL,
+                           assay_name = "logcounts",
+                           max_cells = 2500,
                            ...){
 
     # Match arguments
@@ -98,6 +101,12 @@ compareMarkers <- function(query_data,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_types = cell_types,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Get cell type information
     query_cell_types_orig <- colData(query_data)[[query_cell_type_col]]

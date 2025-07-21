@@ -10,14 +10,15 @@ plotCellTypeMDS(
   query_cell_type_col,
   ref_cell_type_col,
   cell_types = NULL,
-  assay_name = "logcounts"
+  assay_name = "logcounts",
+  max_cells = 2500
 )
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell 
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell
 expression data and metadata.}
 
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell 
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell
 expression data and metadata.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
@@ -27,20 +28,23 @@ expression data and metadata.}
 \item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 }
 \value{
 A ggplot object representing the MDS scatter plot with cell type coloring.
 }
 \description{
-This function facilitates the assessment of similarity between reference and query datasets 
-through Multidimensional Scaling (MDS) scatter plots. It allows the visualization of cell types, 
-color-coded with user-defined custom colors, based on a dissimilarity matrix computed from a 
+This function facilitates the assessment of similarity between reference and query datasets
+through Multidimensional Scaling (MDS) scatter plots. It allows the visualization of cell types,
+color-coded with user-defined custom colors, based on a dissimilarity matrix computed from a
 user-selected gene set.
 }
 \details{
-To evaluate dataset similarity, the function selects specific subsets of cells from 
-both reference and query datasets. It then calculates Spearman correlations between gene expression profiles, 
-deriving a dissimilarity matrix. This matrix undergoes Classical Multidimensional Scaling (MDS) for 
+To evaluate dataset similarity, the function selects specific subsets of cells from
+both reference and query datasets. It then calculates Spearman correlations between gene expression profiles,
+deriving a dissimilarity matrix. This matrix undergoes Classical Multidimensional Scaling (MDS) for
 visualization, presenting cell types in a scatter plot, distinguished by colors defined by the user.
 }
 \examples{
@@ -49,10 +53,10 @@ data("reference_data")
 data("query_data")
 
 # Generate the MDS scatter plot with cell type coloring
-mds_plot <- plotCellTypeMDS(query_data = query_data, 
-                            reference_data = reference_data, 
+mds_plot <- plotCellTypeMDS(query_data = query_data,
+                            reference_data = reference_data,
                             cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid")[1:4],
-                            query_cell_type_col = "SingleR_annotation", 
+                            query_cell_type_col = "SingleR_annotation",
                             ref_cell_type_col = "expert_annotation")
 mds_plot
 

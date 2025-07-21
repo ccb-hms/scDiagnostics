@@ -14,7 +14,8 @@ calculateWassersteinDistance(
   cell_types = NULL,
   pc_subset = 1:10,
   n_resamples = 300,
-  assay_name = "logcounts"
+  assay_name = "logcounts",
+  max_cells = 2500
 )
 
 \method{plot}{calculateWassersteinDistanceObject}(x, cell_types = NULL, ...)
@@ -35,6 +36,9 @@ calculateWassersteinDistance(
 \item{n_resamples}{An integer specifying the number of resamples to generate each distribution. Default is \code{300}.}
 
 \item{assay_name}{The name of the assay to use for computations. Default is \code{"logcounts"}.}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 
 \item{x}{A list object containing the Wasserstein distance results from the \code{calculateWassersteinDistance} function.}
 

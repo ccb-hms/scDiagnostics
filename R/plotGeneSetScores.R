@@ -18,6 +18,8 @@
 #'        Default is 1:5.
 #' @param cell_type_col The column name in the \code{colData} of \code{se_object} that identifies the cell types.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A ggplot2 object representing the gene set scores plotted on the specified reduced dimensions.
 #'
@@ -43,13 +45,18 @@ plotGeneSetScores <- function(se_object,
                               score_col,
                               pc_subset = 1:5,
                               cell_type_col = NULL,
-                              cell_types = NULL) {
+                              cell_types = NULL,
+                              max_cells = 2500) {
 
     # Check standard input arguments
     argumentCheck(query_data = se_object,
                   pc_subset_query = pc_subset,
                   query_cell_type_col = cell_type_col,
                   cell_types = cell_types)
+
+    # Downsample SCE object
+    se_object <- downsampleSCE(sce = se_object,
+                               max_cells = max_cells)
 
     # Match method argument
     method <- match.arg(method)

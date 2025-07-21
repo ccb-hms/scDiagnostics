@@ -9,7 +9,8 @@ plotQCvsAnnotation(
   cell_type_col,
   cell_types = NULL,
   qc_col,
-  score_col
+  score_col,
+  max_cells = 2500
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ contains the QC stats of interest.}
 
 \item{score_col}{The column name in the \code{colData} of \code{se_object} that
 contains the cell type annotation scores.}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 }
 \value{
 A ggplot object displaying a scatter plot of QC stats vs annotation scores,

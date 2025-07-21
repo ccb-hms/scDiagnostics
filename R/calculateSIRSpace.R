@@ -15,9 +15,11 @@
 #' @param ref_cell_type_col A character string specifying the column name in the \code{colData} of \code{reference_data} that identifies the cell types.
 #' @param cell_types A character vector specifying the cell types to include in the analysis. If NULL, all common cell types between the query and reference data will be used.
 #' @param multiple_cond_means Logical. Whether to compute conditional means for multiple conditions in the reference dataset. Default is TRUE.
-#' @param assay_name A character string specifying the name of the assay on which to perform computations. Default is "logcounts".
 #' @param cumulative_variance_threshold A numeric value specifying the cumulative variance threshold for selecting principal components. Default is 0.7.
 #' @param n_neighbor A numeric value specifying the number of neighbors for computing the SIR space. Default is 1.
+#' @param assay_name A character string specifying the name of the assay on which to perform computations. Default is "logcounts".
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A list containing the SIR projections, rotation matrix, and percentage of variance explained for the given cell types.
 #'
@@ -62,9 +64,10 @@ calculateSIRSpace <- function(query_data,
                               ref_cell_type_col,
                               cell_types = NULL,
                               multiple_cond_means = TRUE,
-                              assay_name = "logcounts",
                               cumulative_variance_threshold = 0.7,
-                              n_neighbor = 1){
+                              n_neighbor = 1,
+                              assay_name = "logcounts",
+                              max_cells = 2500){
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -73,6 +76,12 @@ calculateSIRSpace <- function(query_data,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_types = cell_types,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Check if cumulative_variance_threshold is between 0 and 1
     if (!is.numeric(cumulative_variance_threshold) ||

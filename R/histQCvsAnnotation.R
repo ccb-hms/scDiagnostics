@@ -18,6 +18,8 @@
 #' contains the QC stats of interest.
 #' @param score_col The column name in the \code{colData} of \code{se_object} that
 #' contains the cell type scores.
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A object containing two histograms displayed side by side.
 #' The first histogram represents the distribution of QC stats,
@@ -47,12 +49,17 @@ histQCvsAnnotation <- function(se_object,
                                cell_type_col,
                                cell_types = NULL,
                                qc_col,
-                               score_col) {
+                               score_col,
+                               max_cells = 2500) {
 
     # Check standard input arguments
     argumentCheck(query_data = se_object,
                   query_cell_type_col = cell_type_col,
                   cell_types = cell_types)
+
+    # Downsample SCE object
+    se_object <- downsampleSCE(sce = se_object,
+                               max_cells = max_cells)
 
     # Check if qc_col is a valid column name in se_object
     if (!qc_col %in% names(colData(se_object))) {

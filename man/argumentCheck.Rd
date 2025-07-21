@@ -27,15 +27,15 @@ If `NULL`, no check is performed.}
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 If `NULL`, no check is performed.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} 
+\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data}
 that identifies the cell types. If `NULL`, no check is performed.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} 
+\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data}
 that identifies the cell types. If `NULL`, no check is performed.}
 
 \item{cell_types}{A character vector specifying the cell types to include in the plot. If `NULL`, no check is performed.}
 
-\item{unique_cell_type}{If `TRUE`, there should only be one cell type in the provided \code{\linkS4class{SingleCellExperiment}} objectss.
+\item{unique_cell_type}{If `TRUE`, there should only be one cell type in the provided \code{\linkS4class{SingleCellExperiment}} objects.
 Default is `FALSE`.}
 
 \item{plot_function}{A logical value indicating whether the function is being called to generate a plot. Default is `FALSE`.}
@@ -57,8 +57,9 @@ Default is FALSE.}
 None.
 }
 \description{
-This function validates the input arguments for functions that analyze SingleCellExperiment objects. It checks that the inputs 
-are of the correct types and formats, and that required columns and cell types are present in the data.
+This function validates the input arguments for functions that analyze \code{\linkS4class{SingleCellExperiment}}
+objects. It checks that the inputs are of the correct types and formats, and that required columns and cell types
+are present in the data.
 }
 \details{
 The function performs a series of checks to ensure that:

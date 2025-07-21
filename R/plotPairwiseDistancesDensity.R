@@ -23,8 +23,10 @@
 #'                        Set to "correlation" to calculate correlation coefficients.
 #' @param correlation_method The correlation method to use when \code{distance_metric} is "correlation".
 #'                           Possible values are "pearson" and "spearman".
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #' @param bandwidth Numeric value controlling the smoothness of the density estimate; smaller values create more detailed curves. Default is 0.25.
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A ggplot2 object showing ridgeline plots of calculated distances or correlations.
 #'
@@ -64,8 +66,9 @@ plotPairwiseDistancesDensity <- function(
         pc_subset = 1:5,
         distance_metric = c("correlation", "euclidean"),
         correlation_method = c("spearman", "pearson"),
+        bandwidth = 0.25,
         assay_name = "logcounts",
-        bandwidth = 0.25) {
+        max_cells = 2500) {
 
     # Match argument for distance_metric
     distance_metric <- match.arg(distance_metric)
@@ -86,6 +89,12 @@ plotPairwiseDistancesDensity <- function(
                   cell_types = c(cell_type_query, cell_type_ref),
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Convert to matrix and potentially applied PCA dimensionality reduction
     if(!is.null(pc_subset)){

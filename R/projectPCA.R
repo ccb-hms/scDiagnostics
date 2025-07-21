@@ -21,6 +21,8 @@
 #' that identifies the cell types.
 #' @param pc_subset A numeric vector specifying the subset of principal components (PCs) to compare. Default is 1:10.
 #' @param assay_name Name of the assay on which to perform computations. Defaults to \code{"logcounts"}.
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A \code{data.frame} containing the projected data in rows (reference and query data combined).
 #'
@@ -46,7 +48,8 @@ projectPCA <- function(query_data,
                        query_cell_type_col,
                        ref_cell_type_col,
                        pc_subset = 1:10,
-                       assay_name = "logcounts"){
+                       assay_name = "logcounts",
+                       max_cells = 2500){
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -55,6 +58,12 @@ projectPCA <- function(query_data,
                   ref_cell_type_col = ref_cell_type_col,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Extract reference PCA components and rotation matrix
     ref_mat <- reducedDim(reference_data, "PCA")[, pc_subset, drop = FALSE]

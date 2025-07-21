@@ -14,10 +14,12 @@
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is 1:5.
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #' @param lower_facet Type of plot to use for the lower panels. Either "scatter" (default), "contour", "ellipse", or "blank".
 #' @param diagonal_facet Type of plot to use for the diagonal panels. Either "ridge" (default), "density", or "boxplot".
 #' @param upper_facet Type of plot to use for the upper panels. Either "blank" (default), "scatter", "contour", or "ellipse".
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A ggmatrix object representing a pairs plot of specified principal components for the given cell types and datasets.
 #'
@@ -33,7 +35,8 @@ plotCellTypePCA <- function(query_data,
                             assay_name = "logcounts",
                             lower_facet = c("scatter", "contour", "ellipse", "blank"),
                             diagonal_facet = c("ridge", "density", "boxplot"),
-                            upper_facet = c("blank", "scatter", "contour", "ellipse")){
+                            upper_facet = c("blank", "scatter", "contour", "ellipse"),
+                            max_cells = 2500){
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -43,6 +46,12 @@ plotCellTypePCA <- function(query_data,
                   cell_types = cell_types,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Match diagonal_facet and upper_facet arguments
     lower_facet <- match.arg(lower_facet)

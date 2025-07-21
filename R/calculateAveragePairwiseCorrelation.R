@@ -20,6 +20,8 @@
 #' If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.
 #' @param correlation_method The correlation method to use for calculating pairwise correlations.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A matrix containing the average pairwise correlation values.
 #'         Rows and columns are labeled with the cell types. Each element
@@ -59,7 +61,8 @@ calculateAveragePairwiseCorrelation <- function(
         cell_types = NULL,
         pc_subset = 1:10,
         correlation_method = c("spearman", "pearson"),
-        assay_name = "logcounts") {
+        assay_name = "logcounts",
+        max_cells = 2500) {
 
     # Match correlation method argument
     correlation_method <- match.arg(correlation_method)
@@ -72,6 +75,12 @@ calculateAveragePairwiseCorrelation <- function(
                   cell_types = cell_types,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){

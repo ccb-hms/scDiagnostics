@@ -20,6 +20,8 @@
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A named vector of p-values from the Cramer test for each cell type.
 #'
@@ -49,7 +51,8 @@ calculateCramerPValue <- function(reference_data,
                                   query_cell_type_col = NULL,
                                   cell_types = NULL,
                                   pc_subset = 1:5,
-                                  assay_name = "logcounts") {
+                                  assay_name = "logcounts",
+                                  max_cells = 2500) {
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -59,6 +62,12 @@ calculateCramerPValue <- function(reference_data,
                   cell_types = cell_types,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){

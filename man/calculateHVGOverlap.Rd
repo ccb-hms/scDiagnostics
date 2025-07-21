@@ -12,15 +12,15 @@ calculateHVGOverlap(reference_genes, query_genes)
 \item{query_genes}{A character vector of highly variable genes from the query dataset.}
 }
 \value{
-Overlap coefficient, a value between 0 and 1, where 0 indicates no overlap 
+Overlap coefficient, a value between 0 and 1, where 0 indicates no overlap
 and 1 indicates complete overlap of highly variable genes between datasets.
 }
 \description{
 Calculates the overlap coefficient between the sets of highly variable genes from a reference dataset and a query dataset.
 }
 \details{
-The overlap coefficient measures the similarity between two gene sets, indicating how well-aligned 
-reference and query datasets are in terms of their highly variable genes. This metric is 
+The overlap coefficient measures the similarity between two gene sets, indicating how well-aligned
+reference and query datasets are in terms of their highly variable genes. This metric is
 useful in single-cell genomics to understand the correspondence between different datasets.
 
 The coefficient is calculated using the formula:
@@ -28,7 +28,7 @@ The coefficient is calculated using the formula:
 \deqn{Coefficient(X, Y) = \frac{|X \cap Y|}{min(|X|, |Y|)}}
 
 where X and Y are the sets of highly variable genes from the reference and query datasets, respectively,
-\eqn{|X \cap Y|} is the number of genes common to both \eqn{X} and \eqn{Y}, and \eqn{min(|X|, |Y|)} is the size of the 
+\eqn{|X \cap Y|} is the number of genes common to both \eqn{X} and \eqn{Y}, and \eqn{min(|X|, |Y|)} is the size of the
 smaller set among \eqn{X} and \eqn{Y}.
 }
 \examples{
@@ -39,7 +39,7 @@ data("query_data")
 # Selecting highly variable genes
 ref_var <- scran::getTopHVGs(reference_data, n = 500)
 query_var <- scran::getTopHVGs(query_data, n = 500)
-overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var, 
+overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var,
                                            query_genes = query_var)
 overlap_coefficient
 

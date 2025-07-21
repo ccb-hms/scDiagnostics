@@ -76,6 +76,7 @@ reference:
       - plotGeneSetScores
   - title: Misc
     contents:
+      - processPCA
       - projectPCA
       - projectSIR
       - calculateCategorizationEntropy

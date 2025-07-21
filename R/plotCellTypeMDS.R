@@ -20,6 +20,8 @@
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A ggplot object representing the MDS scatter plot with cell type coloring.
 #'
@@ -55,7 +57,8 @@ plotCellTypeMDS <- function(query_data,
                             query_cell_type_col,
                             ref_cell_type_col,
                             cell_types = NULL,
-                            assay_name = "logcounts") {
+                            assay_name = "logcounts",
+                            max_cells = 2500) {
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -64,6 +67,12 @@ plotCellTypeMDS <- function(query_data,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_types = cell_types,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){

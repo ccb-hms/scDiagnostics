@@ -21,11 +21,13 @@
 #' @param cell_types A character vector of cell types for which to compute conditional means in the reference data.
 #' @param multiple_cond_means A logical value indicating whether to compute multiple conditional means per cell type
 #' (through PCA and clustering). Defaults to \code{TRUE}.
-#' @param assay_name A character string specifying the assay name on which to perform computations. Defaults to \code{"logcounts"}.
 #' @param cumulative_variance_threshold A numeric value between 0 and 1 specifying the variance threshold for PCA
 #' when computing multiple conditional means. Defaults to \code{0.7}.
 #' @param n_neighbor An integer specifying the number of nearest neighbors for clustering when computing multiple
 #' conditional means. Defaults to \code{1}.
+#' @param assay_name A character string specifying the assay name on which to perform computations. Defaults to \code{"logcounts"}.
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A list containing:
 #' \item{cond_means}{A matrix of the conditional means computed for the reference data.}
@@ -56,9 +58,10 @@ projectSIR <- function(query_data,
                        ref_cell_type_col,
                        cell_types = NULL,
                        multiple_cond_means = TRUE,
-                       assay_name = "logcounts",
                        cumulative_variance_threshold = 0.7,
-                       n_neighbor = 1){
+                       n_neighbor = 1,
+                       assay_name = "logcounts",
+                       max_cells = 2500){
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -67,6 +70,12 @@ projectSIR <- function(query_data,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_types = cell_types,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Check if cumulative_variance_threshold is between 0 and 1
     if (!is.numeric(cumulative_variance_threshold) ||

@@ -10,11 +10,12 @@ calculateMMDPValue(
   ref_cell_type_col,
   query_cell_type_col = NULL,
   cell_types = NULL,
-  pc_subset = seq_len(5),
-  assay_name = "logcounts",
+  pc_subset = 1:5,
   n_permutation = 100,
   kernel_type = "gaussian",
-  sigma = NULL
+  sigma = NULL,
+  assay_name = "logcounts",
+  max_cells = 2500
 )
 }
 \arguments{
@@ -31,13 +32,16 @@ If NULL, the PC scores are regressed against the cell types of the reference dat
 
 \item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
-
 \item{n_permutation}{Number of permutations for p-value calculation. Default is 100.}
 
 \item{kernel_type}{Type of kernel to use. Options are "gaussian" (default) or "linear".}
 
 \item{sigma}{Bandwidth parameter for Gaussian kernel. If NULL, uses median heuristic.}
+
+\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 }
 \value{
 A named vector of p-values from the MMD test for each cell type.

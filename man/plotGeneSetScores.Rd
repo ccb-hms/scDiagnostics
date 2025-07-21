@@ -10,7 +10,8 @@ plotGeneSetScores(
   score_col,
   pc_subset = 1:5,
   cell_type_col = NULL,
-  cell_types = NULL
+  cell_types = NULL,
+  max_cells = 2500
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ Default is 1:5.}
 \item{cell_type_col}{The column name in the \code{colData} of \code{se_object} that identifies the cell types.}
 
 \item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 }
 \value{
 A ggplot2 object representing the gene set scores plotted on the specified reduced dimensions.

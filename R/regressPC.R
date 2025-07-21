@@ -36,7 +36,8 @@
 #'   Options include "BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr", or "none".
 #'   Default is "BH" (Benjamini-Hochberg). Default is "BH".
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#'
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #' @return
 #' A \code{list} containing \itemize{ \item summaries of the linear
 #' regression models for each specified principal component, \item the
@@ -91,7 +92,8 @@ regressPC <- function(reference_data,
                                         "hochberg", "hommel",
                                         "bonferroni", "BY",
                                         "fdr", "none"),
-                      assay_name = "logcounts") {
+                      assay_name = "logcounts",
+                      max_cells = 2500) {
 
     # Match argument for independent variable
     adjust_method <- match.arg(adjust_method)
@@ -104,6 +106,14 @@ regressPC <- function(reference_data,
                   cell_types = cell_types,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
+
+    # Downsample reference and query data
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
+    if(!is.null(query_data)){
+        query_data <- downsampleSCE(sce = query_data,
+                                    max_cells = max_cells)
+    }
 
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){

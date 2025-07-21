@@ -86,10 +86,6 @@ comparePCA <- function(reference_data,
                        correlation_method = c("spearman", "pearson"),
                        n_permutations = 0) {
 
-    # Match arguments
-    metric <- match.arg(metric)
-    correlation_method <- match.arg(correlation_method)
-
     # Check standard input arguments
     argumentCheck(query_data = query_data,
                   reference_data = reference_data,
@@ -99,6 +95,10 @@ comparePCA <- function(reference_data,
                   pc_subset_query = pc_subset,
                   pc_subset_ref = pc_subset,
                   common_rotation_genes = TRUE)
+
+    # Match arguments
+    metric <- match.arg(metric)
+    correlation_method <- match.arg(correlation_method)
 
     # Enhanced input validation
     if (!is.numeric(n_top_vars) || n_top_vars <= 0 ||

@@ -21,7 +21,8 @@ calculateGraphIntegration(
   high_query_prop_threshold = 0.9,
   cross_type_threshold = 0.15,
   local_consistency_threshold = 0.6,
-  local_confidence_threshold = 0.2
+  local_confidence_threshold = 0.2,
+  max_cells = 2500
 )
 
 \method{plot}{calculateGraphIntegrationObject}(
@@ -65,6 +66,9 @@ calculateGraphIntegration(
 \item{local_consistency_threshold}{Minimum proportion of reference neighbors that should support a query cell's annotation. Default is 0.6.}
 
 \item{local_confidence_threshold}{Minimum confidence difference needed to suggest re-annotation. Default is 0.2.}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 
 \item{x}{An object of class \code{calculateGraphIntegrationObject} containing the diagnostic results.}
 

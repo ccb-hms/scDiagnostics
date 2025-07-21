@@ -17,7 +17,8 @@ calculateDiscriminantSpace(
   eigen_threshold = 0.1,
   calculate_metrics = FALSE,
   alpha = 0.01,
-  assay_name = "logcounts"
+  assay_name = "logcounts",
+  max_cells = 2500
 )
 
 \method{plot}{calculateDiscriminantSpaceObject}(
@@ -53,6 +54,9 @@ If NULL, only the projected reference data is returned. Default is NULL.}
 \item{alpha}{A numeric value specifying the significance level for Mahalanobis distance cutoff.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 
 \item{x}{An object of class \code{calculateDiscriminantSpaceObject} containing the projected data on the discriminant space.}
 

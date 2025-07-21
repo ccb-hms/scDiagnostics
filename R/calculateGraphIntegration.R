@@ -26,6 +26,8 @@
 #' @param cross_type_threshold Minimum proportion needed to flag cross-cell-type mixing. Default is 0.1.
 #' @param local_consistency_threshold Minimum proportion of reference neighbors that should support a query cell's annotation. Default is 0.6.
 #' @param local_confidence_threshold Minimum confidence difference needed to suggest re-annotation. Default is 0.2.
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A list containing:
 #' \item{high_query_prop_analysis}{Analysis of communities with only query cells}
@@ -114,7 +116,8 @@ calculateGraphIntegration <- function(query_data,
                                       high_query_prop_threshold = 0.9,
                                       cross_type_threshold = 0.15,
                                       local_consistency_threshold = 0.6,
-                                      local_confidence_threshold = 0.2) {
+                                      local_confidence_threshold = 0.2,
+                                      max_cells = 2500) {
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -124,6 +127,12 @@ calculateGraphIntegration <- function(query_data,
                   cell_types = cell_types,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Check additional parameters
     if (!is.numeric(k_neighbors) || k_neighbors <= 0 ||

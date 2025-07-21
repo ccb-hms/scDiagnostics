@@ -22,6 +22,8 @@
 #' @param pc_subset A numeric vector specifying which principal components to use. Default is \code{1:10}.
 #' @param n_resamples An integer specifying the number of resamples to generate each distribution. Default is \code{300}.
 #' @param assay_name The name of the assay to use for computations. Default is \code{"logcounts"}.
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A list with the following components:
 #' \item{ref_ref_dist}{A named list of numeric vectors containing Wasserstein distances computed from resampled pairs within the reference dataset for each cell type.}
@@ -62,7 +64,8 @@ calculateWassersteinDistance <- function(query_data,
                                          cell_types = NULL,
                                          pc_subset = 1:10,
                                          n_resamples = 300,
-                                         assay_name = "logcounts"){
+                                         assay_name = "logcounts",
+                                         max_cells = 2500){
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -72,6 +75,12 @@ calculateWassersteinDistance <- function(query_data,
                   cell_types = cell_types,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Check if n_resamples is a positive integer
     if (!inherits(n_resamples, "numeric")) {

@@ -11,7 +11,8 @@ calculateCramerPValue(
   query_cell_type_col = NULL,
   cell_types = NULL,
   pc_subset = 1:5,
-  assay_name = "logcounts"
+  assay_name = "logcounts",
+  max_cells = 2500
 )
 }
 \arguments{
@@ -29,6 +30,9 @@ If NULL, the PC scores are regressed against the cell types of the reference dat
 \item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 }
 \value{
 A named vector of p-values from the Cramer test for each cell type.

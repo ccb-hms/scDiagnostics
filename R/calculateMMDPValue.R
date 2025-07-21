@@ -20,10 +20,12 @@
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #' @param n_permutation Number of permutations for p-value calculation. Default is 100.
 #' @param kernel_type Type of kernel to use. Options are "gaussian" (default) or "linear".
 #' @param sigma Bandwidth parameter for Gaussian kernel. If NULL, uses median heuristic.
+#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A named vector of p-values from the MMD test for each cell type.
 #'
@@ -57,11 +59,12 @@ calculateMMDPValue <- function(reference_data,
                                ref_cell_type_col,
                                query_cell_type_col = NULL,
                                cell_types = NULL,
-                               pc_subset = seq_len(5),
-                               assay_name = "logcounts",
+                               pc_subset = 1:5,
                                n_permutation = 100,
                                kernel_type = "gaussian",
-                               sigma = NULL) {
+                               sigma = NULL,
+                               assay_name = "logcounts",
+                               max_cells = 2500) {
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -71,6 +74,12 @@ calculateMMDPValue <- function(reference_data,
                   cell_types = cell_types,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Optimized helper function to compute MMD statistic
     .computeMMDStatistic <- function(X, Y,

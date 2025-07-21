@@ -10,16 +10,23 @@
 #' distributions of the principal components across different cell types and datasets. The function internally calls \code{projectPCA}
 #' to perform the PCA projection. It then reshapes the output data into a long format suitable for ggplot2 plotting.
 #'
-#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
+#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the
+#'                   query cells.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for
+#'                       the reference cells.
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
+#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are
+#'                   included.
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
-#' @param shape Character string indicating the plot type: "box" for boxplots or "violin" for violin plots. Default is "box".
+#' @param shape Character string indicating the plot type: "box" for boxplots or "violin" for violin plots.
+#'              Default is "box".
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
-#' @return A ggplot object representing the boxplots or violin plots of specified principal components for the given cell types and datasets.
+#' @return A ggplot object representing the boxplots or violin plots of specified principal components for the given
+#'         cell types and datasets.
 #'
 #' @export
 #'
@@ -60,7 +67,8 @@ boxplotPCA <- function(query_data,
                        cell_types = NULL,
                        pc_subset = 1:5,
                        shape = c("box", "violin"),
-                       assay_name = "logcounts"){
+                       assay_name = "logcounts",
+                       max_cells = 2500){
 
     # Match the shape argument
     shape <- match.arg(shape)
@@ -73,6 +81,12 @@ boxplotPCA <- function(query_data,
                   cell_types = cell_types,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){

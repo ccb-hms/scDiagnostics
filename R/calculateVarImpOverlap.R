@@ -17,6 +17,8 @@
 #' @param n_tree An integer specifying the number of trees to grow in the Random Forest. Default is 500.
 #' @param n_top An integer specifying the number of top genes to consider when comparing variable importance scores. Default is 50.
 #' @param assay_name Name of the assay on which to perform computations. Defaults to \code{"logcounts"}.
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A list containing three elements:
 #' \item{var_imp_ref}{A list of data frames containing variable importance scores for each combination of cell types in the reference
@@ -57,7 +59,8 @@ calculateVarImpOverlap <- function(reference_data,
                                    cell_types = NULL,
                                    n_tree = 500,
                                    n_top = 50,
-                                   assay_name = "logcounts"){
+                                   assay_name = "logcounts",
+                                   max_cells = 2500){
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -65,6 +68,14 @@ calculateVarImpOverlap <- function(reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_types = cell_types)
+
+    # Downsample reference and query data
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
+    if(!is.null(query_data)){
+        query_data <- downsampleSCE(sce = query_data,
+                                    max_cells = max_cells)
+    }
 
     # Check if n_tree is a positive integer
     if (!is.numeric(n_tree) || n_tree <= 0 || n_tree != as.integer(n_tree)) {

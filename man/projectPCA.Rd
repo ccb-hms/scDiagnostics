@@ -10,7 +10,8 @@ projectPCA(
   query_cell_type_col,
   ref_cell_type_col,
   pc_subset = 1:10,
-  assay_name = "logcounts"
+  assay_name = "logcounts",
+  max_cells = 2500
 )
 }
 \arguments{
@@ -29,6 +30,9 @@ that identifies the cell types.}
 \item{pc_subset}{A numeric vector specifying the subset of principal components (PCs) to compare. Default is 1:10.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Defaults to \code{"logcounts"}.}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 }
 \value{
 A \code{data.frame} containing the projected data in rows (reference and query data combined).

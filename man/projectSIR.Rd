@@ -11,9 +11,10 @@ projectSIR(
   ref_cell_type_col,
   cell_types = NULL,
   multiple_cond_means = TRUE,
-  assay_name = "logcounts",
   cumulative_variance_threshold = 0.7,
-  n_neighbor = 1
+  n_neighbor = 1,
+  assay_name = "logcounts",
+  max_cells = 2500
 )
 }
 \arguments{
@@ -32,13 +33,16 @@ that identifies the cell types.}
 \item{multiple_cond_means}{A logical value indicating whether to compute multiple conditional means per cell type
 (through PCA and clustering). Defaults to \code{TRUE}.}
 
-\item{assay_name}{A character string specifying the assay name on which to perform computations. Defaults to \code{"logcounts"}.}
-
 \item{cumulative_variance_threshold}{A numeric value between 0 and 1 specifying the variance threshold for PCA
 when computing multiple conditional means. Defaults to \code{0.7}.}
 
 \item{n_neighbor}{An integer specifying the number of nearest neighbors for clustering when computing multiple
 conditional means. Defaults to \code{1}.}
+
+\item{assay_name}{A character string specifying the assay name on which to perform computations. Defaults to \code{"logcounts"}.}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 }
 \value{
 A list containing:

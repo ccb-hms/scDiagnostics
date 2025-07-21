@@ -26,6 +26,8 @@
 #' @param cell_names A character vector specifying the names of the query cells for which to compute distance measures.
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is 1:5.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+#'                  Default is 2500.
 #'
 #' @return A list containing distance data for each cell type. Each entry in the list contains:
 #' \describe{
@@ -75,7 +77,8 @@ calculateCellDistancesSimilarity <- function(query_data,
                                              ref_cell_type_col,
                                              cell_names,
                                              pc_subset = 1:5,
-                                             assay_name = "logcounts") {
+                                             assay_name = "logcounts",
+                                             max_cells = 2500) {
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -85,6 +88,12 @@ calculateCellDistancesSimilarity <- function(query_data,
                   cell_names_query = cell_names,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Compute distance data
     query_data_subset <- query_data[, cell_names, drop = FALSE]

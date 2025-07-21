@@ -15,6 +15,7 @@ detectAnomaly(
   n_tree = 500,
   anomaly_threshold = 0.6,
   assay_name = "logcounts",
+  max_cells = 2500,
   ...
 )
 
@@ -49,6 +50,9 @@ in \code{reference_mat_subset} will be included.}
 \item{anomaly_threshold}{A numeric value specifying the threshold for identifying anomalies, Default is 0.6.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 
 \item{...}{Additional arguments passed to the `isolation.forest` function.}
 

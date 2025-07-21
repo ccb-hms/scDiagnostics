@@ -13,9 +13,10 @@ calculateSIRSpace(
   ref_cell_type_col,
   cell_types = NULL,
   multiple_cond_means = TRUE,
-  assay_name = "logcounts",
   cumulative_variance_threshold = 0.7,
-  n_neighbor = 1
+  n_neighbor = 1,
+  assay_name = "logcounts",
+  max_cells = 2500
 )
 
 \method{plot}{calculateSIRSpaceObject}(
@@ -43,11 +44,14 @@ calculateSIRSpace(
 
 \item{multiple_cond_means}{Logical. Whether to compute conditional means for multiple conditions in the reference dataset. Default is TRUE.}
 
-\item{assay_name}{A character string specifying the name of the assay on which to perform computations. Default is "logcounts".}
-
 \item{cumulative_variance_threshold}{A numeric value specifying the cumulative variance threshold for selecting principal components. Default is 0.7.}
 
 \item{n_neighbor}{A numeric value specifying the number of neighbors for computing the SIR space. Default is 1.}
+
+\item{assay_name}{A character string specifying the name of the assay on which to perform computations. Default is "logcounts".}
+
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 
 \item{x}{An object of class \code{calculateSIRSpaceObject} containing SIR projections.}
 

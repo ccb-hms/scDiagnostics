@@ -14,8 +14,9 @@ plotPairwiseDistancesDensity(
   pc_subset = 1:5,
   distance_metric = c("correlation", "euclidean"),
   correlation_method = c("spearman", "pearson"),
+  bandwidth = 0.25,
   assay_name = "logcounts",
-  bandwidth = 0.25
+  max_cells = 2500
 )
 }
 \arguments{
@@ -42,9 +43,12 @@ Set to "correlation" to calculate correlation coefficients.}
 \item{correlation_method}{The correlation method to use when \code{distance_metric} is "correlation".
 Possible values are "pearson" and "spearman".}
 
+\item{bandwidth}{Numeric value controlling the smoothness of the density estimate; smaller values create more detailed curves. Default is 0.25.}
+
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
-\item{bandwidth}{Numeric value controlling the smoothness of the density estimate; smaller values create more detailed curves. Default is 0.25.}
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
+Default is 2500.}
 }
 \value{
 A ggplot2 object showing ridgeline plots of calculated distances or correlations.
