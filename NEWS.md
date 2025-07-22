@@ -1,2 +1,11 @@
 # CHANGES IN VERSION 1.0.0
 * Initial release of the scDiagnostics package.
+
+# CHANGES IN VERSION 1.2.0
+* Add functionality to process SCE objects for PCA computation.
+* Add functionality to downsample SCE objects for diagnostic functions.
+* Add new diagnostic functions (compareMarkers and calculateMMDPValue).
+* Add graph integration diagnostic function in replacement of nearest neighbor diagnostic.
+* Improve normalization for plotMarkerExpression diagnostic function.
+* Improve user control and options for plot methods.
+* Update vignettes to reflect all new changes.
