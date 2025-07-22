@@ -19,7 +19,7 @@
 #'
 #' @rdname regressPC
 #'
-# Function to plot results of regressPC function
+# Plot the results of regressPC
 plot.regressPCObject <- function(x,
                                  plot_type = NULL,
                                  alpha = 0.05,
@@ -31,14 +31,13 @@ plot.regressPCObject <- function(x,
             return(pc_names)
         } else {
             pc_nums <- as.numeric(gsub("PC", "", pc_names))
-            percentages <- round(var_explained[pc_nums] * 100, 1)
+            percentages <- round(var_explained[pc_nums], 1)
             return(paste0(pc_names, " (", percentages, "%)"))
         }
     }
 
     # Helper function to clean coefficient names
     .cleanCoeffNames <- function(coeff_names) {
-
         cleaned_names <- coeff_names
 
         # Process interaction terms (contain ":")
@@ -48,24 +47,17 @@ plot.regressPCObject <- function(x,
 
             for(i in seq_along(interaction_terms)) {
                 term <- interaction_terms[i]
-
-                # Split by ":"
                 parts <- strsplit(term, ":")[[1]]
-
-                # Clean each part
                 cleaned_parts <- character(length(parts))
                 for(j in seq_along(parts)) {
                     part <- parts[j]
-                    # Remove prefixes
                     part <- gsub("^cell_type", "", part)
                     part <- gsub("^dataset", "", part)
                     part <- gsub("^batch", "", part)
                     cleaned_parts[j] <- part
                 }
 
-                # Reorder: put batch/dataset first, then cell type
                 if(length(cleaned_parts) == 2) {
-                    # Check which one is likely the batch/dataset (contains "Query" or "Reference")
                     if(grepl("Query|Reference", cleaned_parts[1])) {
                         cleaned_names[interaction_idx][i] <-
                             paste(cleaned_parts[1], cleaned_parts[2], sep = ":")
@@ -73,7 +65,6 @@ plot.regressPCObject <- function(x,
                         cleaned_names[interaction_idx][i] <-
                             paste(cleaned_parts[2], cleaned_parts[1], sep = ":")
                     } else {
-                        # Default order
                         cleaned_names[interaction_idx][i] <-
                             paste(cleaned_parts, collapse = ":")
                     }
@@ -88,7 +79,6 @@ plot.regressPCObject <- function(x,
         non_interaction_idx <- !interaction_idx
         if(any(non_interaction_idx)) {
             non_interaction_terms <- coeff_names[non_interaction_idx]
-            # Remove prefixes from main effects
             cleaned_terms <- gsub("^cell_type", "", non_interaction_terms)
             cleaned_terms <- gsub("^dataset", "", cleaned_terms)
             cleaned_terms <- gsub("^batch", "", cleaned_terms)
@@ -100,9 +90,9 @@ plot.regressPCObject <- function(x,
 
     # Get variance explained - use reference if available, otherwise query
     var_explained <- if("reference_pca_var" %in% names(x)) {
-        x[["reference_pca_var"]] / 100  # From reference data
+        x[["reference_pca_var"]]
     } else if("query_pca_var" %in% names(x)) {
-        x[["query_pca_var"]] / 100  # From query data
+        x[["query_pca_var"]]
     } else {
         NULL
     }
@@ -171,8 +161,9 @@ plot.regressPCObject <- function(x,
             # Map PC names to labels
             pc_mapping <- setNames(pc_labels, unique_pc_names)
             coeff_data[["PC_labeled"]] <- pc_mapping[coeff_data[["PC"]]]
-            coeff_data[["PC_labeled"]] <- factor(coeff_data[["PC_labeled"]],
-                                                 levels = pc_labels)
+            coeff_data[["PC_labeled"]] <- factor(coeff_data[["PC_labeled"]], levels = pc_labels)
+            coeff_data[["cell_type"]] <- factor(coeff_data[["cell_type"]],
+                                                levels = unique(coeff_data[["cell_type"]]))
             coeff_data[["significant"]] <- coeff_data[["p_value"]] < alpha
 
             plot_obj <- ggplot2::ggplot(coeff_data, ggplot2::aes(x = .data[["PC_labeled"]],
@@ -183,6 +174,8 @@ plot.regressPCObject <- function(x,
                                     shape = 8, size = 2, color = "black") +
                 ggplot2::scale_fill_gradient2(low = "blue", mid = "white", high = "red",
                                               name = "Coefficient") +
+                ggplot2::scale_x_discrete(drop = TRUE) +  # This should fix extra x-axis ticks
+                ggplot2::scale_y_discrete(drop = TRUE) +  # This should fix extra y-axis ticks
                 ggplot2::labs(title = "Cell Type Coefficients by PC",
                               subtitle = "Asterisks indicate significant coefficients",
                               x = "", y = "Cell Type") +
@@ -249,8 +242,6 @@ plot.regressPCObject <- function(x,
 
                 if(sum(keep_rows) > 0){
                     filtered_coeffs <- coeffs[keep_rows, , drop = FALSE]
-
-                    # Clean coefficient names
                     coeff_names <- rownames(filtered_coeffs)
                     clean_names <- .cleanCoeffNames(coeff_names)
 
@@ -282,6 +273,14 @@ plot.regressPCObject <- function(x,
             pc_mapping <- setNames(pc_labels, unique_pc_names)
             coeff_data[["PC_labeled"]] <- pc_mapping[coeff_data[["PC"]]]
             coeff_data[["PC_labeled"]] <- factor(coeff_data[["PC_labeled"]], levels = pc_labels)
+            coeff_data[["coefficient_name"]] <- factor(coeff_data[["coefficient_name"]],
+                                                       levels = unique(coeff_data[["coefficient_name"]]))
+
+            # Clean coefficient_type and ensure no NAs
+            coeff_data <- coeff_data[!is.na(coeff_data[["coefficient_type"]]) &
+                                         coeff_data[["coefficient_type"]] != "", ]
+            coeff_data[["coefficient_type"]] <- factor(coeff_data[["coefficient_type"]],
+                                                       levels = unique(coeff_data[["coefficient_type"]]))
             coeff_data[["significant"]] <- coeff_data[["p_value"]] < alpha
 
             plot_obj <- ggplot2::ggplot(coeff_data,
@@ -293,6 +292,8 @@ plot.regressPCObject <- function(x,
                                     shape = 8, size = 2, color = "black") +
                 ggplot2::scale_fill_gradient2(low = "blue", mid = "white", high = "red",
                                               name = "Coefficient") +
+                ggplot2::scale_x_discrete(drop = TRUE) +  # Fix extra x-axis ticks
+                ggplot2::scale_y_discrete(drop = TRUE) +  # Fix extra y-axis ticks
                 ggplot2::facet_grid(coefficient_type ~ ., scales = "free_y", space = "free_y") +
                 ggplot2::labs(title = "Cell Type x Dataset Interaction Model Coefficients",
                               subtitle = "Asterisks indicate significant coefficients",
@@ -311,8 +312,6 @@ plot.regressPCObject <- function(x,
 
                 if(sum(interaction_rows) > 0){
                     interaction_coeffs <- coeffs[interaction_rows, , drop = FALSE]
-
-                    # Clean interaction names
                     interaction_names <- rownames(interaction_coeffs)
                     clean_names <- .cleanCoeffNames(interaction_names)
 
@@ -337,8 +336,9 @@ plot.regressPCObject <- function(x,
             # Map PC names to labels
             pc_mapping <- setNames(pc_labels, unique_pc_names)
             interaction_data[["PC_labeled"]] <- pc_mapping[interaction_data[["PC"]]]
-            interaction_data[["PC_labeled"]] <- factor(interaction_data[["PC_labeled"]],
-                                                       levels = pc_labels)
+            interaction_data[["PC_labeled"]] <- factor(interaction_data[["PC_labeled"]], levels = pc_labels)
+            interaction_data[["interaction"]] <- factor(interaction_data[["interaction"]],
+                                                        levels = unique(interaction_data[["interaction"]]))
             interaction_data[["significant"]] <- interaction_data[["p_value"]] < alpha
 
             plot_obj <- ggplot2::ggplot(interaction_data,
@@ -350,6 +350,8 @@ plot.regressPCObject <- function(x,
                                     shape = 8, size = 2, color = "black") +
                 ggplot2::scale_fill_gradient2(low = "blue", mid = "white", high = "red",
                                               name = "Interaction\nCoefficient") +
+                ggplot2::scale_x_discrete(drop = TRUE) +  # Fix extra x-axis ticks
+                ggplot2::scale_y_discrete(drop = TRUE) +  # Fix extra y-axis ticks
                 ggplot2::labs(title = "Cell Type x Dataset Interaction Effects",
                               subtitle = "Large interactions suggest annotation problems for specific cell types",
                               x = "", y = "Interaction Term") +
@@ -397,8 +399,6 @@ plot.regressPCObject <- function(x,
 
                 if(sum(keep_rows) > 0){
                     filtered_coeffs <- coeffs[keep_rows, , drop = FALSE]
-
-                    # Clean coefficient names
                     coeff_names <- rownames(filtered_coeffs)
                     clean_names <- .cleanCoeffNames(coeff_names)
 
@@ -427,8 +427,15 @@ plot.regressPCObject <- function(x,
             # Map PC names to labels
             pc_mapping <- setNames(pc_labels, unique_pc_names)
             coeff_data[["PC_labeled"]] <- pc_mapping[coeff_data[["PC"]]]
-            coeff_data[["PC_labeled"]] <- factor(coeff_data[["PC_labeled"]],
-                                                 levels = pc_labels)
+            coeff_data[["PC_labeled"]] <- factor(coeff_data[["PC_labeled"]], levels = pc_labels)
+            coeff_data[["coefficient_name"]] <- factor(coeff_data[["coefficient_name"]],
+                                                       levels = unique(coeff_data[["coefficient_name"]]))
+
+            # Clean coefficient_type and ensure no NAs
+            coeff_data <- coeff_data[!is.na(coeff_data[["coefficient_type"]]) &
+                                         coeff_data[["coefficient_type"]] != "", ]
+            coeff_data[["coefficient_type"]] <- factor(coeff_data[["coefficient_type"]],
+                                                       levels = unique(coeff_data[["coefficient_type"]]))
             coeff_data[["significant"]] <- coeff_data[["p_value"]] < alpha
 
             plot_obj <- ggplot2::ggplot(coeff_data, ggplot2::aes(x = .data[["PC_labeled"]],
@@ -439,6 +446,8 @@ plot.regressPCObject <- function(x,
                                     shape = 8, size = 2, color = "black") +
                 ggplot2::scale_fill_gradient2(low = "blue", mid = "white", high = "red",
                                               name = "Coefficient") +
+                ggplot2::scale_x_discrete(drop = TRUE) +  # Fix extra x-axis ticks
+                ggplot2::scale_y_discrete(drop = TRUE) +  # Fix extra y-axis ticks
                 ggplot2::facet_grid(coefficient_type ~ ., scales = "free_y", space = "free_y") +
                 ggplot2::labs(title = "Cell Type x Batch Interaction Model Coefficients",
                               subtitle = "Asterisks indicate significant coefficients",
@@ -457,8 +466,6 @@ plot.regressPCObject <- function(x,
 
                 if(sum(interaction_rows) > 0){
                     interaction_coeffs <- coeffs[interaction_rows, , drop = FALSE]
-
-                    # Clean interaction names
                     interaction_names <- rownames(interaction_coeffs)
                     clean_names <- .cleanCoeffNames(interaction_names)
 
@@ -484,6 +491,8 @@ plot.regressPCObject <- function(x,
             pc_mapping <- setNames(pc_labels, unique_pc_names)
             interaction_data[["PC_labeled"]] <- pc_mapping[interaction_data[["PC"]]]
             interaction_data[["PC_labeled"]] <- factor(interaction_data[["PC_labeled"]], levels = pc_labels)
+            interaction_data[["interaction"]] <- factor(interaction_data[["interaction"]],
+                                                        levels = unique(interaction_data[["interaction"]]))
             interaction_data[["significant"]] <- interaction_data[["p_value"]] < alpha
 
             plot_obj <- ggplot2::ggplot(interaction_data, ggplot2::aes(x = .data[["PC_labeled"]],
@@ -494,6 +503,8 @@ plot.regressPCObject <- function(x,
                                     shape = 8, size = 2, color = "black") +
                 ggplot2::scale_fill_gradient2(low = "blue", mid = "white", high = "red",
                                               name = "Interaction\nCoefficient") +
+                ggplot2::scale_x_discrete(drop = TRUE) +  # Fix extra x-axis ticks
+                ggplot2::scale_y_discrete(drop = TRUE) +  # Fix extra y-axis ticks
                 ggplot2::labs(title = "Cell Type x Batch Interaction Effects",
                               subtitle = "Large interactions suggest batch-specific cell type problems",
                               x = "", y = "Interaction Term") +
