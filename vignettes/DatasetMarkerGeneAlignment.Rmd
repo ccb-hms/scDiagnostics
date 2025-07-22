@@ -369,56 +369,106 @@ In this example, `calculateAveragePairwiseCorrelation()` computes the average pa
 
 The `regressPC()` function performs linear regression of a covariate of interest onto one or more principal components using data from a `r BiocStyle::Biocpkg("SingleCellExperiment")` object. This method helps quantify the variance explained by a covariate, which can be useful in applications such as quantifying batch effects, assessing clustering homogeneity, and evaluating alignment between query and reference datasets in cell type annotation settings.
 
-The function calculates the R-squared value from the linear regression of the covariate onto each principal component. The variance contribution of the covariate effect per principal component is computed as the product of the variance explained by the principal component and the R-squared value. The total variance explained by the covariate is obtained by summing these contributions across all principal components.
+The function supports multiple regression scenarios depending on the data provided:
+
+- **Query only**: Regresses principal components against cell types (`PC ~ cell_type`)
+- **Query + Reference**: Uses an interaction model to assess annotation quality (`PC ~ cell_type * dataset`)
+
+When reference data is provided, the function projects query data onto the reference PCA space and performs unified interaction modeling to identify cell types with annotation inconsistencies between datasets.
+
+The function calculates the R-squared value from the linear regression for each principal component. For query-only analyses, variance contributions are computed as the product of the variance explained by each principal component and its corresponding R-squared value. The total variance explained by the covariate is obtained by summing these contributions across all principal components.
 
 Here is how you can use the `regressPC()` function:
+
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
-# Perform regression analysis using only reference data
-regress_res <- regressPC(
-    reference_data = reference_data,
-    ref_cell_type_col = "expert_annotation",
+# Query-only analysis: How well do cell types separate in PCA space?
+regress_res_query <- regressPC(
+    query_data = query_data,
+    query_cell_type_col = "expert_annotation",
     cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-    pc_subset = 1:15
+    pc_subset = 1:10
 )
 
-# Plot results showing R-squared values
-plot(regress_res, plot_type = "r_squared")
+# Plot R-squared values showing cell type separation quality
+plot(regress_res_query, plot_type = "r_squared")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC1.png)
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot results showing p-values
-plot(regress_res, plot_type = "p-value")
+plot(regress_res_query, plot_type = "heatmap")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC2.png)
 
-In this example, `regressPC()` is used to perform regression analysis on principal components 1 to 15 from the reference dataset. The results are then visualized using plots showing the R-squared values and p-values.
+In this example, `regressPC()` is used to perform regression analysis on principal components 1 to 10 from the query dataset. The results are then visualized using plots showing the R-squared values and cell type coefficients, with PC labels displaying the percentage of variance explained by each component.
 
-If you also have a query dataset and want to compare it with the reference dataset, you can include it in the analysis:
+If you also have a reference dataset and want to assess annotation quality by comparing it with the query dataset, you can include it in the analysis:
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Perform regression analysis using both reference and query data
 regress_res <- regressPC(
-    reference_data = reference_data,
     query_data = query_data,
-    ref_cell_type_col = "expert_annotation",
+    reference_data = reference_data,
     query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
     cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-    pc_subset = 1:15
+    pc_subset = 1:10
 )
 
-# Plot results showing R-squared values
+# Plot overall model fit with variance percentages on PC labels
 plot(regress_res, plot_type = "r_squared")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC3.png)
 
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot results showing p-values
-plot(regress_res, plot_type = "p-value")
+plot(regress_res, plot_type = "heatmap")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC4.png)
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Plot results showing p-values
+plot(regress_res, plot_type = "heatmap")
+```
 
-In this case, the function projects the query data onto the principal components of the reference data and performs regression analysis. The results are visualized in the same way, providing insights into how well the principal components from the query data align with those from the reference data.
+The `regressPC()` function also supports batch effect analysis when sample or batch information is available. This capability is particularly useful for assessing whether cell type annotations are consistent across different batches or samples, and for identifying batch-specific annotation problems.
 
-This function is useful for understanding the impact of different covariates on principal components and for comparing how cell types in different datasets are represented in the principal component space.
+When batch information is provided via the `query_batch_col` parameter, the function performs different regression analyses depending on the data configuration:
+
+### Query-only with Batch Information
+
+For query data with multiple batches, the function fits an interaction model:
+
+**PC ~ cell_type × batch**
+
+This model captures:
+- **Main effects of cell types**: How each cell type contributes to PC variation overall
+- **Main effects of batches**: How each batch contributes to PC variation overall  
+- **Interaction effects**: How cell type effects vary across different batches
+
+Large interaction effects indicate that certain cell types behave differently across batches, which could suggest batch-specific technical artifacts or genuine biological differences between samples.
+
+### Query + Reference with Batch Information  
+
+When both reference and query data are provided along with batch information, the analysis becomes more sophisticated. The function creates a unified batch labeling system where:
+- Reference data is labeled as "Reference" 
+- Query batches are labeled as "Query_BatchName" (e.g., "Query_Sample1", "Query_Sample2")
+
+The regression model then becomes:
+
+**PC ~ cell_type × batch**
+
+where the batch variable now includes both the reference and all query batches. This allows assessment of:
+- How consistently each cell type is annotated between reference and query datasets
+- Whether annotation quality varies across different query batches
+- Which specific query batches show the most deviation from reference annotations
+
+### Diagnostic Value
+
+The interaction effects in batch analysis are particularly diagnostic:
+- **Small interactions**: Consistent cell type annotations across batches
+- **Large interactions for specific cell types**: Potential annotation problems in particular batches
+- **Large interactions for specific batches**: Systematic annotation issues in those batches
+
+This analysis framework enables identification of batch-specific annotation problems and helps determine whether observed differences between datasets are due to technical batch effects or genuine biological variation.
+
 
 # Marker Gene Alignment
 

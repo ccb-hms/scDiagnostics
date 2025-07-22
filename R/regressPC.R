@@ -12,29 +12,30 @@
 #' homogeneity, and evaluating alignment of query and reference datasets in cell
 #' type annotation settings.
 #'
-#' Briefly, the \eqn{R^2} is calculated from a linear regression of the covariate \eqn{B} of
-#' interest onto each principal component. The variance contribution of the
-#' covariate effect per principal component is then calculated as the product of
-#' the variance explained by the i-th principal component (PC) and the
-#' corresponding \eqn{R^2(PC_i | B)}. The sum across all variance contributions by the
-#' covariate effects in all principal components gives the total variance
-#' explained by the covariate as follows:
+#' The function supports multiple regression scenarios:
+#' \itemize{
+#'   \item Query only, no batch: PC ~ cell_type
+#'   \item Query only, with batch: PC ~ cell_type * batch
+#'   \item Query + Reference, no batch: PC ~ cell_type * dataset
+#'   \item Query + Reference, with batch: PC ~ cell_type * batch (where batch includes Reference)
+#' }
 #'
-#' \deqn{Var(C|B) = \sum_{i=1}^G \text{Var}(C|PC_i) \times R^2(PC_i | B)}
+#' When batch information is provided with reference data, batches are labeled as
+#' "Reference" for reference data and "Query_BatchName" for query batches, with
+#' Reference set as the first factor level for interpretation.
 #'
-#' where, \eqn{\text{Var}(C \mid PC_i)} is the variance of the data matrix \eqn{C}
-#' explained by the i-th principal component. See references for details.
-#'
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
-#' If NULL, the PC scores are regressed against the cell types of the reference data.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
+#' If NULL, the PC scores are regressed against the cell types of the query data.
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
-#' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
+#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
+#' @param query_batch_col The column name in the \code{colData} of \code{query_data} that identifies the batch or sample.
+#' If provided, performs interaction analysis with cell types. Default is NULL.
+#' @param cell_types A character vector specifying the cell types to include in the analysis. If NULL, all cell types are included.
+#' @param pc_subset A numeric vector specifying which principal components to include in the analysis. Default is PC1 to PC10.
 #' @param adjust_method A character string specifying the method to adjust the p-values.
 #'   Options include "BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr", or "none".
-#'   Default is "BH" (Benjamini-Hochberg). Default is "BH".
+#'   Default is "BH" (Benjamini-Hochberg).
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
 #'                  Default is 2500.
@@ -59,33 +60,31 @@
 #' data("reference_data")
 #' data("query_data")
 #'
-#' # Plot the PC data (no query data)
-#' regress_res <- regressPC(reference_data = reference_data,
-#'                          ref_cell_type_col = "expert_annotation",
+#' # Query only analysis
+#' regress_res <- regressPC(query_data = query_data,
+#'                          query_cell_type_col = "expert_annotation",
 #'                          cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-#'                          pc_subset = 1:15)
-#' # Plot results
+#'                          pc_subset = 1:10)
 #' plot(regress_res, plot_type = "r_squared")
-#' plot(regress_res, plot_type = "p-value")
 #'
-#' # Plot the PC data (with query data)
-#' regress_res <- regressPC(reference_data = reference_data,
-#'                          query_data = query_data,
-#'                          ref_cell_type_col = "expert_annotation",
+#' # Query + Reference analysis
+#' regress_res <- regressPC(query_data = query_data,
+#'                          reference_data = reference_data,
 #'                          query_cell_type_col = "SingleR_annotation",
+#'                          ref_cell_type_col = "expert_annotation",
 #'                          cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-#'                          pc_subset = 1:15)
-#' # Plot results
-#' plot(regress_res, plot_type = "r_squared")
-#' plot(regress_res, plot_type = "p-value")
+#'                          pc_subset = 1:10)
+#' plot(regress_res, plot_type = "heatmap")
 #'
 #' @importFrom rlang .data
 #' @import SingleCellExperiment
 #'
-regressPC <- function(reference_data,
-                      query_data = NULL,
-                      ref_cell_type_col,
-                      query_cell_type_col = NULL,
+# Function to regress PCs against cell types and batches
+regressPC <- function(query_data,
+                      reference_data = NULL,
+                      query_cell_type_col,
+                      ref_cell_type_col = NULL,
+                      query_batch_col = NULL,
                       cell_types = NULL,
                       pc_subset = 1:10,
                       adjust_method = c("BH", "holm",
@@ -95,49 +94,52 @@ regressPC <- function(reference_data,
                       assay_name = "logcounts",
                       max_cells = 2500) {
 
-    # Match argument for independent variable
+    # Match argument for adjustment method
     adjust_method <- match.arg(adjust_method)
 
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
+    argumentCheck(reference_data = reference_data,
+                  query_data = query_data,
                   ref_cell_type_col = ref_cell_type_col,
+                  query_cell_type_col = query_cell_type_col,
                   cell_types = cell_types,
-                  pc_subset_ref = pc_subset,
+                  pc_subset_query = pc_subset,
                   assay_name = assay_name)
 
+    # Additional check for batch column
+    if(!is.null(query_batch_col)){
+        if(!query_batch_col %in% colnames(colData(query_data))){
+            stop("query_batch_col '", query_batch_col,
+                 "' not found in query_data colData.")
+        }
+    }
+
     # Downsample reference and query data
-    reference_data <- downsampleSCE(sce = reference_data,
-                                    max_cells = max_cells)
-    if(!is.null(query_data)){
-        query_data <- downsampleSCE(sce = query_data,
-                                    max_cells = max_cells)
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    if(!is.null(reference_data)){
+        reference_data <- downsampleSCE(sce = reference_data,
+                                        max_cells = max_cells)
     }
 
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){
-        if(is.null(query_data)){
-            cell_types <- na.omit(unique(
-                c(reference_data[[ref_cell_type_col]])))
+        if(is.null(reference_data)){
+            cell_types <- na.omit(unique(query_data[[query_cell_type_col]]))
         } else{
-            cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
-                                           query_data[[query_cell_type_col]])))
+            cell_types <- na.omit(unique(c(query_data[[query_cell_type_col]],
+                                           reference_data[[ref_cell_type_col]])))
         }
     }
 
+    # Sort cell types for consistent reference category
+    cell_types <- sort(cell_types)
+
     # Perform linear regression for each principal component
-    .regressFast <- function(pc, indep_var, df, reference_category) {
-        regression_formula <- paste(pc, "~", indep_var)
-        if(isTRUE(reference_category)){
-            model <- do.call(speedglm::speedlm,
-                             list(formula = paste(pc, " ~ ", indep_var),
-                                  data = df))
-        } else{
-            model <- do.call(speedglm::speedlm,
-                             list(formula = paste(pc, " ~ ", indep_var, " - 1"),
-                                  data = df))
-        }
+    .regressFast <- function(pc, indep_var, df) {
+        model <- do.call(speedglm::speedlm,
+                         list(formula = paste(pc, " ~ ", indep_var),
+                              data = df))
         model_summary <- list(coefficients = summary(model)[["coefficients"]],
                               r_squared = summary(model)[["r.squared"]])
         return(model_summary)
@@ -146,84 +148,197 @@ regressPC <- function(reference_data,
     # Set dependent variables
     dep_vars <- paste0("PC", pc_subset)
 
-    # Regress PCs against cell types
-    if(is.null(query_data)){
+    # Case 1: Query data only
+    if(is.null(reference_data)){
 
-        # Create a data frame with the dependent and independent variables
-        reference_labels <- reference_data[[ref_cell_type_col]]
-        regress_data <- data.frame(
-            reducedDim(reference_data, "PCA")[, dep_vars],
-            Cell_Type_ = reference_data[[ref_cell_type_col]])
-        regress_data <- regress_data[reference_labels %in% cell_types,]
+        # Get query PCA variance for plotting
+        query_pca_var <- attr(reducedDim(query_data, "PCA"), "percentVar")
 
-        # Regress PCs
-        summaries <- lapply(dep_vars, .regressFast, indep_var = "Cell_Type_",
-                            df = regress_data,
-                            reference_category = TRUE)
-        names(summaries) <- dep_vars
+        # Case 1a: No batch - PC ~ cell_type
+        if(is.null(query_batch_col)){
 
-        # Adjust cell types for the summaries
-        for(pc in seq_len(length(summaries))){
-            rownames(summaries[[pc]][["coefficients"]]) <- sort(cell_types)
+            query_labels <- query_data[[query_cell_type_col]]
+            regress_data <- data.frame(
+                reducedDim(query_data, "PCA")[, dep_vars],
+                cell_type = factor(query_data[[query_cell_type_col]],
+                                   levels = cell_types))
+            regress_data <- regress_data[query_labels %in% cell_types,]
+
+            # Regress PCs against cell types
+            summaries <- lapply(dep_vars, .regressFast,
+                                indep_var = "cell_type",
+                                df = regress_data)
+            names(summaries) <- dep_vars
+
+            # Calculate variance contributions
+            r_squared <- vapply(summaries, `[[`, numeric(1),
+                                x = "r_squared")
+            var_expl <- query_pca_var[pc_subset]
+            var_contr <- var_expl * r_squared
+            total_var_expl <- sum(var_contr)
+
+            regress_res <- list(regression_summaries = summaries,
+                                r_squared = r_squared,
+                                var_contributions = var_contr,
+                                total_variance_explained = total_var_expl,
+                                query_pca_var = query_pca_var,
+                                indep_var = "cell_type")
+
+            regress_res <- adjustPValues(regress_res,
+                                         adjust_method = adjust_method,
+                                         indep_var = "cell_type")
+
+            # Case 1b: With batch - PC ~ cell_type * batch
+        } else {
+
+            query_labels <- query_data[[query_cell_type_col]]
+
+            regress_data <- data.frame(
+                reducedDim(query_data, "PCA")[, dep_vars],
+                cell_type = factor(query_data[[query_cell_type_col]],
+                                   levels = cell_types),
+                batch = factor(query_data[[query_batch_col]]))
+            regress_data <- regress_data[query_labels %in% cell_types,]
+
+            # Regress PCs against cell_type * batch interaction
+            summaries <- lapply(dep_vars, .regressFast,
+                                indep_var = "cell_type * batch",
+                                df = regress_data)
+            names(summaries) <- dep_vars
+
+            # Calculate variance contributions
+            r_squared <- vapply(summaries, `[[`, numeric(1),
+                                x = "r_squared")
+            var_expl <- query_pca_var[pc_subset]
+            var_contr <- var_expl * r_squared
+            total_var_expl <- sum(var_contr)
+
+            regress_res <- list(regression_summaries = summaries,
+                                r_squared = r_squared,
+                                var_contributions = var_contr,
+                                total_variance_explained = total_var_expl,
+                                query_pca_var = query_pca_var,
+                                indep_var = "cell_type_batch_interaction")
+
+            regress_res <- adjustPValues(regress_res,
+                                         adjust_method = adjust_method,
+                                         indep_var = "cell_type_batch_interaction")
         }
 
-        # Calculate variance contributions by principal component
-        r_squared <- vapply(summaries, `[[`, numeric(1), x = "r_squared")
-        var_expl <- attr(reducedDim(reference_data, "PCA"),
-                         "percentVar")[pc_subset]
-        var_contr <- var_expl * r_squared
-
-        # Calculate total variance explained by summing the variance contributions
-        total_var_expl <- sum(var_contr)
-
-        # Return the summaries of the linear regression models, R-squared values, and variance contributions
-        regress_res <- list(regression_summaries = summaries,
-                            r_squared = r_squared,
-                            var_contributions = var_contr,
-                            total_variance_explained = total_var_expl,
-                            indep_var = "cell_type")
-
-        # Adjust p-values
-        regress_res <- adjustPValues(regress_res,
-                                     adjust_method = adjust_method,
-                                     indep_var = "cell_type")
-
+        # Case 2: Query + Reference
     } else {
 
+        # Get reference PCA variance for plotting
+        reference_pca_var <- attr(reducedDim(reference_data, "PCA"), "percentVar")
+
         # Get the projected PCA data
-        pca_output <- projectPCA(query_data = query_data,
-                                 reference_data = reference_data,
-                                 query_cell_type_col = query_cell_type_col,
+        pca_output <- projectPCA(reference_data = reference_data,
+                                 query_data = query_data,
                                  ref_cell_type_col = ref_cell_type_col,
+                                 query_cell_type_col = query_cell_type_col,
                                  pc_subset = pc_subset,
                                  assay_name = assay_name)
         pca_output <- pca_output[pca_output[["cell_type"]] %in% cell_types,]
-        pca_output[["dataset"]] <- factor(pca_output[["dataset"]],
-                                          levels = c("Reference", "Query"))
 
-        # Set dependent variables
-        dep_vars <- paste0("PC", pc_subset)
+        # Case 2a: No batch - PC ~ cell_type * dataset
+        if(is.null(query_batch_col)){
 
-        # Set independent variables
-        indep_list <- split(pca_output, pca_output[["cell_type"]])
+            pca_output[["dataset"]] <- factor(pca_output[["dataset"]],
+                                              levels = c("Reference", "Query"))
+            pca_output[["cell_type"]] <- factor(pca_output[["cell_type"]],
+                                                levels = cell_types)
 
-        # Adding regression summaries for each cell type
-        regress_res <- vector("list", length = length(indep_list))
-        names(regress_res) <- cell_types
-        for(cell_type in cell_types){
+            # Unified interaction model: PC ~ cell_type * dataset
+            summaries <- lapply(dep_vars, .regressFast,
+                                indep_var = "cell_type * dataset",
+                                df = pca_output)
+            names(summaries) <- dep_vars
 
-            regress_res[[cell_type]] <- lapply(dep_vars, .regressFast,
-                                               indep_var = "dataset",
-                                               df = indep_list[[cell_type]],
-                                               reference_category = TRUE)
-            names(regress_res[[cell_type]]) <- dep_vars
+            # Calculate R-squared
+            r_squared <- vapply(summaries, `[[`, numeric(1), x = "r_squared")
+
+            regress_res <- list(regression_summaries = summaries,
+                                r_squared = r_squared,
+                                reference_pca_var = reference_pca_var,
+                                indep_var = "cell_type_dataset_interaction")
+
+            regress_res <- adjustPValues(regress_res,
+                                         adjust_method = adjust_method,
+                                         indep_var = "cell_type_dataset_interaction")
+
+            # Case 2b: With batch - PC ~ cell_type * batch (where batch includes Reference)
+        } else {
+
+            # Create batch labels: "Reference" for reference, "Query_BatchName" for query
+            batch_labels <- rep(NA, nrow(pca_output))
+            ref_indices <- pca_output[["dataset"]] == "Reference"
+            query_indices <- pca_output[["dataset"]] == "Query"
+
+            # Reference gets "Reference" label
+            batch_labels[ref_indices] <- "Reference"
+
+            # Query gets "Query_BatchName" labels
+            query_cell_names <- rownames(pca_output)[query_indices]
+            query_batch_data <- query_data[[query_batch_col]]
+            names(query_batch_data) <- colnames(query_data)
+            query_batch_values <- query_batch_data[query_cell_names]
+            batch_labels[query_indices] <- paste0("Query_", query_batch_values)
+
+            # Add batch information to pca_output
+            pca_output[["batch"]] <- factor(
+                batch_labels,
+                levels = c("Reference",
+                           sort(unique(batch_labels[query_indices]))))
+            pca_output[["cell_type"]] <- factor(pca_output[["cell_type"]],
+                                                levels = cell_types)
+
+            # Remove any rows with missing batch info
+            pca_output <- pca_output[!is.na(pca_output[["batch"]]),]
+
+            # Check if this reduces to Case 2a (only one query batch)
+            unique_batches <- unique(pca_output[["batch"]])
+            if(length(unique_batches) == 2 && "Reference" %in% unique_batches){
+                # Fallback to dataset interaction analysis
+                pca_output[["dataset"]] <- ifelse(pca_output[["batch"]] == "Reference",
+                                                  "Reference", "Query")
+                pca_output[["dataset"]] <- factor(pca_output[["dataset"]],
+                                                  levels = c("Reference", "Query"))
+
+                # Unified interaction model: PC ~ cell_type * dataset
+                summaries <- lapply(dep_vars, .regressFast,
+                                    indep_var = "cell_type * dataset",
+                                    df = pca_output)
+                names(summaries) <- dep_vars
+
+                r_squared <- vapply(summaries, `[[`, numeric(1), x = "r_squared")
+
+                regress_res <- list(regression_summaries = summaries,
+                                    r_squared = r_squared,
+                                    reference_pca_var = reference_pca_var,
+                                    indep_var = "cell_type_dataset_interaction")
+
+                regress_res <- adjustPValues(regress_res,
+                                             adjust_method = adjust_method,
+                                             indep_var = "cell_type_dataset_interaction")
+            } else {
+                # True multi-batch case: PC ~ cell_type * batch
+                summaries <- lapply(dep_vars, .regressFast,
+                                    indep_var = "cell_type * batch",
+                                    df = pca_output)
+                names(summaries) <- dep_vars
+
+                r_squared <- vapply(summaries, `[[`, numeric(1), x = "r_squared")
+
+                regress_res <- list(regression_summaries = summaries,
+                                    r_squared = r_squared,
+                                    reference_pca_var = reference_pca_var,
+                                    indep_var = "cell_type_batch_interaction")
+
+                regress_res <- adjustPValues(regress_res,
+                                             adjust_method = adjust_method,
+                                             indep_var = "cell_type_batch_interaction")
+            }
         }
-        regress_res[["indep_var"]] <- "dataset"
-
-        # Adjust p-values
-        regress_res <- adjustPValues(regress_res,
-                                     adjust_method = adjust_method,
-                                     indep_var = "dataset")
     }
 
     # Return regression output
@@ -235,24 +350,21 @@ regressPC <- function(reference_data,
 #'
 #' @description
 #' Adjusts the p-values in the regression results using a specified adjustment method.
-#' The adjustment is performed either for each principal component (PC) by cell type
-#' or for each dataset, depending on the selected independent variable.
+#' The adjustment is performed for different regression types including cell type,
+#' dataset, and cell type-batch interaction analyses.
 #'
 #' @details
 #' This function adjusts p-values from regression results stored in a list. The adjustment
-#' can be applied either across cell types or datasets, depending on the user’s choice.
-#' The method for adjusting p-values can be selected from various options such as Benjamini-Hochberg (BH),
-#' Holm, and others, which are supported by the `p.adjust` function in R.
+#' can be applied across different regression structures depending on the analysis type.
+#' The method for adjusting p-values can be selected from various options such as
+#' Benjamini-Hochberg (BH), Holm, and others, which are supported by the `p.adjust` function in R.
 #'
-#' @param regress_res A list containing regression results. The structure of the list
-#'   depends on the \code{indep_var} argument: if \code{indep_var} is "cell_type",
-#'   the list should contain regression summaries for each principal component (PC);
-#'   if \code{indep_var} is "dataset", it should contain summaries for each dataset.
+#' @param regress_res A list containing regression results. The structure varies by analysis type.
 #' @param adjust_method A character string specifying the method to adjust the p-values.
 #'   Options include "BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr", or "none".
-#'   Default is "BH" (Benjamini-Hochberg). Default is "BH".
+#'   Default is "BH" (Benjamini-Hochberg).
 #' @param indep_var A character string specifying the independent variable for the adjustment.
-#'   Options are "cell_type" (default) or "dataset".
+#'   Options are "cell_type", "cell_type_dataset_interaction", or "cell_type_batch_interaction".
 #'
 #' @keywords internal
 #'
@@ -263,57 +375,27 @@ regressPC <- function(reference_data,
 #'
 #' @importFrom stats p.adjust
 #'
-# Function to adjust p-values from the regression analysis on PCs
+# Function to compute adjusted p-values for PC regression
 adjustPValues <- function(regress_res,
                           adjust_method = c("BH", "holm",
                                             "hochberg", "hommel",
                                             "bonferroni", "BY",
                                             "fdr", "none"),
-                          indep_var = c("cell_type", "dataset")){
+                          indep_var = c("cell_type", "cell_type_dataset_interaction",
+                                        "cell_type_batch_interaction")){
 
-    # Match argument for independent variable
+    # Match arguments
     adjust_method <- match.arg(adjust_method)
-
-    # Match argument for independent variable
     indep_var <- match.arg(indep_var)
 
-    if(indep_var == "cell_type"){
-
-        # Add adjusted p-values
+    # All interaction models have the same structure
+    if(indep_var %in% c("cell_type", "cell_type_dataset_interaction", "cell_type_batch_interaction")){
+        # Add adjusted p-values for unified model structure
         for (pc in names(regress_res[["regression_summaries"]])) {
-
-            # Extract the coefficients table for the current PC
-            coeffs <- regress_res[["regression_summaries"]][[pc]]$coefficients
-
-            # Adjust the p-values using Benjamini-Hochberg (FDR) correction
-            p.adjusted <- p.adjust(coeffs[["p.value"]], method = "BH")
-
-            # Add the adjusted p-values as a new column to the coefficients table
-            coeffs$p.adjusted <- p.adjusted
-
-            # Update the coefficients table in the object
+            coeffs <- regress_res[["regression_summaries"]][[pc]][["coefficients"]]
+            p.adjusted <- p.adjust(coeffs[["p.value"]], method = adjust_method)
+            coeffs[["p.adjusted"]] <- p.adjusted
             regress_res[["regression_summaries"]][[pc]][["coefficients"]] <- coeffs
-        }
-
-    } else if (indep_var == "dataset"){
-
-        # Add adjusted p-values
-        for (cell_type in names(regress_res)[-length(regress_res)]) {
-
-            for(pc_id in seq_len(length(regress_res[[cell_type]]))){
-
-                # Extract the coefficients table for the current PC
-                coeffs <- regress_res[[cell_type]][[pc_id]]$coefficients
-
-                # Adjust the p-values using Benjamini-Hochberg (FDR) correction
-                p.adjusted <- p.adjust(coeffs[["p.value"]], method = "BH")
-
-                # Add the adjusted p-values as a new column to the coefficients table
-                coeffs[["p.adjusted"]] <- p.adjusted
-
-                # Update the coefficients table in the object
-                regress_res[[cell_type]][[pc_id]][["coefficients"]] <- coeffs
-            }
         }
     }
 
