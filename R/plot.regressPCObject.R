@@ -179,7 +179,7 @@ plot.regressPCObject <- function(x,
                                                                  y = .data[["cell_type"]],
                                                                  fill = .data[["coefficient"]])) +
                 ggplot2::geom_tile(color = "white") +
-                ggplot2::geom_point(data = subset(coeff_data, significant),
+                ggplot2::geom_point(data = coeff_data[coeff_data[["significant"]], ],
                                     shape = 8, size = 2, color = "black") +
                 ggplot2::scale_fill_gradient2(low = "blue", mid = "white", high = "red",
                                               name = "Coefficient") +
@@ -289,7 +289,7 @@ plot.regressPCObject <- function(x,
                                                      y = .data[["coefficient_name"]],
                                                      fill = .data[["coefficient"]])) +
                 ggplot2::geom_tile(color = "white") +
-                ggplot2::geom_point(data = subset(coeff_data, significant),
+                ggplot2::geom_point(data = coeff_data[coeff_data[["significant"]], ],
                                     shape = 8, size = 2, color = "black") +
                 ggplot2::scale_fill_gradient2(low = "blue", mid = "white", high = "red",
                                               name = "Coefficient") +
@@ -346,7 +346,7 @@ plot.regressPCObject <- function(x,
                                                      y = .data[["interaction"]],
                                                      fill = .data[["coefficient"]])) +
                 ggplot2::geom_tile(color = "white") +
-                ggplot2::geom_point(data = subset(interaction_data, significant),
+                ggplot2::geom_point(data = interaction_data[interaction_data[["significant"]], ],
                                     shape = 8, size = 2, color = "black") +
                 ggplot2::scale_fill_gradient2(low = "blue", mid = "white", high = "red",
                                               name = "Interaction\nCoefficient") +
@@ -435,7 +435,7 @@ plot.regressPCObject <- function(x,
                                                                  y = .data[["coefficient_name"]],
                                                                  fill = .data[["coefficient"]])) +
                 ggplot2::geom_tile(color = "white") +
-                ggplot2::geom_point(data = subset(coeff_data, significant),
+                ggplot2::geom_point(data = coeff_data[coeff_data[["significant"]], ],
                                     shape = 8, size = 2, color = "black") +
                 ggplot2::scale_fill_gradient2(low = "blue", mid = "white", high = "red",
                                               name = "Coefficient") +
@@ -490,7 +490,7 @@ plot.regressPCObject <- function(x,
                                                                        y = .data[["interaction"]],
                                                                        fill = .data[["coefficient"]])) +
                 ggplot2::geom_tile(color = "white") +
-                ggplot2::geom_point(data = subset(interaction_data, significant),
+                ggplot2::geom_point(data = interaction_data[interaction_data[["significant"]], ],
                                     shape = 8, size = 2, color = "black") +
                 ggplot2::scale_fill_gradient2(low = "blue", mid = "white", high = "red",
                                               name = "Interaction\nCoefficient") +
