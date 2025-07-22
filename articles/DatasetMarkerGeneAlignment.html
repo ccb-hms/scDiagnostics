@@ -708,62 +708,127 @@ covariate, which can be useful in applications such as quantifying batch
 effects, assessing clustering homogeneity, and evaluating alignment
 between query and reference datasets in cell type annotation
 settings.</p>
+<p>The function supports multiple regression scenarios depending on the
+data provided:</p>
+<ul>
+<li>
+<strong>Query only</strong>: Regresses principal components against
+cell types (<code>PC ~ cell_type</code>)</li>
+<li>
+<strong>Query + Reference</strong>: Uses an interaction model to
+assess annotation quality (<code>PC ~ cell_type * dataset</code>)</li>
+</ul>
+<p>When reference data is provided, the function projects query data
+onto the reference PCA space and performs unified interaction modeling
+to identify cell types with annotation inconsistencies between
+datasets.</p>
 <p>The function calculates the R-squared value from the linear
-regression of the covariate onto each principal component. The variance
-contribution of the covariate effect per principal component is computed
-as the product of the variance explained by the principal component and
-the R-squared value. The total variance explained by the covariate is
-obtained by summing these contributions across all principal
-components.</p>
+regression for each principal component. For query-only analyses,
+variance contributions are computed as the product of the variance
+explained by each principal component and its corresponding R-squared
+value. The total variance explained by the covariate is obtained by
+summing these contributions across all principal components.</p>
 <p>Here is how you can use the <code><a href="../reference/regressPC.html">regressPC()</a></code> function:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Perform regression analysis using only reference data</span></span>
-<span><span class="va">regress_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/regressPC.html">regressPC</a></span><span class="op">(</span></span>
-<span>    reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
-<span>    ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span>
+<code class="sourceCode R"><span><span class="co"># Query-only analysis: How well do cell types separate in PCA space?</span></span>
+<span><span class="va">regress_res_query</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/regressPC.html">regressPC</a></span><span class="op">(</span></span>
+<span>    query_data <span class="op">=</span> <span class="va">query_data</span>,</span>
+<span>    query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span>
 <span>    cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span>
-<span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span></span>
+<span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Plot results showing R-squared values</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Plot R-squared values showing cell type separation quality</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res_query</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC1.png"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot results showing p-values</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"p-value"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res_query</span>, plot_type <span class="op">=</span> <span class="st">"heatmap"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC2.png"></p>
 <p>In this example, <code><a href="../reference/regressPC.html">regressPC()</a></code> is used to perform
-regression analysis on principal components 1 to 15 from the reference
+regression analysis on principal components 1 to 10 from the query
 dataset. The results are then visualized using plots showing the
-R-squared values and p-values.</p>
-<p>If you also have a query dataset and want to compare it with the
-reference dataset, you can include it in the analysis:</p>
+R-squared values and cell type coefficients, with PC labels displaying
+the percentage of variance explained by each component.</p>
+<p>If you also have a reference dataset and want to assess annotation
+quality by comparing it with the query dataset, you can include it in
+the analysis:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Perform regression analysis using both reference and query data</span></span>
 <span><span class="va">regress_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/regressPC.html">regressPC</a></span><span class="op">(</span></span>
-<span>    reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
 <span>    query_data <span class="op">=</span> <span class="va">query_data</span>,</span>
-<span>    ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span>
+<span>    reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span>
 <span>    query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span>
+<span>    ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span>
 <span>    cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span>
-<span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span></span>
+<span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Plot results showing R-squared values</span></span>
+<span><span class="co"># Plot overall model fit with variance percentages on PC labels</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC3.png"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot results showing p-values</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"p-value"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"heatmap"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC4.png"></p>
-<p>In this case, the function projects the query data onto the principal
-components of the reference data and performs regression analysis. The
-results are visualized in the same way, providing insights into how well
-the principal components from the query data align with those from the
-reference data.</p>
-<p>This function is useful for understanding the impact of different
-covariates on principal components and for comparing how cell types in
-different datasets are represented in the principal component space.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plot results showing p-values</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"heatmap"</span><span class="op">)</span></span></code></pre></div>
+<p>The <code><a href="../reference/regressPC.html">regressPC()</a></code> function also supports batch effect
+analysis when sample or batch information is available. This capability
+is particularly useful for assessing whether cell type annotations are
+consistent across different batches or samples, and for identifying
+batch-specific annotation problems.</p>
+<p>When batch information is provided via the
+<code>query_batch_col</code> parameter, the function performs different
+regression analyses depending on the data configuration:</p>
+<div class="section level4">
+<h4 id="query-only-with-batch-information">Query-only with Batch Information<a class="anchor" aria-label="anchor" href="#query-only-with-batch-information"></a>
+</h4>
+<p>For query data with multiple batches, the function fits an
+interaction model:</p>
+<p><strong>PC ~ cell_type × batch</strong></p>
+<p>This model captures: - <strong>Main effects of cell types</strong>:
+How each cell type contributes to PC variation overall - <strong>Main
+effects of batches</strong>: How each batch contributes to PC variation
+overall<br>
+- <strong>Interaction effects</strong>: How cell type effects vary
+across different batches</p>
+<p>Large interaction effects indicate that certain cell types behave
+differently across batches, which could suggest batch-specific technical
+artifacts or genuine biological differences between samples.</p>
+</div>
+<div class="section level4">
+<h4 id="query-reference-with-batch-information">Query + Reference with Batch Information<a class="anchor" aria-label="anchor" href="#query-reference-with-batch-information"></a>
+</h4>
+<p>When both reference and query data are provided along with batch
+information, the analysis becomes more sophisticated. The function
+creates a unified batch labeling system where: - Reference data is
+labeled as “Reference” - Query batches are labeled as “Query_BatchName”
+(e.g., “Query_Sample1”, “Query_Sample2”)</p>
+<p>The regression model then becomes:</p>
+<p><strong>PC ~ cell_type × batch</strong></p>
+<p>where the batch variable now includes both the reference and all
+query batches. This allows assessment of: - How consistently each cell
+type is annotated between reference and query datasets - Whether
+annotation quality varies across different query batches - Which
+specific query batches show the most deviation from reference
+annotations</p>
+</div>
+<div class="section level4">
+<h4 id="diagnostic-value">Diagnostic Value<a class="anchor" aria-label="anchor" href="#diagnostic-value"></a>
+</h4>
+<p>The interaction effects in batch analysis are particularly
+diagnostic: - <strong>Small interactions</strong>: Consistent cell type
+annotations across batches - <strong>Large interactions for specific
+cell types</strong>: Potential annotation problems in particular batches
+- <strong>Large interactions for specific batches</strong>: Systematic
+annotation issues in those batches</p>
+<p>This analysis framework enables identification of batch-specific
+annotation problems and helps determine whether observed differences
+between datasets are due to technical batch effects or genuine
+biological variation.</p>
+</div>
 </div>
 </div>
 <div class="section level2">
@@ -811,7 +876,7 @@ are less comparable.</p>
 <div class="section level4">
 <h4 id="code-example-1">Code Example<a class="anchor" aria-label="anchor" href="#code-example-1"></a>
 </h4>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load library to get top HVGs</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/MarioniLab/scran/" class="external-link">scran</a></span><span class="op">)</span></span>
 <span></span>
@@ -862,7 +927,7 @@ expression data and cell type annotations, stored in columns named
 You want to calculate the importance of genes using 500 trees and
 compare the top 50 genes between the datasets.</p>
 <p>Here’s how you would use the function:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># RF function to compare which genes are best at differentiating cell types</span></span>
 <span><span class="va">rf_output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateVarImpOverlap.html">calculateVarImpOverlap</a></span><span class="op">(</span>reference_data <span class="op">=</span> <span class="va">reference_data</span>, </span>
 <span>                                    query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
@@ -874,9 +939,9 @@ compare the top 50 genes between the datasets.</p>
 <span><span class="co"># Comparison table</span></span>
 <span><span class="va">rf_output</span><span class="op">$</span><span class="va">var_imp_comparison</span></span>
 <span><span class="co">#&gt;              CD4-CD8     CD4-B_and_plasma          CD4-Myeloid </span></span>
-<span><span class="co">#&gt;                 0.84                 0.80                 0.82 </span></span>
+<span><span class="co">#&gt;                 0.84                 0.84                 0.86 </span></span>
 <span><span class="co">#&gt;     CD8-B_and_plasma          CD8-Myeloid B_and_plasma-Myeloid </span></span>
-<span><span class="co">#&gt;                 0.88                 0.86                 0.86</span></span></code></pre></div>
+<span><span class="co">#&gt;                 0.86                 0.84                 0.78</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="interpretation-2">Interpretation:<a class="anchor" aria-label="anchor" href="#interpretation-2"></a>
