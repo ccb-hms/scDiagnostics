@@ -24,7 +24,7 @@
 #'
 #' @rdname regressPC
 #'
-#' @importFrom stats aggregate formula complete.cases
+#' @importFrom stats aggregate formula complete.cases as.formula
 #'
 # Plot the results of regressPC
 plot.regressPCObject <- function(x,
