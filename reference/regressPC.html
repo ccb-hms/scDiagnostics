@@ -81,7 +81,13 @@ object.</p>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'regressPCObject'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, plot_type <span class="op">=</span> <span class="cn">NULL</span>, alpha <span class="op">=</span> <span class="fl">0.05</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  plot_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"r_squared"</span>, <span class="st">"variance_contribution"</span>, <span class="st">"coefficient_heatmap"</span><span class="op">)</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  coefficients_include <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">regressPC</span><span class="op">(</span></span>
 <span>  <span class="va">query_data</span>,</span>
@@ -107,11 +113,19 @@ object.</p>
 
 
 <dt id="arg-plot-type">plot_type<a class="anchor" aria-label="anchor" href="#arg-plot-type"></a></dt>
-<dd><p>Type of plot to generate. Available options depend on analysis type.</p></dd>
+<dd><p>Type of plot to generate. Available options:
+"r_squared", "variance_contribution", "coefficient_heatmap"</p></dd>
 
 
 <dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
 <dd><p>Significance threshold for p-values. Default is 0.05.</p></dd>
+
+
+<dt id="arg-coefficients-include">coefficients_include<a class="anchor" aria-label="anchor" href="#arg-coefficients-include"></a></dt>
+<dd><p>Character vector specifying which coefficient types to include
+in the coefficient heatmap. Options are <code>c("cell_type", "batch", "interaction")</code>.
+Default is <code>NULL</code>, which includes all available coefficient types. Only applies
+to <code>plot_type = "coefficient_heatmap"</code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -181,10 +195,10 @@ variance explained by a covariate of interest. Applications for single-cell
 analysis include quantification of batch effects, assessing clustering
 homogeneity, and evaluating alignment of query and reference datasets in cell
 type annotation settings.</p>
-<p>The function supports multiple regression scenarios:</p><ul><li><p>Query only, no batch: PC ~ cell_type</p></li>
-<li><p>Query only, with batch: PC ~ cell_type * batch</p></li>
-<li><p>Query + Reference, no batch: PC ~ cell_type * dataset</p></li>
-<li><p>Query + Reference, with batch: PC ~ cell_type * batch (where batch includes Reference)</p></li>
+<p>The function supports multiple regression scenarios:</p><ul><li><p>Query only, no batch: PC  cell_type</p></li>
+<li><p>Query only, with batch: PC  cell_type * batch</p></li>
+<li><p>Query + Reference, no batch: PC  cell_type * dataset</p></li>
+<li><p>Query + Reference, with batch: PC  cell_type * batch (where batch includes Reference)</p></li>
 </ul><p>When batch information is provided with reference data, batches are labeled as
 "Reference" for reference data and "Query_BatchName" for query batches, with
 Reference set as the first factor level for interpretation.</p>
@@ -215,8 +229,13 @@ single-cell genomics. Nature Methods, 19:41-50, 2022.</p>
 <span class="r-in"><span>                         query_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
 <span class="r-in"><span>                         cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                         pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Visualize results</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="regressPC-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"variance_contribution"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="regressPC-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"coefficient_heatmap"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="regressPC-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Query + Reference analysis</span></span></span>
 <span class="r-in"><span><span class="va">regress_res</span> <span class="op">&lt;-</span> <span class="fu">regressPC</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
@@ -225,8 +244,13 @@ single-cell genomics. Nature Methods, 19:41-50, 2022.</p>
 <span class="r-in"><span>                         ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
 <span class="r-in"><span>                         cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span>, <span class="st">"B_and_plasma"</span>, <span class="st">"Myeloid"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                         pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"heatmap"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="regressPC-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># Visualize results</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"r_squared"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="regressPC-4.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"variance_contribution"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="regressPC-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regress_res</span>, plot_type <span class="op">=</span> <span class="st">"coefficient_heatmap"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="regressPC-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
