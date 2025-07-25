@@ -38,7 +38,6 @@ Imports:
     SummarizedExperiment,
     ranger,
     transport,
-    speedglm,
     cramer,
     rlang,
     bluster,

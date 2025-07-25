@@ -5,7 +5,13 @@
 \alias{regressPC}
 \title{Plot Regression Results on Principal Components}
 \usage{
-\method{plot}{regressPCObject}(x, plot_type = NULL, alpha = 0.05, ...)
+\method{plot}{regressPCObject}(
+  x,
+  plot_type = c("r_squared", "variance_contribution", "coefficient_heatmap"),
+  alpha = 0.05,
+  coefficients_include = NULL,
+  ...
+)
 
 regressPC(
   query_data,
@@ -24,9 +30,15 @@ regressPC(
 \arguments{
 \item{x}{An object of class \code{regressPCObject} containing the output of the \code{regressPC} function}
 
-\item{plot_type}{Type of plot to generate. Available options depend on analysis type.}
+\item{plot_type}{Type of plot to generate. Available options:
+"r_squared", "variance_contribution", "coefficient_heatmap"}
 
 \item{alpha}{Significance threshold for p-values. Default is 0.05.}
+
+\item{coefficients_include}{Character vector specifying which coefficient types to include
+in the coefficient heatmap. Options are \code{c("cell_type", "batch", "interaction")}.
+Default is \code{NULL}, which includes all available coefficient types. Only applies
+to \code{plot_type = "coefficient_heatmap"}.}
 
 \item{...}{Additional arguments to be passed to the plotting functions.}
 
@@ -80,10 +92,10 @@ type annotation settings.
 
 The function supports multiple regression scenarios:
 \itemize{
-  \item Query only, no batch: PC ~ cell_type
-  \item Query only, with batch: PC ~ cell_type * batch
-  \item Query + Reference, no batch: PC ~ cell_type * dataset
-  \item Query + Reference, with batch: PC ~ cell_type * batch (where batch includes Reference)
+  \item Query only, no batch: PC  cell_type
+  \item Query only, with batch: PC  cell_type * batch
+  \item Query + Reference, no batch: PC  cell_type * dataset
+  \item Query + Reference, with batch: PC  cell_type * batch (where batch includes Reference)
 }
 
 When batch information is provided with reference data, batches are labeled as
@@ -100,7 +112,10 @@ regress_res <- regressPC(query_data = query_data,
                          query_cell_type_col = "expert_annotation",
                          cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
                          pc_subset = 1:10)
+# Visualize results
 plot(regress_res, plot_type = "r_squared")
+plot(regress_res, plot_type = "variance_contribution")
+plot(regress_res, plot_type = "coefficient_heatmap")
 
 # Query + Reference analysis
 regress_res <- regressPC(query_data = query_data,
@@ -109,7 +124,10 @@ regress_res <- regressPC(query_data = query_data,
                          ref_cell_type_col = "expert_annotation",
                          cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
                          pc_subset = 1:10)
-plot(regress_res, plot_type = "heatmap")
+# Visualize results
+plot(regress_res, plot_type = "r_squared")
+plot(regress_res, plot_type = "variance_contribution")
+plot(regress_res, plot_type = "coefficient_heatmap")
 
 }
 \references{

@@ -389,13 +389,14 @@ regress_res_query <- regressPC(
     pc_subset = 1:10
 )
 
-# Plot R-squared values showing cell type separation quality
+# Visualize results
 plot(regress_res_query, plot_type = "r_squared")
+plot(regress_res_query, plot_type = "variance_contribution")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC1.png)
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot results showing p-values
-plot(regress_res_query, plot_type = "heatmap")
+plot(regress_res_query, plot_type = "coefficient_heatmap")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC2.png)
 
@@ -413,20 +414,17 @@ regress_res <- regressPC(
     pc_subset = 1:10
 )
 
-# Plot overall model fit with variance percentages on PC labels
+# Visualize results
 plot(regress_res, plot_type = "r_squared")
+plot(regress_res, plot_type = "variance_contribution")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC3.png)
 
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot results showing p-values
-plot(regress_res, plot_type = "heatmap")
+plot(regress_res, plot_type = "coefficient_heatmap")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC4.png)
-```{r, fig.height=5, fig.width=10, fig.show='hide'}
-# Plot results showing p-values
-plot(regress_res, plot_type = "heatmap")
-```
 
 The `regressPC()` function also supports batch effect analysis when sample or batch information is available. This capability is particularly useful for assessing whether cell type annotations are consistent across different batches or samples, and for identifying batch-specific annotation problems.
 
