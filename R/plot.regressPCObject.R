@@ -4,9 +4,9 @@
 #' The S3 plot method generates plots to visualize the results of regression analyses
 #' performed on principal components (PCs) against cell types, datasets, or their interactions.
 #'
-#' @param x An object of class \code{regressPCObject} containing the output of the \code{regressPC} function
+#' @param x An object of class \code{regressPCObject} containing the output of the \code{regressPC} function.
 #' @param plot_type Type of plot to generate. Available options:
-#'   "r_squared", "variance_contribution", "coefficient_heatmap"
+#'   "r_squared", "variance_contribution", "coefficient_heatmap".
 #' @param alpha Significance threshold for p-values. Default is 0.05.
 #' @param coefficients_include Character vector specifying which coefficient types to include
 #'   in the coefficient heatmap. Options are \code{c("cell_type", "batch", "interaction")}.

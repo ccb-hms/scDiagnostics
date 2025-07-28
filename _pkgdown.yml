@@ -63,6 +63,7 @@ reference:
   - title: Evaluation of Marker Gene Alignment
     contents:
       - calculateHVGOverlap
+      - calculateTopLoadingGeneShifts
       - calculateVarImpOverlap
       - compareMarkers
   - title: Visualization of Marker Expressions

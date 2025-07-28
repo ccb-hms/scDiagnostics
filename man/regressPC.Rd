@@ -28,10 +28,10 @@ regressPC(
 )
 }
 \arguments{
-\item{x}{An object of class \code{regressPCObject} containing the output of the \code{regressPC} function}
+\item{x}{An object of class \code{regressPCObject} containing the output of the \code{regressPC} function.}
 
 \item{plot_type}{Type of plot to generate. Available options:
-"r_squared", "variance_contribution", "coefficient_heatmap"}
+"r_squared", "variance_contribution", "coefficient_heatmap".}
 
 \item{alpha}{Significance threshold for p-values. Default is 0.05.}
 
