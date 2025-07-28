@@ -23,6 +23,7 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateHotellingPValue.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateMMDPValue.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateSIRSpace.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateTopLoadingGeneShifts.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateVarImpOverlap.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculateWassersteinDistance.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/calculate_entropy.html</loc></url>
@@ -51,6 +52,7 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotQCvsAnnotation.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotRSquared.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotVarianceContribution.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/processGenesSimple.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/processPCA.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/projectPCA.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/projectSIR.html</loc></url>
