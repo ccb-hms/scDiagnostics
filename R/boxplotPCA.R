@@ -101,17 +101,17 @@ boxplotPCA <- function(query_data,
                              ref_cell_type_col = ref_cell_type_col,
                              pc_subset = pc_subset,
                              assay_name = assay_name)
+    pca_output <- pca_output[pca_output[["cell_type"]] %in% cell_types,]
+
+    # Get variance explained percentages
+    pca_data <- SingleCellExperiment::reducedDim(reference_data, "PCA")
+    percent_var <- attr(pca_data, "percentVar")[pc_subset]
+
+    # Create PC labels with variance explained
+    pc_labels <- paste0("PC", pc_subset, " (", round(percent_var, 1), "%)")
+    names(pc_labels) <- paste0("pc", pc_subset)
 
     # Create the long format data frame manually
-    pca_output <- pca_output[!is.na(pca_output[["cell_type"]]),]
-    if(!is.null(cell_types)){
-        if(all(cell_types %in% pca_output[["cell_type"]])){
-            pca_output <- pca_output[which(pca_output[["cell_type"]] %in%
-                                               cell_types),]
-        } else{
-            stop("One or more of the specified \'cell_types\' are not available.")
-        }
-    }
     pca_long <- data.frame(PC = rep(paste0("pc", pc_subset),
                                     each = nrow(pca_output)),
                            Value = unlist(c(pca_output[, pc_subset])),
@@ -119,7 +119,10 @@ boxplotPCA <- function(query_data,
                                          length(pc_subset)),
                            cell_type = rep(pca_output[["cell_type"]],
                                            length(pc_subset)))
-    pca_long[["PC"]] <- toupper(pca_long[["PC"]])
+
+    # Create properly ordered PC factor with variance explained labels
+    pc_order <- paste0("pc", pc_subset)
+    pca_long[["PC"]] <- factor(pca_long[["PC"]], levels = pc_order)
 
     # Create a new variable representing the combination of cell type and dataset
     pca_long[["cell_type_dataset"]] <- paste(pca_long[["dataset"]],
@@ -159,7 +162,8 @@ boxplotPCA <- function(query_data,
 
     # Continue with common plot elements
     plot <- plot +
-        ggplot2::facet_wrap(~ .data[["PC"]], scales = "free") +
+        ggplot2::facet_wrap(~ .data[["PC"]], scales = "free",
+                            labeller = ggplot2::labeller(PC = pc_labels)) +
         ggplot2::scale_fill_manual(values = cell_type_colors,
                                    name = "Cell Types") +
         ggplot2::labs(x = "", y = "PCA Score") +
