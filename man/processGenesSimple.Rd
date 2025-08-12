@@ -24,31 +24,10 @@ processGenesSimple(
 \item{cell_type}{Character string specifying the cell type being analyzed.}
 }
 \value{
-A list of data frames, where each data frame contains results for one gene with columns:
-\itemize{
-  \item gene: Gene symbol
-  \item loading: PC loading value for the gene
-  \item cell_type: Cell type analyzed
-  \item p_value: Raw p-value from Wilcoxon rank-sum test
-  \item mean_query: Mean expression in query data
-  \item mean_reference: Mean expression in reference data
-}
+A list of data frames, where each data frame contains results for one gene.
 }
 \description{
 Internal helper function that performs statistical testing on top loading genes
 to compare their expression distributions between query and reference datasets.
-}
-\details{
-This function processes a set of top loading genes for a specific cell type by:
-\itemize{
-  \item Extracting expression values for each gene from query and reference matrices
-  \item Removing NA values and checking for sufficient sample sizes
-  \item Calculating mean expression values for both datasets
-  \item Performing Wilcoxon rank-sum tests to assess distributional differences
-  \item Returning results in a standardized data frame format
-}
-}
-\author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 }
 \keyword{internal}

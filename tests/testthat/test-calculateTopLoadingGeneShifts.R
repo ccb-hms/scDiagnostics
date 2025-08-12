@@ -292,3 +292,4 @@ test_that("calculateTopLoadingGeneShifts preserves gene order by significance", 
         }
     }
 })
+

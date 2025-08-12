@@ -1,25 +1,31 @@
 #' @title Plot Top Loading Gene Expression Shifts
 #'
 #' @description
-#' This function creates boxplots showing expression distributions for top loading genes
-#' that exhibit distributional differences between query and reference datasets.
+#' This function creates visualizations showing expression distributions for top loading genes
+#' that exhibit distributional differences between query and reference datasets. Can display
+#' results as elegant complex heatmaps or as information-rich summary boxplots.
 #'
 #' @details
-#' This function visualizes the results from \code{calculateTopLoadingGeneShifts} by creating
-#' faceted boxplots. Each facet represents a principal component with its variance explained.
-#' Within each facet, boxplots show expression distributions for selected genes, comparing
-#' query and reference datasets for a specific cell type. Genes can be selected either by
-#' highest absolute loadings or most significant p-adjusted values.
+#' This function visualizes the results from \code{calculateTopLoadingGeneShifts}.
+#' The "heatmap" option displays a hierarchically clustered set of genes.
+#' The "boxplot" option creates a two-panel plot using `ggplot2`: the left panel shows
+#' horizontal expression boxplots for up to 5 PCs, while the right panel displays their
+#' corresponding PC loadings and adjusted p-values.
 #'
-#' @param x An object of class \code{calculateTopLoadingGeneShiftsObject} containing the output of the \code{calculateTopLoadingGeneShifts} function.
+#' @param x An object of class \code{calculateTopLoadingGeneShiftsObject}.
 #' @param cell_type A character string specifying the cell type to plot (must be exactly one).
 #' @param pc_subset A numeric vector specifying which principal components to plot. Default is 1:3.
-#' @param plot_by A character string specifying gene selection method. Either "top_loading" or "p_adjusted". Default is "p_adjusted".
-#' @param n_genes Number of genes to show per PC. Default is 10.
-#' @param significance_threshold P-adjusted threshold for significance annotation. Default is 0.05.
-#' @param ... Additional arguments to be passed to the plotting functions.
+#' @param plot_type A character string specifying visualization type. Either "heatmap" or "boxplot".
+#'                  Default is "heatmap".
+#' @param plot_by A character string specifying gene selection method when `n_genes` is not NULL.
+#'                Either "top_loading" or "p_adjusted". Default is "p_adjusted".
+#' @param n_genes Number of top genes to show per PC. Can be NULL if `significance_threshold` is set.
+#'                Default is 10.
+#' @param significance_threshold If not NULL, a numeric value between 0 and 1. Used for gene
+#'   selection or annotation. Default is 0.05.
+#' @param ... Additional arguments passed to \code{\link[ComplexHeatmap]{draw}} or not used for boxplot.
 #'
-#' @return A ggplot object showing boxplots of gene expression by PC and dataset.
+#' @return A plot object.
 #'
 #' @export
 #'
@@ -30,263 +36,554 @@
 #'
 #' @rdname calculateTopLoadingGeneShifts
 #'
-# Function to plot results of calculateTopLoadingGeneShifts
+#' @importFrom stats wilcox.test var p.adjust na.omit setNames aggregate reshape
+#'
+# Function to visualize genes with top loadings
 plot.calculateTopLoadingGeneShiftsObject <- function(x,
                                                      cell_type,
                                                      pc_subset = 1:3,
+                                                     plot_type = c("heatmap", "boxplot"),
                                                      plot_by = c("p_adjusted", "top_loading"),
                                                      n_genes = 10,
                                                      significance_threshold = 0.05,
                                                      ...) {
 
-    # Input validation
+    # --- Input Validation ---
     if (missing(cell_type) || length(cell_type) != 1) {
-        stop("cell_type must be specified and be exactly one cell type")
+        stop("cell_type must be specified and be a single character string.")
     }
 
-    if (!is.numeric(n_genes) || n_genes <= 0) {
-        stop("n_genes must be a positive integer")
-    }
-
-    # Match plot_by argument
+    # Match arguments first
+    plot_type <- match.arg(plot_type)
     plot_by <- match.arg(plot_by)
 
-    # Check if x has the expected structure
-    required_elements <- c("expression_data", "cell_metadata", "gene_metadata", "percent_var")
-    if (!all(required_elements %in% names(x))) {
-        stop("x must contain expression_data, cell_metadata, gene_metadata, and percent_var elements")
+    # Validate plot-type specific requirements
+    if (plot_type == "boxplot" && is.null(n_genes)) {
+        stop("For 'boxplot' plot type, 'n_genes' must be specified.")
+    }
+    if (plot_type == "heatmap" &&
+        is.null(n_genes) &&
+        is.null(significance_threshold)) {
+        stop("For 'heatmap' plot type, at least one of 'n_genes' or 'significance_threshold' must be specified.")
+    }
+    if (!is.null(n_genes) &&
+        (!is.numeric(n_genes) ||
+         length(n_genes) != 1 ||
+         n_genes <= 0)) {
+        stop("If not NULL, 'n_genes' must be a positive integer.")
+    }
+    if (!is.null(significance_threshold) &&
+        (!is.numeric(significance_threshold) ||
+         length(significance_threshold) != 1 ||
+         significance_threshold < 0 ||
+         significance_threshold > 1)) {
+        stop("If not NULL, 'significance_threshold' must be a numeric value between 0 and 1.")
     }
 
-    # Get PC names in proper order (PC1, PC2, ... not PC1, PC10, PC2)
+    # Check for package dependencies
+    if (plot_type == "heatmap") {
+        if (!requireNamespace("ComplexHeatmap", quietly = TRUE)) {
+            stop("Packages 'ComplexHeatmap' and 'circlize' are required. Please install them.",
+                 call. = FALSE)
+        }
+    }
+
+    # Check object structure
+    required_elements <- c("expression_data", "cell_metadata", "percent_var")
+    if (!all(required_elements %in% names(x))) {
+        stop("Input object 'x' is missing required elements.", call. = FALSE)
+    }
+
+    # Get available PCs from the object
     pc_names <- paste0("PC", pc_subset)
     available_pcs <- intersect(pc_names, names(x))
-
     if (length(available_pcs) == 0) {
-        stop("No requested PCs found in x")
+        stop("None of the requested PCs were found in the results object.")
     }
-
-    # Reorder to match requested order
     available_pcs <- pc_names[pc_names %in% available_pcs]
 
-    # Check if cell type exists
-    if (!cell_type %in% x[["cell_metadata"]][["cell_type"]]) {
-        stop(paste("Cell type", cell_type, "not found in results"))
+    # Limit PCs for boxplot
+    if (plot_type == "boxplot" && length(available_pcs) > 5) {
+        warning("Boxplot type can display at most 5 PCs. Using the first 5.")
+        available_pcs <- available_pcs[1:5]
     }
 
-    # Create PC labels with variance explained from stored percent_var
-    pc_labels <- paste0("PC", pc_subset, " (", sprintf("%.1f%%", x[["percent_var"]][paste0("PC", pc_subset)]), ")")
-    names(pc_labels) <- paste0("PC", pc_subset)
+    # Check cell type existence
+    if (!cell_type %in% x[["cell_metadata"]][["cell_type"]]) {
+        stop(paste("Cell type '", cell_type, "' not found in results.", sep = ""))
+    }
 
-    # Filter to available PCs
-    pc_labels <- pc_labels[available_pcs]
+    # --- Route to Plotting Functions ---
+    if (plot_type == "boxplot") {
+        return(plotBoxplot(x, cell_type, available_pcs,
+                           plot_by, n_genes, significance_threshold))
+    } else {
+        ht <- plotHeatmap(x, cell_type, available_pcs,
+                          plot_by, n_genes, significance_threshold)
+        if (is.null(ht)) {
+            message("No data available to generate a heatmap for the specified parameters.")
+            return(invisible(NULL))
+        }
+        # Draw the heatmap
+        return(
+            ComplexHeatmap::draw(ht,
+                                 heatmap_legend_side = "right",
+                                 annotation_legend_side = "right",
+                                 merge_legends = TRUE,
+                                 ...)
+        )
+    }
+}
 
-    # Collect data for plotting
-    plot_data_list <- list()
-    gene_annotation_list <- list()
+#' @title Plot Heatmaps for Top Loading Gene Shifts (Simplified Single Heatmap)
+#'
+#' @description
+#' This internal helper function creates a single, hierarchically clustered heatmap
+#' displaying expression data for top loading genes from principal component analysis.
+#' The function handles gene selection, data preprocessing, and visualization formatting.
+#'
+#' @details
+#' This function generates a ComplexHeatmap visualization showing scaled gene expression
+#' data across cells. Genes are selected based on either their loading values or
+#' statistical significance. The function automatically handles data filtering,
+#' scaling, and visual formatting including color schemes and annotations.
+#'
+#' @param x An object of class \code{calculateTopLoadingGeneShiftsObject} containing
+#'   expression data and analysis results.
+#' @param cell_type A character string specifying the cell type to visualize.
+#' @param available_pcs A character vector of principal components to include in analysis.
+#' @param plot_by A character string indicating gene selection criterion ("top_loading" or "p_adjusted").
+#' @param n_genes An integer specifying the number of top genes to display per PC. Can be NULL.
+#' @param significance_threshold A numeric value between 0 and 1 for significance filtering. Can be NULL.
+#'
+#' @keywords internal
+#'
+#' @return A ComplexHeatmap object ready for plotting, or NULL if no genes meet selection criteria.
+#'
+#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#'
+# Helper heatmap function
+plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
+                        n_genes, significance_threshold) {
 
-    for (pc_name in available_pcs) {
+    # Initialize gene collection
+    all_genes_to_plot <- c()
+
+    # Gene selection based on n_genes criterion
+    if (!is.null(n_genes)) {
+        gene_list <- lapply(available_pcs, function(pc_name) {
+            pc_results <- x[[pc_name]]
+            if (is.null(pc_results) || nrow(pc_results) == 0) {
+                return(NULL)
+            }
+
+            pc_cell_data <- pc_results[pc_results[["cell_type"]] == cell_type, ]
+            if (nrow(pc_cell_data) == 0) {
+                return(NULL)
+            }
+
+            # Order genes by selection criterion
+            if (plot_by == "top_loading") {
+                gene_order <- order(abs(pc_cell_data[["loading"]]),
+                                    decreasing = TRUE)
+            } else {
+                gene_order <- order(pc_cell_data[["p_adjusted"]])
+            }
+
+            selected_indices <- gene_order[1:min(n_genes, nrow(pc_cell_data))]
+            return(pc_cell_data[selected_indices, "gene"])
+        })
+        all_genes_to_plot <- unique(unlist(gene_list))
+
+    } else if (!is.null(significance_threshold)) {
+        # Gene selection based on significance threshold
+        sig_gene_list <- lapply(available_pcs, function(pc_name) {
+            pc_results <- x[[pc_name]]
+            if (is.null(pc_results) || nrow(pc_results) == 0) {
+                return(NULL)
+            }
+
+            sig_df <- pc_results[pc_results[["cell_type"]] == cell_type &
+                                     pc_results[["p_adjusted"]] < significance_threshold, ]
+            return(sig_df[["gene"]])
+        })
+        all_genes_to_plot <- unique(unlist(sig_gene_list))
+    }
+
+    # Check if any genes were selected
+    if (length(all_genes_to_plot) == 0) {
+        return(NULL)  # Return NULL instead of warning
+    }
+
+    # Identify significant genes for annotation
+    significant_genes <- c()
+    if (!is.null(significance_threshold)) {
+        sig_gene_list <- lapply(available_pcs, function(pc_name) {
+            pc_results <- x[[pc_name]]
+            if (is.null(pc_results) || nrow(pc_results) == 0) {
+                return(NULL)
+            }
+
+            sig_df <- pc_results[pc_results[["cell_type"]] == cell_type &
+                                     pc_results[["p_adjusted"]] < significance_threshold, ]
+            return(sig_df[["gene"]])
+        })
+        significant_genes <- unique(unlist(sig_gene_list))
+    }
+
+    # Prepare cell subset and ordering
+    cell_subset <- x[["cell_metadata"]][x[["cell_metadata"]][["cell_type"]] == cell_type, ]
+    cell_subset <- cell_subset[order(cell_subset[["dataset"]]), ]
+
+    # Extract and filter expression matrix
+    expr_matrix_unfiltered <- as.matrix(
+        x[["expression_data"]][all_genes_to_plot,
+                               cell_subset[["cell_id"]],
+                               drop = FALSE]
+    )
+
+    # Remove zero-variance genes to prevent scaling issues
+    row_variances <- apply(expr_matrix_unfiltered, 1, stats::var)
+    genes_to_keep <- row_variances > .Machine$double.eps
+
+    if (sum(genes_to_keep) == 0) {
+        return(NULL)  # Return NULL instead of warning
+    }
+
+    # Create final expression matrix and scale
+    expr_matrix <- expr_matrix_unfiltered[genes_to_keep, , drop = FALSE]
+    scaled_matrix <- t(scale(t(expr_matrix)))
+
+    # Clamp z-scores to the range [-2, 2] for consistent visualization
+    scaled_matrix[scaled_matrix < -2] <- -2
+    scaled_matrix[scaled_matrix > 2] <- 2
+
+    # Define color schemes
+    dataset_colors <- c("Query" = "#E41A1C", "Reference" = "#377EB8")
+
+    # Create custom color mapping function
+    .createColorMapping <- function(breaks, colors) {
+        function(x) {
+            # Handle NA values
+            if (any(is.na(x))) {
+                return(rep("grey", length(x)))
+            }
+
+            # Clamp values to break range
+            x[x < min(breaks)] <- min(breaks)
+            x[x > max(breaks)] <- max(breaks)
+
+            # Create color ramp and normalize values
+            col_ramp <- grDevices::colorRamp(colors)
+            x_norm <- (x - min(breaks)) / (max(breaks) - min(breaks))
+
+            # Convert to hex colors
+            rgb_vals <- col_ramp(x_norm)
+            grDevices::rgb(rgb_vals[,1], rgb_vals[,2], rgb_vals[,3], maxColorValue = 255)
+        }
+    }
+    zscore_col_fun <- .createColorMapping(c(-2, 0, 2),
+                                          c("#313695", "white", "#A50026"))
+
+    # Create top annotation
+    top_ha <- ComplexHeatmap::HeatmapAnnotation(
+        Dataset = cell_subset[["dataset"]],
+        col = list(Dataset = dataset_colors),
+        show_legend = TRUE,
+        show_annotation_name = FALSE,
+        annotation_legend_param = list(title = "Dataset")
+    )
+
+    # Prepare gene labels with significance indicators
+    final_genes <- rownames(expr_matrix)
+    row_labels <- paste0(final_genes,
+                         ifelse(final_genes %in% significant_genes, "*", ""))
+
+    # Smart dependency checking for grid package
+    if (requireNamespace("grid", quietly = TRUE)) {
+        # Use smaller font size for better readability when grid is available
+        row_gp <- grid::gpar(fontsize = 8)
+        ht <- ComplexHeatmap::Heatmap(
+            matrix = scaled_matrix,
+            name = "Z-Score",
+            col = zscore_col_fun,
+            heatmap_legend_param = list(
+                title = "Z-Score",
+                at = c(-2, -1, 0, 1, 2),
+                labels = c("-2", "-1", "0", "1", "2")
+            ),
+            show_row_names = TRUE,
+            row_labels = row_labels,
+            row_names_gp = row_gp,
+            cluster_rows = TRUE,
+            show_column_names = FALSE,
+            cluster_columns = FALSE,
+            column_order = cell_subset[["cell_id"]],
+            top_annotation = top_ha,
+            border = TRUE,
+            use_raster = TRUE,
+            raster_quality = 2
+        )
+    } else {
+        # Use default font size and inform user about grid package
+        message("Note: For optimal gene name readability, consider installing the 'grid' package: install.packages('grid')")
+        ht <- ComplexHeatmap::Heatmap(
+            matrix = scaled_matrix,
+            name = "Z-Score",
+            col = zscore_col_fun,
+            heatmap_legend_param = list(
+                title = "Z-Score",
+                at = c(-2, -1, 0, 1, 2),
+                labels = c("-2", "-1", "0", "1", "2")
+            ),
+            show_row_names = TRUE,
+            row_labels = row_labels,
+            cluster_rows = TRUE,
+            show_column_names = FALSE,
+            cluster_columns = FALSE,
+            column_order = cell_subset[["cell_id"]],
+            top_annotation = top_ha,
+            border = TRUE,
+            use_raster = TRUE,
+            raster_quality = 2
+        )
+    }
+
+    return(ht)
+}
+
+#' @title Plot Boxplots for Top Loading Gene Shifts (Two-Panel Summary using ggplot2)
+#'
+#' @description
+#' This internal helper function creates a comprehensive two-panel summary plot
+#' displaying gene expression distributions and principal component loadings.
+#' The visualization uses ggplot2 faceting to create side-by-side panels.
+#'
+#' @details
+#' This function generates a dual-panel ggplot2 visualization where the left panel
+#' shows horizontal boxplots of gene expression distributions comparing Reference
+#' and Query datasets, while the right panel displays PC loading values as points
+#' with adjusted p-values. Gene selection is based on the union of top genes
+#' across specified principal components.
+#'
+#' @param x An object of class \code{calculateTopLoadingGeneShiftsObject} containing
+#'   expression data and analysis results.
+#' @param cell_type A character string specifying the cell type to visualize.
+#' @param available_pcs A character vector of principal components to include in analysis.
+#' @param plot_by A character string indicating gene selection criterion ("top_loading" or "p_adjusted").
+#' @param n_genes An integer specifying the number of top genes to display per PC.
+#' @param significance_threshold A numeric value between 0 and 1 for significance annotation.
+#'
+#' @keywords internal
+#'
+#' @return A ggplot2 object ready for display, or NULL if no genes meet selection criteria.
+#'
+#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#'
+# Helper boxplot function - unchanged but with line breaks
+plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
+                        n_genes, significance_threshold) {
+
+    # Validate required parameters
+    if (is.null(n_genes)) {
+        stop("'plot_type = \"boxplot\"' requires 'n_genes' to be set.")
+    }
+
+    # Gene selection across principal components
+    gene_df_list <- lapply(available_pcs, function(pc_name) {
         pc_results <- x[[pc_name]]
-
-        if (nrow(pc_results) == 0) {
-            next
+        if (is.null(pc_results) || nrow(pc_results) == 0) {
+            return(NULL)
         }
 
-        # Filter for the specified cell type
         pc_cell_data <- pc_results[pc_results[["cell_type"]] == cell_type, ]
-
         if (nrow(pc_cell_data) == 0) {
-            warning(paste("No data found for cell type", cell_type, "in", pc_name))
-            next
+            return(NULL)
         }
 
-        # Select genes based on plot_by criterion
+        # Order genes by selection criterion
         if (plot_by == "top_loading") {
-            # Order by absolute loading (descending)
-            gene_order <- order(abs(pc_cell_data[["loading"]]), decreasing = TRUE)
-        } else if (plot_by == "p_adjusted") {
-            # Order by p_adjusted (ascending - most significant first)
+            gene_order <- order(abs(pc_cell_data[["loading"]]),
+                                decreasing = TRUE)
+        } else {
             gene_order <- order(pc_cell_data[["p_adjusted"]])
         }
 
-        # Get top n_genes
-        selected_indices <- gene_order[1:min(n_genes, length(gene_order))]
-        selected_data <- pc_cell_data[selected_indices, ]
+        selected_indices <- gene_order[1:min(n_genes, nrow(pc_cell_data))]
+        return(pc_cell_data[selected_indices, ])
+    })
 
-        # Get expression data for selected genes
-        selected_genes <- selected_data[["gene"]]
+    # Combine results and remove duplicates
+    final_gene_data <- do.call(rbind, gene_df_list)
+    final_gene_data <- final_gene_data[!duplicated(final_gene_data[["gene"]]), ]
 
-        # Filter cell metadata for this cell type
-        cell_subset <- x[["cell_metadata"]][["cell_type"]] == cell_type
-        relevant_cells <- x[["cell_metadata"]][cell_subset, ]
-
-        # Extract expression data
-        expr_subset <- x[["expression_data"]][selected_genes,
-                                              relevant_cells[["cell_id"]],
-                                              drop = FALSE]
-
-        # Create long format data for plotting
-        for (gene in selected_genes) {
-            gene_expr <- expr_subset[gene, ]
-
-            gene_plot_data <- data.frame(
-                PC = pc_labels[pc_name],  # Use labeled PC name
-                Gene = gene,
-                Expression = as.numeric(gene_expr),
-                Dataset = relevant_cells[["dataset"]],
-                row.names = NULL,  # Explicitly set row.names to NULL to avoid warnings
-                stringsAsFactors = FALSE
-            )
-
-            plot_data_list[[length(plot_data_list) + 1]] <- gene_plot_data
-
-            # Store gene annotation info
-            gene_info <- selected_data[selected_data[["gene"]] == gene, ]
-            gene_annotation_list[[length(gene_annotation_list) + 1]] <- data.frame(
-                PC = pc_labels[pc_name],  # Use labeled PC name
-                Gene = gene,
-                p_adjusted = gene_info[["p_adjusted"]],
-                loading = gene_info[["loading"]],
-                significant = gene_info[["significant"]],
-                row.names = NULL,  # Explicitly set row.names to NULL to avoid warnings
-                stringsAsFactors = FALSE
-            )
-        }
+    if (nrow(final_gene_data) == 0) {
+        warning("No genes met the selection criteria for the boxplot.")
+        return(NULL)
     }
 
-    # Combine all data
-    if (length(plot_data_list) == 0) {
-        stop("No data available for plotting with the specified parameters")
-    }
-
-    plot_data <- do.call(rbind, plot_data_list)
-    gene_annotations <- do.call(rbind, gene_annotation_list)
-
-    # Set proper factor levels for PC ordering (with labels)
-    pc_label_levels <- pc_labels[available_pcs]
-    plot_data[["PC"]] <- factor(plot_data[["PC"]], levels = pc_label_levels)
-    gene_annotations[["PC"]] <- factor(gene_annotations[["PC"]], levels = pc_label_levels)
-
-    # Set Dataset factor levels to control boxplot order (Reference left, Query right)
-    plot_data[["Dataset"]] <- factor(plot_data[["Dataset"]], levels = c("Reference", "Query"))
-
-    # Create a Gene_PC interaction variable for proper ordering within each facet
-    # This ensures each PC has its own gene ordering
+    # Order final gene set by selection criterion
     if (plot_by == "top_loading") {
-        # For top_loading: order by absolute loading (descending) within each PC
-        gene_annotations[["sort_value"]] <- -abs(gene_annotations[["loading"]])
+        final_gene_data <- final_gene_data[
+            order(abs(final_gene_data[["loading"]]), decreasing = TRUE),
+        ]
     } else {
-        # For p_adjusted: order by p_adjusted (ascending) within each PC
-        gene_annotations[["sort_value"]] <- gene_annotations[["p_adjusted"]]
+        final_gene_data <- final_gene_data[
+            order(final_gene_data[["p_adjusted"]]),
+        ]
     }
 
-    # Create a unique identifier for each gene-PC combination for proper ordering
-    gene_annotations[["Gene_PC"]] <- paste(gene_annotations[["Gene"]],
-                                           gene_annotations[["PC"]],
-                                           sep = "_")
+    # Prepare expression data for plotting
+    cell_subset_meta <- x[["cell_metadata"]][
+        x[["cell_metadata"]][["cell_type"]] == cell_type,
+    ]
+    expr_subset <- x[["expression_data"]][
+        final_gene_data[["gene"]],
+        cell_subset_meta[["cell_id"]],
+        drop = FALSE
+    ]
 
-    # Order within each PC
-    gene_annotations <- gene_annotations[order(gene_annotations[["PC"]],
-                                               gene_annotations[["sort_value"]]), ]
+    # Create expression data frame
+    expr_plot_list <- lapply(final_gene_data[["gene"]], function(g) {
+        data.frame(
+            gene = g,
+            value = as.numeric(expr_subset[g, ]),
+            dataset = cell_subset_meta[["dataset"]],
+            metric = "Expression",
+            pc_group = NA_character_,
+            stringsAsFactors = FALSE
+        )
+    })
+    expr_plot_df <- do.call(rbind, expr_plot_list)
 
-    # Create the same Gene_PC variable for plot_data
-    plot_data[["Gene_PC"]] <- paste(plot_data[["Gene"]],
-                                    plot_data[["PC"]],
-                                    sep = "_")
+    # Prepare loading data for plotting
+    loading_data <- x[["gene_metadata"]][
+        x[["gene_metadata"]][["gene"]] %in% final_gene_data[["gene"]] &
+            paste0("PC", x[["gene_metadata"]][["pc"]]) %in% available_pcs,
+    ]
 
-    # Set factor levels for Gene_PC to maintain proper ordering
-    plot_data[["Gene_PC"]] <- factor(plot_data[["Gene_PC"]],
-                                     levels = unique(gene_annotations[["Gene_PC"]]))
-    gene_annotations[["Gene_PC"]] <- factor(gene_annotations[["Gene_PC"]],
-                                            levels = unique(gene_annotations[["Gene_PC"]]))
-
-    # Create better significance labels
-    gene_annotations[["p_formatted"]] <- ifelse(
-        gene_annotations[["p_adjusted"]] < 0.001,
-        "p < 0.001",  # Changed format for very small p-values
-        paste0("p = ", sprintf("%.3f", gene_annotations[["p_adjusted"]]))  # Added "p = " prefix
+    loading_plot_df <- data.frame(
+        gene = loading_data[["gene"]],
+        value = loading_data[["loading"]],
+        dataset = factor("Reference", levels = c("Reference", "Query")),
+        metric = "PC Loading",
+        pc_group = paste0("PC", loading_data[["pc"]]),
+        stringsAsFactors = FALSE
     )
 
-    # Calculate number of columns for facet wrap (max 3 per row)
-    n_facets <- length(available_pcs)
-    n_cols <- min(n_facets, 3)
+    # Combine plotting data
+    full_plot_df <- rbind(expr_plot_df, loading_plot_df)
 
-    # Create the main plot using Gene_PC for proper ordering
-    p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["Gene_PC"]],
-                                                 y = .data[["Expression"]],
-                                                 fill = .data[["Dataset"]])) +
-        ggplot2::geom_boxplot(alpha = 0.7,
-                              outlier.size = 0.5,  # Show outliers with small size
-                              width = 0.7) +
-        ggplot2::facet_wrap(~ PC, scales = "free",  # Free both x and y scales
-                            ncol = n_cols) +  # Dynamic number of columns
-        ggplot2::scale_fill_manual(values = c("Reference" = "#3498DB", "Query" = "#E74C3C"),
-                                   name = "Dataset") +
-        ggplot2::scale_x_discrete(labels = function(x) {
-            # Extract just the gene name from Gene_PC for x-axis labels
-            sapply(strsplit(x, "_"), function(parts) parts[1])
-        }) +
-        ggplot2::labs(
-            title = paste0("Gene Expression Shifts for ", cell_type),
-            subtitle = paste0("Genes selected by ",
-                              ifelse(plot_by == "top_loading", "highest absolute loadings",
-                                     "most significant adjusted p-values")),
-            x = "",  # No x-axis label
-            y = ""   # No y-axis label
+    # Prepare gene labels with significance indicators
+    is_significant <- if (!is.null(significance_threshold)) {
+        final_gene_data[["p_adjusted"]] < significance_threshold
+    } else {
+        FALSE
+    }
+    gene_labels <- paste0(final_gene_data[["gene"]],
+                          ifelse(is_significant, "*", ""))
+    full_plot_df[["gene"]] <- factor(full_plot_df[["gene"]],
+                                     levels = rev(final_gene_data[["gene"]]))
+
+    # Format p-value labels
+    p_value_data <- final_gene_data[, c("gene", "p_adjusted")]
+    p_value_labels <- paste0("p = ",
+                             sprintf("%.2g", p_value_data[["p_adjusted"]]))
+    p_value_labels[p_value_data[["p_adjusted"]] < 0.001] <- "p < .001"
+    names(p_value_labels) <- p_value_data[["gene"]]
+
+    # Create PC legend labels with variance explained
+    pc_legend_labels <- paste0(available_pcs, " (",
+                               sprintf("%.1f%%", x[["percent_var"]][available_pcs]),
+                               ")")
+    names(pc_legend_labels) <- available_pcs
+
+    # Define color and shape palettes
+    dataset_colors <- c("Reference" = "#377EB8", "Query" = "#E41A1C")
+    num_pcs <- length(available_pcs)
+    pc_color_palette <- grDevices::hcl.colors(num_pcs, palette = "Dark 3")
+    pc_shape_palette <- c(16, 17, 15, 18, 8)
+
+    pc_colors <- pc_color_palette[1:num_pcs]
+    pc_shapes <- pc_shape_palette[1:num_pcs]
+    names(pc_colors) <- available_pcs
+    names(pc_shapes) <- available_pcs
+
+    # Create facet labeller
+    facet_labeller <- ggplot2::labeller(
+        metric = c("Expression" = "Log-Normalized Expression",
+                   "PC Loading" = "PC Loading")
+    )
+
+    # Build the ggplot object
+    p <- ggplot2::ggplot(
+        mapping = ggplot2::aes(y = .data[["gene"]], x = .data[["value"]])
+    ) +
+
+        # Expression panel: horizontal boxplots
+        ggplot2::geom_boxplot(
+            data = ~subset(full_plot_df, metric == "Expression"),
+            ggplot2::aes(fill = .data[["dataset"]]),
+            alpha = 0.8,
+            outlier.size = 0.5
         ) +
+
+        # Loading panel: reference line and points
+        ggplot2::geom_vline(xintercept = 0,
+                            linetype = "dashed",
+                            color = "grey50") +
+        ggplot2::geom_point(
+            data = ~subset(full_plot_df, metric == "PC Loading"),
+            ggplot2::aes(color = .data[["pc_group"]],
+                         shape = .data[["pc_group"]]),
+            size = 3,
+            alpha = 0.8
+        ) +
+
+        # Panel configuration
+        ggplot2::facet_grid(~ metric,
+                            scales = "free_x",
+                            switch = "x",
+                            labeller = facet_labeller) +
+
+        # Scale definitions
+        ggplot2::scale_fill_manual(name = "Dataset", values = dataset_colors) +
+        ggplot2::scale_color_manual(name = "PC",
+                                    values = pc_colors,
+                                    labels = pc_legend_labels) +
+        ggplot2::scale_shape_manual(name = "PC",
+                                    values = pc_shapes,
+                                    labels = pc_legend_labels) +
+        ggplot2::scale_y_discrete(labels = rev(gene_labels), name = NULL) +
+        ggplot2::scale_x_continuous(
+            sec.axis = ggplot2::dup_axis(
+                name = "Adj. P-value",
+                breaks = NULL,
+                labels = rev(p_value_labels)
+            ),
+            name = NULL,
+            expand = ggplot2::expansion(mult = c(0.05, 0.15))
+        ) +
+
+        # Labels and guides
+        ggplot2::labs(title = NULL, subtitle = NULL) +
+        ggplot2::guides(
+            fill = ggplot2::guide_legend(order = 1),
+            color = ggplot2::guide_legend(order = 2),
+            shape = ggplot2::guide_legend(order = 2)
+        ) +
+
+        # Theme customization
         ggplot2::theme_bw() +
         ggplot2::theme(
-            strip.background = ggplot2::element_rect(fill = "white",
-                                                     color = "black",
-                                                     linewidth = 0.5),
-            panel.grid.minor = ggplot2::element_blank(),
-            panel.grid.major = ggplot2::element_line(color = "gray",
-                                                     linetype = "dotted"),
-            plot.title = ggplot2::element_text(size = 14,
-                                               face = "bold",
-                                               hjust = 0),  # Left aligned title
-            plot.subtitle = ggplot2::element_text(size = 11,
-                                                  hjust = 0,  # Left aligned subtitle
-                                                  color = "gray30"),
-            axis.title = ggplot2::element_text(size = 12),
-            axis.text = ggplot2::element_text(size = 10),
-            axis.text.x = ggplot2::element_text(angle = 45,
-                                                hjust = 1,
-                                                size = 9),
-            legend.position = "right",  # Legend on right side
-            legend.title = ggplot2::element_text(size = 11),
-            legend.text = ggplot2::element_text(size = 10),
-            strip.text = ggplot2::element_text(size = 11, face = "plain")  # No bold facet titles
+            axis.title.x = ggplot2::element_blank(),
+            axis.text.y.left = ggplot2::element_text(face = "bold"),
+            legend.position = "right",
+            legend.box = "vertical",
+            strip.background = ggplot2::element_blank(),
+            strip.placement = "outside",
+            strip.text.x = ggplot2::element_text(face = "bold", size = 10)
         )
-
-    # Add significance annotations with better positioning
-    # Calculate y position for annotations based on data range per facet
-    y_ranges <- aggregate(Expression ~ PC, data = plot_data,
-                          FUN = function(x) c(min = min(x, na.rm = TRUE),
-                                              max = max(x, na.rm = TRUE)))
-
-    # Create a data frame for y positions
-    y_positions <- data.frame(
-        PC = y_ranges[["PC"]],
-        y_min = y_ranges[["Expression"]][, "min"],
-        y_max = y_ranges[["Expression"]][, "max"]
-    )
-
-    # Merge with gene annotations
-    gene_annotations <- merge(gene_annotations, y_positions, by = "PC")
-    gene_annotations[["y_annotation"]] <- gene_annotations[["y_max"]] +
-        0.05 * (gene_annotations[["y_max"]] - gene_annotations[["y_min"]])
-
-    # Add p-values (no asterisks)
-    p <- p + ggplot2::geom_text(
-        data = gene_annotations,
-        ggplot2::aes(x = .data[["Gene_PC"]], y = .data[["y_annotation"]],
-                     label = .data[["p_formatted"]]),
-        inherit.aes = FALSE,
-        size = 2.8,
-        color = ifelse(gene_annotations[["significant"]], "#D32F2F", "gray50"),
-        vjust = 0,
-        angle = 0
-    )
 
     return(p)
 }

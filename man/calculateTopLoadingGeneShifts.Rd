@@ -24,6 +24,7 @@ calculateTopLoadingGeneShifts(
   x,
   cell_type,
   pc_subset = 1:3,
+  plot_type = c("heatmap", "boxplot"),
   plot_by = c("p_adjusted", "top_loading"),
   n_genes = 10,
   significance_threshold = 0.05,
@@ -54,86 +55,61 @@ calculateTopLoadingGeneShifts(
 \item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
 Default is 2500.}
 
-\item{x}{An object of class \code{calculateTopLoadingGeneShiftsObject} containing the output of the \code{calculateTopLoadingGeneShifts} function.}
+\item{x}{An object of class \code{calculateTopLoadingGeneShiftsObject}.}
 
 \item{cell_type}{A character string specifying the cell type to plot (must be exactly one).}
 
-\item{plot_by}{A character string specifying gene selection method. Either "top_loading" or "p_adjusted". Default is "p_adjusted".}
+\item{plot_type}{A character string specifying visualization type. Either "heatmap" or "boxplot".
+Default is "heatmap".}
 
-\item{n_genes}{Number of genes to show per PC. Default is 10.}
+\item{plot_by}{A character string specifying gene selection method when `n_genes` is not NULL.
+Either "top_loading" or "p_adjusted". Default is "p_adjusted".}
 
-\item{significance_threshold}{P-adjusted threshold for significance annotation. Default is 0.05.}
+\item{n_genes}{Number of top genes to show per PC. Can be NULL if `significance_threshold` is set.
+Default is 10.}
 
-\item{...}{Additional arguments to be passed to the plotting functions.}
+\item{significance_threshold}{If not NULL, a numeric value between 0 and 1. Used for gene
+selection or annotation. Default is 0.05.}
+
+\item{...}{Additional arguments passed to \code{\link[ComplexHeatmap]{draw}} or not used for boxplot.}
 }
 \value{
 A list containing:
 \itemize{
-  \item PC results: Named elements for each PC (e.g., "PC1", "PC2") containing data frames with analysis results
-  \item expression_data: Matrix of expression values for all analyzed genes (genes × cells)
-  \item cell_metadata: Data frame with columns: cell_id, dataset, cell_type, original_index
-  \item gene_metadata: Data frame with columns: gene, pc, loading for all analyzed genes
-  \item percent_var: Named numeric vector of percent variance explained for each analyzed PC
+  \item PC results: Named elements for each PC (e.g., "PC1", "PC2") containing data frames with gene-level analysis results.
+  \item expression_data: Matrix of expression values for all analyzed genes (genes × cells).
+  \item cell_metadata: Data frame with columns: cell_id, dataset, cell_type, original_index.
+  \item gene_metadata: Data frame with columns: gene, pc, loading for all analyzed genes.
+  \item percent_var: Named numeric vector of global percent variance explained for each analyzed PC.
+  \item cell_type_variance: A data frame detailing the percent of variance a global PC explains within specific cell types for both query and reference datasets.
 }
 
-Each PC data frame contains columns:
-\itemize{
-  \item gene: Gene symbol
-  \item loading: PC loading value for the gene
-  \item cell_type: Cell type analyzed
-  \item p_value: Raw p-value from Wilcoxon rank-sum test
-  \item p_adjusted: Adjusted p-value
-  \item mean_query: Mean expression in query data
-  \item mean_reference: Mean expression in reference data
-  \item significant: Logical indicating statistical significance
-}
+The `cell_type_variance` data frame contains columns: pc, cell_type, dataset, percent_variance.
 
-A ggplot object showing boxplots of gene expression by PC and dataset.
+A plot object.
 }
 \description{
 This function identifies genes with the highest loadings for specified principal components
 and performs statistical tests to detect distributional differences between query and reference data.
+It also calculates the proportion of variance explained by each principal component within
+specific cell types.
 
-This function creates boxplots showing expression distributions for top loading genes
-that exhibit distributional differences between query and reference datasets.
+This function creates visualizations showing expression distributions for top loading genes
+that exhibit distributional differences between query and reference datasets. Can display
+results as elegant complex heatmaps or as information-rich summary boxplots.
 }
 \details{
 This function extracts the top loading genes for each specified principal component from the reference
 PCA space and performs distributional comparisons between query and reference data. For each gene,
 it performs statistical tests to identify genes that may be causing PC-specific alignment issues
-between datasets.
+between datasets. A key feature is the calculation of cell-type-specific variance explained by
+global PCs, providing a more nuanced view of how major biological axes affect individual populations.
 
-This function visualizes the results from \code{calculateTopLoadingGeneShifts} by creating
-faceted boxplots. Each facet represents a principal component with its variance explained.
-Within each facet, boxplots show expression distributions for selected genes, comparing
-query and reference datasets for a specific cell type. Genes can be selected either by
-highest absolute loadings or most significant p-adjusted values.
-}
-\examples{
-# Load data
-data("reference_data")
-data("query_data")
-
-# Compute distributional shifts for genes with top loadings
-gene_shifts <- calculateTopLoadingGeneShifts(reference_data = reference_data,
-                                             query_data = query_data,
-                                             query_cell_type_col = "SingleR_annotation",
-                                             ref_cell_type_col = "expert_annotation",
-                                             cell_types = NULL,
-                                             pc_subset = 1:3,
-                                             n_top_loadings = 50,
-                                             assay_name = "logcounts",
-                                             p_value_threshold = 0.05,
-                                             adjust_method = "fdr")
-
-# Plot gene shifts
-plot(gene_shifts,
-     cell_type = "CD8",
-     pc_subset = 1:3,
-     plot_by = "p_adjusted",
-     n_genes = 10,
-     significance_threshold = 0.05)
-
+This function visualizes the results from \code{calculateTopLoadingGeneShifts}.
+The "heatmap" option displays a hierarchically clustered set of genes.
+The "boxplot" option creates a two-panel plot using `ggplot2`: the left panel shows
+horizontal expression boxplots for up to 5 PCs, while the right panel displays their
+corresponding PC loadings and adjusted p-values.
 }
 \seealso{
 \code{\link{plot.calculateTopLoadingGeneShiftsObject}}
