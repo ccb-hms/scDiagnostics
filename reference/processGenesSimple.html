@@ -109,24 +109,7 @@ to compare their expression distributions between query and reference datasets.<
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of data frames, where each data frame contains results for one gene with columns:</p><ul><li><p>gene: Gene symbol</p></li>
-<li><p>loading: PC loading value for the gene</p></li>
-<li><p>cell_type: Cell type analyzed</p></li>
-<li><p>p_value: Raw p-value from Wilcoxon rank-sum test</p></li>
-<li><p>mean_query: Mean expression in query data</p></li>
-<li><p>mean_reference: Mean expression in reference data</p></li>
-</ul></div>
-    <div id="details">
-    <h2>Details</h2>
-    <p>This function processes a set of top loading genes for a specific cell type by:</p><ul><li><p>Extracting expression values for each gene from query and reference matrices</p></li>
-<li><p>Removing NA values and checking for sufficient sample sizes</p></li>
-<li><p>Calculating mean expression values for both datasets</p></li>
-<li><p>Performing Wilcoxon rank-sum tests to assess distributional differences</p></li>
-<li><p>Returning results in a standardized data frame format</p></li>
-</ul></div>
-    <div id="author">
-    <h2>Author</h2>
-    <p>Anthony Christidis, <a href="mailto:anthony-alexander_christidis@hms.harvard.edu">anthony-alexander_christidis@hms.harvard.edu</a></p>
+    <p>A list of data frames, where each data frame contains results for one gene.</p>
     </div>
 
   </div>
