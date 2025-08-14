@@ -70,36 +70,27 @@ downsampleSCE <- function(sce, max_cells = 2500, seed = NULL) {
     # Sample cells
     cell_indices <- sample(n_cells, max_cells)
 
-    # Store all reducedDims attributes before subsetting
-    reduced_dims_attrs <- list()
-    for (dim_name in reducedDimNames(sce)) {
-        reduced_dims_attrs[[dim_name]] <-
-            attributes(reducedDim(sce, dim_name))
+    # Store ONLY the PCA reducedDim's attributes
+    pca_attrs <- NULL
+    if ("PCA" %in% reducedDimNames(sce)) {
+        pca_attrs <- attributes(reducedDim(sce, "PCA"))
     }
 
-    # Perform subsetting
+    # Subset SCE
     sce_subset <- sce[, cell_indices]
 
-    # Restore reducedDims attributes for all dimensionality reductions
-    for (dim_name in names(reduced_dims_attrs)) {
-        if (dim_name %in% reducedDimNames(sce_subset)) {
-
-            # Get the subsetted coordinates
-            dim_coords <- reducedDim(sce_subset, dim_name)
-            original_attrs <- reduced_dims_attrs[[dim_name]]
-
-            # Restore all attributes except automatic ones (dim, dimnames)
-            for (attr_name in names(original_attrs)) {
-                if (!attr_name %in% c("dim", "dimnames")) {
-                    attr(dim_coords, attr_name) <-
-                        original_attrs[[attr_name]]
-                }
+    # Restore PCA attributes only
+    if (!is.null(pca_attrs) && "PCA" %in% reducedDimNames(sce_subset)) {
+        dim_coords <- reducedDim(sce_subset, "PCA")
+        for (attr_name in names(pca_attrs)) {
+            if (!attr_name %in% c("dim", "dimnames")) {
+                attr(dim_coords, attr_name) <- pca_attrs[[attr_name]]
             }
-
-            # Put back into SCE
-            reducedDim(sce_subset, dim_name) <- dim_coords
         }
+        reducedDim(sce_subset, "PCA") <- dim_coords
     }
+
+    # Do NOT restore attributes for any other reducedDims (so, no loop!)
 
     return(sce_subset)
 }
