@@ -365,7 +365,8 @@ regressPC <- function(query_data,
                                  ref_cell_type_col = ref_cell_type_col,
                                  query_cell_type_col = query_cell_type_col,
                                  pc_subset = pc_subset,
-                                 assay_name = assay_name)
+                                 assay_name = assay_name,
+                                 max_cells = NULL)
         pca_output <- pca_output[pca_output[["cell_type"]] %in% cell_types,]
 
         # Case 2a: No batch - PC ~ cell_type * dataset

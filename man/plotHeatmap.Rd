@@ -10,7 +10,8 @@ plotHeatmap(
   available_pcs,
   plot_by,
   n_genes,
-  significance_threshold
+  significance_threshold,
+  show_anomalies
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ expression data and analysis results.}
 \item{n_genes}{An integer specifying the number of top genes to display per PC. Can be NULL.}
 
 \item{significance_threshold}{A numeric value between 0 and 1 for significance filtering. Can be NULL.}
+
+\item{show_anomalies}{Logical indicating whether to show anomaly annotations.}
 }
 \value{
 A ComplexHeatmap object ready for plotting, or NULL if no genes meet selection criteria.
@@ -34,12 +37,22 @@ A ComplexHeatmap object ready for plotting, or NULL if no genes meet selection c
 This internal helper function creates a single, hierarchically clustered heatmap
 displaying expression data for top loading genes from principal component analysis.
 The function handles gene selection, data preprocessing, and visualization formatting.
+Optionally includes anomaly status annotations with proper cell ordering.
 }
 \details{
 This function generates a ComplexHeatmap visualization showing scaled gene expression
 data across cells. Genes are selected based on either their loading values or
 statistical significance. The function automatically handles data filtering,
 scaling, and visual formatting including color schemes and annotations.
+
+Cell ordering (left to right):
+1. Query Anomalous cells (leftmost)
+2. Query Normal cells
+3. Reference Anomalous cells
+4. Reference Normal cells (rightmost)
+
+This ensures clear dataset separation while grouping anomalous cells together
+within each dataset for easy visual identification.
 }
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}

@@ -17,6 +17,9 @@ calculateTopLoadingGeneShifts(
   p_value_threshold = 0.05,
   adjust_method = "fdr",
   assay_name = "logcounts",
+  detect_anomalies = FALSE,
+  anomaly_threshold = 0.6,
+  n_tree = 500,
   max_cells = 2500
 )
 
@@ -28,6 +31,8 @@ calculateTopLoadingGeneShifts(
   plot_by = c("p_adjusted", "top_loading"),
   n_genes = 10,
   significance_threshold = 0.05,
+  show_anomalies = FALSE,
+  draw_plot = TRUE,
   ...
 )
 }
@@ -52,6 +57,15 @@ calculateTopLoadingGeneShifts(
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
+\item{detect_anomalies}{Logical indicating whether to perform anomaly detection using isolation forests.
+Default is FALSE.}
+
+\item{anomaly_threshold}{A numeric value specifying the threshold for identifying anomalies when
+\code{detect_anomalies} is TRUE. Default is 0.6.}
+
+\item{n_tree}{An integer specifying the number of trees for the isolation forest when
+\code{detect_anomalies} is TRUE. Default is 500.}
+
 \item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
 Default is 2500.}
 
@@ -71,6 +85,13 @@ Default is 10.}
 \item{significance_threshold}{If not NULL, a numeric value between 0 and 1. Used for gene
 selection or annotation. Default is 0.05.}
 
+\item{show_anomalies}{Logical indicating whether to display anomaly status annotations.
+Default is FALSE. Requires anomaly results to be present in the object.}
+
+\item{draw_plot}{Logical indicating whether to draw the plot immediately (TRUE) or return
+the undrawn plot object (FALSE). For heatmaps, FALSE returns a ComplexHeatmap
+object that can be further customized before drawing. Default is TRUE.}
+
 \item{...}{Additional arguments passed to \code{\link[ComplexHeatmap]{draw}} or not used for boxplot.}
 }
 \value{
@@ -78,13 +99,15 @@ A list containing:
 \itemize{
   \item PC results: Named elements for each PC (e.g., "PC1", "PC2") containing data frames with gene-level analysis results.
   \item expression_data: Matrix of expression values for all analyzed genes (genes × cells).
-  \item cell_metadata: Data frame with columns: cell_id, dataset, cell_type, original_index.
+  \item cell_metadata: Data frame with columns: cell_id, dataset, cell_type, original_index, and optionally anomaly_status.
   \item gene_metadata: Data frame with columns: gene, pc, loading for all analyzed genes.
   \item percent_var: Named numeric vector of global percent variance explained for each analyzed PC.
   \item cell_type_variance: A data frame detailing the percent of variance a global PC explains within specific cell types for both query and reference datasets.
+  \item anomaly_results: If \code{detect_anomalies} is TRUE, contains the full output from \code{detectAnomaly}.
 }
 
 The `cell_type_variance` data frame contains columns: pc, cell_type, dataset, percent_variance.
+When anomaly detection is enabled, `cell_metadata` includes an additional `anomaly_status` column.
 
 A plot object.
 }
@@ -92,11 +115,12 @@ A plot object.
 This function identifies genes with the highest loadings for specified principal components
 and performs statistical tests to detect distributional differences between query and reference data.
 It also calculates the proportion of variance explained by each principal component within
-specific cell types.
+specific cell types. Optionally, it can detect anomalous cells using isolation forests.
 
 This function creates visualizations showing expression distributions for top loading genes
 that exhibit distributional differences between query and reference datasets. Can display
-results as elegant complex heatmaps or as information-rich summary boxplots.
+results as elegant complex heatmaps or as information-rich summary boxplots. Optionally
+displays anomaly status when available.
 }
 \details{
 This function extracts the top loading genes for each specified principal component from the reference
@@ -104,15 +128,19 @@ PCA space and performs distributional comparisons between query and reference da
 it performs statistical tests to identify genes that may be causing PC-specific alignment issues
 between datasets. A key feature is the calculation of cell-type-specific variance explained by
 global PCs, providing a more nuanced view of how major biological axes affect individual populations.
+When anomaly detection is enabled, isolation forests are used to identify anomalous cells based on
+their PCA projections.
 
 This function visualizes the results from \code{calculateTopLoadingGeneShifts}.
 The "heatmap" option displays a hierarchically clustered set of genes.
 The "boxplot" option creates a two-panel plot using `ggplot2`: the left panel shows
 horizontal expression boxplots for up to 5 PCs, while the right panel displays their
-corresponding PC loadings and adjusted p-values.
+corresponding PC loadings and adjusted p-values. When anomaly detection results are
+available and \code{show_anomalies} is TRUE, an additional annotation bar highlights
+anomalous cells.
 }
 \seealso{
-\code{\link{plot.calculateTopLoadingGeneShiftsObject}}
+\code{\link{plot.calculateTopLoadingGeneShiftsObject}}, \code{\link{detectAnomaly}}
 
 \code{\link{calculateTopLoadingGeneShifts}}
 }

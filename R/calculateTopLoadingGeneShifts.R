@@ -4,7 +4,7 @@
 #' This function identifies genes with the highest loadings for specified principal components
 #' and performs statistical tests to detect distributional differences between query and reference data.
 #' It also calculates the proportion of variance explained by each principal component within
-#' specific cell types.
+#' specific cell types. Optionally, it can detect anomalous cells using isolation forests.
 #'
 #' @details
 #' This function extracts the top loading genes for each specified principal component from the reference
@@ -12,6 +12,8 @@
 #' it performs statistical tests to identify genes that may be causing PC-specific alignment issues
 #' between datasets. A key feature is the calculation of cell-type-specific variance explained by
 #' global PCs, providing a more nuanced view of how major biological axes affect individual populations.
+#' When anomaly detection is enabled, isolation forests are used to identify anomalous cells based on
+#' their PCA projections.
 #'
 #' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
@@ -23,6 +25,12 @@
 #' @param p_value_threshold P-value threshold for statistical significance. Default is 0.05.
 #' @param adjust_method Method for multiple testing correction. Default is "fdr".
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param detect_anomalies Logical indicating whether to perform anomaly detection using isolation forests.
+#'                        Default is FALSE.
+#' @param anomaly_threshold A numeric value specifying the threshold for identifying anomalies when
+#'                         \code{detect_anomalies} is TRUE. Default is 0.6.
+#' @param n_tree An integer specifying the number of trees for the isolation forest when
+#'              \code{detect_anomalies} is TRUE. Default is 500.
 #' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
 #'                  Default is 2500.
 #'
@@ -30,23 +38,26 @@
 #' \itemize{
 #'   \item PC results: Named elements for each PC (e.g., "PC1", "PC2") containing data frames with gene-level analysis results.
 #'   \item expression_data: Matrix of expression values for all analyzed genes (genes × cells).
-#'   \item cell_metadata: Data frame with columns: cell_id, dataset, cell_type, original_index.
+#'   \item cell_metadata: Data frame with columns: cell_id, dataset, cell_type, original_index, and optionally anomaly_status.
 #'   \item gene_metadata: Data frame with columns: gene, pc, loading for all analyzed genes.
 #'   \item percent_var: Named numeric vector of global percent variance explained for each analyzed PC.
 #'   \item cell_type_variance: A data frame detailing the percent of variance a global PC explains within specific cell types for both query and reference datasets.
+#'   \item anomaly_results: If \code{detect_anomalies} is TRUE, contains the full output from \code{detectAnomaly}.
 #' }
 #'
 #' The `cell_type_variance` data frame contains columns: pc, cell_type, dataset, percent_variance.
+#' When anomaly detection is enabled, `cell_metadata` includes an additional `anomaly_status` column.
 #'
 #' @export
 #'
 #' @author
 #' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
-#' @seealso \code{\link{plot.calculateTopLoadingGeneShiftsObject}}
+#' @seealso \code{\link{plot.calculateTopLoadingGeneShiftsObject}}, \code{\link{detectAnomaly}}
 #'
 #' @importFrom stats wilcox.test var p.adjust na.omit setNames
 #'
+# Function to calculate expression shifts for genes with top loadings
 calculateTopLoadingGeneShifts <- function(query_data,
                                           reference_data,
                                           query_cell_type_col,
@@ -57,7 +68,25 @@ calculateTopLoadingGeneShifts <- function(query_data,
                                           p_value_threshold = 0.05,
                                           adjust_method = "fdr",
                                           assay_name = "logcounts",
+                                          detect_anomalies = FALSE,
+                                          anomaly_threshold = 0.6,
+                                          n_tree = 500,
                                           max_cells = 2500) {
+
+    # Check standard input arguments
+    argumentCheck(query_data = query_data,
+                  reference_data = reference_data,
+                  ref_cell_type_col = ref_cell_type_col,
+                  query_cell_type_col = query_cell_type_col,
+                  cell_types = cell_types,
+                  pc_subset_query = pc_subset,
+                  assay_name = assay_name)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells)
 
     # Input validation
     if (!is.numeric(n_top_loadings) || length(n_top_loadings) != 1 || n_top_loadings <= 0) {
@@ -67,6 +96,22 @@ calculateTopLoadingGeneShifts <- function(query_data,
     if (!is.numeric(p_value_threshold) || length(p_value_threshold) != 1 ||
         p_value_threshold < 0 || p_value_threshold > 1) {
         stop("p_value_threshold must be between 0 and 1")
+    }
+
+    # Validate anomaly detection parameters
+    if (!is.logical(detect_anomalies) || length(detect_anomalies) != 1) {
+        stop("detect_anomalies must be a logical value")
+    }
+
+    if (detect_anomalies) {
+        if (!is.numeric(anomaly_threshold) || length(anomaly_threshold) != 1 ||
+            anomaly_threshold <= 0 || anomaly_threshold >= 1) {
+            stop("anomaly_threshold must be a numeric value between 0 and 1")
+        }
+
+        if (!is.numeric(n_tree) || length(n_tree) != 1 || n_tree <= 0 || n_tree != as.integer(n_tree)) {
+            stop("n_tree must be a positive integer")
+        }
     }
 
     # Check if cell type columns exist
@@ -116,6 +161,28 @@ calculateTopLoadingGeneShifts <- function(query_data,
         return(list())
     }
 
+    # Perform anomaly detection if requested
+    anomaly_results <- NULL
+    if (detect_anomalies) {
+        tryCatch({
+            anomaly_results <- detectAnomaly(
+                reference_data = reference_data,
+                query_data = query_data,
+                ref_cell_type_col = ref_cell_type_col,
+                query_cell_type_col = query_cell_type_col,
+                cell_types = available_cell_types,
+                pc_subset = pc_subset,
+                n_tree = n_tree,
+                anomaly_threshold = anomaly_threshold,
+                assay_name = assay_name,
+                max_cells = max_cells
+            )
+        }, error = function(e) {
+            warning("Anomaly detection failed: ", e$message, ". Continuing without anomaly detection.")
+            anomaly_results <<- NULL
+        })
+    }
+
     # Gene-level statistical analysis
     all_top_genes <- character(0)
     gene_metadata_list <- list()
@@ -124,12 +191,16 @@ calculateTopLoadingGeneShifts <- function(query_data,
     for (pc in pc_subset) {
         pc_name <- paste0("PC", pc)
         pc_loadings <- pca_rotation[, pc]
-        top_loading_indices <- order(abs(pc_loadings), decreasing = TRUE)[1:min(n_top_loadings, length(pc_loadings))]
+        top_loading_indices <- order(abs(pc_loadings),
+                                     decreasing = TRUE)[1:min(n_top_loadings, length(pc_loadings))]
         top_genes <- names(pc_loadings)[top_loading_indices]
         top_loadings_vals <- pc_loadings[top_loading_indices]
 
         all_top_genes <- unique(c(all_top_genes, top_genes))
-        gene_metadata_list[[pc_name]] <- data.frame(gene = top_genes, pc = pc, loading = top_loadings_vals, stringsAsFactors = FALSE)
+        gene_metadata_list[[pc_name]] <- data.frame(gene = top_genes,
+                                                    pc = pc,
+                                                    loading = top_loadings_vals,
+                                                    stringsAsFactors = FALSE)
 
         pc_result_list <- list()
         for (ct in available_cell_types) {
@@ -137,11 +208,20 @@ calculateTopLoadingGeneShifts <- function(query_data,
             ref_cells_ct <- ref_cell_indices[[ct]]
             if (length(query_cells_ct) < 3 || length(ref_cells_ct) < 3) next
 
-            query_expr_ct <- SummarizedExperiment::assay(query_data, assay_name)[top_genes, query_cells_ct, drop = FALSE]
-            ref_expr_ct <- SummarizedExperiment::assay(reference_data, assay_name)[top_genes, ref_cells_ct, drop = FALSE]
+            query_expr_ct <- SummarizedExperiment::assay(query_data,
+                                                         assay_name)[top_genes,
+                                                                     query_cells_ct, drop = FALSE]
+            ref_expr_ct <- SummarizedExperiment::assay(reference_data,
+                                                       assay_name)[top_genes,
+                                                                   ref_cells_ct, drop = FALSE]
 
-            gene_results <- processGenesSimple(top_genes, top_loadings_vals, query_expr_ct, ref_expr_ct, ct)
-            if (length(gene_results) > 0) pc_result_list <- c(pc_result_list, gene_results)
+            gene_results <- processGenesSimple(top_genes,
+                                               top_loadings_vals,
+                                               query_expr_ct,
+                                               ref_expr_ct,
+                                               ct)
+            if (length(gene_results) > 0)
+                pc_result_list <- c(pc_result_list, gene_results)
         }
 
         if (length(pc_result_list) > 0) {
@@ -159,8 +239,10 @@ calculateTopLoadingGeneShifts <- function(query_data,
 
     # Cell-type-specific variance explained by global PCs
     var_explained_list <- list()
-    full_ref_assay <- SummarizedExperiment::assay(reference_data, assay_name)[common_genes, ]
-    full_query_assay <- SummarizedExperiment::assay(query_data, assay_name)[common_genes, ]
+    full_ref_assay <- SummarizedExperiment::assay(reference_data,
+                                                  assay_name)[common_genes, ]
+    full_query_assay <- SummarizedExperiment::assay(query_data,
+                                                    assay_name)[common_genes, ]
 
     for (ct in available_cell_types) {
         ref_cells_ct <- ref_cell_indices[[ct]]
@@ -169,7 +251,6 @@ calculateTopLoadingGeneShifts <- function(query_data,
         ref_expr_ct <- full_ref_assay[, ref_cells_ct, drop = FALSE]
         query_expr_ct <- full_query_assay[, query_cells_ct, drop = FALSE]
 
-        # CHANGE: Replaced matrixStats::rowVars with base R apply()
         total_var_ref <- if(ncol(ref_expr_ct) > 1) sum(apply(as.matrix(ref_expr_ct), 1, stats::var)) else 0
         total_var_query <- if(ncol(query_expr_ct) > 1) sum(apply(as.matrix(query_expr_ct), 1, stats::var)) else 0
 
@@ -182,14 +263,16 @@ calculateTopLoadingGeneShifts <- function(query_data,
                 var_scores_ref <- stats::var(as.vector(ref_scores))
                 pct_var_ref <- (var_scores_ref / total_var_ref) * 100
                 var_explained_list[[length(var_explained_list) + 1]] <- data.frame(
-                    pc = pc_name, cell_type = ct, dataset = "Reference", percent_variance = pct_var_ref, stringsAsFactors = FALSE)
+                    pc = pc_name, cell_type = ct, dataset = "Reference",
+                    percent_variance = pct_var_ref, stringsAsFactors = FALSE)
             }
             if (total_var_query > .Machine$double.eps) {
                 query_scores <- crossprod(query_expr_ct, loadings_pc)
                 var_scores_query <- stats::var(as.vector(query_scores))
                 pct_var_query <- (var_scores_query / total_var_query) * 100
                 var_explained_list[[length(var_explained_list) + 1]] <- data.frame(
-                    pc = pc_name, cell_type = ct, dataset = "Query", percent_variance = pct_var_query, stringsAsFactors = FALSE)
+                    pc = pc_name, cell_type = ct, dataset = "Query",
+                    percent_variance = pct_var_query, stringsAsFactors = FALSE)
             }
         }
     }
@@ -200,10 +283,15 @@ calculateTopLoadingGeneShifts <- function(query_data,
     query_relevant_cells <- unlist(query_cell_indices[available_cell_types], use.names = FALSE)
     ref_relevant_cells <- unlist(ref_cell_indices[available_cell_types], use.names = FALSE)
 
-    query_expr_plot <- SummarizedExperiment::assay(query_data, assay_name)[all_top_genes, query_relevant_cells, drop = FALSE]
-    ref_expr_plot <- SummarizedExperiment::assay(reference_data, assay_name)[all_top_genes, ref_relevant_cells, drop = FALSE]
+    query_expr_plot <- SummarizedExperiment::assay(query_data,
+                                                   assay_name)[all_top_genes,
+                                                               query_relevant_cells, drop = FALSE]
+    ref_expr_plot <- SummarizedExperiment::assay(reference_data,
+                                                 assay_name)[all_top_genes,
+                                                             ref_relevant_cells, drop = FALSE]
     expression_data <- cbind(ref_expr_plot, query_expr_plot)
 
+    # Create cell metadata with anomaly information
     cell_metadata <- rbind(
         data.frame(cell_id = colnames(ref_expr_plot), dataset = "Reference",
                    cell_type = reference_data[[ref_cell_type_col]][ref_relevant_cells],
@@ -212,6 +300,41 @@ calculateTopLoadingGeneShifts <- function(query_data,
                    cell_type = query_data[[query_cell_type_col]][query_relevant_cells],
                    original_index = query_relevant_cells, stringsAsFactors = FALSE)
     )
+
+    # Add anomaly status if anomaly detection was performed and successful
+    if (!is.null(anomaly_results)) {
+        # Initialize anomaly status
+        cell_metadata$anomaly_status <- "Normal"
+
+        # Process anomaly results for each cell type
+        for (ct in available_cell_types) {
+            if (ct %in% names(anomaly_results)) {
+                # Get reference anomaly status
+                if ("reference_anomaly" %in% names(anomaly_results[[ct]])) {
+                    ref_ct_cells <- ref_cell_indices[[ct]]
+                    ref_anomalies <- anomaly_results[[ct]][["reference_anomaly"]]
+                    ref_anomaly_cells <- ref_ct_cells[ref_anomalies]
+
+                    # Update cell metadata for reference anomalies
+                    ref_mask <- cell_metadata$dataset == "Reference" &
+                        cell_metadata$original_index %in% ref_anomaly_cells
+                    cell_metadata$anomaly_status[ref_mask] <- "Anomaly"
+                }
+
+                # Get query anomaly status
+                if ("query_anomaly" %in% names(anomaly_results[[ct]])) {
+                    query_ct_cells <- query_cell_indices[[ct]]
+                    query_anomalies <- anomaly_results[[ct]][["query_anomaly"]]
+                    query_anomaly_cells <- query_ct_cells[query_anomalies]
+
+                    # Update cell metadata for query anomalies
+                    query_mask <- cell_metadata$dataset == "Query" &
+                        cell_metadata$original_index %in% query_anomaly_cells
+                    cell_metadata$anomaly_status[query_mask] <- "Anomaly"
+                }
+            }
+        }
+    }
 
     # Assemble final results
     final_results <- c(
@@ -225,6 +348,11 @@ calculateTopLoadingGeneShifts <- function(query_data,
             cell_type_variance = cell_type_variance_df
         )
     )
+
+    # Add anomaly results if available
+    if (!is.null(anomaly_results)) {
+        final_results[["anomaly_results"]] <- anomaly_results
+    }
 
     class(final_results) <- c(class(final_results), "calculateTopLoadingGeneShiftsObject")
     return(final_results)
@@ -243,10 +371,14 @@ calculateTopLoadingGeneShifts <- function(query_data,
 #' @param cell_type Character string specifying the cell type being analyzed.
 #'
 #' @keywords internal
+#'
 #' @return A list of data frames, where each data frame contains results for one gene.
 #'
-processGenesSimple <- function(top_genes, top_loadings,
-                               query_expr_matrix, ref_expr_matrix,
+# Helper function to process genes for statistical analysis
+processGenesSimple <- function(top_genes,
+                               top_loadings,
+                               query_expr_matrix,
+                               ref_expr_matrix,
                                cell_type) {
 
     result_list <- list()

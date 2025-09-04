@@ -96,7 +96,8 @@ calculateCellDistances <- function(query_data,
                              query_cell_type_col = query_cell_type_col,
                              ref_cell_type_col = ref_cell_type_col,
                              pc_subset = pc_subset,
-                             assay_name = assay_name)
+                             assay_name = assay_name,
+                             max_cells = NULL)
 
     # Create a list to store distance data for each cell type
     distance_data <- vector("list", length = length(cell_types))

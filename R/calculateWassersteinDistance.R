@@ -101,7 +101,8 @@ calculateWassersteinDistance <- function(query_data,
                              pc_subset = pc_subset,
                              query_cell_type_col = query_cell_type_col,
                              ref_cell_type_col = ref_cell_type_col,
-                             assay_name = assay_name)
+                             assay_name = assay_name,
+                             max_cells = NULL)
 
     # Split by cell type
     cell_list <- split(pca_output, pca_output[["cell_type"]])

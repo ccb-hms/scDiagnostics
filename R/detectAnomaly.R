@@ -133,7 +133,8 @@ detectAnomaly <- function(reference_data,
                                      query_cell_type_col = query_cell_type_col,
                                      ref_cell_type_col = ref_cell_type_col,
                                      pc_subset = pc_subset,
-                                     assay_name = assay_name)
+                                     assay_name = assay_name,
+                                     max_cells = NULL)
             query_mat <- pca_output[pca_output[["dataset"]] == "Query",
                                     paste0("PC", pc_subset)]
         }

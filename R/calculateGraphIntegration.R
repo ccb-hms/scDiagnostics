@@ -191,7 +191,8 @@ calculateGraphIntegration <- function(query_data,
                              pc_subset = pc_subset,
                              query_cell_type_col = query_cell_type_col,
                              ref_cell_type_col = ref_cell_type_col,
-                             assay_name = assay_name)
+                             assay_name = assay_name,
+                             max_cells = NULL)
 
     # Filter to selected cell types
     pca_filtered <- pca_output[pca_output[["cell_type"]] %in% cell_types, ]

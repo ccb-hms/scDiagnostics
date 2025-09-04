@@ -22,7 +22,8 @@
 #' @param sce A \code{\linkS4class{SingleCellExperiment}} object to potentially downsample.
 #' Must contain PCA in reducedDims. May also contain UMAP, TSNE, or other reducedDims.
 #' @param max_cells Maximum number of cells to retain. If the object has fewer cells,
-#' it is returned unchanged. Default is 2500.
+#' it is returned unchanged. If NULL, no downsampling is performed (all cells are kept).
+#' Default is 2500.
 #' @param seed Random seed for reproducible downsampling. If NULL, no seed is set.
 #' Default is NULL.
 #'
@@ -30,12 +31,14 @@
 #'
 #' @return A \code{\linkS4class{SingleCellExperiment}} object with at most max_cells cells.
 #' If downsampling occurred, all reducedDims (PCA, UMAP, TSNE, etc.) and their
-#' attributes are preserved.
+#' attributes are preserved. If max_cells is NULL, the original object is returned unchanged.
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 # Function to downsample SCE objects
-downsampleSCE <- function(sce, max_cells = 2500, seed = NULL) {
+downsampleSCE <- function(sce,
+                          max_cells = 2500,
+                          seed = NULL) {
 
     # Check if sce is a SingleCellExperiment object
     if (!is(sce, "SingleCellExperiment")) {
@@ -43,10 +46,12 @@ downsampleSCE <- function(sce, max_cells = 2500, seed = NULL) {
     }
 
     # Check max_cells argument
-    if (!is.numeric(max_cells) || length(max_cells) != 1 || max_cells <= 0 || max_cells != as.integer(max_cells)) {
-        stop("'max_cells' must be a single positive integer.")
+    if (!is.null(max_cells)) {
+        if (!is.numeric(max_cells) || length(max_cells) != 1 || max_cells <= 0 || max_cells != as.integer(max_cells)) {
+            stop("'max_cells' must be a single positive integer or NULL.")
+        }
+        max_cells <- as.integer(max_cells)
     }
-    max_cells <- as.integer(max_cells)
 
     # Check seed argument
     if (!is.null(seed)) {
@@ -54,6 +59,11 @@ downsampleSCE <- function(sce, max_cells = 2500, seed = NULL) {
             stop("'seed' must be a single integer or NULL.")
         }
         seed <- as.integer(seed)
+    }
+
+    # If max_cells is NULL, return original object without downsampling
+    if (is.null(max_cells)) {
+        return(sce)
     }
 
     # Check if downsampling is needed

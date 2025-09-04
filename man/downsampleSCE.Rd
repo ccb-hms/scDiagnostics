@@ -11,7 +11,8 @@ downsampleSCE(sce, max_cells = 2500, seed = NULL)
 Must contain PCA in reducedDims. May also contain UMAP, TSNE, or other reducedDims.}
 
 \item{max_cells}{Maximum number of cells to retain. If the object has fewer cells,
-it is returned unchanged. Default is 2500.}
+it is returned unchanged. If NULL, no downsampling is performed (all cells are kept).
+Default is 2500.}
 
 \item{seed}{Random seed for reproducible downsampling. If NULL, no seed is set.
 Default is NULL.}
@@ -19,7 +20,7 @@ Default is NULL.}
 \value{
 A \code{\linkS4class{SingleCellExperiment}} object with at most max_cells cells.
 If downsampling occurred, all reducedDims (PCA, UMAP, TSNE, etc.) and their
-attributes are preserved.
+attributes are preserved. If max_cells is NULL, the original object is returned unchanged.
 }
 \description{
 This internal function downsamples \code{\linkS4class{SingleCellExperiment}} objects while preserving

@@ -87,7 +87,8 @@ calculateCramerPValue <- function(reference_data,
                              query_cell_type_col = query_cell_type_col,
                              ref_cell_type_col = ref_cell_type_col,
                              pc_subset = pc_subset,
-                             assay_name = assay_name)
+                             assay_name = assay_name,
+                             max_cells = NULL)
     pca_output <- pca_output[pca_output[["cell_type"]] %in% cell_types,]
 
     # Set data for Cramer test

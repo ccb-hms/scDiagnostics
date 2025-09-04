@@ -3,14 +3,17 @@
 #' @description
 #' This function creates visualizations showing expression distributions for top loading genes
 #' that exhibit distributional differences between query and reference datasets. Can display
-#' results as elegant complex heatmaps or as information-rich summary boxplots.
+#' results as elegant complex heatmaps or as information-rich summary boxplots. Optionally
+#' displays anomaly status when available.
 #'
 #' @details
 #' This function visualizes the results from \code{calculateTopLoadingGeneShifts}.
 #' The "heatmap" option displays a hierarchically clustered set of genes.
 #' The "boxplot" option creates a two-panel plot using `ggplot2`: the left panel shows
 #' horizontal expression boxplots for up to 5 PCs, while the right panel displays their
-#' corresponding PC loadings and adjusted p-values.
+#' corresponding PC loadings and adjusted p-values. When anomaly detection results are
+#' available and \code{show_anomalies} is TRUE, an additional annotation bar highlights
+#' anomalous cells.
 #'
 #' @param x An object of class \code{calculateTopLoadingGeneShiftsObject}.
 #' @param cell_type A character string specifying the cell type to plot (must be exactly one).
@@ -23,6 +26,11 @@
 #'                Default is 10.
 #' @param significance_threshold If not NULL, a numeric value between 0 and 1. Used for gene
 #'   selection or annotation. Default is 0.05.
+#' @param show_anomalies Logical indicating whether to display anomaly status annotations.
+#'                      Default is FALSE. Requires anomaly results to be present in the object.
+#' @param draw_plot Logical indicating whether to draw the plot immediately (TRUE) or return
+#'                  the undrawn plot object (FALSE). For heatmaps, FALSE returns a ComplexHeatmap
+#'                  object that can be further customized before drawing. Default is TRUE.
 #' @param ... Additional arguments passed to \code{\link[ComplexHeatmap]{draw}} or not used for boxplot.
 #'
 #' @return A plot object.
@@ -46,9 +54,11 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
                                                      plot_by = c("p_adjusted", "top_loading"),
                                                      n_genes = 10,
                                                      significance_threshold = 0.05,
+                                                     show_anomalies = FALSE,
+                                                     draw_plot = TRUE,
                                                      ...) {
 
-    # --- Input Validation ---
+    #Input Validation
     if (missing(cell_type) || length(cell_type) != 1) {
         stop("cell_type must be specified and be a single character string.")
     }
@@ -56,6 +66,19 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
     # Match arguments first
     plot_type <- match.arg(plot_type)
     plot_by <- match.arg(plot_by)
+
+    # Validate show_anomalies parameter
+    if (!is.logical(show_anomalies) || length(show_anomalies) != 1) {
+        stop("show_anomalies must be a logical value.")
+    }
+
+    # Check if anomaly data is available when requested
+    if (show_anomalies) {
+        if (!"anomaly_status" %in% names(x[["cell_metadata"]])) {
+            stop("Anomaly visualization requested but anomaly data not found in object. ",
+                 "Please re-run calculateTopLoadingGeneShifts() with detect_anomalies = TRUE.")
+        }
+    }
 
     # Validate plot-type specific requirements
     if (plot_type == "boxplot" && is.null(n_genes)) {
@@ -113,25 +136,32 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
         stop(paste("Cell type '", cell_type, "' not found in results.", sep = ""))
     }
 
-    # --- Route to Plotting Functions ---
+    # Route to Plotting Functions
     if (plot_type == "boxplot") {
         return(plotBoxplot(x, cell_type, available_pcs,
-                           plot_by, n_genes, significance_threshold))
+                           plot_by, n_genes, significance_threshold, show_anomalies))
     } else {
         ht <- plotHeatmap(x, cell_type, available_pcs,
-                          plot_by, n_genes, significance_threshold)
+                          plot_by, n_genes, significance_threshold, show_anomalies)
         if (is.null(ht)) {
             message("No data available to generate a heatmap for the specified parameters.")
             return(invisible(NULL))
         }
-        # Draw the heatmap
-        return(
-            ComplexHeatmap::draw(ht,
-                                 heatmap_legend_side = "right",
-                                 annotation_legend_side = "right",
-                                 merge_legends = TRUE,
-                                 ...)
-        )
+
+        # Return drawn or undrawn heatmap based on draw_plot parameter
+        if (draw_plot) {
+            # Draw the heatmap and return the drawn object
+            return(
+                ComplexHeatmap::draw(ht,
+                                     heatmap_legend_side = "right",
+                                     annotation_legend_side = "right",
+                                     merge_legends = TRUE,
+                                     ...)
+            )
+        } else {
+            # Return the undrawn Heatmap object for further customization
+            return(ht)
+        }
     }
 }
 
@@ -141,12 +171,22 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
 #' This internal helper function creates a single, hierarchically clustered heatmap
 #' displaying expression data for top loading genes from principal component analysis.
 #' The function handles gene selection, data preprocessing, and visualization formatting.
+#' Optionally includes anomaly status annotations with proper cell ordering.
 #'
 #' @details
 #' This function generates a ComplexHeatmap visualization showing scaled gene expression
 #' data across cells. Genes are selected based on either their loading values or
 #' statistical significance. The function automatically handles data filtering,
 #' scaling, and visual formatting including color schemes and annotations.
+#'
+#' Cell ordering (left to right):
+#' 1. Query Anomalous cells (leftmost)
+#' 2. Query Normal cells
+#' 3. Reference Anomalous cells
+#' 4. Reference Normal cells (rightmost)
+#'
+#' This ensures clear dataset separation while grouping anomalous cells together
+#' within each dataset for easy visual identification.
 #'
 #' @param x An object of class \code{calculateTopLoadingGeneShiftsObject} containing
 #'   expression data and analysis results.
@@ -155,6 +195,7 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
 #' @param plot_by A character string indicating gene selection criterion ("top_loading" or "p_adjusted").
 #' @param n_genes An integer specifying the number of top genes to display per PC. Can be NULL.
 #' @param significance_threshold A numeric value between 0 and 1 for significance filtering. Can be NULL.
+#' @param show_anomalies Logical indicating whether to show anomaly annotations.
 #'
 #' @keywords internal
 #'
@@ -164,7 +205,7 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
 #'
 # Helper heatmap function
 plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
-                        n_genes, significance_threshold) {
+                        n_genes, significance_threshold, show_anomalies) {
 
     # Initialize gene collection
     all_genes_to_plot <- c()
@@ -231,9 +272,23 @@ plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
         significant_genes <- unique(unlist(sig_gene_list))
     }
 
-    # Prepare cell subset and ordering
+    # Prepare cell subset and ordering - UPDATED for proper anomaly ordering
     cell_subset <- x[["cell_metadata"]][x[["cell_metadata"]][["cell_type"]] == cell_type, ]
-    cell_subset <- cell_subset[order(cell_subset[["dataset"]]), ]
+
+    # Create proper ordering: Query (Anomaly, Normal), then Reference (Anomaly, Normal)
+    if (show_anomalies && "anomaly_status" %in% names(cell_subset)) {
+        # Order by dataset first, then by anomaly status within each dataset
+        # This creates: Query-Anomaly, Query-Normal, Reference-Anomaly, Reference-Normal
+        cell_subset <- cell_subset[order(
+            factor(cell_subset[["dataset"]], levels = c("Query", "Reference")),
+            factor(cell_subset[["anomaly_status"]], levels = c("Anomaly", "Normal"))
+        ), ]
+    } else {
+        # Standard ordering by dataset only when no anomaly information
+        cell_subset <- cell_subset[order(
+            factor(cell_subset[["dataset"]], levels = c("Query", "Reference"))
+        ), ]
+    }
 
     # Extract and filter expression matrix
     expr_matrix_unfiltered <- as.matrix(
@@ -259,7 +314,8 @@ plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
     scaled_matrix[scaled_matrix > 2] <- 2
 
     # Define color schemes
-    dataset_colors <- c("Query" = "#E41A1C", "Reference" = "#377EB8")
+    dataset_colors <- c("Query" = "#9932CC", "Reference" = "#377EB8")
+    anomaly_colors <- c("Non-Anomalous" = "#228B22", "Anomalous" = "#DC143C")
 
     # Create custom color mapping function
     .createColorMapping <- function(breaks, colors) {
@@ -285,13 +341,31 @@ plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
     zscore_col_fun <- .createColorMapping(c(-2, 0, 2),
                                           c("#313695", "white", "#A50026"))
 
-    # Create top annotation
+    # Create top annotation - start with anomaly status (if available), then dataset below
+    annotation_list <- list()
+    color_list <- list()
+    legend_params <- list()
+
+    if (show_anomalies && "anomaly_status" %in% names(cell_subset)) {
+        # Map anomaly status to new labels
+        anomaly_labels <- ifelse(cell_subset[["anomaly_status"]] == "Anomaly",
+                                 "Anomalous", "Non-Anomalous")
+        annotation_list[["Status"]] <- anomaly_labels
+        color_list[["Status"]] <- anomaly_colors
+        legend_params[["Status"]] <- list(title = "Status")
+    }
+
+    # Add dataset annotation below anomaly status
+    annotation_list[["Dataset"]] <- cell_subset[["dataset"]]
+    color_list[["Dataset"]] <- dataset_colors
+    legend_params[["Dataset"]] <- list(title = "Dataset")
+
     top_ha <- ComplexHeatmap::HeatmapAnnotation(
-        Dataset = cell_subset[["dataset"]],
-        col = list(Dataset = dataset_colors),
+        df = as.data.frame(annotation_list),
+        col = color_list,
         show_legend = TRUE,
         show_annotation_name = FALSE,
-        annotation_legend_param = list(title = "Dataset")
+        annotation_legend_param = legend_params
     )
 
     # Prepare gene labels with significance indicators
@@ -358,6 +432,7 @@ plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
 #' This internal helper function creates a comprehensive two-panel summary plot
 #' displaying gene expression distributions and principal component loadings.
 #' The visualization uses ggplot2 faceting to create side-by-side panels.
+#' Optionally includes anomaly status information using visual cues.
 #'
 #' @details
 #' This function generates a dual-panel ggplot2 visualization where the left panel
@@ -366,6 +441,18 @@ plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
 #' with adjusted p-values. Gene selection is based on the union of top genes
 #' across specified principal components.
 #'
+#' When anomaly information is available and requested, anomalous cells are
+#' distinguished using dashed boxplot borders (normal cells have solid borders).
+#' This approach avoids color conflicts between dataset identification (fill colors)
+#' and PC identification (point colors/shapes).
+#'
+#' Visual encoding:
+#' \itemize{
+#'   \item Dataset: Fill colors (Reference = blue, Query = red)
+#'   \item Anomaly status: Line types (Normal = solid, Anomaly = dashed borders)
+#'   \item PC identity: Point colors and shapes in loading panel
+#' }
+#'
 #' @param x An object of class \code{calculateTopLoadingGeneShiftsObject} containing
 #'   expression data and analysis results.
 #' @param cell_type A character string specifying the cell type to visualize.
@@ -373,16 +460,28 @@ plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
 #' @param plot_by A character string indicating gene selection criterion ("top_loading" or "p_adjusted").
 #' @param n_genes An integer specifying the number of top genes to display per PC.
 #' @param significance_threshold A numeric value between 0 and 1 for significance annotation.
+#' @param show_anomalies Logical indicating whether to show anomaly annotations using
+#'   line type differences in boxplot borders.
 #'
 #' @keywords internal
 #'
 #' @return A ggplot2 object ready for display, or NULL if no genes meet selection criteria.
+#'   The returned plot contains:
+#'   \itemize{
+#'     \item Left panel: Expression boxplots with dataset-specific fill colors
+#'     \item Right panel: PC loading scatter points with PC-specific colors/shapes
+#'     \item Gene labels on y-axis with significance indicators (*)
+#'     \item P-value annotations on secondary y-axis
+#'     \item Legend showing dataset, PC information, and anomaly status (if applicable)
+#'   }
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
-# Helper boxplot function - unchanged but with line breaks
+#' @seealso \code{\link{plotHeatmap}}, \code{\link{plot.calculateTopLoadingGeneShiftsObject}}
+#'
+# Helper boxplot function
 plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
-                        n_genes, significance_threshold) {
+                        n_genes, significance_threshold, show_anomalies) {
 
     # Validate required parameters
     if (is.null(n_genes)) {
@@ -443,9 +542,9 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
         drop = FALSE
     ]
 
-    # Create expression data frame
+    # Create expression data frame with cell-level metadata
     expr_plot_list <- lapply(final_gene_data[["gene"]], function(g) {
-        data.frame(
+        gene_data <- data.frame(
             gene = g,
             value = as.numeric(expr_subset[g, ]),
             dataset = cell_subset_meta[["dataset"]],
@@ -453,10 +552,17 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
             pc_group = NA_character_,
             stringsAsFactors = FALSE
         )
+
+        # Add anomaly status if available and requested
+        if (show_anomalies && "anomaly_status" %in% names(cell_subset_meta)) {
+            gene_data[["anomaly_status"]] <- cell_subset_meta[["anomaly_status"]]
+        }
+
+        return(gene_data)
     })
     expr_plot_df <- do.call(rbind, expr_plot_list)
 
-    # Prepare loading data for plotting
+    # Prepare loading data for plotting (PC-specific information)
     loading_data <- x[["gene_metadata"]][
         x[["gene_metadata"]][["gene"]] %in% final_gene_data[["gene"]] &
             paste0("PC", x[["gene_metadata"]][["pc"]]) %in% available_pcs,
@@ -470,6 +576,11 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
         pc_group = paste0("PC", loading_data[["pc"]]),
         stringsAsFactors = FALSE
     )
+
+    # Add anomaly status column to loading data (not applicable for PC loadings)
+    if (show_anomalies && "anomaly_status" %in% names(cell_subset_meta)) {
+        loading_plot_df[["anomaly_status"]] <- NA_character_
+    }
 
     # Combine plotting data
     full_plot_df <- rbind(expr_plot_df, loading_plot_df)
@@ -485,7 +596,7 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
     full_plot_df[["gene"]] <- factor(full_plot_df[["gene"]],
                                      levels = rev(final_gene_data[["gene"]]))
 
-    # Format p-value labels
+    # Format p-value labels for secondary axis
     p_value_data <- final_gene_data[, c("gene", "p_adjusted")]
     p_value_labels <- paste0("p = ",
                              sprintf("%.2g", p_value_data[["p_adjusted"]]))
@@ -502,59 +613,106 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
     dataset_colors <- c("Reference" = "#377EB8", "Query" = "#E41A1C")
     num_pcs <- length(available_pcs)
     pc_color_palette <- grDevices::hcl.colors(num_pcs, palette = "Dark 3")
-    pc_shape_palette <- c(16, 17, 15, 18, 8)
+    pc_shape_palette <- c(16, 17, 15, 18, 8)  # circle, triangle, square, diamond, star
 
     pc_colors <- pc_color_palette[1:num_pcs]
     pc_shapes <- pc_shape_palette[1:num_pcs]
     names(pc_colors) <- available_pcs
     names(pc_shapes) <- available_pcs
 
-    # Create facet labeller
+    # Create facet labeller for panel titles
     facet_labeller <- ggplot2::labeller(
         metric = c("Expression" = "Log-Normalized Expression",
                    "PC Loading" = "PC Loading")
     )
 
-    # Build the ggplot object
+    # Build the base ggplot object
     p <- ggplot2::ggplot(
+        data = full_plot_df,
         mapping = ggplot2::aes(y = .data[["gene"]], x = .data[["value"]])
-    ) +
+    )
 
-        # Expression panel: horizontal boxplots
-        ggplot2::geom_boxplot(
-            data = ~subset(full_plot_df, metric == "Expression"),
+    # Add expression panel elements with conditional anomaly visualization
+    if (show_anomalies && "anomaly_status" %in% names(full_plot_df)) {
+        # Boxplots with anomaly-aware border styling using linetype
+        p <- p + ggplot2::geom_boxplot(
+            data = ~subset(., metric == "Expression"),
+            ggplot2::aes(fill = .data[["dataset"]],
+                         linetype = .data[["anomaly_status"]]),
+            alpha = 0.8,
+            outlier.size = 0.5,
+            size = 0.8  # Slightly thicker borders for better linetype visibility
+        ) +
+            ggplot2::scale_linetype_manual(
+                name = "Status",
+                values = c("Normal" = "solid", "Anomaly" = "dashed"),
+                na.value = "solid",
+                guide = ggplot2::guide_legend(
+                    order = 3,
+                    override.aes = list(color = "black", fill = "grey80")
+                )
+            )
+    } else {
+        # Standard boxplots without anomaly information
+        p <- p + ggplot2::geom_boxplot(
+            data = ~subset(., metric == "Expression"),
             ggplot2::aes(fill = .data[["dataset"]]),
             alpha = 0.8,
             outlier.size = 0.5
-        ) +
+        )
+    }
 
-        # Loading panel: reference line and points
-        ggplot2::geom_vline(xintercept = 0,
-                            linetype = "dashed",
-                            color = "grey50") +
+    # Add PC loading panel elements
+    p <- p +
+        # Reference line at zero for PC loadings
+        ggplot2::geom_vline(
+            xintercept = 0,
+            linetype = "dashed",
+            color = "grey50",
+            alpha = 0.7
+        ) +
+        # PC loading points with color and shape encoding
         ggplot2::geom_point(
-            data = ~subset(full_plot_df, metric == "PC Loading"),
+            data = ~subset(., metric == "PC Loading"),
             ggplot2::aes(color = .data[["pc_group"]],
                          shape = .data[["pc_group"]]),
             size = 3,
             alpha = 0.8
         ) +
 
-        # Panel configuration
-        ggplot2::facet_grid(~ metric,
-                            scales = "free_x",
-                            switch = "x",
-                            labeller = facet_labeller) +
+        # Panel configuration with custom labelling
+        ggplot2::facet_grid(
+            ~ metric,
+            scales = "free_x",
+            switch = "x",
+            labeller = facet_labeller
+        ) +
 
-        # Scale definitions
-        ggplot2::scale_fill_manual(name = "Dataset", values = dataset_colors) +
-        ggplot2::scale_color_manual(name = "PC",
-                                    values = pc_colors,
-                                    labels = pc_legend_labels) +
-        ggplot2::scale_shape_manual(name = "PC",
-                                    values = pc_shapes,
-                                    labels = pc_legend_labels) +
-        ggplot2::scale_y_discrete(labels = rev(gene_labels), name = NULL) +
+        # Define all aesthetic scales
+        ggplot2::scale_fill_manual(
+            name = "Dataset",
+            values = dataset_colors,
+            guide = ggplot2::guide_legend(
+                order = 1,
+                override.aes = list(linetype = "solid")
+            )
+        ) +
+        ggplot2::scale_color_manual(
+            name = "PC",
+            values = pc_colors,
+            labels = pc_legend_labels,
+            guide = ggplot2::guide_legend(order = 2)
+        ) +
+        ggplot2::scale_shape_manual(
+            name = "PC",
+            values = pc_shapes,
+            labels = pc_legend_labels,
+            guide = ggplot2::guide_legend(order = 2)
+        ) +
+        ggplot2::scale_y_discrete(
+            labels = rev(gene_labels),
+            name = NULL
+        ) +
         ggplot2::scale_x_continuous(
             sec.axis = ggplot2::dup_axis(
                 name = "Adj. P-value",
@@ -565,24 +723,44 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
             expand = ggplot2::expansion(mult = c(0.05, 0.15))
         ) +
 
-        # Labels and guides
-        ggplot2::labs(title = NULL, subtitle = NULL) +
+        # Labels and legend configuration
+        ggplot2::labs(
+            title = NULL,
+            subtitle = NULL
+        ) +
         ggplot2::guides(
             fill = ggplot2::guide_legend(order = 1),
             color = ggplot2::guide_legend(order = 2),
-            shape = ggplot2::guide_legend(order = 2)
+            shape = ggplot2::guide_legend(order = 2),
+            linetype = if(show_anomalies && "anomaly_status" %in% names(full_plot_df)) {
+                ggplot2::guide_legend(order = 3)
+            } else {
+                "none"
+            }
         ) +
 
-        # Theme customization
+        # Theme customization for publication-ready appearance
         ggplot2::theme_bw() +
         ggplot2::theme(
+            # Remove x-axis title (shown via facet labels)
             axis.title.x = ggplot2::element_blank(),
-            axis.text.y.left = ggplot2::element_text(face = "bold"),
+            # Bold gene names for emphasis
+            axis.text.y.left = ggplot2::element_text(face = "bold", size = 10),
+            # P-value labels styling
+            axis.text.y.right = ggplot2::element_text(size = 8),
+            # Legend positioning and styling
             legend.position = "right",
             legend.box = "vertical",
+            legend.key.size = ggplot2::unit(0.8, "lines"),
+            legend.text = ggplot2::element_text(size = 9),
+            legend.title = ggplot2::element_text(size = 10, face = "bold"),
+            # Panel styling
             strip.background = ggplot2::element_blank(),
             strip.placement = "outside",
-            strip.text.x = ggplot2::element_text(face = "bold", size = 10)
+            strip.text.x = ggplot2::element_text(face = "bold", size = 11),
+            # Grid and panel borders
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.border = ggplot2::element_rect(color = "grey70", size = 0.5)
         )
 
     return(p)
