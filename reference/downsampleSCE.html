@@ -90,7 +90,8 @@ Must contain PCA in reducedDims. May also contain UMAP, TSNE, or other reducedDi
 
 <dt id="arg-max-cells">max_cells<a class="anchor" aria-label="anchor" href="#arg-max-cells"></a></dt>
 <dd><p>Maximum number of cells to retain. If the object has fewer cells,
-it is returned unchanged. Default is 2500.</p></dd>
+it is returned unchanged. If NULL, no downsampling is performed (all cells are kept).
+Default is 2500.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
@@ -102,7 +103,7 @@ Default is NULL.</p></dd>
     <h2>Value</h2>
     <p>A <code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></code> object with at most max_cells cells.
 If downsampling occurred, all reducedDims (PCA, UMAP, TSNE, etc.) and their
-attributes are preserved.</p>
+attributes are preserved. If max_cells is NULL, the original object is returned unchanged.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
