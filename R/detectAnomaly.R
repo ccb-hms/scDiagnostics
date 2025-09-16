@@ -91,21 +91,21 @@ detectAnomaly <- function(reference_data,
                   assay_name = assay_name)
 
     # Downsample reference and query data
+    reference_labels <- reference_data[[ref_cell_type_col]]
     reference_data <- downsampleSCE(sce = reference_data,
                                     max_cells = max_cells)
     if(!is.null(query_data)){
+        query_labels <- query_data[[query_cell_type_col]]
         query_data <- downsampleSCE(sce = query_data,
                                     max_cells = max_cells)
     }
 
     # Get common cell types if they are not specified by user
-    reference_labels <- reference_data[[ref_cell_type_col]]
     if(is.null(cell_types)){
         if(is.null(query_data)){
             cell_types <- c(as.list(na.omit(unique(reference_labels))),
                             list(na.omit(unique(reference_labels))))
         } else{
-            query_labels <- query_data[[query_cell_type_col]]
             cell_types <- c(as.list(na.omit(intersect(unique(reference_labels),
                                                       unique(query_labels)))),
                             list(na.omit(intersect(unique(reference_labels),
