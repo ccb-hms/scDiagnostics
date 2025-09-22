@@ -28,8 +28,10 @@
 #' @param calculate_metrics Parameter to determine if cosine similarity and Mahalanobis distance metrics should be computed. Default is FALSE.
 #' @param alpha A numeric value specifying the significance level for Mahalanobis distance cutoff.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is NULL.
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is NULL.
 #'
 #' @return A list with the following components:
 #' \item{discriminant_eigenvalues}{Eigenvalues from the discriminant analysis.}
@@ -95,7 +97,8 @@ calculateDiscriminantSpace <- function(reference_data,
                                        calculate_metrics = FALSE,
                                        alpha = 0.01,
                                        assay_name = "logcounts",
-                                       max_cells = 2500){
+                                       max_cells_ref = NULL,
+                                       max_cells_query = NULL){
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -104,14 +107,6 @@ calculateDiscriminantSpace <- function(reference_data,
                   ref_cell_type_col = ref_cell_type_col,
                   cell_types = cell_types,
                   assay_name = assay_name)
-
-    # Downsample reference and query data
-    reference_data <- downsampleSCE(sce = reference_data,
-                                    max_cells = max_cells)
-    if(!is.null(query_data)){
-        query_data <- downsampleSCE(sce = query_data,
-                                    max_cells = max_cells)
-    }
 
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){
@@ -123,6 +118,18 @@ calculateDiscriminantSpace <- function(reference_data,
                 unique(c(reference_data[[ref_cell_type_col]],
                          query_data[[query_cell_type_col]])))
         }
+    }
+
+    # Downsample query and reference data (with cell type filtering)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells_ref,
+                                    cell_types = cell_types,
+                                    cell_type_col = ref_cell_type_col)
+    if(!is.null(query_data)){
+        query_data <- downsampleSCE(sce = query_data,
+                                    max_cells = max_cells_query,
+                                    cell_types = cell_types,
+                                    cell_type_col = query_cell_type_col)
     }
 
     # Check if n_tree is a positive integer

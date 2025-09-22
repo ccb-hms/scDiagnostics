@@ -14,7 +14,8 @@ projectSIR(
   cumulative_variance_threshold = 0.7,
   n_neighbor = 1,
   assay_name = "logcounts",
-  max_cells = 2500
+  max_cells_query = 5000,
+  max_cells_ref = 5000
 )
 }
 \arguments{
@@ -41,8 +42,11 @@ conditional means. Defaults to \code{1}.}
 
 \item{assay_name}{A character string specifying the assay name on which to perform computations. Defaults to \code{"logcounts"}.}
 
-\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is 5000.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.}
 }
 \value{
 A list containing:

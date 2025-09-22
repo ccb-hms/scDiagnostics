@@ -12,10 +12,11 @@ calculateWassersteinDistance(
   ref_cell_type_col,
   query_cell_type_col,
   cell_types = NULL,
-  pc_subset = 1:10,
+  pc_subset = 1:5,
   n_resamples = 300,
   assay_name = "logcounts",
-  max_cells = 2500
+  max_cells_query = 5000,
+  max_cells_ref = 5000
 )
 
 \method{plot}{calculateWassersteinDistanceObject}(x, cell_types = NULL, ...)
@@ -31,14 +32,17 @@ calculateWassersteinDistance(
 
 \item{cell_types}{A character vector specifying which cell types to plot. If NULL, all cell types are plotted.}
 
-\item{pc_subset}{A numeric vector specifying which principal components to use. Default is \code{1:10}.}
+\item{pc_subset}{A numeric vector specifying which principal components to use. Default is \code{1:5}.}
 
 \item{n_resamples}{An integer specifying the number of resamples to generate each distribution. Default is \code{300}.}
 
 \item{assay_name}{The name of the assay to use for computations. Default is \code{"logcounts"}.}
 
-\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is 5000.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.}
 
 \item{x}{A list object containing the Wasserstein distance results from the \code{calculateWassersteinDistance} function.}
 
@@ -86,7 +90,7 @@ wasserstein_data <- calculateWassersteinDistance(query_data = query_data,
                                                  reference_data = reference_data,
                                                  query_cell_type_col = "expert_annotation",
                                                  ref_cell_type_col = "expert_annotation",
-                                                 pc_subset = 1:10,
+                                                 pc_subset = 1:5,
                                                  n_resamples = 100)
 plot(wasserstein_data)
 

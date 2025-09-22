@@ -23,11 +23,13 @@
 #' that identifies the cell types.
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data}
 #' that identifies the cell types.
-#' @param cell_names A character vector specifying the names of the query cells for which to compute distance measures.
+#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are
+#'                   included.
+#' @param cell_names_query A character vector specifying the names of the query cells for which to compute distance measures.
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is 1:5.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000.
 #'
 #' @return A list containing distance data for each cell type. Each entry in the list contains:
 #' \describe{
@@ -64,7 +66,7 @@
 #' # Get overlap measures
 #' overlap_measures <- calculateCellDistancesSimilarity(query_data = query_data,
 #'                                                      reference_data = reference_data,
-#'                                                      cell_names = cd4_top6_anomalies,
+#'                                                      cell_names_query = cd4_top6_anomalies,
 #'                                                      query_cell_type_col = "SingleR_annotation",
 #'                                                      ref_cell_type_col = "expert_annotation",
 #'                                                      pc_subset = 1:10)
@@ -75,35 +77,36 @@ calculateCellDistancesSimilarity <- function(query_data,
                                              reference_data,
                                              query_cell_type_col,
                                              ref_cell_type_col,
-                                             cell_names,
+                                             cell_types = NULL,
+                                             cell_names_query,
                                              pc_subset = 1:5,
                                              assay_name = "logcounts",
-                                             max_cells = 2500) {
+                                             max_cells_ref = 5000) {
 
-    # Check standard input arguments
-    argumentCheck(query_data = query_data,
+    # Subset query data first
+    query_data_subset <- query_data[, cell_names_query, drop = FALSE]
+
+    # Check standard input arguments (now with proper cell_types)
+    argumentCheck(query_data = query_data_subset,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_names_query = cell_names,
+                  cell_types = cell_types,
+                  cell_names_query = cell_names_query,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
 
-    # Downsample query and reference data
-    query_data <- downsampleSCE(sce = query_data,
-                                max_cells = max_cells)
-    reference_data <- downsampleSCE(sce = reference_data,
-                                    max_cells = max_cells)
-
     # Compute distance data
-    query_data_subset <- query_data[, cell_names, drop = FALSE]
     distance_data <- calculateCellDistances(
         query_data = query_data_subset,
         reference_data = reference_data,
         query_cell_type_col = query_cell_type_col,
         ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
         pc_subset = pc_subset,
-        assay_name = assay_name)
+        assay_name = assay_name,
+        max_cells_ref = max_cells_ref,
+        max_cells_query = NULL)
 
     # Initialize empty lists to store results
     bhattacharyya_list <- hellinger_list <-
@@ -120,15 +123,15 @@ calculateCellDistancesSimilarity <- function(query_data,
         ref_density <- density(ref_distances)
 
         # Initialize an empty vector to store overlap measures for the current cell type
-        bhattacharyya_coef <- numeric(length(cell_names))
-        hellinger_dist <- numeric(length(cell_names))
+        bhattacharyya_coef <- numeric(length(cell_names_query))
+        hellinger_dist <- numeric(length(cell_names_query))
 
         # Iterate over each cell
-        for (i in seq_len(length(cell_names))) {
+        for (i in seq_len(length(cell_names_query))) {
 
             # Extract distances from the current cell to reference cells
             cell_distances <-
-                distance_data[[cell_type]][["query_to_ref_distances"]][cell_names[i], , drop = FALSE]
+                distance_data[[cell_type]][["query_to_ref_distances"]][cell_names_query[i], , drop = FALSE]
 
             # Compute density of cell distances
             cell_density <- density(cell_distances)
@@ -163,8 +166,8 @@ calculateCellDistancesSimilarity <- function(query_data,
     }
 
     # Return list with overlap measures
-    bhattacharyya_coef <- data.frame(Cell = cell_names, bhattacharyya_list)
-    hellinger_dist <- data.frame(Cell = cell_names, hellinger_list)
+    bhattacharyya_coef <- data.frame(Cell = cell_names_query, bhattacharyya_list)
+    hellinger_dist <- data.frame(Cell = cell_names_query, hellinger_list)
     return(list(bhattacharyya_coef = bhattacharyya_coef,
                 hellinger_dist = hellinger_dist))
 }

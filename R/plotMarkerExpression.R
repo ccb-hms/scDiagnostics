@@ -20,12 +20,14 @@
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
-#' @param cell_type A vector of cell type cell_types to plot (e.g., c("T-cell", "B-cell")).
+#' @param cell_type A cell type to plot (e.g., c("T-cell", "B-cell")).
 #' @param gene_name The gene name for which the distribution is to be visualized.
 #' @param normalization Method for normalizing expression values. Options: "z_score" (default), "min_max", "rank", "none".
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is NULL.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is NULL.
 #'
 #' @return A ggplot object containing density plots comparing reference and query distributions.
 #'
@@ -60,7 +62,8 @@ plotMarkerExpression <- function(query_data,
                                  gene_name,
                                  assay_name = "logcounts",
                                  normalization = c("z_score", "min_max", "rank", "none"),
-                                 max_cells = 2500) {
+                                 max_cells_ref = NULL,
+                                 max_cells_query = NULL) {
 
     # Match normalization argument
     normalization <- match.arg(normalization)
@@ -73,17 +76,17 @@ plotMarkerExpression <- function(query_data,
                   cell_types = cell_type,
                   assay_name = assay_name)
 
-    # Downsample query and reference data
-    query_data <- downsampleSCE(sce = query_data,
-                                max_cells = max_cells)
-    reference_data <- downsampleSCE(sce = reference_data,
-                                    max_cells = max_cells)
-
     # Get common cell types if they are not specified by user
     if(is.null(cell_type)){
         cell_type <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
                                       query_data[[query_cell_type_col]])))
     }
+
+    # Downsample query and reference data (with cell type filtering)
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells_query)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells_ref)
 
     # Check if gene_name is present in both query_data and reference_data
     if (!(gene_name %in% rownames(assay(query_data)) &&

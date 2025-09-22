@@ -23,14 +23,17 @@
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing reference cells.
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
+#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are
+#'                   included.
 #' @param n_markers Number of top marker genes to consider for each cell type. Default is 50.
 #' @param min_cells Minimum number of cells required per cell type for marker identification. Default is 10.
 #' @param anomaly_filter Character string specifying how to filter query cells based on anomaly detection.
 #'                       Options: "none" (default), "anomalous_only", "non_anomalous_only".
-#' @param cell_types Character vector specifying which cell types to analyze. If NULL, all common cell types are used.
 #' @param assay_name Name of the assay to use for computations. Default is "logcounts".
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000.
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 5000.
 #' @param ... Additional arguments passed to the \code{detectAnomaly} function.
 #'
 #' @return A list containing the following elements:
@@ -83,12 +86,13 @@ compareMarkers <- function(query_data,
                            reference_data,
                            query_cell_type_col,
                            ref_cell_type_col,
+                           cell_types = NULL,
                            n_markers = 50,
                            min_cells = 10,
                            anomaly_filter = c("none", "anomalous_only", "non_anomalous_only"),
-                           cell_types = NULL,
                            assay_name = "logcounts",
-                           max_cells = 2500,
+                           max_cells_query = 5000,
+                           max_cells_ref = 5000,
                            ...){
 
     # Match arguments
@@ -102,52 +106,110 @@ compareMarkers <- function(query_data,
                   cell_types = cell_types,
                   assay_name = assay_name)
 
-    # Downsample query and reference data
-    query_data <- downsampleSCE(sce = query_data,
-                                max_cells = max_cells)
-    reference_data <- downsampleSCE(sce = reference_data,
-                                    max_cells = max_cells)
+    # Get common cell types if they are not specified by user
+    if(is.null(cell_types)){
+        cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
+                                       query_data[[query_cell_type_col]])))
+    }
 
-    # Get cell type information
-    query_cell_types_orig <- colData(query_data)[[query_cell_type_col]]
-    ref_cell_types_orig <- colData(reference_data)[[ref_cell_type_col]]
+    # Ensure cell names exist for anomaly detection mapping
+    original_ref_names <- colnames(reference_data)
+    original_query_names <- colnames(query_data)
 
-    # Perform anomaly detection if filtering is requested
+    if (is.null(original_ref_names) || any(is.na(original_ref_names)) ||
+        length(unique(original_ref_names)) != length(original_ref_names)) {
+        original_ref_names <- paste0("REF_CELL_", seq_len(ncol(reference_data)))
+        colnames(reference_data) <- original_ref_names
+    }
+
+    if (is.null(original_query_names) || any(is.na(original_query_names)) ||
+        length(unique(original_query_names)) != length(original_query_names)) {
+        original_query_names <- paste0("QUERY_CELL_", seq_len(ncol(query_data)))
+        colnames(query_data) <- original_query_names
+    }
+
+    # Perform anomaly detection FIRST (before any downsampling) if needed
     anomaly_output <- NULL
     if (anomaly_filter != "none") {
-        anomaly_output <- detectAnomaly(reference_data = reference_data,
-                                        query_data = query_data,
-                                        ref_cell_type_col = ref_cell_type_col,
-                                        query_cell_type_col = query_cell_type_col,
-                                        ...)
+        tryCatch({
+            anomaly_output <- detectAnomaly(reference_data = reference_data,
+                                            query_data = query_data,
+                                            ref_cell_type_col = ref_cell_type_col,
+                                            query_cell_type_col = query_cell_type_col,
+                                            cell_types = cell_types,
+                                            max_cells_ref = NULL,      # No downsampling in anomaly detection
+                                            max_cells_query = NULL,    # No downsampling in anomaly detection
+                                            ...)
+        }, error = function(e) {
+            warning("Anomaly detection failed: ", e[["message"]], ". Proceeding without anomaly filtering.")
+            anomaly_output <<- NULL
+        })
     }
+
+    # Downsample query and reference data (with cell type filtering)
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells_query,
+                                cell_types = cell_types,
+                                cell_type_col = query_cell_type_col)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells_ref,
+                                    cell_types = cell_types,
+                                    cell_type_col = ref_cell_type_col)
+
+    # Get cell type information after downsampling
+    query_cell_types_orig <- colData(query_data)[[query_cell_type_col]]
+    ref_cell_types_orig <- colData(reference_data)[[ref_cell_type_col]]
 
     # Reference data is NEVER filtered - always use all reference cells
     reference_data_filtered <- reference_data
     ref_cell_types <- ref_cell_types_orig
 
-    # Query data filtering based on anomaly detection
+    # Query data filtering based on anomaly detection results
     query_data_filtered <- query_data
     query_cell_types <- query_cell_types_orig
 
     if (anomaly_filter != "none" && !is.null(anomaly_output)) {
 
-        # Function to filter ONLY query cells based on anomaly results
-        .filterQueryCellsByAnomaly <- function(data, cell_types_vec, anomaly_data, filter_type) {
+        # Function to filter ONLY query cells based on anomaly results using cell names
+        .filterQueryCellsByAnomalyNames <- function(data, anomaly_data, filter_type) {
+            current_cell_names <- colnames(data)
             cells_to_keep <- rep(TRUE, ncol(data))
+            current_cell_types <- colData(data)[[query_cell_type_col]]
 
-            for (cell_type in unique(cell_types_vec)) {
+            for (cell_type in unique(current_cell_types)) {
                 if (cell_type %in% names(anomaly_data)) {
-                    cell_indices <- which(cell_types_vec == cell_type)
+                    # Get indices of cells of this type in current (downsampled) data
+                    cell_indices <- which(current_cell_types == cell_type)
+                    cell_names_this_type <- current_cell_names[cell_indices]
 
                     if ("query_anomaly" %in% names(anomaly_data[[cell_type]])) {
-                        anomaly_flags <- anomaly_data[[cell_type]][["query_anomaly"]]
+                        # Get anomaly status from original detection
+                        anomaly_names <- names(anomaly_data[[cell_type]][["query_anomaly"]])
+                        anomaly_status <- anomaly_data[[cell_type]][["query_anomaly"]]
 
-                        if (length(anomaly_flags) == length(cell_indices)) {
-                            if (filter_type == "anomalous_only") {
-                                cells_to_keep[cell_indices] <- anomaly_flags
-                            } else if (filter_type == "non_anomalous_only") {
-                                cells_to_keep[cell_indices] <- !anomaly_flags
+                        if (!is.null(anomaly_names) && length(anomaly_names) > 0) {
+                            # Map current cells to their anomaly status
+                            for (i in seq_along(cell_indices)) {
+                                cell_name <- cell_names_this_type[i]
+                                cell_idx <- cell_indices[i]
+
+                                # Find this cell in the anomaly results
+                                anomaly_idx <- match(cell_name, anomaly_names)
+                                if (!is.na(anomaly_idx)) {
+                                    is_anomalous <- anomaly_status[anomaly_idx]
+
+                                    if (filter_type == "anomalous_only") {
+                                        cells_to_keep[cell_idx] <- is_anomalous
+                                    } else if (filter_type == "non_anomalous_only") {
+                                        cells_to_keep[cell_idx] <- !is_anomalous
+                                    }
+                                } else {
+                                    # Cell not found in anomaly results (shouldn't happen)
+                                    # Keep it by default
+                                    if (filter_type == "anomalous_only") {
+                                        cells_to_keep[cell_idx] <- FALSE
+                                    }
+                                }
                             }
                         }
                     }
@@ -156,11 +218,15 @@ compareMarkers <- function(query_data,
             return(cells_to_keep)
         }
 
-        # Filter ONLY query data
-        query_keep <- .filterQueryCellsByAnomaly(query_data_filtered, query_cell_types,
-                                                 anomaly_output, anomaly_filter)
-        query_data_filtered <- query_data_filtered[, query_keep]
-        query_cell_types <- query_cell_types[query_keep]
+        # Filter ONLY query data using cell names
+        query_keep <- .filterQueryCellsByAnomalyNames(query_data_filtered, anomaly_output, anomaly_filter)
+
+        if (sum(query_keep) == 0) {
+            warning("Anomaly filtering removed all query cells. Proceeding without filtering.")
+        } else {
+            query_data_filtered <- query_data_filtered[, query_keep]
+            query_cell_types <- query_cell_types[query_keep]
+        }
     }
 
     # Get unique cell types with sufficient cells
@@ -207,7 +273,7 @@ compareMarkers <- function(query_data,
                 list(p.value = 1)
             })
 
-            pvals[i] <- test_result$p.value
+            pvals[i] <- test_result[["p.value"]]
             logFCs[i] <- mean(target_expr) - mean(other_expr)
         }
 
@@ -224,8 +290,8 @@ compareMarkers <- function(query_data,
         )
 
         # Filter and sort
-        results <- results[results$adj_pval < 0.05 & results$logFC > 0, ]
-        results <- results[order(results$adj_pval, decreasing = FALSE), ]
+        results <- results[results[["adj_pval"]] < 0.05 & results[["logFC"]] > 0, ]
+        results <- results[order(results[["adj_pval"]], decreasing = FALSE), ]
 
         return(results)
     }
@@ -266,8 +332,8 @@ compareMarkers <- function(query_data,
 
     for (cell_type in common_cell_types) {
         # Get top markers
-        query_top <- head(markers_query[[cell_type]]$gene, n_markers)
-        ref_top <- head(markers_ref[[cell_type]]$gene, n_markers)
+        query_top <- head(markers_query[[cell_type]][["gene"]], n_markers)
+        ref_top <- head(markers_ref[[cell_type]][["gene"]], n_markers)
 
         # Calculate overlap (Jaccard index)
         if (length(query_top) > 0 && length(ref_top) > 0) {

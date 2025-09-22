@@ -13,7 +13,7 @@
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#'                  Default is 2000.
 #'
 #' @importFrom SummarizedExperiment assay
 #' @import SingleCellExperiment
@@ -42,7 +42,7 @@ plotGeneExpressionDimred <- function(se_object,
                                      cell_type_col = NULL,
                                      cell_types = NULL,
                                      assay_name = "logcounts",
-                                     max_cells = 2500) {
+                                     max_cells = 2000) {
 
     # Check standard input arguments
     argumentCheck(query_data = se_object,
@@ -51,12 +51,23 @@ plotGeneExpressionDimred <- function(se_object,
                   query_cell_type_col = cell_type_col,
                   cell_types = cell_types)
 
-    # Downsample SCE object
-    se_object <- downsampleSCE(sce = se_object,
-                               max_cells = max_cells)
-
     # Match arguments
     method <- match.arg(method)
+
+    # Store PCA attributes BEFORE downsampling (if method is PCA)
+    pca_percent_var <- NULL
+    if (method == "PCA" && "PCA" %in% reducedDimNames(se_object)) {
+        pca_attrs <- attributes(reducedDim(se_object, "PCA"))
+        if (!is.null(pca_attrs[["percentVar"]])) {
+            pca_percent_var <- pca_attrs[["percentVar"]]
+        }
+    }
+
+    # Downsample SCE object
+    se_object <- downsampleSCE(sce = se_object,
+                               max_cells = max_cells,
+                               cell_types = cell_types,
+                               cell_type_col = cell_type_col)
 
     # Check if feature is available
     if (!feature %in% rownames(assay(se_object, assay_name))) {
@@ -110,7 +121,7 @@ plotGeneExpressionDimred <- function(se_object,
 
         # Add cell type information if available
         if (!is.null(cell_type_col)) {
-            df$CellType <- colData(se_object)[[cell_type_col]]
+            df[["CellType"]] <- colData(se_object)[[cell_type_col]]
         }
 
         # Create the plot object with better color gradient
@@ -156,14 +167,14 @@ plotGeneExpressionDimred <- function(se_object,
         # PCA data
         plot_mat <- reducedDim(se_object, "PCA")[, pc_subset]
 
-        # Create PC column names - include variance explained only if using all cell types
-        if (filtered_to_specific_types) {
-            plot_names <- paste0("PC", pc_subset)
-        } else {
+        # Create PC column names with variance explained (always show percentages if available)
+        if (!is.null(pca_percent_var) && length(pca_percent_var) >= max(pc_subset)) {
             plot_names <- paste0(
                 "PC", pc_subset, " (",
-                sprintf("%.1f%%", attributes(
-                    reducedDim(se_object, "PCA"))[["percentVar"]][pc_subset]), ")")
+                sprintf("%.1f%%", pca_percent_var[pc_subset]), ")")
+        } else {
+            # Fallback if percentVar is not available
+            plot_names <- paste0("PC", pc_subset)
         }
 
         # Create a new data frame with selected PCs

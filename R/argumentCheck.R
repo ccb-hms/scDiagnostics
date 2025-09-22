@@ -111,20 +111,28 @@ argumentCheck <- function(query_data = NULL,
         }
     }
 
-    # Check if cell_types are available in the SingleCellExperiment object(s)
+    # Check if cell_types are available in at least one of the SingleCellExperiment object(s)
     if (!is.null(cell_types)) {
 
+        # Get available cell types from each dataset
+        available_query_types <- NULL
+        available_ref_types <- NULL
+
         if (!is.null(query_data)) {
-            if (!all(cell_types %in%
-                     unique(query_data[[query_cell_type_col]]))) {
-                stop("'cell_types' contains one or more cell types that are not available in 'query_data'.")
-            }
+            available_query_types <- unique(query_data[[query_cell_type_col]])
         }
 
         if (!is.null(reference_data)) {
-            if (!all(cell_types %in%
-                     unique(reference_data[[ref_cell_type_col]]))) {
-                stop("'cell_types' contains one or more cell types that are not available in 'reference_data'.")
+            available_ref_types <- unique(reference_data[[ref_cell_type_col]])
+        }
+
+        # Check that each cell type is present in at least one dataset
+        for (cell_type in cell_types) {
+            present_in_query <- !is.null(available_query_types) && cell_type %in% available_query_types
+            present_in_ref <- !is.null(available_ref_types) && cell_type %in% available_ref_types
+
+            if (!present_in_query && !present_in_ref) {
+                stop("Cell type '", cell_type, "' is not available in either 'query_data' or 'reference_data'.")
             }
         }
     }

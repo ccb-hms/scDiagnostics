@@ -20,7 +20,7 @@
 #' @param score_col The column name in the \code{colData} of \code{se_object} that
 #' contains the cell type annotation scores.
 #' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#'                  Default is 5000.
 #'
 #' @return A ggplot object displaying a scatter plot of QC stats vs annotation scores,
 #'         where each point represents a cell, color-coded by its cell type.
@@ -50,7 +50,7 @@ plotQCvsAnnotation <- function(se_object,
                                cell_types = NULL,
                                qc_col,
                                score_col,
-                               max_cells = 2500) {
+                               max_cells = 5000) {
 
     # Check standard input arguments
     argumentCheck(query_data = se_object,
@@ -59,7 +59,9 @@ plotQCvsAnnotation <- function(se_object,
 
     # Downsample SCE object
     se_object <- downsampleSCE(sce = se_object,
-                               max_cells = max_cells)
+                               max_cells = max_cells,
+                               cell_types = cell_types,
+                               cell_type_col = cell_type_col)
 
     # Check if qc_col is a valid column name in se_object
     if (!qc_col %in% names(colData(se_object))) {

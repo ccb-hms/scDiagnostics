@@ -21,8 +21,10 @@
 #' @param n_tree An integer specifying the number of trees for the isolation forest. Default is 500
 #' @param anomaly_threshold A numeric value specifying the threshold for identifying anomalies, Default is 0.6.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000.
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 5000.
 #' @param ... Additional arguments passed to the `isolation.forest` function.
 #'
 #' @return A list containing the following components for each cell type and the combined data:
@@ -78,7 +80,8 @@ detectAnomaly <- function(reference_data,
                           n_tree = 500,
                           anomaly_threshold = 0.6,
                           assay_name = "logcounts",
-                          max_cells = 2500,
+                          max_cells_query = 5000,
+                          max_cells_ref = 5000,
                           ...) {
 
     # Check standard input arguments
@@ -89,29 +92,6 @@ detectAnomaly <- function(reference_data,
                   cell_types = cell_types,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
-
-    # Downsample reference and query data
-    reference_labels <- reference_data[[ref_cell_type_col]]
-    reference_data <- downsampleSCE(sce = reference_data,
-                                    max_cells = max_cells)
-    if(!is.null(query_data)){
-        query_labels <- query_data[[query_cell_type_col]]
-        query_data <- downsampleSCE(sce = query_data,
-                                    max_cells = max_cells)
-    }
-
-    # Get common cell types if they are not specified by user
-    if(is.null(cell_types)){
-        if(is.null(query_data)){
-            cell_types <- c(as.list(na.omit(unique(reference_labels))),
-                            list(na.omit(unique(reference_labels))))
-        } else{
-            cell_types <- c(as.list(na.omit(intersect(unique(reference_labels),
-                                                      unique(query_labels)))),
-                            list(na.omit(intersect(unique(reference_labels),
-                                                   unique(query_labels)))))
-        }
-    }
 
     # Check if n_tree is a positive integer
     if (!is.numeric(n_tree) || n_tree <= 0 || n_tree != as.integer(n_tree)) {
@@ -124,43 +104,78 @@ detectAnomaly <- function(reference_data,
         stop("\'anomaly_threshold\' must be a positive number greater than 0 and less than 1.")
     }
 
+    # Get common cell types if they are not specified by user
+    if(is.null(cell_types)){
+        if(is.null(query_data)){
+            cell_types <- na.omit(
+                unique(reference_data[[ref_cell_type_col]]))
+        } else{
+            cell_types <- na.omit(
+                intersect(reference_data[[ref_cell_type_col]], query_data[[query_cell_type_col]]))
+        }
+    }
+
     # Get data from reference and query datasets
     if(!is.null(pc_subset)){
-        reference_mat <- reducedDim(reference_data, "PCA")[, pc_subset]
         if(!is.null(query_data)){
             pca_output <- projectPCA(query_data = query_data,
                                      reference_data = reference_data,
                                      query_cell_type_col = query_cell_type_col,
                                      ref_cell_type_col = ref_cell_type_col,
+                                     cell_types = cell_types,
                                      pc_subset = pc_subset,
                                      assay_name = assay_name,
-                                     max_cells = NULL)
-            query_mat <- pca_output[pca_output[["dataset"]] == "Query",
-                                    paste0("PC", pc_subset)]
+                                     max_cells_ref = max_cells_ref,
+                                     max_cells_query = max_cells_query)
+            query_mat <- pca_output[pca_output[["dataset"]] == "Query",]
+            reference_mat <- pca_output[pca_output[["dataset"]] == "Reference",]
+
+            # Extract cell type information from PCA output
+            query_cell_types <- query_mat[["cell_type"]]
+            reference_cell_types <- reference_mat[["cell_type"]]
+
+            # Remove the metadata columns to keep only PCA coordinates
+            pc_cols <- grep("^PC", colnames(pca_output), value = TRUE)
+            query_mat <- query_mat[, pc_cols, drop = FALSE]
+            reference_mat <- reference_mat[, pc_cols, drop = FALSE]
+        } else {
+            reference_data <- downsampleSCE(sce = reference_data,
+                                            max_cells = max_cells_ref,
+                                            cell_types =  cell_types,
+                                            cell_type_col = ref_cell_type_col)
+            reference_mat <- reducedDim(reference_data, "PCA")[, pc_subset]
         }
     } else{
+        reference_data <- downsampleSCE(sce = reference_data,
+                                        max_cells = max_cells_ref,
+                                        cell_types =  cell_types,
+                                        cell_type_col = ref_cell_type_col)
         reference_mat <- t(as.matrix(assay(reference_data, assay_name)))
         if(!is.null(query_data)){
+            query_data <- downsampleSCE(sce = query_data,
+                                        max_cells = max_cells_ref,
+                                        cell_types =  cell_types,
+                                        cell_type_col = query_cell_type_col)
             query_mat <- t(as.matrix(assay(query_data, assay_name)))
         }
     }
 
-    # Extract reference and query labels
-    reference_labels <- reference_data[[ref_cell_type_col]]
-    query_labels <- query_data[[query_cell_type_col]]
-
     # List to store output
     output <- list()
 
-    for (cell_type in cell_types) {
+    # Cell types list for anomaly detection
+    cell_types_list <- as.list(cell_types)
+    cell_types_list[["Combined"]] <- cell_types
+
+    for (cell_type in cell_types_list) {
 
         # Filter reference and query PCA data for the current cell type
         reference_mat_subset <- na.omit(reference_mat[which(
-            reference_labels %in% cell_type),])
+            reference_cell_types %in% cell_type),])
 
         # Build isolation forest on reference PCA data for this cell type
         isolation_forest <- isotree::isolation.forest(reference_mat_subset,
-                                                      ntree = n_tree)
+                                                      ntree = n_tree,)
 
         # Calculate anomaly scores for query data (scaled by reference path length)
         reference_anomaly_scores <- predict(isolation_forest,
@@ -168,7 +183,7 @@ detectAnomaly <- function(reference_data,
                                             type = "score")
         if(!is.null(query_data)){
             query_mat_subset <- na.omit(query_mat[which(
-                query_labels %in% cell_type),])
+                query_cell_types %in% cell_type),])
             query_anomaly_scores <- predict(isolation_forest,
                                             newdata = query_mat_subset,
                                             type = "score")

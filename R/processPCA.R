@@ -1,14 +1,14 @@
 #' @title Process PCA for SingleCellExperiment Objects
 #'
 #' @description
-#' This function ensures that SingleCellExperiment objects have PCA computed using
+#' This function ensures that \code{\linkS4class{SingleCellExperiment}} objects have PCA computed using
 #' highly variable genes when needed. It only performs downsampling when PCA computation
 #' is required, preserving existing PCA computations without modification.
 #'
 #' @details
 #' The function performs the following operations:
 #' \itemize{
-#'   \item Checks if PCA exists in the provided SingleCellExperiment objects
+#'   \item Checks if PCA exists in the provided \code{\linkS4class{SingleCellExperiment}} objects
 #'   \item If PCA already exists, returns the object unchanged (no downsampling)
 #'   \item If PCA is missing and dataset is large, downsamples before computing PCA
 #'   \item Computes PCA using highly variable genes when PCA is missing

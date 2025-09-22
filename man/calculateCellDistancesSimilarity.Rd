@@ -9,10 +9,11 @@ calculateCellDistancesSimilarity(
   reference_data,
   query_cell_type_col,
   ref_cell_type_col,
-  cell_names,
+  cell_types = NULL,
+  cell_names_query,
   pc_subset = 1:5,
   assay_name = "logcounts",
-  max_cells = 2500
+  max_cells_ref = 5000
 )
 }
 \arguments{
@@ -26,14 +27,17 @@ that identifies the cell types.}
 \item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data}
 that identifies the cell types.}
 
-\item{cell_names}{A character vector specifying the names of the query cells for which to compute distance measures.}
+\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are
+included.}
+
+\item{cell_names_query}{A character vector specifying the names of the query cells for which to compute distance measures.}
 
 \item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is 1:5.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
-\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.}
 }
 \value{
 A list containing distance data for each cell type. Each entry in the list contains:
@@ -84,7 +88,7 @@ cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, decreas
 # Get overlap measures
 overlap_measures <- calculateCellDistancesSimilarity(query_data = query_data,
                                                      reference_data = reference_data,
-                                                     cell_names = cd4_top6_anomalies,
+                                                     cell_names_query = cd4_top6_anomalies,
                                                      query_cell_type_col = "SingleR_annotation",
                                                      ref_cell_type_col = "expert_annotation",
                                                      pc_subset = 1:10)

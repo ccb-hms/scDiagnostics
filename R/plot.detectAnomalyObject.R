@@ -50,7 +50,7 @@ plot.detectAnomalyObject <- function(x,
 
     # Check if PCA was used for computations
     if(!("var_explained" %in% names(x[[names(x)[1]]])))
-        stop("The plot function can only be used if 'n_components' is not NULL.")
+        stop("The plot function can only be used if \'pc_subset\' is not NULL when using \'detectAnomaly\'.")
 
     # Check input for upper_facet and diagonal_facet
     upper_facet <- match.arg(upper_facet)
@@ -67,10 +67,10 @@ plot.detectAnomalyObject <- function(x,
     # Check input for pc_subset
     if(!is.null(pc_subset)){
         if(!all(pc_subset %in% seq_len(
-            ncol(x[[cell_type]][["reference_mat_subset"]]))))
+            length(x[[cell_type]][["var_explained"]]))))
             stop("'pc_subset' is out of range.")
     } else{
-        pc_subset <- seq_len(ncol(x[[cell_type]][["reference_mat_subset"]]))
+        pc_subset <- seq_len(length(x[[cell_type]][["var_explained"]]))
     }
 
     # Check input for data_type

@@ -31,8 +31,10 @@
 #'                         \code{detect_anomalies} is TRUE. Default is 0.6.
 #' @param n_tree An integer specifying the number of trees for the isolation forest when
 #'              \code{detect_anomalies} is TRUE. Default is 500.
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000.
 #'
 #' @return A list containing:
 #' \itemize{
@@ -71,7 +73,8 @@ calculateTopLoadingGeneShifts <- function(query_data,
                                           detect_anomalies = FALSE,
                                           anomaly_threshold = 0.6,
                                           n_tree = 500,
-                                          max_cells = 2500) {
+                                          max_cells_query = 5000,
+                                          max_cells_ref = 5000) {
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -81,12 +84,6 @@ calculateTopLoadingGeneShifts <- function(query_data,
                   cell_types = cell_types,
                   pc_subset_query = pc_subset,
                   assay_name = assay_name)
-
-    # Downsample query and reference data
-    query_data <- downsampleSCE(sce = query_data,
-                                max_cells = max_cells)
-    reference_data <- downsampleSCE(sce = reference_data,
-                                    max_cells = max_cells)
 
     # Input validation
     if (!is.numeric(n_top_loadings) || length(n_top_loadings) != 1 || n_top_loadings <= 0) {
@@ -114,19 +111,27 @@ calculateTopLoadingGeneShifts <- function(query_data,
         }
     }
 
-    # Check if cell type columns exist
-    if (!query_cell_type_col %in% names(SummarizedExperiment::colData(query_data))) {
-        stop(paste("Column '", query_cell_type_col, "' not found in query_data colData"))
-    }
-
-    if (!ref_cell_type_col %in% names(SummarizedExperiment::colData(reference_data))) {
-        stop(paste("Column '", ref_cell_type_col, "' not found in reference_data colData"))
-    }
-
-    # Get common cell types
+    # Get common cell types first
     if (is.null(cell_types)) {
         cell_types <- stats::na.omit(unique(c(reference_data[[ref_cell_type_col]],
                                               query_data[[query_cell_type_col]])))
+    }
+
+    # Ensure cell names exist for anomaly detection mapping
+    # Store original cell names or create them if they don't exist
+    original_ref_names <- colnames(reference_data)
+    original_query_names <- colnames(query_data)
+
+    if (is.null(original_ref_names) || any(is.na(original_ref_names)) ||
+        length(unique(original_ref_names)) != length(original_ref_names)) {
+        original_ref_names <- paste0("REF_CELL_", seq_len(ncol(reference_data)))
+        colnames(reference_data) <- original_ref_names
+    }
+
+    if (is.null(original_query_names) || any(is.na(original_query_names)) ||
+        length(unique(original_query_names)) != length(original_query_names)) {
+        original_query_names <- paste0("QUERY_CELL_", seq_len(ncol(query_data)))
+        colnames(query_data) <- original_query_names
     }
 
     # Get PCA results
@@ -142,26 +147,8 @@ calculateTopLoadingGeneShifts <- function(query_data,
     pc_percent_var <- percent_var[pc_subset]
     names(pc_percent_var) <- paste0("PC", pc_subset)
 
-    # Get common genes
-    common_genes <- intersect(rownames(query_data), rownames(reference_data))
-    common_genes <- intersect(common_genes, rownames(pca_rotation))
-    if (length(common_genes) == 0) {
-        stop("No common genes found between query, reference, and PCA rotation matrix.")
-    }
-    pca_rotation <- pca_rotation[common_genes, ]
-
-    # Prepare cell indices
-    query_cell_indices <- split(seq_len(ncol(query_data)), query_data[[query_cell_type_col]])
-    ref_cell_indices <- split(seq_len(ncol(reference_data)), reference_data[[ref_cell_type_col]])
-    query_cell_indices <- query_cell_indices[names(query_cell_indices) %in% cell_types]
-    ref_cell_indices <- ref_cell_indices[names(ref_cell_indices) %in% cell_types]
-    available_cell_types <- intersect(names(query_cell_indices), names(ref_cell_indices))
-    if (length(available_cell_types) == 0) {
-        warning("No common cell types with sufficient cells found between datasets.")
-        return(list())
-    }
-
-    # Perform anomaly detection if requested
+    # Perform anomaly detection FIRST (before any downsampling)
+    # This ensures the rotation matrix is intact
     anomaly_results <- NULL
     if (detect_anomalies) {
         tryCatch({
@@ -170,17 +157,56 @@ calculateTopLoadingGeneShifts <- function(query_data,
                 query_data = query_data,
                 ref_cell_type_col = ref_cell_type_col,
                 query_cell_type_col = query_cell_type_col,
-                cell_types = available_cell_types,
+                cell_types = cell_types,
                 pc_subset = pc_subset,
                 n_tree = n_tree,
                 anomaly_threshold = anomaly_threshold,
                 assay_name = assay_name,
-                max_cells = max_cells
+                max_cells_ref = NULL,
+                max_cells_query = NULL
             )
         }, error = function(e) {
-            warning("Anomaly detection failed: ", e$message, ". Continuing without anomaly detection.")
+            warning("Anomaly detection failed: ", e[["message"]], ". Continuing without anomaly detection.")
             anomaly_results <<- NULL
         })
+    }
+
+    # Now downsample the data (with cell type filtering)
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells_query,
+                                cell_types = cell_types,
+                                cell_type_col = query_cell_type_col)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells_ref,
+                                    cell_types = cell_types,
+                                    cell_type_col = ref_cell_type_col)
+
+    # Check if cell type columns exist after downsampling
+    if (!query_cell_type_col %in% names(SummarizedExperiment::colData(query_data))) {
+        stop(paste("Column '", query_cell_type_col, "' not found in query_data colData"))
+    }
+
+    if (!ref_cell_type_col %in% names(SummarizedExperiment::colData(reference_data))) {
+        stop(paste("Column '", ref_cell_type_col, "' not found in reference_data colData"))
+    }
+
+    # Get common genes
+    common_genes <- intersect(rownames(query_data), rownames(reference_data))
+    common_genes <- intersect(common_genes, rownames(pca_rotation))
+    if (length(common_genes) == 0) {
+        stop("No common genes found between query, reference, and PCA rotation matrix.")
+    }
+    pca_rotation <- pca_rotation[common_genes, ]
+
+    # Prepare cell indices (data is already filtered by cell type and downsampled)
+    query_cell_indices <- split(seq_len(ncol(query_data)), query_data[[query_cell_type_col]])
+    ref_cell_indices <- split(seq_len(ncol(reference_data)), reference_data[[ref_cell_type_col]])
+    query_cell_indices <- query_cell_indices[names(query_cell_indices) %in% cell_types]
+    ref_cell_indices <- ref_cell_indices[names(ref_cell_indices) %in% cell_types]
+    available_cell_types <- intersect(names(query_cell_indices), names(ref_cell_indices))
+    if (length(available_cell_types) == 0) {
+        warning("No common cell types with sufficient cells found between datasets.")
+        return(list())
     }
 
     # Gene-level statistical analysis
@@ -226,9 +252,9 @@ calculateTopLoadingGeneShifts <- function(query_data,
 
         if (length(pc_result_list) > 0) {
             df <- do.call(rbind, pc_result_list)
-            df$p_adjusted <- stats::p.adjust(df$p_value, method = adjust_method)
-            df$significant <- df$p_adjusted <= p_value_threshold
-            pc_results[[pc_name]] <- df[order(df$p_adjusted), ]
+            df[["p_adjusted"]] <- stats::p.adjust(df[["p_value"]], method = adjust_method)
+            df[["significant"]] <- df[["p_adjusted"]] <= p_value_threshold
+            pc_results[[pc_name]] <- df[order(df[["p_adjusted"]]), ]
             rownames(pc_results[[pc_name]]) <- NULL
         } else {
             pc_results[[pc_name]] <- data.frame()
@@ -258,7 +284,7 @@ calculateTopLoadingGeneShifts <- function(query_data,
             pc_name <- paste0("PC", pc)
             loadings_pc <- pca_rotation[, pc, drop = FALSE]
 
-            if (total_var_ref > .Machine$double.eps) {
+            if (total_var_ref > .Machine[["double.eps"]]) {
                 ref_scores <- crossprod(ref_expr_ct, loadings_pc)
                 var_scores_ref <- stats::var(as.vector(ref_scores))
                 pct_var_ref <- (var_scores_ref / total_var_ref) * 100
@@ -266,7 +292,7 @@ calculateTopLoadingGeneShifts <- function(query_data,
                     pc = pc_name, cell_type = ct, dataset = "Reference",
                     percent_variance = pct_var_ref, stringsAsFactors = FALSE)
             }
-            if (total_var_query > .Machine$double.eps) {
+            if (total_var_query > .Machine[["double.eps"]]) {
                 query_scores <- crossprod(query_expr_ct, loadings_pc)
                 var_scores_query <- stats::var(as.vector(query_scores))
                 pct_var_query <- (var_scores_query / total_var_query) * 100
@@ -291,7 +317,7 @@ calculateTopLoadingGeneShifts <- function(query_data,
                                                              ref_relevant_cells, drop = FALSE]
     expression_data <- cbind(ref_expr_plot, query_expr_plot)
 
-    # Create cell metadata with anomaly information
+    # Create cell metadata
     cell_metadata <- rbind(
         data.frame(cell_id = colnames(ref_expr_plot), dataset = "Reference",
                    cell_type = reference_data[[ref_cell_type_col]][ref_relevant_cells],
@@ -301,36 +327,41 @@ calculateTopLoadingGeneShifts <- function(query_data,
                    original_index = query_relevant_cells, stringsAsFactors = FALSE)
     )
 
-    # Add anomaly status if anomaly detection was performed and successful
+    # Map anomaly status using cell names
     if (!is.null(anomaly_results)) {
         # Initialize anomaly status
-        cell_metadata$anomaly_status <- "Normal"
+        cell_metadata[["anomaly_status"]] <- "Normal"
 
         # Process anomaly results for each cell type
         for (ct in available_cell_types) {
             if (ct %in% names(anomaly_results)) {
-                # Get reference anomaly status
-                if ("reference_anomaly" %in% names(anomaly_results[[ct]])) {
-                    ref_ct_cells <- ref_cell_indices[[ct]]
-                    ref_anomalies <- anomaly_results[[ct]][["reference_anomaly"]]
-                    ref_anomaly_cells <- ref_ct_cells[ref_anomalies]
 
-                    # Update cell metadata for reference anomalies
-                    ref_mask <- cell_metadata$dataset == "Reference" &
-                        cell_metadata$original_index %in% ref_anomaly_cells
-                    cell_metadata$anomaly_status[ref_mask] <- "Anomaly"
+                # Map reference anomaly status using cell names
+                if ("reference_anomaly" %in% names(anomaly_results[[ct]])) {
+                    ref_anomaly_names <- names(anomaly_results[[ct]][["reference_anomaly"]])
+                    ref_anomaly_status <- anomaly_results[[ct]][["reference_anomaly"]]
+
+                    if (!is.null(ref_anomaly_names) && length(ref_anomaly_names) > 0) {
+                        # Find which cells in cell_metadata are anomalous
+                        anomalous_ref_names <- ref_anomaly_names[ref_anomaly_status]
+                        ref_mask <- cell_metadata[["dataset"]] == "Reference" &
+                            cell_metadata[["cell_id"]] %in% anomalous_ref_names
+                        cell_metadata[["anomaly_status"]][ref_mask] <- "Anomaly"
+                    }
                 }
 
-                # Get query anomaly status
+                # Map query anomaly status using cell names
                 if ("query_anomaly" %in% names(anomaly_results[[ct]])) {
-                    query_ct_cells <- query_cell_indices[[ct]]
-                    query_anomalies <- anomaly_results[[ct]][["query_anomaly"]]
-                    query_anomaly_cells <- query_ct_cells[query_anomalies]
+                    query_anomaly_names <- names(anomaly_results[[ct]][["query_anomaly"]])
+                    query_anomaly_status <- anomaly_results[[ct]][["query_anomaly"]]
 
-                    # Update cell metadata for query anomalies
-                    query_mask <- cell_metadata$dataset == "Query" &
-                        cell_metadata$original_index %in% query_anomaly_cells
-                    cell_metadata$anomaly_status[query_mask] <- "Anomaly"
+                    if (!is.null(query_anomaly_names) && length(query_anomaly_names) > 0) {
+                        # Find which cells in cell_metadata are anomalous
+                        anomalous_query_names <- query_anomaly_names[query_anomaly_status]
+                        query_mask <- cell_metadata[["dataset"]] == "Query" &
+                            cell_metadata[["cell_id"]] %in% anomalous_query_names
+                        cell_metadata[["anomaly_status"]][query_mask] <- "Anomaly"
+                    }
                 }
             }
         }

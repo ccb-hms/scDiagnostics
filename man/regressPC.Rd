@@ -24,7 +24,8 @@ regressPC(
   adjust_method = c("BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr",
     "none"),
   assay_name = "logcounts",
-  max_cells = 2500
+  max_cells_ref = 5000,
+  max_cells_query = 5000
 )
 }
 \arguments{
@@ -64,8 +65,11 @@ Default is "BH" (Benjamini-Hochberg).}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
-\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.}
+
+\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is 5000.}
 }
 \value{
 The S3 plot method returns a \code{ggplot} object representing the specified plot type.

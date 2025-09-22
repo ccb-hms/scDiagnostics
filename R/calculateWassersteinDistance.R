@@ -19,11 +19,13 @@
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies cell types.
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies cell types.
 #' @param cell_types A character vector specifying the cell types to include in the analysis. If NULL, all common cell types are included.
-#' @param pc_subset A numeric vector specifying which principal components to use. Default is \code{1:10}.
+#' @param pc_subset A numeric vector specifying which principal components to use. Default is \code{1:5}.
 #' @param n_resamples An integer specifying the number of resamples to generate each distribution. Default is \code{300}.
 #' @param assay_name The name of the assay to use for computations. Default is \code{"logcounts"}.
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000.
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 5000.
 #'
 #' @return A list with the following components:
 #' \item{ref_ref_dist}{A named list of numeric vectors containing Wasserstein distances computed from resampled pairs within the reference dataset for each cell type.}
@@ -51,7 +53,7 @@
 #'                                                  reference_data = reference_data,
 #'                                                  query_cell_type_col = "expert_annotation",
 #'                                                  ref_cell_type_col = "expert_annotation",
-#'                                                  pc_subset = 1:10,
+#'                                                  pc_subset = 1:5,
 #'                                                  n_resamples = 100)
 #' plot(wasserstein_data)
 #'
@@ -62,10 +64,11 @@ calculateWassersteinDistance <- function(query_data,
                                          ref_cell_type_col,
                                          query_cell_type_col,
                                          cell_types = NULL,
-                                         pc_subset = 1:10,
+                                         pc_subset = 1:5,
                                          n_resamples = 300,
                                          assay_name = "logcounts",
-                                         max_cells = 2500){
+                                         max_cells_query = 5000,
+                                         max_cells_ref = 5000){
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -75,12 +78,6 @@ calculateWassersteinDistance <- function(query_data,
                   cell_types = cell_types,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
-
-    # Downsample query and reference data
-    query_data <- downsampleSCE(sce = query_data,
-                                max_cells = max_cells)
-    reference_data <- downsampleSCE(sce = reference_data,
-                                    max_cells = max_cells)
 
     # Check if n_resamples is a positive integer
     if (!inherits(n_resamples, "numeric")) {
@@ -98,11 +95,13 @@ calculateWassersteinDistance <- function(query_data,
     # Get the projected PCA data
     pca_output <- projectPCA(query_data = query_data,
                              reference_data = reference_data,
-                             pc_subset = pc_subset,
                              query_cell_type_col = query_cell_type_col,
                              ref_cell_type_col = ref_cell_type_col,
+                             cell_types = cell_types,
+                             pc_subset = pc_subset,
                              assay_name = assay_name,
-                             max_cells = NULL)
+                             max_cells_ref = max_cells_ref,
+                             max_cells_query = max_cells_query)
 
     # Split by cell type
     cell_list <- split(pca_output, pca_output[["cell_type"]])
@@ -162,9 +161,9 @@ calculateWassersteinDistance <- function(query_data,
         weighted_dist_ref <- as.matrix(dist(pca_ref_weighted))
 
         # Compute reference-query weighted distances (full distance matrix)
-        weighted_dist_query <- outer(rowSums(pca_ref_weighted^2),
-                                     rowSums(pca_query_weighted^2), "+") -
-            2 * pca_ref_weighted %*% t(pca_query_weighted)
+        weighted_dist_query <- sqrt(outer(rowSums(pca_ref_weighted^2),
+                                          rowSums(pca_query_weighted^2), "+") -
+                                        2 * pca_ref_weighted %*% t(pca_query_weighted))
 
         # Computing reference-reference Wasserstein distance distribution
         ref_ref_distances <- numeric(n_resamples)

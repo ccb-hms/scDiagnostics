@@ -4,42 +4,46 @@
 \alias{downsampleSCE}
 \title{Downsample SingleCellExperiment Objects}
 \usage{
-downsampleSCE(sce, max_cells = 2500, seed = NULL)
+downsampleSCE(
+  sce,
+  max_cells = 2500,
+  cell_types = NULL,
+  cell_type_col = NULL,
+  seed = NULL
+)
 }
 \arguments{
 \item{sce}{A \code{\linkS4class{SingleCellExperiment}} object to potentially downsample.
-Must contain PCA in reducedDims. May also contain UMAP, TSNE, or other reducedDims.}
+May contain PCA, UMAP, TSNE, or other reducedDims.}
 
 \item{max_cells}{Maximum number of cells to retain. If the object has fewer cells,
 it is returned unchanged. If NULL, no downsampling is performed (all cells are kept).
 Default is 2500.}
 
+\item{cell_types}{A character vector specifying which cell types to retain. If NULL,
+no cell type filtering is performed. Default is NULL.}
+
+\item{cell_type_col}{The column name in colData that contains cell type information.
+Required if cell_types is not NULL. Default is NULL.}
+
 \item{seed}{Random seed for reproducible downsampling. If NULL, no seed is set.
 Default is NULL.}
 }
 \value{
-A \code{\linkS4class{SingleCellExperiment}} object with at most max_cells cells.
-If downsampling occurred, all reducedDims (PCA, UMAP, TSNE, etc.) and their
-attributes are preserved. If max_cells is NULL, the original object is returned unchanged.
+A \code{\linkS4class{SingleCellExperiment}} object with at most max_cells cells
+and optionally filtered by cell types. ReducedDims coordinates are preserved through
+standard subsetting. If max_cells is NULL, the original object is returned unchanged.
 }
 \description{
 This internal function downsamples \code{\linkS4class{SingleCellExperiment}} objects while preserving
-all reducedDims information, including PCA, UMAP, t-SNE, and any other dimensionality
-reduction results with their associated attributes.
+reducedDims coordinate information (PCA, UMAP, t-SNE, etc.). Optionally, it can also subset by cell types
+before downsampling.
 }
 \details{
-The function performs random downsampling without replacement when the number of
-cells exceeds the specified threshold. All reducedDims are preserved by subsetting
-the cell coordinates and manually restoring associated attributes that would
-otherwise be lost during subsetting operations.
-
-Supported reducedDims and their preserved attributes:
-\itemize{
-  \item PCA: rotation, percentVar, varExplained
-  \item UMAP: any custom attributes from uwot or other UMAP implementations
-  \item TSNE: any custom attributes from Rtsne or other t-SNE implementations
-  \item Any other reducedDim: all associated attributes
-}
+The function can perform cell type filtering followed by random downsampling without replacement
+when the number of cells exceeds the specified threshold. All reducedDims coordinates are preserved
+through standard SCE subsetting operations. This function does not preserve PCA rotation matrices or
+other model-specific attributes.
 }
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}

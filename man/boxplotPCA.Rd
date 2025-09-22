@@ -13,7 +13,8 @@ boxplotPCA(
   pc_subset = 1:5,
   shape = c("box", "violin"),
   assay_name = "logcounts",
-  max_cells = 2500
+  max_cells_query = NULL,
+  max_cells_ref = NULL
 )
 }
 \arguments{
@@ -37,8 +38,11 @@ Default is "box".}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
-\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is NULL.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is NULL.}
 }
 \value{
 A ggplot object representing the boxplots or violin plots of specified principal components for the given

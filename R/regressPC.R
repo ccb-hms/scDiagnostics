@@ -37,8 +37,11 @@
 #'   Options include "BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr", or "none".
 #'   Default is "BH" (Benjamini-Hochberg).
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000.
+#'
 #' @return
 #' A \code{list} containing \itemize{ \item summaries of the linear
 #' regression models for each specified principal component, \item the
@@ -98,7 +101,8 @@ regressPC <- function(query_data,
                                         "bonferroni", "BY",
                                         "fdr", "none"),
                       assay_name = "logcounts",
-                      max_cells = 2500) {
+                      max_cells_ref = 5000,
+                      max_cells_query = 5000) {
 
     # Match argument for adjustment method
     adjust_method <- match.arg(adjust_method)
@@ -120,14 +124,6 @@ regressPC <- function(query_data,
         }
     }
 
-    # Downsample reference and query data
-    query_data <- downsampleSCE(sce = query_data,
-                                max_cells = max_cells)
-    if(!is.null(reference_data)){
-        reference_data <- downsampleSCE(sce = reference_data,
-                                        max_cells = max_cells)
-    }
-
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){
         if(is.null(reference_data)){
@@ -144,97 +140,6 @@ regressPC <- function(query_data,
     # Store reference cell type (first alphabetically)
     reference_cell_type <- cell_types[1]
 
-    # Perform linear regression for each principal component
-    regressFastCustom <- function(pc, indep_var, df) {
-
-        # Extract the response variable
-        y <- df[[pc]]
-        n <- length(y)
-
-        # Create design matrix based on independent variable specification
-        if (indep_var == "cell_type") {
-            X <- model.matrix(~ cell_type, data = df)
-        } else if (indep_var == "cell_type * batch") {
-            X <- model.matrix(~ cell_type * batch, data = df)
-        } else if (indep_var == "cell_type * dataset") {
-            X <- model.matrix(~ cell_type * dataset, data = df)
-        } else {
-            # Handle other interaction cases generically
-            formula_str <- paste("~", gsub("_", " * ", gsub("_interaction$", "", indep_var)))
-            X <- model.matrix(as.formula(formula_str), data = df)
-        }
-
-        # Use QR decomposition for numerical stability
-        qr_decomp <- qr(X)
-
-        # Handle rank deficiency (shouldn't happen with your data, but for safety)
-        if (qr_decomp$rank < ncol(X)) {
-            X <- X[, qr_decomp$pivot[1:qr_decomp$rank], drop = FALSE]
-            qr_decomp <- qr(X)
-        }
-
-        # Solve for coefficients using QR decomposition
-        coefficients <- qr.coef(qr_decomp, y)
-
-        # Handle any NAs (shouldn't happen but for completeness)
-        if (any(is.na(coefficients))) {
-            # Fall back to normal equations
-            XtX <- crossprod(X)
-            Xty <- crossprod(X, y)
-            coefficients <- solve(XtX, Xty)
-        }
-
-        # Compute fitted values and residuals
-        fitted_values <- X %*% coefficients
-        residuals <- y - fitted_values
-
-        # Sum of squares calculations
-        y_mean <- mean(y)
-        ss_total <- sum((y - y_mean)^2)
-        ss_residual <- sum(residuals^2)
-        ss_regression <- ss_total - ss_residual
-
-        # R-squared
-        r_squared <- ss_regression / ss_total
-
-        # Degrees of freedom
-        p <- ncol(X)  # number of parameters including intercept
-        df_residual <- n - p
-
-        # Residual standard error
-        mse <- ss_residual / df_residual
-
-        # Variance-covariance matrix of coefficients
-        # Var(beta) = sigma^2 * (X'X)^(-1)
-        XtX_inv <- chol2inv(qr.R(qr_decomp))
-        var_coef <- mse * XtX_inv
-        se_coef <- sqrt(diag(var_coef))
-
-        # t-statistics and p-values
-        t_values <- coefficients / se_coef
-        p_values <- 2 * pt(abs(t_values), df_residual, lower.tail = FALSE)
-
-        # Create coefficients data.frame in exact format as speedlm
-        coef_df <- data.frame(
-            coef = as.numeric(coefficients),
-            se = se_coef,
-            t = t_values,
-            p.value = p_values,
-            stringsAsFactors = FALSE
-        )
-
-        # Set row names to match coefficient names
-        rownames(coef_df) <- names(coefficients)
-
-        # Return in same format as speedlm summary
-        model_summary <- list(
-            coefficients = coef_df,
-            r_squared = r_squared
-        )
-
-        return(model_summary)
-    }
-
     # Set dependent variables
     dep_vars <- paste0("PC", pc_subset)
 
@@ -244,15 +149,19 @@ regressPC <- function(query_data,
         # Get query PCA variance for plotting
         query_pca_var <- attr(reducedDim(query_data, "PCA"), "percentVar")
 
+        # Downsample reference and query data
+        query_data <- downsampleSCE(sce = query_data,
+                                    max_cells = max_cells_query,
+                                    cell_types = cell_types,
+                                    cell_type_col = query_cell_type_col)
+
         # Case 1a: No batch - PC ~ cell_type
         if(is.null(query_batch_col)){
 
-            query_labels <- query_data[[query_cell_type_col]]
             regress_data <- data.frame(
                 reducedDim(query_data, "PCA")[, dep_vars],
                 cell_type = factor(query_data[[query_cell_type_col]],
                                    levels = cell_types))
-            regress_data <- regress_data[query_labels %in% cell_types,]
 
             # Regress PCs against cell types
             summaries <- lapply(dep_vars, regressFastCustom,
@@ -293,14 +202,12 @@ regressPC <- function(query_data,
             # Case 1b: With batch - PC ~ cell_type * batch
         } else {
 
-            query_labels <- query_data[[query_cell_type_col]]
 
             regress_data <- data.frame(
                 reducedDim(query_data, "PCA")[, dep_vars],
                 cell_type = factor(query_data[[query_cell_type_col]],
                                    levels = cell_types),
                 batch = factor(query_data[[query_batch_col]]))
-            regress_data <- regress_data[query_labels %in% cell_types,]
 
             # Get reference batch (first alphabetically)
             batch_levels <- levels(regress_data[["batch"]])
@@ -364,10 +271,11 @@ regressPC <- function(query_data,
                                  query_data = query_data,
                                  ref_cell_type_col = ref_cell_type_col,
                                  query_cell_type_col = query_cell_type_col,
+                                 cell_types = cell_types,
                                  pc_subset = pc_subset,
                                  assay_name = assay_name,
-                                 max_cells = NULL)
-        pca_output <- pca_output[pca_output[["cell_type"]] %in% cell_types,]
+                                 max_cells_ref = max_cells_ref,
+                                 max_cells_query = max_cells_query)
 
         # Case 2a: No batch - PC ~ cell_type * dataset
         if(is.null(query_batch_col)){

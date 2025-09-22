@@ -12,7 +12,7 @@ plotGeneExpressionDimred(
   cell_type_col = NULL,
   cell_types = NULL,
   assay_name = "logcounts",
-  max_cells = 2500
+  max_cells = 2000
 )
 }
 \arguments{
@@ -33,7 +33,7 @@ Default is 1:5.}
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
 \item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.}
+Default is 2000.}
 }
 \value{
 A ggplot object representing the dimensional reduction plot with gene expression.

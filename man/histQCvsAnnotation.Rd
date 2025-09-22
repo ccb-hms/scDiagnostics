@@ -10,7 +10,7 @@ histQCvsAnnotation(
   cell_types = NULL,
   qc_col,
   score_col,
-  max_cells = 2500
+  max_cells = NULL
 )
 }
 \arguments{
@@ -30,7 +30,7 @@ contains the QC stats of interest.}
 contains the cell type scores.}
 
 \item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.}
+Default is NULL.}
 }
 \value{
 A object containing two histograms displayed side by side.

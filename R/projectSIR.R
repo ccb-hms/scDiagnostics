@@ -26,8 +26,10 @@
 #' @param n_neighbor An integer specifying the number of nearest neighbors for clustering when computing multiple
 #' conditional means. Defaults to \code{1}.
 #' @param assay_name A character string specifying the assay name on which to perform computations. Defaults to \code{"logcounts"}.
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000.
 #'
 #' @return A list containing:
 #' \item{cond_means}{A matrix of the conditional means computed for the reference data.}
@@ -61,7 +63,8 @@ projectSIR <- function(query_data,
                        cumulative_variance_threshold = 0.7,
                        n_neighbor = 1,
                        assay_name = "logcounts",
-                       max_cells = 2500){
+                       max_cells_query = 5000,
+                       max_cells_ref = 5000){
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -73,9 +76,9 @@ projectSIR <- function(query_data,
 
     # Downsample query and reference data
     query_data <- downsampleSCE(sce = query_data,
-                                max_cells = max_cells)
+                                max_cells = max_cells_query)
     reference_data <- downsampleSCE(sce = reference_data,
-                                    max_cells = max_cells)
+                                    max_cells = max_cells_ref)
 
     # Check if cumulative_variance_threshold is between 0 and 1
     if (!is.numeric(cumulative_variance_threshold) ||

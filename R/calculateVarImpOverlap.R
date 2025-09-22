@@ -17,8 +17,10 @@
 #' @param n_tree An integer specifying the number of trees to grow in the Random Forest. Default is 500.
 #' @param n_top An integer specifying the number of top genes to consider when comparing variable importance scores. Default is 50.
 #' @param assay_name Name of the assay on which to perform computations. Defaults to \code{"logcounts"}.
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000.
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 5000.
 #'
 #' @return A list containing three elements:
 #' \item{var_imp_ref}{A list of data frames containing variable importance scores for each combination of cell types in the reference
@@ -60,22 +62,16 @@ calculateVarImpOverlap <- function(reference_data,
                                    n_tree = 500,
                                    n_top = 50,
                                    assay_name = "logcounts",
-                                   max_cells = 2500){
+                                   max_cells_ref = 5000,
+                                   max_cells_query = 5000){
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_types)
-
-    # Downsample reference and query data
-    reference_data <- downsampleSCE(sce = reference_data,
-                                    max_cells = max_cells)
-    if(!is.null(query_data)){
-        query_data <- downsampleSCE(sce = query_data,
-                                    max_cells = max_cells)
-    }
+                  cell_types = cell_types,
+                  assay_name = assay_name)
 
     # Check if n_tree is a positive integer
     if (!is.numeric(n_tree) || n_tree <= 0 || n_tree != as.integer(n_tree)) {
@@ -95,6 +91,18 @@ calculateVarImpOverlap <- function(reference_data,
             cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
                                            query_data[[query_cell_type_col]])))
         }
+    }
+
+    # Downsample query and reference data (with cell type filtering)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells_ref,
+                                    cell_types = cell_types,
+                                    cell_type_col = ref_cell_type_col)
+    if(!is.null(query_data)){
+        query_data <- downsampleSCE(sce = query_data,
+                                    max_cells = max_cells_query,
+                                    cell_types = cell_types,
+                                    cell_type_col = query_cell_type_col)
     }
 
     # Extract assay data for reference and query datasets

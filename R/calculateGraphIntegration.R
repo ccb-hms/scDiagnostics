@@ -26,8 +26,10 @@
 #' @param cross_type_threshold Minimum proportion needed to flag cross-cell-type mixing. Default is 0.1.
 #' @param local_consistency_threshold Minimum proportion of reference neighbors that should support a query cell's annotation. Default is 0.6.
 #' @param local_confidence_threshold Minimum confidence difference needed to suggest re-annotation. Default is 0.2.
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000.
 #'
 #' @return A list containing:
 #' \item{high_query_prop_analysis}{Analysis of communities with only query cells}
@@ -117,7 +119,8 @@ calculateGraphIntegration <- function(query_data,
                                       cross_type_threshold = 0.15,
                                       local_consistency_threshold = 0.6,
                                       local_confidence_threshold = 0.2,
-                                      max_cells = 2500) {
+                                      max_cells_query = 5000,
+                                      max_cells_ref = 5000) {
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -127,12 +130,6 @@ calculateGraphIntegration <- function(query_data,
                   cell_types = cell_types,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
-
-    # Downsample query and reference data
-    query_data <- downsampleSCE(sce = query_data,
-                                max_cells = max_cells)
-    reference_data <- downsampleSCE(sce = reference_data,
-                                    max_cells = max_cells)
 
     # Check additional parameters
     if (!is.numeric(k_neighbors) || k_neighbors <= 0 ||
@@ -188,21 +185,16 @@ calculateGraphIntegration <- function(query_data,
     # Get PCA projection
     pca_output <- projectPCA(query_data = query_data,
                              reference_data = reference_data,
-                             pc_subset = pc_subset,
                              query_cell_type_col = query_cell_type_col,
                              ref_cell_type_col = ref_cell_type_col,
+                             cell_types = cell_types,
+                             pc_subset = pc_subset,
                              assay_name = assay_name,
-                             max_cells = NULL)
-
-    # Filter to selected cell types
-    pca_filtered <- pca_output[pca_output[["cell_type"]] %in% cell_types, ]
-
-    if (nrow(pca_filtered) == 0) {
-        stop("No cells remain after filtering by cell types.")
-    }
+                             max_cells_ref = max_cells_ref,
+                             max_cells_query = max_cells_query)
 
     # Extract PCA coordinates
-    pc_coords <- as.matrix(pca_filtered[, paste0("PC", pc_subset)])
+    pc_coords <- as.matrix(pca_output[, paste0("PC", pc_subset)])
 
     # Construct k-nearest neighbor graph
     .constructKNNGraph <- function(coords, k) {
@@ -432,9 +424,9 @@ calculateGraphIntegration <- function(query_data,
 
     # Prepare cell information
     cell_info <- data.frame(
-        cell_id = seq_len(nrow(pca_filtered)),
-        dataset = pca_filtered[["dataset"]],
-        cell_type = pca_filtered[["cell_type"]],
+        cell_id = seq_len(nrow(pca_output)),
+        dataset = pca_output[["dataset"]],
+        cell_type = pca_output[["cell_type"]],
         community = clustering_result[["membership"]],
         stringsAsFactors = FALSE
     )

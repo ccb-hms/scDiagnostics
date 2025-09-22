@@ -2,42 +2,40 @@
 #'
 #' @description
 #' This internal function downsamples \code{\linkS4class{SingleCellExperiment}} objects while preserving
-#' all reducedDims information, including PCA, UMAP, t-SNE, and any other dimensionality
-#' reduction results with their associated attributes.
+#' reducedDims coordinate information (PCA, UMAP, t-SNE, etc.). Optionally, it can also subset by cell types
+#' before downsampling.
 #'
 #' @details
-#' The function performs random downsampling without replacement when the number of
-#' cells exceeds the specified threshold. All reducedDims are preserved by subsetting
-#' the cell coordinates and manually restoring associated attributes that would
-#' otherwise be lost during subsetting operations.
-#'
-#' Supported reducedDims and their preserved attributes:
-#' \itemize{
-#'   \item PCA: rotation, percentVar, varExplained
-#'   \item UMAP: any custom attributes from uwot or other UMAP implementations
-#'   \item TSNE: any custom attributes from Rtsne or other t-SNE implementations
-#'   \item Any other reducedDim: all associated attributes
-#' }
+#' The function can perform cell type filtering followed by random downsampling without replacement
+#' when the number of cells exceeds the specified threshold. All reducedDims coordinates are preserved
+#' through standard SCE subsetting operations. This function does not preserve PCA rotation matrices or
+#' other model-specific attributes.
 #'
 #' @param sce A \code{\linkS4class{SingleCellExperiment}} object to potentially downsample.
-#' Must contain PCA in reducedDims. May also contain UMAP, TSNE, or other reducedDims.
+#' May contain PCA, UMAP, TSNE, or other reducedDims.
 #' @param max_cells Maximum number of cells to retain. If the object has fewer cells,
 #' it is returned unchanged. If NULL, no downsampling is performed (all cells are kept).
 #' Default is 2500.
+#' @param cell_types A character vector specifying which cell types to retain. If NULL,
+#' no cell type filtering is performed. Default is NULL.
+#' @param cell_type_col The column name in colData that contains cell type information.
+#' Required if cell_types is not NULL. Default is NULL.
 #' @param seed Random seed for reproducible downsampling. If NULL, no seed is set.
 #' Default is NULL.
 #'
 #' @keywords internal
 #'
-#' @return A \code{\linkS4class{SingleCellExperiment}} object with at most max_cells cells.
-#' If downsampling occurred, all reducedDims (PCA, UMAP, TSNE, etc.) and their
-#' attributes are preserved. If max_cells is NULL, the original object is returned unchanged.
+#' @return A \code{\linkS4class{SingleCellExperiment}} object with at most max_cells cells
+#' and optionally filtered by cell types. ReducedDims coordinates are preserved through
+#' standard subsetting. If max_cells is NULL, the original object is returned unchanged.
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 # Function to downsample SCE objects
 downsampleSCE <- function(sce,
                           max_cells = 2500,
+                          cell_types = NULL,
+                          cell_type_col = NULL,
                           seed = NULL) {
 
     # Check if sce is a SingleCellExperiment object
@@ -53,6 +51,19 @@ downsampleSCE <- function(sce,
         max_cells <- as.integer(max_cells)
     }
 
+    # Check cell_types and cell_type_col arguments
+    if (!is.null(cell_types)) {
+        if (!is.character(cell_types)) {
+            stop("'cell_types' must be a character vector or NULL.")
+        }
+        if (is.null(cell_type_col) || !is.character(cell_type_col) || length(cell_type_col) != 1) {
+            stop("'cell_type_col' must be a single character string when 'cell_types' is provided.")
+        }
+        if (!cell_type_col %in% names(SummarizedExperiment::colData(sce))) {
+            stop(paste("Column '", cell_type_col, "' not found in sce colData"))
+        }
+    }
+
     # Check seed argument
     if (!is.null(seed)) {
         if (!is.numeric(seed) || length(seed) != 1 || seed != as.integer(seed)) {
@@ -61,46 +72,38 @@ downsampleSCE <- function(sce,
         seed <- as.integer(seed)
     }
 
-    # If max_cells is NULL, return original object without downsampling
-    if (is.null(max_cells)) {
-        return(sce)
-    }
-
-    # Check if downsampling is needed
-    n_cells <- ncol(sce)
-    if (n_cells <= max_cells) {
-        return(sce)
-    }
-
     # Set seed if provided
     if (!is.null(seed)) {
         set.seed(seed)
     }
 
-    # Sample cells
-    cell_indices <- sample(n_cells, max_cells)
-
-    # Store ONLY the PCA reducedDim's attributes
-    pca_attrs <- NULL
-    if ("PCA" %in% reducedDimNames(sce)) {
-        pca_attrs <- attributes(reducedDim(sce, "PCA"))
+    # Subset by cell types if requested
+    if (!is.null(cell_types)) {
+        cell_type_mask <- sce[[cell_type_col]] %in% cell_types
+        if (sum(cell_type_mask) == 0) {
+            warning("No cells found for the specified cell types. Returning empty SCE object.")
+            return(sce[, FALSE])  # Return empty SCE with same genes but no cells
+        }
+        sce <- sce[, cell_type_mask]
     }
 
-    # Subset SCE
+    # Check if downsampling is needed
+    n_cells <- ncol(sce)
+
+    # If max_cells is NULL, return object without downsampling (but potentially cell-type filtered)
+    if (is.null(max_cells)) {
+        return(sce)
+    }
+
+    # If we already have fewer cells than max_cells, return as is
+    if (n_cells <= max_cells) {
+        return(sce)
+    }
+
+    # Step 3: Downsample cells
+    cell_indices <- sample(n_cells, max_cells)
     sce_subset <- sce[, cell_indices]
 
-    # Restore PCA attributes only
-    if (!is.null(pca_attrs) && "PCA" %in% reducedDimNames(sce_subset)) {
-        dim_coords <- reducedDim(sce_subset, "PCA")
-        for (attr_name in names(pca_attrs)) {
-            if (!attr_name %in% c("dim", "dimnames")) {
-                attr(dim_coords, attr_name) <- pca_attrs[[attr_name]]
-            }
-        }
-        reducedDim(sce_subset, "PCA") <- dim_coords
-    }
-
-    # Do NOT restore attributes for any other reducedDims (so, no loop!)
-
+    # Return the subsetted object (reducedDims coordinates are automatically preserved)
     return(sce_subset)
 }

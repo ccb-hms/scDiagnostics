@@ -133,7 +133,7 @@ anomaly_output <- detectAnomaly(reference_data = reference_data,
 
 # Plot the output for the "CD4" cell type
 plot(anomaly_output, 
-     cell_type = "CD4", 
+     cell_type = "CD8", 
      pc_subset = 1:5, 
      data_type = "query")
 ```

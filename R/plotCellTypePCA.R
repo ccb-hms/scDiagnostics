@@ -18,8 +18,10 @@
 #' @param diagonal_facet Type of plot to use for the diagonal panels. Either "ridge" (default), "density", or "boxplot".
 #' @param upper_facet Type of plot to use for the upper panels. Either "blank" (default), "scatter", "contour", or "ellipse".
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 2000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 2000.
 #'
 #' @return A ggmatrix object representing a pairs plot of specified principal components for the given cell types and datasets.
 #'
@@ -36,7 +38,8 @@ plotCellTypePCA <- function(query_data,
                             lower_facet = c("scatter", "contour", "ellipse", "blank"),
                             diagonal_facet = c("ridge", "density", "boxplot"),
                             upper_facet = c("blank", "scatter", "contour", "ellipse"),
-                            max_cells = 2500){
+                            max_cells_ref = 2000,
+                            max_cells_query = 2000){
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -46,12 +49,6 @@ plotCellTypePCA <- function(query_data,
                   cell_types = cell_types,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
-
-    # Downsample query and reference data
-    query_data <- downsampleSCE(sce = query_data,
-                                max_cells = max_cells)
-    reference_data <- downsampleSCE(sce = reference_data,
-                                    max_cells = max_cells)
 
     # Match diagonal_facet and upper_facet arguments
     lower_facet <- match.arg(lower_facet)
@@ -69,10 +66,11 @@ plotCellTypePCA <- function(query_data,
                              reference_data = reference_data,
                              query_cell_type_col = query_cell_type_col,
                              ref_cell_type_col = ref_cell_type_col,
+                             cell_types = cell_types,
                              pc_subset = pc_subset,
                              assay_name = assay_name,
-                             max_cells = NULL)
-    pca_output <- pca_output[pca_output[["cell_type"]] %in% cell_types,]
+                             max_cells_ref = max_cells_ref,
+                             max_cells_query = max_cells_query)
 
     # Create PC column names with variance explained
     plot_names <- paste0(

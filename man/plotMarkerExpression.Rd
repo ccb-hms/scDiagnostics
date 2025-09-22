@@ -13,7 +13,8 @@ plotMarkerExpression(
   gene_name,
   assay_name = "logcounts",
   normalization = c("z_score", "min_max", "rank", "none"),
-  max_cells = 2500
+  max_cells_ref = NULL,
+  max_cells_query = NULL
 )
 }
 \arguments{
@@ -25,7 +26,7 @@ plotMarkerExpression(
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
 
-\item{cell_type}{A vector of cell type cell_types to plot (e.g., c("T-cell", "B-cell")).}
+\item{cell_type}{A cell type to plot (e.g., c("T-cell", "B-cell")).}
 
 \item{gene_name}{The gene name for which the distribution is to be visualized.}
 
@@ -33,8 +34,11 @@ plotMarkerExpression(
 
 \item{normalization}{Method for normalizing expression values. Options: "z_score" (default), "min_max", "rank", "none".}
 
-\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is NULL.}
+
+\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is NULL.}
 }
 \value{
 A ggplot object containing density plots comparing reference and query distributions.

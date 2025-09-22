@@ -19,13 +19,16 @@
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
 #' @param n_permutation Number of permutations to perform for p-value calculation. Default is 500.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000.
 #'
 #' @return A named numeric vector of p-values from Hotelling's T-squared test for each cell type.
 #'
 #' @references
-#' Hotelling, H. (1931). "The generalization of Student's ratio". *Annals of Mathematical Statistics*. 2 (3): 360–378. doi:10.1214/aoms/1177732979.
+#' Hotelling, H. (1931). "The generalization of Student's ratio". *Annals of Mathematical Statistics*. 2 (3): 360–378.
+#' doi:10.1214/aoms/1177732979.
 #'
 #' @export
 #'
@@ -54,7 +57,8 @@ calculateHotellingPValue <- function(query_data,
                                      pc_subset = 1:5,
                                      n_permutation = 500,
                                      assay_name = "logcounts",
-                                     max_cells = 2500) {
+                                     max_cells_query = 5000,
+                                     max_cells_ref = 5000) {
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -65,12 +69,6 @@ calculateHotellingPValue <- function(query_data,
                   pc_subset_ref = pc_subset,
                   assay_name = assay_name)
 
-    # Downsample query and reference data
-    query_data <- downsampleSCE(sce = query_data,
-                                max_cells = max_cells)
-    reference_data <- downsampleSCE(sce = reference_data,
-                                    max_cells = max_cells)
-
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){
         cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
@@ -80,11 +78,15 @@ calculateHotellingPValue <- function(query_data,
     # Get the projected PCA data
     pca_output <- projectPCA(query_data = query_data,
                              reference_data = reference_data,
-                             pc_subset = pc_subset,
                              query_cell_type_col = query_cell_type_col,
                              ref_cell_type_col = ref_cell_type_col,
+                             cell_types = cell_types,
+                             pc_subset = pc_subset,
                              assay_name = assay_name,
-                             max_cells = NULL)
+                             max_cells_ref = max_cells_ref,
+                             max_cells_query = max_cells_query)
+
+    # Set data for Hotelling permutation test
     cell_list <- split(pca_output, pca_output[["cell_type"]])
 
     # Perform permutation test with p-values

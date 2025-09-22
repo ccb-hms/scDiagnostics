@@ -6,7 +6,7 @@
 \usage{
 calculateCategorizationEntropy(
   X,
-  inverse_normal_transform = FALSE,
+  inverseNormalTransformationform = FALSE,
   plot = TRUE,
   verbose = TRUE
 )
@@ -14,7 +14,7 @@ calculateCategorizationEntropy(
 \arguments{
 \item{X}{A matrix of category scores.}
 
-\item{inverse_normal_transform}{If TRUE, apply inverse normal transformation to X. Default is FALSE.}
+\item{inverseNormalTransformationform}{If TRUE, apply inverse normal transformation to X. Default is FALSE.}
 
 \item{plot}{If TRUE, plot a histogram of the entropies. Default is TRUE.}
 

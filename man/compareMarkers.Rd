@@ -10,12 +10,13 @@ compareMarkers(
   reference_data,
   query_cell_type_col,
   ref_cell_type_col,
+  cell_types = NULL,
   n_markers = 50,
   min_cells = 10,
   anomaly_filter = c("none", "anomalous_only", "non_anomalous_only"),
-  cell_types = NULL,
   assay_name = "logcounts",
-  max_cells = 2500,
+  max_cells_query = 5000,
+  max_cells_ref = 5000,
   ...
 )
 
@@ -30,6 +31,8 @@ compareMarkers(
 
 \item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
 
+\item{cell_types}{Character vector specifying which cell types to plot. If NULL, all cell types are plotted.}
+
 \item{n_markers}{Number of top marker genes to consider for each cell type. Default is 50.}
 
 \item{min_cells}{Minimum number of cells required per cell type for marker identification. Default is 10.}
@@ -37,12 +40,13 @@ compareMarkers(
 \item{anomaly_filter}{Character string specifying how to filter query cells based on anomaly detection.
 Options: "none" (default), "anomalous_only", "non_anomalous_only".}
 
-\item{cell_types}{Character vector specifying which cell types to plot. If NULL, all cell types are plotted.}
-
 \item{assay_name}{Name of the assay to use for computations. Default is "logcounts".}
 
-\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is 5000.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.}
 
 \item{...}{Additional arguments passed to the plotting function.}
 

@@ -20,7 +20,8 @@ calculateTopLoadingGeneShifts(
   detect_anomalies = FALSE,
   anomaly_threshold = 0.6,
   n_tree = 500,
-  max_cells = 2500
+  max_cells_query = 5000,
+  max_cells_ref = 5000
 )
 
 \method{plot}{calculateTopLoadingGeneShiftsObject}(
@@ -66,8 +67,11 @@ Default is FALSE.}
 \item{n_tree}{An integer specifying the number of trees for the isolation forest when
 \code{detect_anomalies} is TRUE. Default is 500.}
 
-\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is 5000.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.}
 
 \item{x}{An object of class \code{calculateTopLoadingGeneShiftsObject}.}
 

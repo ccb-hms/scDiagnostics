@@ -20,8 +20,10 @@
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2500.
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000.
 #'
 #' @return A ggplot object representing the MDS scatter plot with cell type coloring.
 #'
@@ -58,7 +60,8 @@ plotCellTypeMDS <- function(query_data,
                             ref_cell_type_col,
                             cell_types = NULL,
                             assay_name = "logcounts",
-                            max_cells = 2500) {
+                            max_cells_ref = 5000,
+                            max_cells_query = 5000) {
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
@@ -68,23 +71,21 @@ plotCellTypeMDS <- function(query_data,
                   cell_types = cell_types,
                   assay_name = assay_name)
 
-    # Downsample query and reference data
-    query_data <- downsampleSCE(sce = query_data,
-                                max_cells = max_cells)
-    reference_data <- downsampleSCE(sce = reference_data,
-                                    max_cells = max_cells)
-
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){
         cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
                                        query_data[[query_cell_type_col]])))
     }
 
-    # Subset data
-    query_data <- query_data[, which(
-        query_data[[query_cell_type_col]] %in% cell_types)]
-    reference_data <- reference_data[, which(
-        reference_data[[ref_cell_type_col]] %in% cell_types)]
+    # Downsample query and reference data (with cell type filtering)
+    query_data <- downsampleSCE(sce = query_data,
+                                max_cells = max_cells_query,
+                                cell_types = cell_types,
+                                cell_type_col = query_cell_type_col)
+    reference_data <- downsampleSCE(sce = reference_data,
+                                    max_cells = max_cells_ref,
+                                    cell_types = cell_types,
+                                    cell_type_col = ref_cell_type_col)
 
     # Extract assay matrices
     query_assay <- as.matrix(assay(query_data, assay_name))
@@ -100,12 +101,12 @@ plotCellTypeMDS <- function(query_data,
                         reference_data[[ref_cell_type_col]]))
     colnames(cmd) <- c("Dim1", "Dim2", "dataset", "cellType")
     cmd <- na.omit(cmd)
-    cmd$cell_type_dataset <- paste(cmd[["dataset"]], cmd[["cellType"]], sep = " ")
+    cmd[["cell_type_dataset"]] <- paste(cmd[["dataset"]], cmd[["cellType"]], sep = " ")
 
     # Define the order of cell type and dataset combinations
     order_combinations <- paste(rep(c("Reference", "Query"), length(cell_types)),
                                 rep(sort(cell_types), each = 2))
-    cmd$cell_type_dataset <- factor(cmd$cell_type_dataset,
+    cmd[["cell_type_dataset"]] <- factor(cmd[["cell_type_dataset"]],
                                     levels = order_combinations)
 
     # Define the colors for cell types
