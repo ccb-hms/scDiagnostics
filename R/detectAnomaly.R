@@ -151,12 +151,14 @@ detectAnomaly <- function(reference_data,
                                         cell_types =  cell_types,
                                         cell_type_col = ref_cell_type_col)
         reference_mat <- t(as.matrix(assay(reference_data, assay_name)))
+        reference_cell_types <- reference_data[[ref_cell_type_col]]
         if(!is.null(query_data)){
             query_data <- downsampleSCE(sce = query_data,
                                         max_cells = max_cells_ref,
                                         cell_types =  cell_types,
                                         cell_type_col = query_cell_type_col)
             query_mat <- t(as.matrix(assay(query_data, assay_name)))
+            query_cell_types <- query_data[[query_cell_type_col]]
         }
     }
 
