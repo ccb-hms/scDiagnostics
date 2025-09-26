@@ -149,8 +149,10 @@ projectPCA <- function(query_data,
         stringsAsFactors = FALSE
     )
 
-    # Set rownames to preserve cell names
-    rownames(full_output) <- c(ref_cell_names, query_cell_names)
+    # Make cell names unique by prefixing with dataset name
+    unique_ref_names <- paste0("Reference_", ref_cell_names)
+    unique_query_names <- paste0("Query_", query_cell_names)
+    rownames(full_output) <- c(unique_ref_names, unique_query_names)
 
     # Filter by cell types if specified
     if (!is.null(cell_types)) {
