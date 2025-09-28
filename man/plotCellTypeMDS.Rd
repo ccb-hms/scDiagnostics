@@ -11,8 +11,8 @@ plotCellTypeMDS(
   ref_cell_type_col,
   cell_types = NULL,
   assay_name = "logcounts",
-  max_cells_ref = 5000,
-  max_cells_query = 5000
+  max_cells_query = 5000,
+  max_cells_ref = 5000
 )
 }
 \arguments{
@@ -30,11 +30,11 @@ expression data and metadata.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000.}
-
 \item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
 no downsampling of query cells is performed. Default is 5000.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.}
 }
 \value{
 A ggplot object representing the MDS scatter plot with cell type coloring.

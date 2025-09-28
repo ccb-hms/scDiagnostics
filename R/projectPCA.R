@@ -68,42 +68,27 @@ projectPCA <- function(query_data,
                        cell_types = NULL,
                        pc_subset = 1:10,
                        assay_name = "logcounts",
-                       max_cells_ref = NULL,
-                       max_cells_query = NULL){
+                       max_cells_query = NULL,
+                       max_cells_ref = NULL){
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_types,
                   pc_subset_ref = pc_subset,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
 
-    # Validate cell_types argument
-    if (!is.null(cell_types)) {
-        if (!is.character(cell_types)) {
-            stop("\'cell_types\' must be a character vector or NULL.")
-        }
-    }
-
-    # Validate max_cells_ref argument
-    if (!is.null(max_cells_ref)) {
-        if (!is.numeric(max_cells_ref) || length(max_cells_ref) != 1 ||
-            max_cells_ref <= 0 || max_cells_ref != as.integer(max_cells_ref)) {
-            stop("\'max_cells_ref\' must be a single positive integer or NULL.")
-        }
-        max_cells_ref <- as.integer(max_cells_ref)
-    }
-
-    # Validate max_cells_query argument
-    if (!is.null(max_cells_query)) {
-        if (!is.numeric(max_cells_query) || length(max_cells_query) != 1 ||
-            max_cells_query <= 0 || max_cells_query != as.integer(max_cells_query)) {
-            stop("\'max_cells_query\' must be a single positive integer or NULL.")
-        }
-        max_cells_query <- as.integer(max_cells_query)
-    }
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = query_data,
+                                  reference_data = reference_data,
+                                  query_cell_type_col = query_cell_type_col,
+                                  ref_cell_type_col = ref_cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = FALSE,
+                                  n_cell_types = NULL)
 
     # Extract reference PCA components and rotation matrix
     ref_mat <- reducedDim(reference_data, "PCA")[, pc_subset, drop = FALSE]

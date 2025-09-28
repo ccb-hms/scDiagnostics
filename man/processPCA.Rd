@@ -7,9 +7,10 @@
 processPCA(
   query_data = NULL,
   reference_data = NULL,
-  max_cells = 5000,
   n_hvgs = 2000,
-  assay_name = "logcounts"
+  assay_name = "logcounts",
+  max_cells_query = NULL,
+  max_cells_ref = NULL
 )
 }
 \arguments{
@@ -19,16 +20,18 @@ If NULL, no processing is performed on query data. Default is NULL.}
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object for reference data.
 If NULL, no processing is performed on reference data. Default is NULL.}
 
-\item{max_cells}{Maximum number of cells to retain per dataset when PCA computation is required.
-Objects with more cells will be randomly downsampled to this number before PCA computation.
-Objects with existing PCA are never downsampled. Default is 5000.}
-
 \item{n_hvgs}{Number of highly variable genes to select for PCA computation.
 When both datasets lack PCA, this number is used for each dataset before
 taking the intersection. Default is 2000.}
 
 \item{assay_name}{Name of the assay to use for HVG selection and PCA computation.
 Should contain log-normalized expression values. Default is "logcounts".}
+
+\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is NULL.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is NULL.}
 }
 \value{
 When only one dataset is provided, returns the processed SingleCellExperiment object directly.

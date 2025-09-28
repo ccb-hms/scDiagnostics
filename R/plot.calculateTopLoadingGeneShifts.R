@@ -31,6 +31,10 @@
 #' @param draw_plot Logical indicating whether to draw the plot immediately (TRUE) or return
 #'                  the undrawn plot object (FALSE). For heatmaps, FALSE returns a ComplexHeatmap
 #'                  object that can be further customized before drawing. Default is TRUE.
+#' @param max_cells_ref Maximum number of reference cells to include in the plot. If NULL,
+#' all available reference cells are plotted. Default is NULL.
+#' @param max_cells_query Maximum number of query cells to include in the plot. If NULL,
+#' all available query cells are plotted. Default is NULL.
 #' @param ... Additional arguments passed to \code{\link[ComplexHeatmap]{draw}} or not used for boxplot.
 #'
 #' @return A plot object.
@@ -56,6 +60,8 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
                                                      significance_threshold = 0.05,
                                                      show_anomalies = FALSE,
                                                      draw_plot = TRUE,
+                                                     max_cells_ref = NULL,
+                                                     max_cells_query = NULL,
                                                      ...) {
 
     #Input Validation
@@ -70,6 +76,19 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
     # Validate show_anomalies parameter
     if (!is.logical(show_anomalies) || length(show_anomalies) != 1) {
         stop("show_anomalies must be a logical value.")
+    }
+
+    # Validate max_cells parameters
+    if (!is.null(max_cells_ref)) {
+        if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 || max_cells_ref != as.integer(max_cells_ref)) {
+            stop("'max_cells_ref' must be a positive integer.")
+        }
+    }
+
+    if (!is.null(max_cells_query)) {
+        if (!is.numeric(max_cells_query) || max_cells_query <= 0 || max_cells_query != as.integer(max_cells_query)) {
+            stop("'max_cells_query' must be a positive integer.")
+        }
     }
 
     # Check if anomaly data is available when requested
@@ -136,12 +155,40 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
         stop(paste("Cell type '", cell_type, "' not found in results.", sep = ""))
     }
 
+    # Downsample cells if max_cells parameters are specified
+    cell_metadata_filtered <- x[["cell_metadata"]]
+    cell_subset <- cell_metadata_filtered[cell_metadata_filtered[["cell_type"]] == cell_type, ]
+
+    # Separate reference and query data for potential downsampling
+    ref_cells <- cell_subset[cell_subset[["dataset"]] == "Reference", ]
+    query_cells <- cell_subset[cell_subset[["dataset"]] == "Query", ]
+
+    # Downsample reference cells if specified
+    if (!is.null(max_cells_ref) && nrow(ref_cells) > max_cells_ref) {
+        sampled_indices <- sample(nrow(ref_cells), max_cells_ref)
+        ref_cells <- ref_cells[sampled_indices, ]
+    }
+
+    # Downsample query cells if specified
+    if (!is.null(max_cells_query) && nrow(query_cells) > max_cells_query) {
+        sampled_indices <- sample(nrow(query_cells), max_cells_query)
+        query_cells <- query_cells[sampled_indices, ]
+    }
+
+    # Combine the potentially downsampled cells back together
+    cell_subset_final <- rbind(ref_cells, query_cells)
+
+    # Update the object with downsampled data for plotting
+    x_plotting <- x
+    x_plotting[["cell_metadata"]] <- cell_subset_final
+    x_plotting[["expression_data"]] <- x[["expression_data"]][, cell_subset_final[["cell_id"]], drop = FALSE]
+
     # Route to Plotting Functions
     if (plot_type == "boxplot") {
-        return(plotBoxplot(x, cell_type, available_pcs,
+        return(plotBoxplot(x_plotting, cell_type, available_pcs,
                            plot_by, n_genes, significance_threshold, show_anomalies))
     } else {
-        ht <- plotHeatmap(x, cell_type, available_pcs,
+        ht <- plotHeatmap(x_plotting, cell_type, available_pcs,
                           plot_by, n_genes, significance_threshold, show_anomalies)
         if (is.null(ht)) {
             message("No data available to generate a heatmap for the specified parameters.")

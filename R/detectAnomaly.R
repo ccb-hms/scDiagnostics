@@ -89,9 +89,10 @@ detectAnomaly <- function(reference_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_types,
                   pc_subset_ref = pc_subset,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
 
     # Check if n_tree is a positive integer
     if (!is.numeric(n_tree) || n_tree <= 0 || n_tree != as.integer(n_tree)) {
@@ -104,16 +105,14 @@ detectAnomaly <- function(reference_data,
         stop("\'anomaly_threshold\' must be a positive number greater than 0 and less than 1.")
     }
 
-    # Get common cell types if they are not specified by user
-    if(is.null(cell_types)){
-        if(is.null(query_data)){
-            cell_types <- na.omit(
-                unique(reference_data[[ref_cell_type_col]]))
-        } else{
-            cell_types <- na.omit(
-                intersect(reference_data[[ref_cell_type_col]], query_data[[query_cell_type_col]]))
-        }
-    }
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = query_data,
+                                  reference_data = reference_data,
+                                  query_cell_type_col = query_cell_type_col,
+                                  ref_cell_type_col = ref_cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = TRUE,
+                                  n_cell_types = NULL)
 
     # Get data from reference and query datasets
     if(!is.null(pc_subset)){
@@ -139,21 +138,21 @@ detectAnomaly <- function(reference_data,
             query_mat <- query_mat[, pc_cols, drop = FALSE]
             reference_mat <- reference_mat[, pc_cols, drop = FALSE]
         } else {
-            reference_data <- downsampleSCE(sce = reference_data,
+            reference_data <- downsampleSCE(sce_object = reference_data,
                                             max_cells = max_cells_ref,
                                             cell_types =  cell_types,
                                             cell_type_col = ref_cell_type_col)
             reference_mat <- reducedDim(reference_data, "PCA")[, pc_subset]
         }
     } else{
-        reference_data <- downsampleSCE(sce = reference_data,
+        reference_data <- downsampleSCE(sce_object = reference_data,
                                         max_cells = max_cells_ref,
                                         cell_types =  cell_types,
                                         cell_type_col = ref_cell_type_col)
         reference_mat <- t(as.matrix(assay(reference_data, assay_name)))
         reference_cell_types <- reference_data[[ref_cell_type_col]]
         if(!is.null(query_data)){
-            query_data <- downsampleSCE(sce = query_data,
+            query_data <- downsampleSCE(sce_object = query_data,
                                         max_cells = max_cells_ref,
                                         cell_types =  cell_types,
                                         cell_type_col = query_cell_type_col)

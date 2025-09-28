@@ -67,8 +67,8 @@ plotPairwiseDistancesDensity <- function(
         correlation_method = c("spearman", "pearson"),
         bandwidth = 0.25,
         assay_name = "logcounts",
-        max_cells_ref = 5000,
-        max_cells_query = 5000) {
+        max_cells_query = 5000,
+        max_cells_ref = 5000) {
 
     # Match argument for distance_metric
     distance_metric <- match.arg(distance_metric)
@@ -91,9 +91,19 @@ plotPairwiseDistancesDensity <- function(
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_type,
                   pc_subset_ref = pc_subset,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
+
+    # Select cell types
+    cell_type <- selectCellTypes(query_data = query_data,
+                                 reference_data = reference_data,
+                                 query_cell_type_col = query_cell_type_col,
+                                 ref_cell_type_col = ref_cell_type_col,
+                                 cell_types = cell_type,
+                                 dual_only = TRUE,
+                                 n_cell_types = NULL)
 
     # Convert to matrix and potentially applied PCA dimensionality reduction
     if(!is.null(pc_subset)){
@@ -113,12 +123,12 @@ plotPairwiseDistancesDensity <- function(
                                 paste0("PC", pc_subset)]
     } else{
         # Subset query and reference data to the specified cell type
-        reference_data <- downsampleSCE(sce = reference_data,
+        reference_data <- downsampleSCE(sce_object = reference_data,
                                         max_cells = max_cells_ref,
                                         cell_types =  cell_type,
                                         cell_type_col = ref_cell_type_col)
         ref_mat <- t(as.matrix(assay(reference_data, assay_name)))
-        query_data <- downsampleSCE(sce = query_data,
+        query_data <- downsampleSCE(sce_object = query_data,
                                     max_cells = max_cells_ref,
                                     cell_types =  cell_type,
                                     cell_type_col = query_cell_type_col)

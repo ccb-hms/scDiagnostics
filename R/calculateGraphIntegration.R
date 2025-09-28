@@ -127,9 +127,10 @@ calculateGraphIntegration <- function(query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_types,
                   pc_subset_ref = pc_subset,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
 
     # Check additional parameters
     if (!is.numeric(k_neighbors) || k_neighbors <= 0 ||
@@ -161,11 +162,14 @@ calculateGraphIntegration <- function(query_data,
         stop("\'local_confidence_threshold\' must be between 0 and 1.")
     }
 
-    # Get common cell types if not specified
-    if (is.null(cell_types)) {
-        cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
-                                       query_data[[query_cell_type_col]])))
-    }
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = query_data,
+                                  reference_data = reference_data,
+                                  query_cell_type_col = query_cell_type_col,
+                                  ref_cell_type_col = ref_cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = TRUE,
+                                  n_cell_types = NULL)
 
     # Filter cell types by minimum cell count
     ref_counts <- table(reference_data[[ref_cell_type_col]])

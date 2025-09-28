@@ -9,7 +9,6 @@ argumentCheck(
   reference_data = NULL,
   query_cell_type_col = NULL,
   ref_cell_type_col = NULL,
-  cell_types = NULL,
   unique_cell_type = FALSE,
   plot_function = FALSE,
   cell_names_query = NULL,
@@ -17,7 +16,9 @@ argumentCheck(
   pc_subset_query = NULL,
   pc_subset_ref = NULL,
   common_rotation_genes = FALSE,
-  assay_name = NULL
+  assay_name = NULL,
+  max_cells_ref = NULL,
+  max_cells_query = NULL
 )
 }
 \arguments{
@@ -32,8 +33,6 @@ that identifies the cell types. If `NULL`, no check is performed.}
 
 \item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data}
 that identifies the cell types. If `NULL`, no check is performed.}
-
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If `NULL`, no check is performed.}
 
 \item{unique_cell_type}{If `TRUE`, there should only be one cell type in the provided \code{\linkS4class{SingleCellExperiment}} objects.
 Default is `FALSE`.}
@@ -52,6 +51,10 @@ Default is `FALSE`.}
 Default is FALSE.}
 
 \item{assay_name}{Name of the assay on which to perform computations. If `NULL`, no check is performed.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain. If `NULL`, no check is performed.}
+
+\item{max_cells_query}{Maximum number of query cells to retain. If `NULL`, no check is performed.}
 }
 \value{
 None.
@@ -66,12 +69,11 @@ The function performs a series of checks to ensure that:
 \itemize{
  \item `query_data` and `reference_data` are \code{\linkS4class{SingleCellExperiment}} objects.
  \item `query_cell_type_col` and `ref_cell_type_col` exist in the column data of their respective \code{\linkS4class{SingleCellExperiment}} objects.
- \item The specified `cell_types` are available in the provided datasets.
  \item If `unique_cell_type` is `TRUE`, there should only be one cell type in the \code{\linkS4class{SingleCellExperiment}} objects.
- \item If `plot_function` is `TRUE`, the number of unique `cell_types` does not exceed 10.
  \item `cell_names_query` are valid cell names in the provided query dataset.
  \item `cell_names_ref` are valid cell names in the provided reference dataset.
  \item The PCA subsets specified by `pc_subset_query` and `pc_subset_ref` are valid.
+ \item `max_cells_ref` and `max_cells_query` are positive integers when not NULL.
 }
 }
 \author{

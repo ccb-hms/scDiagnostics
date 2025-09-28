@@ -9,15 +9,15 @@
 #' metrics, systematically influence the confidence in cell type annotations,
 #' which is essential for ensuring reliable cell type annotation.
 #'
-#' @param se_object A \code{\linkS4class{SingleCellExperiment}} containing the single-cell
+#' @param sce_object A \code{\linkS4class{SingleCellExperiment}} containing the single-cell
 #' expression data and metadata.
-#' @param cell_type_col The column name in the \code{colData} of \code{se_object}
+#' @param cell_type_col The column name in the \code{colData} of \code{sce_object}
 #' that contains the cell type labels.
 #' @param cell_types A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).
 #' Defaults to \code{NULL}, which will include all the cells.
-#' @param qc_col A column name in the \code{colData} of \code{se_object} that
+#' @param qc_col A column name in the \code{colData} of \code{sce_object} that
 #' contains the QC stats of interest.
-#' @param score_col The column name in the \code{colData} of \code{se_object} that
+#' @param score_col The column name in the \code{colData} of \code{sce_object} that
 #' contains the cell type annotation scores.
 #' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
 #'                  Default is 5000.
@@ -35,7 +35,7 @@
 #'                                      "Neurons","Platelets"))]
 #'
 # Create a scatter plot between library size and annotation scores
-#' p1 <- plotQCvsAnnotation(se_object = qc_data_subset,
+#' p1 <- plotQCvsAnnotation(sce_object = qc_data_subset,
 #'                          cell_type_col = "SingleR_annotation",
 #'                          cell_types = NULL,
 #'                          qc_col = "total",
@@ -45,7 +45,7 @@
 #' @export
 #'
 # Function to plot QC score against annotation
-plotQCvsAnnotation <- function(se_object,
+plotQCvsAnnotation <- function(sce_object,
                                cell_type_col,
                                cell_types = NULL,
                                qc_col,
@@ -53,36 +53,39 @@ plotQCvsAnnotation <- function(se_object,
                                max_cells = 5000) {
 
     # Check standard input arguments
-    argumentCheck(query_data = se_object,
+    argumentCheck(query_data = sce_object,
                   query_cell_type_col = cell_type_col,
-                  cell_types = cell_types)
+                  max_cells_query = max_cells)
 
     # Downsample SCE object
-    se_object <- downsampleSCE(sce = se_object,
-                               max_cells = max_cells,
-                               cell_types = cell_types,
-                               cell_type_col = cell_type_col)
+    sce_object <- downsampleSCE(sce_object = sce_object,
+                                max_cells = max_cells,
+                                cell_types = cell_types,
+                                cell_type_col = cell_type_col)
 
-    # Check if qc_col is a valid column name in se_object
-    if (!qc_col %in% names(colData(se_object))) {
-        stop("qc_col: '", qc_col, "' is not a valid column name in se_object.")
+    # Check if qc_col is a valid column name in sce_object
+    if (!qc_col %in% names(colData(sce_object))) {
+        stop("qc_col: '", qc_col, "' is not a valid column name in sce_object.")
     }
 
-    # Check if score_col is a valid column name in se_object
-    if (!score_col %in% names(colData(se_object))) {
-        stop("score_col: '", score_col, "' is not a valid column name in se_object.")
+    # Check if score_col is a valid column name in sce_object
+    if (!score_col %in% names(colData(sce_object))) {
+        stop("score_col: '", score_col, "' is not a valid column name in sce_object.")
     }
 
-    # Filter cells based on cell_types if specified
-    if (!is.null(cell_types)) {
-        se_object <- se_object[, which(se_object[[cell_type_col]] %in%
-                                           cell_types)]
-    }
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = sce_object,
+                                  reference_data = NULL,
+                                  query_cell_type_col = cell_type_col,
+                                  ref_cell_type_col = NULL,
+                                  cell_types = cell_types,
+                                  dual_only = FALSE,
+                                  n_cell_types = 10)
 
     # Extract QC stats, scores, and cell_typess
-    qc_stats <- se_object[[qc_col]]
-    cell_types_scores <- se_object[[score_col]]
-    cell_labels <- se_object[[cell_type_col]]
+    qc_stats <- sce_object[[qc_col]]
+    cell_types_scores <- sce_object[[score_col]]
+    cell_labels <- sce_object[[cell_type_col]]
 
     # Combine QC stats, scores, and labels into a data frame
     data <- data.frame(QCStats = qc_stats,

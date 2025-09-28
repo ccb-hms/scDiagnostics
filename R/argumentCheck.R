@@ -10,12 +10,11 @@
 #' \itemize{
 #'  \item `query_data` and `reference_data` are \code{\linkS4class{SingleCellExperiment}} objects.
 #'  \item `query_cell_type_col` and `ref_cell_type_col` exist in the column data of their respective \code{\linkS4class{SingleCellExperiment}} objects.
-#'  \item The specified `cell_types` are available in the provided datasets.
 #'  \item If `unique_cell_type` is `TRUE`, there should only be one cell type in the \code{\linkS4class{SingleCellExperiment}} objects.
-#'  \item If `plot_function` is `TRUE`, the number of unique `cell_types` does not exceed 10.
 #'  \item `cell_names_query` are valid cell names in the provided query dataset.
 #'  \item `cell_names_ref` are valid cell names in the provided reference dataset.
 #'  \item The PCA subsets specified by `pc_subset_query` and `pc_subset_ref` are valid.
+#'  \item `max_cells_ref` and `max_cells_query` are positive integers when not NULL.
 #' }
 #'
 #' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
@@ -26,7 +25,6 @@
 #' that identifies the cell types. If `NULL`, no check is performed.
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data}
 #' that identifies the cell types. If `NULL`, no check is performed.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If `NULL`, no check is performed.
 #' @param unique_cell_type If `TRUE`, there should only be one cell type in the provided \code{\linkS4class{SingleCellExperiment}} objects.
 #' Default is `FALSE`.
 #' @param plot_function A logical value indicating whether the function is being called to generate a plot. Default is `FALSE`.
@@ -37,6 +35,8 @@
 #' @param common_rotation_genes If TRUE, check the rotation matrices of the reference and query data and ensure they have the same genes.
 #' Default is FALSE.
 #' @param assay_name Name of the assay on which to perform computations. If `NULL`, no check is performed.
+#' @param max_cells_ref Maximum number of reference cells to retain. If `NULL`, no check is performed.
+#' @param max_cells_query Maximum number of query cells to retain. If `NULL`, no check is performed.
 #'
 #' @keywords internal
 #'
@@ -49,7 +49,6 @@ argumentCheck <- function(query_data = NULL,
                           reference_data = NULL,
                           query_cell_type_col = NULL,
                           ref_cell_type_col = NULL,
-                          cell_types = NULL,
                           unique_cell_type = FALSE,
                           plot_function = FALSE,
                           cell_names_query = NULL,
@@ -57,7 +56,9 @@ argumentCheck <- function(query_data = NULL,
                           pc_subset_query = NULL,
                           pc_subset_ref = NULL,
                           common_rotation_genes = FALSE,
-                          assay_name = NULL) {
+                          assay_name = NULL,
+                          max_cells_ref = NULL,
+                          max_cells_query = NULL) {
 
     # Check if query_data is a SingleCellExperiment object
     if (!is.null(query_data)) {
@@ -111,32 +112,6 @@ argumentCheck <- function(query_data = NULL,
         }
     }
 
-    # Check if cell_types are available in at least one of the SingleCellExperiment object(s)
-    if (!is.null(cell_types)) {
-
-        # Get available cell types from each dataset
-        available_query_types <- NULL
-        available_ref_types <- NULL
-
-        if (!is.null(query_data)) {
-            available_query_types <- unique(query_data[[query_cell_type_col]])
-        }
-
-        if (!is.null(reference_data)) {
-            available_ref_types <- unique(reference_data[[ref_cell_type_col]])
-        }
-
-        # Check that each cell type is present in at least one dataset
-        for (cell_type in cell_types) {
-            present_in_query <- !is.null(available_query_types) && cell_type %in% available_query_types
-            present_in_ref <- !is.null(available_ref_types) && cell_type %in% available_ref_types
-
-            if (!present_in_query && !present_in_ref) {
-                stop("Cell type '", cell_type, "' is not available in either 'query_data' or 'reference_data'.")
-            }
-        }
-    }
-
     # Check that the SingleCellExperiment object(s) have a unique cell type
     if (isTRUE(unique_cell_type)) {
 
@@ -157,14 +132,6 @@ argumentCheck <- function(query_data = NULL,
             if (unique(query_data[[query_cell_type_col]]) != unique(reference_data[[ref_cell_type_col]])) {
                 stop("The cell type of the query data does not match the cell type of the reference data.")
             }
-        }
-    }
-
-    # Check the number of cell types for plot function
-    if (plot_function == TRUE) {
-
-        if (length(unique(cell_types)) > 10) {
-            stop("The maximum number of cell types for plotting is 10.")
         }
     }
 
@@ -242,6 +209,38 @@ argumentCheck <- function(query_data = NULL,
         if (!all(rownames(attributes(reducedDim(query_data, "PCA"))[["rotation"]]) %in%
                  rownames(attributes(reducedDim(reference_data, "PCA"))[["rotation"]]))) {
             stop("The genes in the rotation matrices differ.")
+        }
+    }
+
+    # Check max_cells_ref parameter
+    if (!is.null(max_cells_ref)) {
+        # Check if max_cells_ref is a positive integer
+        if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 || max_cells_ref != as.integer(max_cells_ref)) {
+            stop("'max_cells_ref' must be a positive integer.")
+        }
+
+        # Warning for plot functions when max_cells_ref > 50000 and reference_data exists
+        if (plot_function && !is.null(reference_data) && max_cells_ref > 50000) {
+            warning("'max_cells_ref' is set to ", max_cells_ref,
+                    " which is greater than 50,000. For better plot performance, ",
+                    "consider using a smaller value for 'max_cells_ref' to downsample the reference data.",
+                    call. = FALSE)
+        }
+    }
+
+    # Check max_cells_query parameter
+    if (!is.null(max_cells_query)) {
+        # Check if max_cells_query is a positive integer
+        if (!is.numeric(max_cells_query) || max_cells_query <= 0 || max_cells_query != as.integer(max_cells_query)) {
+            stop("'max_cells_query' must be a positive integer.")
+        }
+
+        # Warning for plot functions when max_cells_query > 50000 and query_data exists
+        if (plot_function && !is.null(query_data) && max_cells_query > 50000) {
+            warning("'max_cells_query' is set to ", max_cells_query,
+                    " which is greater than 50,000. For better plot performance, ",
+                    "consider using a smaller value for 'max_cells_query' to downsample the query data.",
+                    call. = FALSE)
         }
     }
 }

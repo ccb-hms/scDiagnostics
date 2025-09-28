@@ -19,6 +19,10 @@
 #'                      "density", "boxplot" or "blank".
 #' @param upper_facet Type of plot to use for the upper panels. Either "blank" (default),
 #'                   "scatter", "contour", or "ellipse".
+#' @param max_cells_ref Maximum number of reference cells to include in the plot. If NULL,
+#' all available reference cells are plotted. Default is NULL.
+#' @param max_cells_query Maximum number of query cells to include in the plot. If NULL,
+#' all available query cells are plotted. Default is NULL.
 #' @param ... Additional arguments to be passed to the plotting functions.
 #'
 #' @return The S3 plot method returns a \code{GGally::ggpairs} object representing
@@ -40,6 +44,8 @@ plot.calculateDiscriminantSpaceObject <- function(
         lower_facet = c("scatter", "contour", "ellipse", "blank"),
         diagonal_facet = c("ridge", "density", "boxplot", "blank"),
         upper_facet = c("blank", "scatter", "contour", "ellipse"),
+        max_cells_ref = NULL,
+        max_cells_query = NULL,
         ...){
 
     # Check if query data is available in the object
@@ -62,6 +68,62 @@ plot.calculateDiscriminantSpaceObject <- function(
                                     cell_types, ]
     query_data <- x[["query_proj"]][x[["query_proj"]][["cell_type"]] %in%
                                         cell_types, ]
+
+    # Downsample reference data if max_cells_ref is specified
+    if(!is.null(max_cells_ref)){
+        # Input validation for max_cells_ref
+        if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 || max_cells_ref != as.integer(max_cells_ref)) {
+            stop("'max_cells_ref' must be a positive integer.")
+        }
+
+        if(nrow(ref_data) > max_cells_ref){
+            # Stratified sampling by cell type
+            ref_data_list <- list()
+            for(ct in cell_types){
+                ct_data <- ref_data[ref_data[["cell_type"]] == ct, ]
+                if(nrow(ct_data) > 0){
+                    # Calculate proportional allocation
+                    n_cells_ct <- min(nrow(ct_data),
+                                      max(1, round(max_cells_ref * nrow(ct_data) / nrow(ref_data))))
+                    if(nrow(ct_data) > n_cells_ct){
+                        sampled_indices <- sample(nrow(ct_data), n_cells_ct)
+                        ct_data <- ct_data[sampled_indices, ]
+                    }
+                    ref_data_list[[ct]] <- ct_data
+                }
+            }
+            ref_data <- do.call(rbind, ref_data_list)
+            rownames(ref_data) <- NULL
+        }
+    }
+
+    # Downsample query data if max_cells_query is specified
+    if(!is.null(max_cells_query)){
+        # Input validation for max_cells_query
+        if (!is.numeric(max_cells_query) || max_cells_query <= 0 || max_cells_query != as.integer(max_cells_query)) {
+            stop("'max_cells_query' must be a positive integer.")
+        }
+
+        if(nrow(query_data) > max_cells_query){
+            # Stratified sampling by cell type
+            query_data_list <- list()
+            for(ct in cell_types){
+                ct_data <- query_data[query_data[["cell_type"]] == ct, ]
+                if(nrow(ct_data) > 0){
+                    # Calculate proportional allocation
+                    n_cells_ct <- min(nrow(ct_data),
+                                      max(1, round(max_cells_query * nrow(ct_data) / nrow(query_data))))
+                    if(nrow(ct_data) > n_cells_ct){
+                        sampled_indices <- sample(nrow(ct_data), n_cells_ct)
+                        ct_data <- ct_data[sampled_indices, ]
+                    }
+                    query_data_list[[ct]] <- ct_data
+                }
+            }
+            query_data <- do.call(rbind, query_data_list)
+            rownames(query_data) <- NULL
+        }
+    }
 
     # Get discriminant vector columns
     dv_cols <- grep("^DV", colnames(ref_data), value = TRUE)
@@ -203,6 +265,7 @@ plot.calculateDiscriminantSpaceObject <- function(
             )
     }
 
+    # [Continue with all other helper functions...]
     # Ellipse facet function
     .robustEllipseFunc <- function(data, mapping, ...) {
         # Function to calculate robust ellipses through bootstrapping

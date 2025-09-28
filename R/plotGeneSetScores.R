@@ -44,7 +44,7 @@ plotGeneSetScores <- function(se_object,
                               method = c("PCA", "TSNE", "UMAP"),
                               score_col,
                               pc_subset = 1:5,
-                              cell_type_col = NULL,
+                              cell_type_col,
                               cell_types = NULL,
                               max_cells = 2000) {
 
@@ -52,7 +52,14 @@ plotGeneSetScores <- function(se_object,
     argumentCheck(query_data = se_object,
                   pc_subset_query = pc_subset,
                   query_cell_type_col = cell_type_col,
-                  cell_types = cell_types)
+                  max_cells_query = max_cells)
+
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = se_object,
+                                  query_cell_type_col = cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = FALSE,
+                                  n_cell_types = NULL)
 
     # Match method argument
     method <- match.arg(method)
@@ -67,7 +74,7 @@ plotGeneSetScores <- function(se_object,
     }
 
     # Downsample SCE object
-    se_object <- downsampleSCE(sce = se_object,
+    se_object <- downsampleSCE(sce_object = se_object,
                                max_cells = max_cells,
                                cell_types = cell_types,
                                cell_type_col = cell_type_col)

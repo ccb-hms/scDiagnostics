@@ -38,28 +38,32 @@ plotCellTypePCA <- function(query_data,
                             lower_facet = c("scatter", "contour", "ellipse", "blank"),
                             diagonal_facet = c("ridge", "density", "boxplot"),
                             upper_facet = c("blank", "scatter", "contour", "ellipse"),
-                            max_cells_ref = 2000,
-                            max_cells_query = 2000){
+                            max_cells_query = 2000,
+                            max_cells_ref = 2000){
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_types,
                   pc_subset_ref = pc_subset,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
 
     # Match diagonal_facet and upper_facet arguments
     lower_facet <- match.arg(lower_facet)
     diagonal_facet <- match.arg(diagonal_facet)
     upper_facet <- match.arg(upper_facet)
 
-    # Get common cell types if they are not specified by user
-    if(is.null(cell_types)){
-        cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
-                                       query_data[[query_cell_type_col]])))
-    }
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = query_data,
+                                  reference_data = reference_data,
+                                  query_cell_type_col = query_cell_type_col,
+                                  ref_cell_type_col = ref_cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = FALSE,
+                                  n_cell_types = 10)
 
     # Get the projected PCA data
     pca_output <- projectPCA(query_data = query_data,

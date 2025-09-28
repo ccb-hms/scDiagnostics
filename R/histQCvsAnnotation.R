@@ -55,10 +55,17 @@ histQCvsAnnotation <- function(se_object,
     # Check standard input arguments
     argumentCheck(query_data = se_object,
                   query_cell_type_col = cell_type_col,
-                  cell_types = cell_types)
+                  max_cells_query = max_cells)
+
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = se_object,
+                                  query_cell_type_col = cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = FALSE,
+                                  n_cell_types = 10)
 
     # Downsample SCE object
-    se_object <- downsampleSCE(sce = se_object,
+    se_object <- downsampleSCE(sce_object = se_object,
                                max_cells = max_cells,
                                cell_type_col = cell_type_col,
                                cell_types = cell_types)

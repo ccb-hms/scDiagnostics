@@ -16,6 +16,10 @@
 #' @param diagonal_facet Type of plot to use for the diagonal panels. Either "ridge" (default), "density", "boxplot" or "blank". Only used when plot_type = "scores".
 #' @param upper_facet Type of plot to use for the upper panels. Either "blank" (default), "scatter", "contour", or "ellipse". Only used when plot_type = "scores".
 #' @param n_top A numeric value specifying the number of n_top variables (by absolute loading value) to display. Default is 10 Only used when plot_type = "loadings".
+#' @param max_cells_ref Maximum number of reference cells to include in the plot. If NULL,
+#' all available reference cells are plotted. Default is NULL. Only used when plot_type = "scores".
+#' @param max_cells_query Maximum number of query cells to include in the plot. If NULL,
+#' all available query cells are plotted. Default is NULL. Only used when plot_type = "scores".
 #' @param ... Additional arguments passed to the plotting function.
 #'
 #' @return A ggmatrix object representing a pairs plot of specified SIR components for the given cell types and datasets when plot_type = "scores", or a ggplot object showing loadings when plot_type = "loadings".
@@ -37,6 +41,8 @@ plot.calculateSIRSpaceObject <- function(x,
                                          diagonal_facet = c("ridge", "density", "boxplot", "blank"),
                                          upper_facet = c("blank", "scatter", "contour", "ellipse"),
                                          n_top = 10,
+                                         max_cells_ref = NULL,
+                                         max_cells_query = NULL,
                                          ...) {
 
     # Match arguments
@@ -57,12 +63,27 @@ plot.calculateSIRSpaceObject <- function(x,
         }
     }
 
-    # Helper function to plot scores (original functionality)
+    # Validate max_cells parameters
+    if (!is.null(max_cells_ref)) {
+        if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 || max_cells_ref != as.integer(max_cells_ref)) {
+            stop("'max_cells_ref' must be a positive integer.")
+        }
+    }
+
+    if (!is.null(max_cells_query)) {
+        if (!is.numeric(max_cells_query) || max_cells_query <= 0 || max_cells_query != as.integer(max_cells_query)) {
+            stop("'max_cells_query' must be a positive integer.")
+        }
+    }
+
+    # Helper function to plot scores (original functionality with added downsampling)
     .plotScores <- function(x, cell_types,
                             sir_subset,
                             lower_facet,
                             diagonal_facet,
-                            upper_facet) {
+                            upper_facet,
+                            max_cells_ref,
+                            max_cells_query) {
 
         # Get SIR projections data
         sir_projections <- na.omit(x[["sir_projections"]])
@@ -79,6 +100,69 @@ plot.calculateSIRSpaceObject <- function(x,
             sir_projections <- sir_projections[sir_projections[["cell_type"]] %in%
                                                    cell_types, ]
         }
+
+        # Separate reference and query data
+        ref_data <- sir_projections[sir_projections[["dataset"]] == "Reference", ]
+        query_data <- sir_projections[sir_projections[["dataset"]] == "Query", ]
+
+        # Downsample reference data if max_cells_ref is specified
+        if(!is.null(max_cells_ref)){
+            # Input validation for max_cells_ref
+            if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 || max_cells_ref != as.integer(max_cells_ref)) {
+                stop("'max_cells_ref' must be a positive integer.")
+            }
+
+            if(nrow(ref_data) > max_cells_ref){
+                # Stratified sampling by cell type
+                ref_data_list <- list()
+                for(ct in cell_types){
+                    ct_data <- ref_data[ref_data[["cell_type"]] == ct, ]
+                    if(nrow(ct_data) > 0){
+                        # Calculate proportional allocation
+                        n_cells_ct <- min(nrow(ct_data),
+                                          max(1, round(max_cells_ref * nrow(ct_data) / nrow(ref_data))))
+                        if(nrow(ct_data) > n_cells_ct){
+                            sampled_indices <- sample(nrow(ct_data), n_cells_ct)
+                            ct_data <- ct_data[sampled_indices, ]
+                        }
+                        ref_data_list[[ct]] <- ct_data
+                    }
+                }
+                ref_data <- do.call(rbind, ref_data_list)
+                rownames(ref_data) <- NULL
+            }
+        }
+
+        # Downsample query data if max_cells_query is specified
+        if(!is.null(max_cells_query)){
+            # Input validation for max_cells_query
+            if (!is.numeric(max_cells_query) || max_cells_query <= 0 || max_cells_query != as.integer(max_cells_query)) {
+                stop("'max_cells_query' must be a positive integer.")
+            }
+
+            if(nrow(query_data) > max_cells_query){
+                # Stratified sampling by cell type
+                query_data_list <- list()
+                for(ct in cell_types){
+                    ct_data <- query_data[query_data[["cell_type"]] == ct, ]
+                    if(nrow(ct_data) > 0){
+                        # Calculate proportional allocation
+                        n_cells_ct <- min(nrow(ct_data),
+                                          max(1, round(max_cells_query * nrow(ct_data) / nrow(query_data))))
+                        if(nrow(ct_data) > n_cells_ct){
+                            sampled_indices <- sample(nrow(ct_data), n_cells_ct)
+                            ct_data <- ct_data[sampled_indices, ]
+                        }
+                        query_data_list[[ct]] <- ct_data
+                    }
+                }
+                query_data <- do.call(rbind, query_data_list)
+                rownames(query_data) <- NULL
+            }
+        }
+
+        # Combine the potentially downsampled reference and query data
+        sir_projections <- rbind(ref_data, query_data)
 
         # Create SIR column names with variance explained
         plot_names <- paste0(
@@ -128,7 +212,6 @@ plot.calculateSIRSpaceObject <- function(x,
             ) +
             ggplot2::guides(color = ggplot2::guide_legend(ncol = 1))
 
-        # [All the helper functions for plotting remain the same]
         # Scatterplot facet function
         .scatterFunc <- function(data, mapping, ...) {
 
@@ -435,7 +518,7 @@ plot.calculateSIRSpaceObject <- function(x,
         return(plot_obj)
     }
 
-    # Helper function to plot loadings
+    # Helper function to plot loadings (unchanged)
     .plotLoadings <- function(x, sir_subset, n_top) {
 
         # Get rotation matrix (loadings)
@@ -552,11 +635,12 @@ plot.calculateSIRSpaceObject <- function(x,
                            sir_subset,
                            lower_facet,
                            diagonal_facet,
-                           upper_facet))
+                           upper_facet,
+                           max_cells_ref,
+                           max_cells_query))
     } else {
         return(.plotLoadings(x,
                              sir_subset,
                              n_top))
     }
 }
-

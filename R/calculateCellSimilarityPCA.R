@@ -57,6 +57,10 @@ calculateCellSimilarityPCA <- function(se_object,
                                        n_top_vars = 50,
                                        assay_name = "logcounts"){
 
+    # Format the cell names - remove "Query_" prefix if present
+    cell_names <- gsub("^Query_", "", cell_names)
+    cell_names <- gsub("^Reference_", "", cell_names)
+
     # Check standard input arguments
     argumentCheck(query_data = se_object,
                   cell_names_query = cell_names,

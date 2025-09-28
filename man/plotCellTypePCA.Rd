@@ -15,8 +15,8 @@ plotCellTypePCA(
   lower_facet = c("scatter", "contour", "ellipse", "blank"),
   diagonal_facet = c("ridge", "density", "boxplot"),
   upper_facet = c("blank", "scatter", "contour", "ellipse"),
-  max_cells_ref = 2000,
-  max_cells_query = 2000
+  max_cells_query = 2000,
+  max_cells_ref = 2000
 )
 }
 \arguments{
@@ -40,11 +40,11 @@ plotCellTypePCA(
 
 \item{upper_facet}{Type of plot to use for the upper panels. Either "blank" (default), "scatter", "contour", or "ellipse".}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 2000.}
-
 \item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
 no downsampling of query cells is performed. Default is 2000.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 2000.}
 }
 \value{
 A ggmatrix object representing a pairs plot of specified principal components for the given cell types and datasets.

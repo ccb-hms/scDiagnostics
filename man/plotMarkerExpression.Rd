@@ -13,8 +13,8 @@ plotMarkerExpression(
   gene_name,
   assay_name = "logcounts",
   normalization = c("z_score", "min_max", "rank", "none"),
-  max_cells_ref = NULL,
-  max_cells_query = NULL
+  max_cells_query = NULL,
+  max_cells_ref = NULL
 )
 }
 \arguments{
@@ -34,11 +34,11 @@ plotMarkerExpression(
 
 \item{normalization}{Method for normalizing expression values. Options: "z_score" (default), "min_max", "rank", "none".}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is NULL.}
-
 \item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
 no downsampling of query cells is performed. Default is NULL.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is NULL.}
 }
 \value{
 A ggplot object containing density plots comparing reference and query distributions.

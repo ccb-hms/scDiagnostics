@@ -71,13 +71,16 @@ projectSIR <- function(query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_types,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
 
     # Downsample query and reference data
-    query_data <- downsampleSCE(sce = query_data,
+    query_data <- downsampleSCE(sce_object = query_data,
+                                cell_type_col = query_cell_type_col,
                                 max_cells = max_cells_query)
-    reference_data <- downsampleSCE(sce = reference_data,
+    reference_data <- downsampleSCE(sce_object = reference_data,
+                                    cell_type_col = ref_cell_type_col,
                                     max_cells = max_cells_ref)
 
     # Check if cumulative_variance_threshold is between 0 and 1
@@ -91,11 +94,14 @@ projectSIR <- function(query_data,
         stop("n_neighbor must be a positive integer.")
     }
 
-    # Get common cell types if they are not specified by user
-    if(is.null(cell_types)){
-        cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
-                                       query_data[[query_cell_type_col]])))
-    }
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = query_data,
+                                  reference_data = reference_data,
+                                  query_cell_type_col = query_cell_type_col,
+                                  ref_cell_type_col = ref_cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = FALSE,
+                                  n_cell_types = NULL)
 
     # Compute conditional means for each cell type of reference data
     cond_means <- conditionalMeans(reference_data = reference_data,

@@ -60,16 +60,17 @@ plotCellTypeMDS <- function(query_data,
                             ref_cell_type_col,
                             cell_types = NULL,
                             assay_name = "logcounts",
-                            max_cells_ref = 5000,
-                            max_cells_query = 5000) {
+                            max_cells_query = 5000,
+                            max_cells_ref = 5000) {
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_types,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
 
     # Get common cell types if they are not specified by user
     if(is.null(cell_types)){
@@ -78,11 +79,11 @@ plotCellTypeMDS <- function(query_data,
     }
 
     # Downsample query and reference data (with cell type filtering)
-    query_data <- downsampleSCE(sce = query_data,
+    query_data <- downsampleSCE(sce_object = query_data,
                                 max_cells = max_cells_query,
                                 cell_types = cell_types,
                                 cell_type_col = query_cell_type_col)
-    reference_data <- downsampleSCE(sce = reference_data,
+    reference_data <- downsampleSCE(sce_object = reference_data,
                                     max_cells = max_cells_ref,
                                     cell_types = cell_types,
                                     cell_type_col = ref_cell_type_col)

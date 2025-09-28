@@ -29,6 +29,8 @@ calculateDiscriminantSpace(
   lower_facet = c("scatter", "contour", "ellipse", "blank"),
   diagonal_facet = c("ridge", "density", "boxplot", "blank"),
   upper_facet = c("blank", "scatter", "contour", "ellipse"),
+  max_cells_ref = NULL,
+  max_cells_query = NULL,
   ...
 )
 }
@@ -56,11 +58,11 @@ If NULL, only the projected reference data is returned. Default is NULL.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is NULL.}
+\item{max_cells_ref}{Maximum number of reference cells to include in the plot. If NULL,
+all available reference cells are plotted. Default is NULL.}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is NULL.}
+\item{max_cells_query}{Maximum number of query cells to include in the plot. If NULL,
+all available query cells are plotted. Default is NULL.}
 
 \item{x}{An object of class \code{calculateDiscriminantSpaceObject} containing the projected data on the discriminant space.}
 

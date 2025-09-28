@@ -81,9 +81,10 @@ calculateTopLoadingGeneShifts <- function(query_data,
                   reference_data = reference_data,
                   ref_cell_type_col = ref_cell_type_col,
                   query_cell_type_col = query_cell_type_col,
-                  cell_types = cell_types,
                   pc_subset_query = pc_subset,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
 
     # Input validation
     if (!is.numeric(n_top_loadings) || length(n_top_loadings) != 1 || n_top_loadings <= 0) {
@@ -111,11 +112,14 @@ calculateTopLoadingGeneShifts <- function(query_data,
         }
     }
 
-    # Get common cell types first
-    if (is.null(cell_types)) {
-        cell_types <- stats::na.omit(unique(c(reference_data[[ref_cell_type_col]],
-                                              query_data[[query_cell_type_col]])))
-    }
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = query_data,
+                                  reference_data = reference_data,
+                                  query_cell_type_col = query_cell_type_col,
+                                  ref_cell_type_col = ref_cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = TRUE,
+                                  n_cell_types = NULL)
 
     # Ensure cell names exist for anomaly detection mapping
     # Store original cell names or create them if they don't exist
@@ -172,11 +176,11 @@ calculateTopLoadingGeneShifts <- function(query_data,
     }
 
     # Now downsample the data (with cell type filtering)
-    query_data <- downsampleSCE(sce = query_data,
+    query_data <- downsampleSCE(sce_object = query_data,
                                 max_cells = max_cells_query,
                                 cell_types = cell_types,
                                 cell_type_col = query_cell_type_col)
-    reference_data <- downsampleSCE(sce = reference_data,
+    reference_data <- downsampleSCE(sce_object = reference_data,
                                     max_cells = max_cells_ref,
                                     cell_types = cell_types,
                                     cell_type_col = ref_cell_type_col)

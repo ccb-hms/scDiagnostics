@@ -3,13 +3,13 @@
 #' @description
 #' This function plots gene expression on a dimensional reduction plot using methods like t-SNE, UMAP, or PCA. Each single cell is color-coded based on the expression of a specific gene or feature.
 #'
-#' @param se_object An object of class \code{\linkS4class{SingleCellExperiment}} containing log-transformed expression matrix and other metadata.
+#' @param sce_object An object of class \code{\linkS4class{SingleCellExperiment}} containing log-transformed expression matrix and other metadata.
 #'        It can be either a reference or query dataset.
 #' @param method The reduction method to use for visualization. It should be one of the supported methods: "TSNE", "UMAP", or "PCA".
 #' @param pc_subset An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA".
 #'        Default is 1:5.
 #' @param feature A character string representing the name of the gene or feature to be visualized.
-#' @param cell_type_col The column name in the \code{colData} of \code{se_object} that identifies the cell types.
+#' @param cell_type_col The column name in the \code{colData} of \code{sce_object} that identifies the cell types.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
@@ -27,7 +27,7 @@
 #' data("query_data")
 #'
 #' # Plot gene expression on PCA plot
-#' plotGeneExpressionDimred(se_object = query_data,
+#' plotGeneExpressionDimred(sce_object = query_data,
 #'                          cell_type_col = "SingleR_annotation",
 #'                          method = "PCA",
 #'                          pc_subset = 1:5,
@@ -35,42 +35,49 @@
 #'                          cell_types = "CD4")
 #'
 # Function to plot the gene expression of a gene for one or more cell types
-plotGeneExpressionDimred <- function(se_object,
+plotGeneExpressionDimred <- function(sce_object,
                                      method = c("TSNE", "UMAP", "PCA"),
                                      pc_subset = 1:5,
                                      feature,
-                                     cell_type_col = NULL,
+                                     cell_type_col,
                                      cell_types = NULL,
                                      assay_name = "logcounts",
                                      max_cells = 2000) {
 
     # Check standard input arguments
-    argumentCheck(query_data = se_object,
+    argumentCheck(query_data = sce_object,
                   pc_subset_query = pc_subset,
                   assay_name = assay_name,
                   query_cell_type_col = cell_type_col,
-                  cell_types = cell_types)
+                  max_cells_query = max_cells)
+
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = sce_object,
+                                  query_cell_type_col = cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = FALSE,
+                                  n_cell_types = NULL)
 
     # Match arguments
     method <- match.arg(method)
 
     # Store PCA attributes BEFORE downsampling (if method is PCA)
     pca_percent_var <- NULL
-    if (method == "PCA" && "PCA" %in% reducedDimNames(se_object)) {
-        pca_attrs <- attributes(reducedDim(se_object, "PCA"))
+    if (method == "PCA" && "PCA" %in% reducedDimNames(sce_object)) {
+        pca_attrs <- attributes(reducedDim(sce_object, "PCA"))
         if (!is.null(pca_attrs[["percentVar"]])) {
             pca_percent_var <- pca_attrs[["percentVar"]]
         }
     }
 
     # Downsample SCE object
-    se_object <- downsampleSCE(sce = se_object,
-                               max_cells = max_cells,
-                               cell_types = cell_types,
-                               cell_type_col = cell_type_col)
+    sce_object <- downsampleSCE(sce_object = sce_object,
+                                max_cells = max_cells,
+                                cell_types = cell_types,
+                                cell_type_col = cell_type_col)
 
     # Check if feature is available
-    if (!feature %in% rownames(assay(se_object, assay_name))) {
+    if (!feature %in% rownames(assay(sce_object, assay_name))) {
         stop("Specified feature does not exist in the expression matrix.")
     }
 
@@ -78,12 +85,12 @@ plotGeneExpressionDimred <- function(se_object,
     filtered_to_specific_types <- FALSE
     if (!is.null(cell_type_col)) {
         # Check if cell type column exists
-        if (!cell_type_col %in% colnames(colData(se_object))) {
+        if (!cell_type_col %in% colnames(colData(sce_object))) {
             stop("Specified cell_type_col does not exist in colData.")
         }
 
         # Get available cell types
-        available_cell_types <- unique(colData(se_object)[[cell_type_col]])
+        available_cell_types <- unique(colData(sce_object)[[cell_type_col]])
 
         # If specific cell types are requested, filter to those
         if (!is.null(cell_types)) {
@@ -95,25 +102,25 @@ plotGeneExpressionDimred <- function(se_object,
             }
 
             # Filter to cells of specified types
-            cell_mask <- colData(se_object)[[cell_type_col]] %in% cell_types
+            cell_mask <- colData(sce_object)[[cell_type_col]] %in% cell_types
             filtered_to_specific_types <- TRUE
         } else {
             # Use all cells if no specific types requested
-            cell_mask <- rep(TRUE, ncol(se_object))
+            cell_mask <- rep(TRUE, ncol(sce_object))
             cell_types <- available_cell_types
         }
 
         # Filter the object
-        se_object <- se_object[, cell_mask]
+        sce_object <- sce_object[, cell_mask]
     }
 
     # Extract gene expression vector (after potential filtering)
-    expression <- assay(se_object, assay_name)[feature, ]
+    expression <- assay(sce_object, assay_name)[feature, ]
 
     if(method %in% c("TSNE", "UMAP")){
 
         # Extract dimension reduction coordinates from SingleCellExperiment object
-        reduction <- reducedDim(se_object, method)
+        reduction <- reducedDim(sce_object, method)
 
         # Prepare data for plotting
         df <- data.frame(Dim1 = reduction[, 1], Dim2 = reduction[, 2],
@@ -121,7 +128,7 @@ plotGeneExpressionDimred <- function(se_object,
 
         # Add cell type information if available
         if (!is.null(cell_type_col)) {
-            df[["CellType"]] <- colData(se_object)[[cell_type_col]]
+            df[["CellType"]] <- colData(sce_object)[[cell_type_col]]
         }
 
         # Create the plot object with better color gradient
@@ -161,11 +168,11 @@ plotGeneExpressionDimred <- function(se_object,
     } else if (method == "PCA"){
 
         # Check input for pc_subset
-        if(!all(pc_subset %in% seq_len(ncol(reducedDim(se_object, "PCA")))))
+        if(!all(pc_subset %in% seq_len(ncol(reducedDim(sce_object, "PCA")))))
             stop("\'pc_subset\' is out of range.")
 
         # PCA data
-        plot_mat <- reducedDim(se_object, "PCA")[, pc_subset]
+        plot_mat <- reducedDim(sce_object, "PCA")[, pc_subset]
 
         # Create PC column names with variance explained (always show percentages if available)
         if (!is.null(pca_percent_var) && length(pca_percent_var) >= max(pc_subset)) {
@@ -191,7 +198,7 @@ plotGeneExpressionDimred <- function(se_object,
 
         # Add cell type information if available
         if (!is.null(cell_type_col)) {
-            pc_df[["CellType"]] <- colData(se_object)[[cell_type_col]]
+            pc_df[["CellType"]] <- colData(sce_object)[[cell_type_col]]
         }
 
         # Create a simple plot to extract the legend with better color gradient

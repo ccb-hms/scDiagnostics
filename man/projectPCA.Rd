@@ -12,8 +12,8 @@ projectPCA(
   cell_types = NULL,
   pc_subset = 1:10,
   assay_name = "logcounts",
-  max_cells_ref = NULL,
-  max_cells_query = NULL
+  max_cells_query = NULL,
+  max_cells_ref = NULL
 )
 }
 \arguments{
@@ -36,11 +36,11 @@ no cell type filtering is performed. Default is NULL.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Defaults to \code{"logcounts"}.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is NULL.}
-
 \item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
 no downsampling of query cells is performed. Default is NULL.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is NULL.}
 }
 \value{
 A \code{data.frame} containing the projected data in rows (reference and query data combined),

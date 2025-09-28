@@ -5,7 +5,7 @@
 \title{Scatter plot: QC stats vs Cell Type Annotation Scores}
 \usage{
 plotQCvsAnnotation(
-  se_object,
+  sce_object,
   cell_type_col,
   cell_types = NULL,
   qc_col,
@@ -14,19 +14,19 @@ plotQCvsAnnotation(
 )
 }
 \arguments{
-\item{se_object}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell
+\item{sce_object}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell
 expression data and metadata.}
 
-\item{cell_type_col}{The column name in the \code{colData} of \code{se_object}
+\item{cell_type_col}{The column name in the \code{colData} of \code{sce_object}
 that contains the cell type labels.}
 
 \item{cell_types}{A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).
 Defaults to \code{NULL}, which will include all the cells.}
 
-\item{qc_col}{A column name in the \code{colData} of \code{se_object} that
+\item{qc_col}{A column name in the \code{colData} of \code{sce_object} that
 contains the QC stats of interest.}
 
-\item{score_col}{The column name in the \code{colData} of \code{se_object} that
+\item{score_col}{The column name in the \code{colData} of \code{sce_object} that
 contains the cell type annotation scores.}
 
 \item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
@@ -56,7 +56,7 @@ qc_data_subset <- qc_data[, !(qc_data$SingleR_annotation
                               \%in\% c("Chondrocytes", "DC",
                                      "Neurons","Platelets"))]
 
-p1 <- plotQCvsAnnotation(se_object = qc_data_subset,
+p1 <- plotQCvsAnnotation(sce_object = qc_data_subset,
                          cell_type_col = "SingleR_annotation",
                          cell_types = NULL,
                          qc_col = "total",

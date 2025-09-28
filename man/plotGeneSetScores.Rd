@@ -9,7 +9,7 @@ plotGeneSetScores(
   method = c("PCA", "TSNE", "UMAP"),
   score_col,
   pc_subset = 1:5,
-  cell_type_col = NULL,
+  cell_type_col,
   cell_types = NULL,
   max_cells = 2000
 )

@@ -83,18 +83,30 @@ calculateCellDistancesSimilarity <- function(query_data,
                                              assay_name = "logcounts",
                                              max_cells_ref = 5000) {
 
-    # Subset query data first
-    query_data_subset <- query_data[, cell_names_query, drop = FALSE]
+    # Format the query cell names - remove "Query_" prefix if present
+    cell_names_query <- gsub("^Query_", "", cell_names_query)
 
     # Check standard input arguments (now with proper cell_types)
-    argumentCheck(query_data = query_data_subset,
+    argumentCheck(query_data = query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_types,
                   cell_names_query = cell_names_query,
                   pc_subset_ref = pc_subset,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_ref = max_cells_ref)
+
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = query_data,
+                                  reference_data = reference_data,
+                                  query_cell_type_col = query_cell_type_col,
+                                  ref_cell_type_col = ref_cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = FALSE,
+                                  n_cell_types = NULL)
+
+    # Subset query data first
+    query_data_subset <- query_data[, cell_names_query, drop = FALSE]
 
     # Compute distance data
     distance_data <- calculateCellDistances(
@@ -105,8 +117,10 @@ calculateCellDistancesSimilarity <- function(query_data,
         cell_types = cell_types,
         pc_subset = pc_subset,
         assay_name = assay_name,
-        max_cells_ref = max_cells_ref,
-        max_cells_query = NULL)
+        max_cells_ref = max_cells_ref)
+
+    # Update the names of the query cells
+    cell_names_query <- paste0("Query_", cell_names_query)
 
     # Initialize empty lists to store results
     bhattacharyya_list <- hellinger_list <-

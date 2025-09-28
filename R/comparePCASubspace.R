@@ -72,8 +72,8 @@
 #' plot(subspace_comparison)
 #'
 # Function to compare subspace spanned by top PCs in reference and query datasets
-comparePCASubspace <- function(reference_data,
-                               query_data,
+comparePCASubspace <- function(query_data,
+                               reference_data,
                                query_cell_type_col,
                                ref_cell_type_col,
                                pc_subset = 1:5,

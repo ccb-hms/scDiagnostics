@@ -112,9 +112,10 @@ regressPC <- function(query_data,
                   query_data = query_data,
                   ref_cell_type_col = ref_cell_type_col,
                   query_cell_type_col = query_cell_type_col,
-                  cell_types = cell_types,
                   pc_subset_query = pc_subset,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
 
     # Additional check for batch column
     if(!is.null(query_batch_col)){
@@ -124,15 +125,14 @@ regressPC <- function(query_data,
         }
     }
 
-    # Get common cell types if they are not specified by user
-    if(is.null(cell_types)){
-        if(is.null(reference_data)){
-            cell_types <- na.omit(unique(query_data[[query_cell_type_col]]))
-        } else{
-            cell_types <- na.omit(unique(c(query_data[[query_cell_type_col]],
-                                           reference_data[[ref_cell_type_col]])))
-        }
-    }
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = query_data,
+                                  reference_data = reference_data,
+                                  query_cell_type_col = query_cell_type_col,
+                                  ref_cell_type_col = ref_cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = FALSE,
+                                  n_cell_types = NULL)
 
     # Sort cell types for consistent reference category
     cell_types <- sort(cell_types)
@@ -150,7 +150,7 @@ regressPC <- function(query_data,
         query_pca_var <- attr(reducedDim(query_data, "PCA"), "percentVar")
 
         # Downsample reference and query data
-        query_data <- downsampleSCE(sce = query_data,
+        query_data <- downsampleSCE(sce_object = query_data,
                                     max_cells = max_cells_query,
                                     cell_types = cell_types,
                                     cell_type_col = query_cell_type_col)

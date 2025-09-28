@@ -62,8 +62,8 @@ plotMarkerExpression <- function(query_data,
                                  gene_name,
                                  assay_name = "logcounts",
                                  normalization = c("z_score", "min_max", "rank", "none"),
-                                 max_cells_ref = NULL,
-                                 max_cells_query = NULL) {
+                                 max_cells_query = NULL,
+                                 max_cells_ref = NULL) {
 
     # Match normalization argument
     normalization <- match.arg(normalization)
@@ -73,19 +73,25 @@ plotMarkerExpression <- function(query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_type,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
 
-    # Get common cell types if they are not specified by user
-    if(is.null(cell_type)){
-        cell_type <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
-                                      query_data[[query_cell_type_col]])))
-    }
+    # Select cell types
+    cell_type <- selectCellTypes(query_data = query_data,
+                                 reference_data = reference_data,
+                                 query_cell_type_col = query_cell_type_col,
+                                 ref_cell_type_col = ref_cell_type_col,
+                                 cell_types = cell_type,
+                                 dual_only = TRUE,
+                                 n_cell_types = NULL)
 
-    # Downsample query and reference data (with cell type filtering)
-    query_data <- downsampleSCE(sce = query_data,
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce_object = query_data,
+                                cell_type_col = query_cell_type_col,
                                 max_cells = max_cells_query)
-    reference_data <- downsampleSCE(sce = reference_data,
+    reference_data <- downsampleSCE(sce_object = reference_data,
+                                    cell_type_col = ref_cell_type_col,
                                     max_cells = max_cells_ref)
 
     # Check if gene_name is present in both query_data and reference_data
