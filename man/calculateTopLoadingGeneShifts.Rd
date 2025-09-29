@@ -18,6 +18,7 @@ calculateTopLoadingGeneShifts(
   adjust_method = "fdr",
   assay_name = "logcounts",
   detect_anomalies = FALSE,
+  anomaly_comparison = FALSE,
   anomaly_threshold = 0.6,
   n_tree = 500,
   max_cells_query = 5000,
@@ -33,6 +34,7 @@ calculateTopLoadingGeneShifts(
   n_genes = 10,
   significance_threshold = 0.05,
   show_anomalies = FALSE,
+  pseudo_bulk = FALSE,
   draw_plot = TRUE,
   max_cells_ref = NULL,
   max_cells_query = NULL,
@@ -62,6 +64,11 @@ calculateTopLoadingGeneShifts(
 
 \item{detect_anomalies}{Logical indicating whether to perform anomaly detection using isolation forests.
 Default is FALSE.}
+
+\item{anomaly_comparison}{Logical indicating whether to perform statistical comparisons
+between non-anomalous reference cells and anomalous query cells instead of all-vs-all
+comparisons. When TRUE, only non-anomalous reference cells are compared against only
+anomalous query cells for each cell type. Requires detect_anomalies = TRUE. Default is FALSE.}
 
 \item{anomaly_threshold}{A numeric value specifying the threshold for identifying anomalies when
 \code{detect_anomalies} is TRUE. Default is 0.6.}
@@ -93,6 +100,11 @@ selection or annotation. Default is 0.05.}
 
 \item{show_anomalies}{Logical indicating whether to display anomaly status annotations.
 Default is FALSE. Requires anomaly results to be present in the object.}
+
+\item{pseudo_bulk}{Logical indicating whether to create pseudo-bulk profiles instead of
+showing individual cells. When TRUE, expression values are averaged within groups
+(dataset and optionally anomaly status). Not compatible with boxplot visualization.
+Default is FALSE.}
 
 \item{draw_plot}{Logical indicating whether to draw the plot immediately (TRUE) or return
 the undrawn plot object (FALSE). For heatmaps, FALSE returns a ComplexHeatmap
@@ -136,6 +148,12 @@ between datasets. A key feature is the calculation of cell-type-specific varianc
 global PCs, providing a more nuanced view of how major biological axes affect individual populations.
 When anomaly detection is enabled, isolation forests are used to identify anomalous cells based on
 their PCA projections.
+
+When \code{anomaly_comparison = TRUE}, the statistical analysis focuses specifically on
+comparing non-anomalous reference cells against anomalous query cells. This can help
+identify genes that are differentially expressed between "normal" reference cells and
+potentially problematic query cells, providing insights into what makes certain query
+cells anomalous.
 
 This function visualizes the results from \code{calculateTopLoadingGeneShifts}.
 The "heatmap" option displays a hierarchically clustered set of genes.

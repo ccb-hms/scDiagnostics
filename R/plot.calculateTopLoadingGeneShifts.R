@@ -28,6 +28,10 @@
 #'   selection or annotation. Default is 0.05.
 #' @param show_anomalies Logical indicating whether to display anomaly status annotations.
 #'                      Default is FALSE. Requires anomaly results to be present in the object.
+#' @param pseudo_bulk Logical indicating whether to create pseudo-bulk profiles instead of
+#'                    showing individual cells. When TRUE, expression values are averaged within groups
+#'                    (dataset and optionally anomaly status). Not compatible with boxplot visualization.
+#'                    Default is FALSE.
 #' @param draw_plot Logical indicating whether to draw the plot immediately (TRUE) or return
 #'                  the undrawn plot object (FALSE). For heatmaps, FALSE returns a ComplexHeatmap
 #'                  object that can be further customized before drawing. Default is TRUE.
@@ -59,6 +63,7 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
                                                      n_genes = 10,
                                                      significance_threshold = 0.05,
                                                      show_anomalies = FALSE,
+                                                     pseudo_bulk = FALSE,
                                                      draw_plot = TRUE,
                                                      max_cells_ref = NULL,
                                                      max_cells_query = NULL,
@@ -89,6 +94,17 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
         if (!is.numeric(max_cells_query) || max_cells_query <= 0 || max_cells_query != as.integer(max_cells_query)) {
             stop("'max_cells_query' must be a positive integer.")
         }
+    }
+
+    # Add after existing validation
+    if (!is.logical(pseudo_bulk) || length(pseudo_bulk) != 1) {
+        stop("pseudo_bulk must be a logical value.")
+    }
+
+    # Restrict boxplot with pseudo_bulk
+    if (pseudo_bulk && plot_type == "boxplot") {
+        stop("Boxplot visualization is not compatible with pseudo_bulk = TRUE. ",
+             "Please use plot_type = 'heatmap' or set pseudo_bulk = FALSE.")
     }
 
     # Check if anomaly data is available when requested
@@ -189,7 +205,7 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
                            plot_by, n_genes, significance_threshold, show_anomalies))
     } else {
         ht <- plotHeatmap(x_plotting, cell_type, available_pcs,
-                          plot_by, n_genes, significance_threshold, show_anomalies)
+                          plot_by, n_genes, significance_threshold, show_anomalies, pseudo_bulk)
         if (is.null(ht)) {
             message("No data available to generate a heatmap for the specified parameters.")
             return(invisible(NULL))
@@ -236,13 +252,17 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
 #' within each dataset for easy visual identification.
 #'
 #' @param x An object of class \code{calculateTopLoadingGeneShiftsObject} containing
-#'   expression data and analysis results.
+#'          expression data and analysis results.
 #' @param cell_type A character string specifying the cell type to visualize.
 #' @param available_pcs A character vector of principal components to include in analysis.
 #' @param plot_by A character string indicating gene selection criterion ("top_loading" or "p_adjusted").
 #' @param n_genes An integer specifying the number of top genes to display per PC. Can be NULL.
 #' @param significance_threshold A numeric value between 0 and 1 for significance filtering. Can be NULL.
 #' @param show_anomalies Logical indicating whether to show anomaly annotations.
+#' @param pseudo_bulk Logical indicating whether to create pseudo-bulk profiles instead of
+#'                    showing individual cells. When TRUE, expression values are averaged within groups
+#'                    (dataset and optionally anomaly status). Not compatible with boxplot visualization.
+#'                    Default is FALSE.
 #'
 #' @keywords internal
 #'
@@ -252,7 +272,7 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
 #'
 # Helper heatmap function
 plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
-                        n_genes, significance_threshold, show_anomalies) {
+                        n_genes, significance_threshold, show_anomalies, pseudo_bulk = FALSE) {
 
     # Initialize gene collection
     all_genes_to_plot <- c()
@@ -319,37 +339,89 @@ plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
         significant_genes <- unique(unlist(sig_gene_list))
     }
 
-    # Prepare cell subset and ordering - UPDATED for proper anomaly ordering
+    # Prepare cell subset
     cell_subset <- x[["cell_metadata"]][x[["cell_metadata"]][["cell_type"]] == cell_type, ]
 
-    # Create proper ordering: Query (Anomaly, Normal), then Reference (Anomaly, Normal)
-    if (show_anomalies && "anomaly_status" %in% names(cell_subset)) {
-        # Order by dataset first, then by anomaly status within each dataset
-        # This creates: Query-Anomaly, Query-Normal, Reference-Anomaly, Reference-Normal
-        cell_subset <- cell_subset[order(
-            factor(cell_subset[["dataset"]], levels = c("Query", "Reference")),
-            factor(cell_subset[["anomaly_status"]], levels = c("Anomaly", "Normal"))
-        ), ]
+    # NEW: Handle pseudo-bulk aggregation
+    if (pseudo_bulk) {
+        # Create grouping categories
+        if (show_anomalies && "anomaly_status" %in% names(cell_subset)) {
+            # 4 categories: Query_Normal, Query_Anomaly, Reference_Normal, Reference_Anomaly
+            cell_subset[["group"]] <- paste(cell_subset[["dataset"]],
+                                            cell_subset[["anomaly_status"]],
+                                            sep = "_")
+            group_order <- c("Query_Normal", "Query_Anomaly", "Reference_Normal", "Reference_Anomaly")
+        } else {
+            # 2 categories: Query, Reference
+            cell_subset[["group"]] <- cell_subset[["dataset"]]
+            group_order <- c("Query", "Reference")
+        }
+
+        # Aggregate expression data by groups
+        expr_matrix_unfiltered <- as.matrix(
+            x[["expression_data"]][all_genes_to_plot, cell_subset[["cell_id"]], drop = FALSE]
+        )
+
+        # Create pseudo-bulk profiles
+        pseudo_bulk_matrix <- matrix(0, nrow = nrow(expr_matrix_unfiltered), ncol = length(group_order))
+        rownames(pseudo_bulk_matrix) <- rownames(expr_matrix_unfiltered)
+        colnames(pseudo_bulk_matrix) <- group_order
+
+        for (group in group_order) {
+            group_cells <- cell_subset[cell_subset[["group"]] == group, "cell_id"]
+            if (length(group_cells) > 0) {
+                if (length(group_cells) == 1) {
+                    pseudo_bulk_matrix[, group] <- expr_matrix_unfiltered[, group_cells]
+                } else {
+                    pseudo_bulk_matrix[, group] <- rowMeans(expr_matrix_unfiltered[, group_cells, drop = FALSE])
+                }
+            }
+        }
+
+        # Update expression matrix for plotting
+        expr_matrix_unfiltered <- pseudo_bulk_matrix
+
+        # Create new cell_subset for annotations
+        cell_subset_pseudo <- data.frame(
+            cell_id = group_order,
+            group = group_order,
+            stringsAsFactors = FALSE
+        )
+
+        # Parse group names back to dataset and anomaly status
+        if (show_anomalies && "anomaly_status" %in% names(cell_subset)) {
+            cell_subset_pseudo[["dataset"]] <- gsub("_.*", "", cell_subset_pseudo[["group"]])
+            cell_subset_pseudo[["anomaly_status"]] <- gsub(".*_", "", cell_subset_pseudo[["group"]])
+        } else {
+            cell_subset_pseudo[["dataset"]] <- cell_subset_pseudo[["group"]]
+        }
+
+        cell_subset <- cell_subset_pseudo
     } else {
-        # Standard ordering by dataset only when no anomaly information
-        cell_subset <- cell_subset[order(
-            factor(cell_subset[["dataset"]], levels = c("Query", "Reference"))
-        ), ]
+        # Original ordering logic for individual cells
+        if (show_anomalies && "anomaly_status" %in% names(cell_subset)) {
+            cell_subset <- cell_subset[order(
+                factor(cell_subset[["dataset"]], levels = c("Query", "Reference")),
+                factor(cell_subset[["anomaly_status"]], levels = c("Anomaly", "Normal"))
+            ), ]
+        } else {
+            cell_subset <- cell_subset[order(
+                factor(cell_subset[["dataset"]], levels = c("Query", "Reference"))
+            ), ]
+        }
+
+        # Extract expression matrix for individual cells
+        expr_matrix_unfiltered <- as.matrix(
+            x[["expression_data"]][all_genes_to_plot, cell_subset[["cell_id"]], drop = FALSE]
+        )
     }
 
-    # Extract and filter expression matrix
-    expr_matrix_unfiltered <- as.matrix(
-        x[["expression_data"]][all_genes_to_plot,
-                               cell_subset[["cell_id"]],
-                               drop = FALSE]
-    )
-
-    # Remove zero-variance genes to prevent scaling issues
+    # Remove zero-variance genes
     row_variances <- apply(expr_matrix_unfiltered, 1, stats::var)
     genes_to_keep <- row_variances > .Machine$double.eps
 
     if (sum(genes_to_keep) == 0) {
-        return(NULL)  # Return NULL instead of warning
+        return(NULL)
     }
 
     # Create final expression matrix and scale

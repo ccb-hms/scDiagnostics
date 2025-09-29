@@ -15,6 +15,12 @@
 #' When anomaly detection is enabled, isolation forests are used to identify anomalous cells based on
 #' their PCA projections.
 #'
+#' When \code{anomaly_comparison = TRUE}, the statistical analysis focuses specifically on
+#' comparing non-anomalous reference cells against anomalous query cells. This can help
+#' identify genes that are differentially expressed between "normal" reference cells and
+#' potentially problematic query cells, providing insights into what makes certain query
+#' cells anomalous.
+#'
 #' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 #' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
@@ -27,6 +33,10 @@
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #' @param detect_anomalies Logical indicating whether to perform anomaly detection using isolation forests.
 #'                        Default is FALSE.
+#' @param anomaly_comparison Logical indicating whether to perform statistical comparisons
+#'                           between non-anomalous reference cells and anomalous query cells instead of all-vs-all
+#'                           comparisons. When TRUE, only non-anomalous reference cells are compared against only
+#'                           anomalous query cells for each cell type. Requires detect_anomalies = TRUE. Default is FALSE.
 #' @param anomaly_threshold A numeric value specifying the threshold for identifying anomalies when
 #'                         \code{detect_anomalies} is TRUE. Default is 0.6.
 #' @param n_tree An integer specifying the number of trees for the isolation forest when
@@ -60,6 +70,7 @@
 #' @importFrom stats wilcox.test var p.adjust na.omit setNames
 #'
 # Function to calculate expression shifts for genes with top loadings
+# Function to calculate expression shifts for genes with top loadings
 calculateTopLoadingGeneShifts <- function(query_data,
                                           reference_data,
                                           query_cell_type_col,
@@ -71,6 +82,7 @@ calculateTopLoadingGeneShifts <- function(query_data,
                                           adjust_method = "fdr",
                                           assay_name = "logcounts",
                                           detect_anomalies = FALSE,
+                                          anomaly_comparison = FALSE,
                                           anomaly_threshold = 0.6,
                                           n_tree = 500,
                                           max_cells_query = 5000,
@@ -110,6 +122,55 @@ calculateTopLoadingGeneShifts <- function(query_data,
         if (!is.numeric(n_tree) || length(n_tree) != 1 || n_tree <= 0 || n_tree != as.integer(n_tree)) {
             stop("n_tree must be a positive integer")
         }
+    }
+
+    # Validate anomaly comparison parameter
+    if (!is.logical(anomaly_comparison) || length(anomaly_comparison) != 1) {
+        stop("anomaly_comparison must be a logical value")
+    }
+
+    if (anomaly_comparison && !detect_anomalies) {
+        stop("anomaly_comparison = TRUE requires detect_anomalies = TRUE")
+    }
+
+    # Helper function to filter cells by anomaly status
+    .filterCellsByAnomalyStatus <- function(cell_indices, cell_names, anomaly_results,
+                                            cell_type, dataset_type, keep_anomalous = TRUE) {
+        if (is.null(anomaly_results) || !cell_type %in% names(anomaly_results)) {
+            return(cell_indices)  # Return all cells if no anomaly data
+        }
+
+        # Get anomaly status for this cell type
+        if (dataset_type == "reference") {
+            anomaly_names <- names(anomaly_results[[cell_type]][["reference_anomaly"]])
+            anomaly_status <- anomaly_results[[cell_type]][["reference_anomaly"]]
+            # Strip "Reference_" prefix to match cell names
+            anomaly_names_clean <- gsub("^Reference_", "", anomaly_names)
+        } else {
+            anomaly_names <- names(anomaly_results[[cell_type]][["query_anomaly"]])
+            anomaly_status <- anomaly_results[[cell_type]][["query_anomaly"]]
+            # Strip "Query_" prefix to match cell names
+            anomaly_names_clean <- gsub("^Query_", "", anomaly_names)
+        }
+
+        if (is.null(anomaly_names) || length(anomaly_names) == 0) {
+            return(cell_indices)  # Return all cells if no anomaly data
+        }
+
+        # Map cell indices to cell names and then to anomaly status
+        current_cell_names <- cell_names[cell_indices]
+
+        # Find which cells are anomalous
+        cells_are_anomalous <- current_cell_names %in% anomaly_names_clean[anomaly_status]
+
+        # Filter based on keep_anomalous parameter
+        if (keep_anomalous) {
+            filtered_indices <- cell_indices[cells_are_anomalous]
+        } else {
+            filtered_indices <- cell_indices[!cells_are_anomalous]
+        }
+
+        return(filtered_indices)
     }
 
     # Select cell types
@@ -236,7 +297,42 @@ calculateTopLoadingGeneShifts <- function(query_data,
         for (ct in available_cell_types) {
             query_cells_ct <- query_cell_indices[[ct]]
             ref_cells_ct <- ref_cell_indices[[ct]]
-            if (length(query_cells_ct) < 3 || length(ref_cells_ct) < 3) next
+
+            # Apply anomaly filtering if requested
+            if (anomaly_comparison && !is.null(anomaly_results)) {
+                # Filter reference cells: keep only NON-anomalous
+                ref_cells_ct <- .filterCellsByAnomalyStatus(
+                    ref_cells_ct,
+                    colnames(reference_data),
+                    anomaly_results,
+                    ct,
+                    "reference",
+                    keep_anomalous = FALSE
+                )
+
+                # Filter query cells: keep only ANOMALOUS
+                query_cells_ct <- .filterCellsByAnomalyStatus(
+                    query_cells_ct,
+                    colnames(query_data),
+                    anomaly_results,
+                    ct,
+                    "query",
+                    keep_anomalous = TRUE
+                )
+
+                # Check if we have enough cells after filtering
+                if (length(query_cells_ct) < 3) {
+                    warning("Cell type '", ct, "' has fewer than 3 anomalous query cells. Skipping statistical analysis.")
+                    next
+                }
+                if (length(ref_cells_ct) < 3) {
+                    warning("Cell type '", ct, "' has fewer than 3 non-anomalous reference cells. Skipping statistical analysis.")
+                    next
+                }
+            } else {
+                # Original check for minimum cell counts
+                if (length(query_cells_ct) < 3 || length(ref_cells_ct) < 3) next
+            }
 
             query_expr_ct <- SummarizedExperiment::assay(query_data,
                                                          assay_name)[top_genes,
@@ -278,6 +374,27 @@ calculateTopLoadingGeneShifts <- function(query_data,
         ref_cells_ct <- ref_cell_indices[[ct]]
         query_cells_ct <- query_cell_indices[[ct]]
 
+        # Apply the same anomaly filtering for variance calculation if anomaly_comparison is TRUE
+        if (anomaly_comparison && !is.null(anomaly_results)) {
+            ref_cells_ct <- .filterCellsByAnomalyStatus(
+                ref_cells_ct,
+                colnames(reference_data),
+                anomaly_results,
+                ct,
+                "reference",
+                keep_anomalous = FALSE
+            )
+
+            query_cells_ct <- .filterCellsByAnomalyStatus(
+                query_cells_ct,
+                colnames(query_data),
+                anomaly_results,
+                ct,
+                "query",
+                keep_anomalous = TRUE
+            )
+        }
+
         ref_expr_ct <- full_ref_assay[, ref_cells_ct, drop = FALSE]
         query_expr_ct <- full_query_assay[, query_cells_ct, drop = FALSE]
 
@@ -309,7 +426,7 @@ calculateTopLoadingGeneShifts <- function(query_data,
     cell_type_variance_df <- do.call(rbind, var_explained_list)
     rownames(cell_type_variance_df) <- NULL
 
-    # Data for plotting
+    # Data for plotting (use all cells, not filtered by anomaly status)
     query_relevant_cells <- unlist(query_cell_indices[available_cell_types], use.names = FALSE)
     ref_relevant_cells <- unlist(ref_cell_indices[available_cell_types], use.names = FALSE)
 
@@ -346,10 +463,12 @@ calculateTopLoadingGeneShifts <- function(query_data,
                     ref_anomaly_status <- anomaly_results[[ct]][["reference_anomaly"]]
 
                     if (!is.null(ref_anomaly_names) && length(ref_anomaly_names) > 0) {
-                        # Find which cells in cell_metadata are anomalous
+                        # Find which cells are anomalous and strip "Reference_" prefix
                         anomalous_ref_names <- ref_anomaly_names[ref_anomaly_status]
+                        anomalous_ref_names_clean <- gsub("^Reference_", "", anomalous_ref_names)
+
                         ref_mask <- cell_metadata[["dataset"]] == "Reference" &
-                            cell_metadata[["cell_id"]] %in% anomalous_ref_names
+                            cell_metadata[["cell_id"]] %in% anomalous_ref_names_clean
                         cell_metadata[["anomaly_status"]][ref_mask] <- "Anomaly"
                     }
                 }
@@ -360,10 +479,12 @@ calculateTopLoadingGeneShifts <- function(query_data,
                     query_anomaly_status <- anomaly_results[[ct]][["query_anomaly"]]
 
                     if (!is.null(query_anomaly_names) && length(query_anomaly_names) > 0) {
-                        # Find which cells in cell_metadata are anomalous
+                        # Find which cells are anomalous and strip "Query_" prefix
                         anomalous_query_names <- query_anomaly_names[query_anomaly_status]
+                        anomalous_query_names_clean <- gsub("^Query_", "", anomalous_query_names)
+
                         query_mask <- cell_metadata[["dataset"]] == "Query" &
-                            cell_metadata[["cell_id"]] %in% anomalous_query_names
+                            cell_metadata[["cell_id"]] %in% anomalous_query_names_clean
                         cell_metadata[["anomaly_status"]][query_mask] <- "Anomaly"
                     }
                 }
@@ -383,6 +504,13 @@ calculateTopLoadingGeneShifts <- function(query_data,
             cell_type_variance = cell_type_variance_df
         )
     )
+
+    # Add analysis type information
+    final_results[["analysis_type"]] <- if (anomaly_comparison && !is.null(anomaly_results)) {
+        "non_anomalous_reference_vs_anomalous_query"
+    } else {
+        "all_reference_vs_all_query"
+    }
 
     # Add anomaly results if available
     if (!is.null(anomaly_results)) {

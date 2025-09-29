@@ -11,7 +11,8 @@ plotHeatmap(
   plot_by,
   n_genes,
   significance_threshold,
-  show_anomalies
+  show_anomalies,
+  pseudo_bulk = FALSE
 )
 }
 \arguments{
@@ -29,6 +30,11 @@ expression data and analysis results.}
 \item{significance_threshold}{A numeric value between 0 and 1 for significance filtering. Can be NULL.}
 
 \item{show_anomalies}{Logical indicating whether to show anomaly annotations.}
+
+\item{pseudo_bulk}{Logical indicating whether to create pseudo-bulk profiles instead of
+showing individual cells. When TRUE, expression values are averaged within groups
+(dataset and optionally anomaly status). Not compatible with boxplot visualization.
+Default is FALSE.}
 }
 \value{
 A ComplexHeatmap object ready for plotting, or NULL if no genes meet selection criteria.
