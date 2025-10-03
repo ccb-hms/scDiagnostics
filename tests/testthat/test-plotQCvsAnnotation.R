@@ -13,7 +13,7 @@ qc_data_subset <- qc_data[, !(qc_data$SingleR_annotation
 test_that("plotQCvsAnnotation generates scatter plot correctly", {
     # Generate plot using the function
     p1 <- plotQCvsAnnotation(
-        se_object = qc_data_subset,
+        sce_object = qc_data_subset,
         cell_type_col = "SingleR_annotation",
         cell_types = NULL,
         qc_col = "total",
@@ -26,9 +26,9 @@ test_that("plotQCvsAnnotation generates scatter plot correctly", {
 })
 
 test_that("plotQCvsAnnotation handles invalid input gracefully", {
-    # Test with non-existent column names in se_object
+    # Test with non-existent column names in sce_object
     expect_error(plotQCvsAnnotation(
-        se_object = qc_data_subset,
+        sce_object = qc_data_subset,
         cell_type_col = "invalid_column",
         cell_types = NULL,
         qc_col = "total",
@@ -37,7 +37,7 @@ test_that("plotQCvsAnnotation handles invalid input gracefully", {
 
     # Test with non-existent qc_col
     expect_error(plotQCvsAnnotation(
-        se_object = qc_data_subset,
+        sce_object = qc_data_subset,
         cell_type_col = "SingleR_annotation",
         cell_types = NULL,
         qc_col = "invalid_column",
@@ -46,7 +46,7 @@ test_that("plotQCvsAnnotation handles invalid input gracefully", {
 
     # Test with non-existent score_col
     expect_error(plotQCvsAnnotation(
-        se_object = qc_data_subset,
+        sce_object = qc_data_subset,
         cell_type_col = "SingleR_annotation",
         cell_types = NULL,
         qc_col = "total",

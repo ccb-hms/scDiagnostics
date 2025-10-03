@@ -57,6 +57,10 @@ plotQCvsAnnotation <- function(sce_object,
                   query_cell_type_col = cell_type_col,
                   max_cells_query = max_cells)
 
+    # Convert cell type columns to character if needed
+    sce_object <- convertColumnsToCharacter(sce_object = sce_object,
+                                            convert_cols = cell_type_col)
+
     # Downsample SCE object
     sce_object <- downsampleSCE(sce_object = sce_object,
                                 max_cells = max_cells,

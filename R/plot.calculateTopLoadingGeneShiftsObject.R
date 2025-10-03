@@ -879,7 +879,7 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
             strip.text.x = ggplot2::element_text(face = "bold", size = 11),
             # Grid and panel borders
             panel.grid.minor = ggplot2::element_blank(),
-            panel.border = ggplot2::element_rect(color = "grey70", size = 0.5)
+            panel.border = ggplot2::element_rect(color = "grey70", linewidth = 0.5)
         )
 
     return(p)

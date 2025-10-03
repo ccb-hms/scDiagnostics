@@ -81,6 +81,60 @@ projectPCA <- function(query_data,
                   max_cells_query = max_cells_query,
                   max_cells_ref = max_cells_ref)
 
+    # Convert cell type columns to character if needed
+    query_data <- convertColumnsToCharacter(sce_object = query_data,
+                                            convert_cols = query_cell_type_col)
+    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
+                                                convert_cols = ref_cell_type_col)
+
+    # Helper function to validate PCA integrity for reference data only
+    .validateReferencePCA <- function(sce, assay_name) {
+        # Check if PCA exists
+        if (!"PCA" %in% reducedDimNames(sce)) {
+            return(FALSE)
+        }
+
+        # Check if rotation matrix exists
+        pca_attrs <- attributes(reducedDim(sce, "PCA"))
+        rotation_mat <- pca_attrs[["rotation"]]
+        if (is.null(rotation_mat)) {
+            return(FALSE)
+        }
+
+        # Check if genes in rotation matrix exist in the assay
+        pca_genes <- rownames(rotation_mat)
+        assay_genes <- rownames(assay(sce, assay_name))
+        if (!all(pca_genes %in% assay_genes)) {
+            return(FALSE)
+        }
+
+        # Check dimension consistency
+        pca_coords <- reducedDim(sce, "PCA")
+        if (nrow(pca_coords) != ncol(sce)) {
+            return(FALSE)
+        }
+
+        return(TRUE)
+    }
+
+    # Validate PCA integrity for reference data ONLY
+    ref_pca_valid <- .validateReferencePCA(reference_data, assay_name)
+
+    if (!ref_pca_valid) {
+        message("Reference PCA is invalid or missing. Computing PCA for reference data only...")
+
+        # Use processPCA to recompute PCA for REFERENCE DATA ONLY
+        reference_data <- processPCA(sce_object = reference_data,
+                                     assay_name = assay_name)
+
+        # Validate that PCA was properly computed
+        if (!.validateReferencePCA(reference_data, assay_name)) {
+            stop("Failed to compute valid PCA for reference data. Please check your data and try again.")
+        }
+
+        message("Reference PCA computation completed. Proceeding with projection...")
+    }
+
     # Select cell types
     cell_types <- selectCellTypes(query_data = query_data,
                                   reference_data = reference_data,
@@ -92,12 +146,11 @@ projectPCA <- function(query_data,
 
     # Extract reference PCA components and rotation matrix
     ref_mat <- reducedDim(reference_data, "PCA")[, pc_subset, drop = FALSE]
-    rotation_mat <- attributes(reducedDim(
-        reference_data, "PCA"))[["rotation"]][, pc_subset, drop = FALSE]
+    rotation_mat <- attributes(reducedDim(reference_data, "PCA"))[["rotation"]][, pc_subset, drop = FALSE]
     PCA_genes <- rownames(rotation_mat)
 
     # Check if genes used for PCA are available in query data
-    if (!all(PCA_genes %in% rownames(assay(query_data)))) {
+    if (!all(PCA_genes %in% rownames(assay(query_data, assay_name)))) {
         stop("Genes in reference PCA are not found in query data.")
     }
 
@@ -114,7 +167,6 @@ projectPCA <- function(query_data,
     query_transposed <- Matrix::t(query_assay_subset)
     query_centered <- sweep(query_transposed, 2, centering_vec, "-")
     query_mat <- as.matrix(query_centered %*% rotation_mat)
-
 
     # Get cell names from the original SCE objects
     ref_cell_names <- colnames(reference_data)

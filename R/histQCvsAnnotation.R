@@ -8,15 +8,15 @@
 #' where understanding the distribution of these metrics is crucial for quality assessment and
 #' interpretation of cell type annotations.
 #'
-#' @param se_object  A \code{\linkS4class{SingleCellExperiment}} containing the single-cell
+#' @param sce_object  A \code{\linkS4class{SingleCellExperiment}} containing the single-cell
 #' expression data and metadata.
-#' @param cell_type_col The column name in the \code{colData} of \code{se_object}
+#' @param cell_type_col The column name in the \code{colData} of \code{sce_object}
 #' that contains the cell type labels.
 #' @param cell_types A vector of cell types to plot (e.g., c("T-cell", "B-cell")).
 #' Defaults to \code{NULL}, which will include all the cells.
-#' @param qc_col A column name in the \code{colData} of \code{se_object} that
+#' @param qc_col A column name in the \code{colData} of \code{sce_object} that
 #' contains the QC stats of interest.
-#' @param score_col The column name in the \code{colData} of \code{se_object} that
+#' @param score_col The column name in the \code{colData} of \code{sce_object} that
 #' contains the cell type scores.
 #' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
 #'                  Default is NULL.
@@ -30,13 +30,13 @@
 #' data("query_data")
 #'
 #' # Generate histograms
-#' histQCvsAnnotation(se_object = query_data,
+#' histQCvsAnnotation(sce_object = query_data,
 #'                    cell_type_col = "SingleR_annotation",
 #'                    cell_types = c("CD4", "CD8"),
 #'                    qc_col = "percent_mito",
 #'                    score_col = "annotation_scores")
 #'
-#' histQCvsAnnotation(se_object = query_data,
+#' histQCvsAnnotation(sce_object = query_data,
 #'                    cell_type_col = "SingleR_annotation",
 #'                    cell_types = NULL,
 #'                    qc_col = "percent_mito",
@@ -45,7 +45,7 @@
 #' @export
 #'
 # Function to plot histogram of QC scores and annotation scores
-histQCvsAnnotation <- function(se_object,
+histQCvsAnnotation <- function(sce_object,
                                cell_type_col,
                                cell_types = NULL,
                                qc_col,
@@ -53,46 +53,50 @@ histQCvsAnnotation <- function(se_object,
                                max_cells = NULL) {
 
     # Check standard input arguments
-    argumentCheck(query_data = se_object,
+    argumentCheck(query_data = sce_object,
                   query_cell_type_col = cell_type_col,
                   max_cells_query = max_cells)
 
+    # Convert cell type columns to character if needed
+    sce_object <- convertColumnsToCharacter(sce_object = sce_object,
+                                            convert_cols = cell_type_col)
+
     # Select cell types
-    cell_types <- selectCellTypes(query_data = se_object,
+    cell_types <- selectCellTypes(query_data = sce_object,
                                   query_cell_type_col = cell_type_col,
                                   cell_types = cell_types,
                                   dual_only = FALSE,
                                   n_cell_types = 10)
 
     # Downsample SCE object
-    se_object <- downsampleSCE(sce_object = se_object,
+    sce_object <- downsampleSCE(sce_object = sce_object,
                                max_cells = max_cells,
                                cell_type_col = cell_type_col,
                                cell_types = cell_types)
 
-    # Check if qc_col is a valid column name in se_object
-    if (!qc_col %in% names(colData(se_object))) {
+    # Check if qc_col is a valid column name in sce_object
+    if (!qc_col %in% names(colData(sce_object))) {
         stop("qc_col: '",
              qc_col,
-             "' is not a valid column name in se_object.")
+             "' is not a valid column name in sce_object.")
     }
 
-    # Check if score_col is a valid column name in se_object
-    if (!score_col %in% names(colData(se_object))) {
+    # Check if score_col is a valid column name in sce_object
+    if (!score_col %in% names(colData(sce_object))) {
         stop("score_col: '",
              score_col,
-             "' is not a valid column name in se_object.")
+             "' is not a valid column name in sce_object.")
     }
 
     # Filter cells based on cell_types if specified
     if (!is.null(cell_types)) {
-        index <- which(se_object[[cell_type_col]] %in% cell_types)
-        se_object <- se_object[, index]
+        index <- which(sce_object[[cell_type_col]] %in% cell_types)
+        sce_object <- sce_object[, index]
     }
 
     # Extract QC stats, scores, and cell_types
-    qc_stats <- se_object[[qc_col]]
-    cell_type_scores <- se_object[[score_col]]
+    qc_stats <- sce_object[[qc_col]]
+    cell_type_scores <- sce_object[[score_col]]
 
     # Combine QC stats, scores, and cell_types into a data frame
     data <- data.frame(stats = c(qc_stats, cell_type_scores),

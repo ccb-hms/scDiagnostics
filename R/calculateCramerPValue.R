@@ -66,6 +66,12 @@ calculateCramerPValue <- function(query_data,
                   max_cells_query = max_cells_query,
                   max_cells_ref = max_cells_ref)
 
+    # Convert cell type columns to character if needed
+    query_data <- convertColumnsToCharacter(sce_object = query_data,
+                                            convert_cols = query_cell_type_col)
+    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
+                                                convert_cols = ref_cell_type_col)
+
     # Select cell types
     cell_types <- selectCellTypes(query_data = query_data,
                                   reference_data = reference_data,

@@ -1,19 +1,18 @@
 #' @title Process PCA for SingleCellExperiment Objects
 #'
 #' @description
-#' This function ensures that \code{\linkS4class{SingleCellExperiment}} objects have PCA computed using
+#' This function ensures that a \code{\linkS4class{SingleCellExperiment}} object has valid PCA computed using
 #' highly variable genes when needed. It only performs downsampling when PCA computation
-#' is required, preserving existing PCA computations without modification.
+#' is required, preserving existing valid PCA computations without modification.
 #'
 #' @details
 #' The function performs the following operations:
 #' \itemize{
-#'   \item Checks if PCA exists in the provided \code{\linkS4class{SingleCellExperiment}} objects
-#'   \item If PCA already exists, returns the object unchanged (no downsampling)
-#'   \item If PCA is missing and dataset is large, downsamples before computing PCA
-#'   \item Computes PCA using highly variable genes when PCA is missing
-#'   \item When both datasets are provided and one has existing PCA, uses the genes from the existing PCA for the other dataset
-#'   \item When both datasets lack PCA, uses the intersection of highly variable genes for consistent PCA spaces
+#'   \item Checks if PCA exists and is valid in the provided \code{\linkS4class{SingleCellExperiment}} object
+#'   \item Validates PCA integrity including rotation matrix, percentVar, gene consistency, and dimensions
+#'   \item If PCA is valid, returns the object unchanged (no downsampling)
+#'   \item If PCA is missing or invalid and dataset is large, downsamples before computing PCA
+#'   \item Computes PCA using highly variable genes when PCA is missing or invalid
 #'   \item Utilizes scran for HVG selection and scater for PCA computation (soft dependencies)
 #' }
 #'
@@ -21,115 +20,124 @@
 #' when PCA computation is necessary. This preserves expensive pre-computed PCA results
 #' while ensuring computational efficiency for new PCA computations.
 #'
-#' For datasets where one has existing PCA and the other doesn't, the function uses the genes
-#' from the existing PCA rotation matrix to ensure compatible PCA spaces. When both datasets
-#' lack PCA, it uses the intersection of highly variable genes from both datasets.
+#' PCA validation includes checking for:
+#' \itemize{
+#'   \item Presence of PCA in reducedDims
+#'   \item Existence of rotation matrix and percentVar attributes
+#'   \item Gene consistency between rotation matrix and current assay
+#'   \item Dimension consistency between PCA coordinates and cell count
+#' }
 #'
-#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object for query data.
-#' If NULL, no processing is performed on query data. Default is NULL.
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object for reference data.
-#' If NULL, no processing is performed on reference data. Default is NULL.
+#' @param sce_object A \code{\linkS4class{SingleCellExperiment}} object to process.
 #' @param assay_name Name of the assay to use for HVG selection and PCA computation.
 #' Should contain log-normalized expression values. Default is "logcounts".
-#' @param n_hvgs Number of highly variable genes to select for PCA computation.
-#' When both datasets lack PCA, this number is used for each dataset before
-#' taking the intersection. Default is 2000.
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is NULL.
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is NULL.
+#' @param n_hvgs Number of highly variable genes to select for PCA computation. Default is 2000.
+#' @param max_cells Maximum number of cells to retain if downsampling is needed for PCA computation.
+#' If NULL, no downsampling is performed. Default is NULL.
 #'
-#' @return When only one dataset is provided, returns the processed SingleCellExperiment object directly.
-#' When both datasets are provided, returns a list containing:
-#' \itemize{
-#'   \item query_data: Processed query data
-#'   \item reference_data: Processed reference data
-#' }
-#' Each returned object will have:
-#' \itemize{
-#'   \item PCA in reducedDims slot
-#'   \item Original cell count if PCA existed, or at most max_cells if PCA was computed
-#' }
+#' @return A \code{\linkS4class{SingleCellExperiment}} object with valid PCA in the reducedDims slot,
+#' including rotation matrix and percentVar attributes. Will have original cell count if PCA was valid,
+#' or at most max_cells if PCA was computed.
 #'
 #' @note
 #' This function requires the scran and scater packages for HVG selection and PCA computation.
 #' These packages should be installed via BiocManager::install(c("scran", "scater")).
 #'
-#' Objects with existing PCA are returned unchanged to preserve expensive pre-computations.
+#' Objects with existing valid PCA are returned unchanged to preserve expensive pre-computations.
 #' Only datasets requiring PCA computation are subject to downsampling.
 #'
 #' @examples
-#' # Example 1: Process single dataset
+#' # Load and prepare dataset
 #' library(TENxPBMCData)
 #' library(scuttle)
 #'
-#' # Load and prepare dataset
 #' pbmc_data <- TENxPBMCData("pbmc3k")
-#' pbmc_subset <- pbmc_data[, 1:500]  # Use subset for example
+#' pbmc_subset <- pbmc_data[, 1:500]
 #' pbmc_subset <- logNormCounts(pbmc_subset)
 #'
 #' # Remove any existing PCA
 #' reducedDims(pbmc_subset) <- list()
 #'
 #' # Process dataset - will compute PCA using HVGs
-#' processed_data <- processPCA(query_data = pbmc_subset, n_hvgs = 1000)
+#' processed_data <- processPCA(sce_object = pbmc_subset, n_hvgs = 1000)
 #'
 #' # Check results
 #' "PCA" %in% reducedDimNames(processed_data)  # Should be TRUE
 #' ncol(processed_data)  # Should be 500 (unchanged)
-#'
-#' # Example 2: Process both query and reference datasets
-#' # Create reference dataset
-#' pbmc_ref <- pbmc_data[, 501:1000]
-#' pbmc_ref <- logNormCounts(pbmc_ref)
-#' reducedDims(pbmc_ref) <- list()
-#'
-#' # Process both datasets - will use intersection of HVGs
-#' result <- processPCA(
-#'   query_data = pbmc_subset,
-#'   reference_data = pbmc_ref,
-#'   max_cells = 10000,
-#'   n_hvgs = 800
-#' )
-#'
-#' # Check results
-#' "PCA" %in% reducedDimNames(result$query_data)      # Should be TRUE
-#' "PCA" %in% reducedDimNames(result$reference_data)  # Should be TRUE
-#' ncol(result$query_data)      # Should be 500
-#' ncol(result$reference_data)  # Should be 500
 #'
 #' @export
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 # Function to process SCE objects with PCA computation
-processPCA <- function(query_data = NULL,
-                       reference_data = NULL,
-                       n_hvgs = 2000,
+processPCA <- function(sce_object,
                        assay_name = "logcounts",
-                       max_cells_query = NULL,
-                       max_cells_ref = NULL) {
+                       n_hvgs = 2000,
+                       max_cells = NULL) {
 
-    # Validate input using argumentCheck for what it can handle
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    # Validate input
+    if (!is(sce_object, "SingleCellExperiment")) {
+        stop("'sce_object' must be a SingleCellExperiment object.")
+    }
 
-    # Additional argument checks not covered by argumentCheck
-    if (is.null(query_data) && is.null(reference_data)) {
-        stop("At least one of query_data or reference_data must be provided.")
+    if (!is.null(assay_name) &&
+        !(assay_name %in% SummarizedExperiment::assayNames(sce_object))) {
+        stop("'sce_object' does not contain the specified assay.")
+    }
+
+    # Check max_cells
+    if (!is.null(max_cells)) {
+        if (!is.numeric(max_cells) || max_cells <= 0 ||
+            max_cells != as.integer(max_cells)) {
+            stop("'max_cells' must be a positive integer.")
+        }
     }
 
     # Check n_hvgs
-    if (!is.numeric(n_hvgs) || length(n_hvgs) != 1 || n_hvgs <= 0 || n_hvgs != as.integer(n_hvgs)) {
+    if (!is.numeric(n_hvgs) || length(n_hvgs) != 1 ||
+        n_hvgs <= 0 || n_hvgs != as.integer(n_hvgs)) {
         stop("'n_hvgs' must be a single positive integer.")
     }
     n_hvgs <- as.integer(n_hvgs)
 
+    # Helper function to validate PCA integrity
+    .validatePCA <- function(sce, assay_name) {
+        # Check if PCA exists
+        if (!"PCA" %in% reducedDimNames(sce)) {
+            return(FALSE)
+        }
+
+        # Check if rotation matrix exists
+        pca_attrs <- attributes(reducedDim(sce, "PCA"))
+        rotation_mat <- pca_attrs[["rotation"]]
+        if (is.null(rotation_mat)) {
+            return(FALSE)
+        }
+
+        # Check if percentVar exists
+        percent_var <- pca_attrs[["percentVar"]]
+        if (is.null(percent_var)) {
+            return(FALSE)
+        }
+
+        # Check if genes in rotation matrix exist in the assay
+        pca_genes <- rownames(rotation_mat)
+        assay_genes <- rownames(assay(sce, assay_name))
+        if (!all(pca_genes %in% assay_genes)) {
+            return(FALSE)
+        }
+
+        # Check dimension consistency
+        pca_coords <- reducedDim(sce, "PCA")
+        if (nrow(pca_coords) != ncol(sce)) {
+            return(FALSE)
+        }
+
+        return(TRUE)
+    }
+
     # Helper function to compute PCA with HVGs
-    .computePCAWithHvgs <- function(sce, hvg_genes = NULL) {
+    .computePCAWithHvgs <- function(sce, n_hvgs, assay_name) {
 
         # Check if required packages are available
         if (!requireNamespace("scran", quietly = TRUE)) {
@@ -139,22 +147,11 @@ processPCA <- function(query_data = NULL,
             stop("Package 'scater' is required but not installed. Please install it with: BiocManager::install('scater')")
         }
 
-        # Select HVGs if not provided
-        if (!is.null(hvg_genes)) {
-            # Check which genes actually exist in the dataset
-            available_genes <- intersect(hvg_genes, rownames(sce))
+        # Get HVGs
+        var_stats <- scran::modelGeneVar(sce, assay.type = assay_name)
+        hvg_genes <- scran::getTopHVGs(var_stats, n = n_hvgs)
 
-            if (length(available_genes) < length(hvg_genes)) {
-                missing_count <- length(hvg_genes) - length(available_genes)
-                message("Note: ", missing_count, " genes from existing PCA not found in dataset. Using ", length(available_genes), " available genes.")
-            }
-
-            if (length(available_genes) < 50) {
-                stop("Too few genes (", length(available_genes), ") available for PCA computation. Consider using datasets with more gene overlap.")
-            }
-
-            hvg_genes <- available_genes
-        }
+        message("Using ", length(hvg_genes), " highly variable genes for PCA computation")
 
         # Compute PCA on HVGs
         sce <- scater::runPCA(sce,
@@ -164,133 +161,37 @@ processPCA <- function(query_data = NULL,
         return(sce)
     }
 
-    # Helper function to extract genes from existing PCA
-    .getGenesFromPCA <- function(sce) {
-        if ("PCA" %in% reducedDimNames(sce)) {
-            rotation_matrix <- attr(reducedDim(sce, "PCA"), "rotation")
-            if (!is.null(rotation_matrix)) {
-                return(rownames(rotation_matrix))
-            }
-        }
-        return(NULL)
-    }
+    # Check if PCA is valid
+    n_cells <- ncol(sce_object)
+    has_valid_pca <- .validatePCA(sce_object, assay_name)
 
-    # Process each dataset
-    processed_query <- NULL
-    processed_reference <- NULL
-    genes_to_use <- NULL
-
-    # Check PCA status for both datasets
-    query_has_pca <- !is.null(query_data) && "PCA" %in% reducedDimNames(query_data)
-    ref_has_pca <- !is.null(reference_data) && "PCA" %in% reducedDimNames(reference_data)
-
-    # Determine which genes to use for PCA computation
-    if (!is.null(query_data) && !is.null(reference_data)) {
-
-        if (query_has_pca && !ref_has_pca) {
-            # Use genes from query PCA for reference
-            genes_to_use <- .getGenesFromPCA(query_data)
-            message("Using ", length(genes_to_use),
-                    " genes from existing query PCA for reference data")
-
-        } else if (!query_has_pca && ref_has_pca) {
-            # Use genes from reference PCA for query
-            genes_to_use <- .getGenesFromPCA(reference_data)
-            message("Using ", length(genes_to_use),
-                    " genes from existing reference PCA for query data")
-
-        } else if (!query_has_pca && !ref_has_pca) {
-            # Both need PCA - use intersection of HVGs
-            if (!requireNamespace("scran", quietly = TRUE)) {
-                stop("Package 'scran' is required but not installed. Please install it with: BiocManager::install('scran')")
-            }
-
-            # Get HVGs for each dataset
-            query_var <- scran::modelGeneVar(query_data, assay.type = assay_name)
-            ref_var <- scran::modelGeneVar(reference_data, assay.type = assay_name)
-
-            query_hvgs <- scran::getTopHVGs(query_var, n = n_hvgs)
-            ref_hvgs <- scran::getTopHVGs(ref_var, n = n_hvgs)
-
-            # Take intersection
-            genes_to_use <- intersect(query_hvgs, ref_hvgs)
-
-            if (length(genes_to_use) < 100) {
-                warning("Only ", length(genes_to_use),
-                        " common HVGs found between datasets. Consider increasing n_hvgs parameter.")
-            }
-
-            message("Using ", length(genes_to_use), " common HVGs for both datasets")
-        }
-        # If both have PCA, genes_to_use remains NULL (no new computation needed)
-    }
-
-    # Process query data
-    if (!is.null(query_data)) {
-
-        n_cells_query <- ncol(query_data)
-        has_pca_query <- "PCA" %in% reducedDimNames(query_data)
-
-        if (has_pca_query) {
-            # PCA exists - return unchanged (no downsampling)
-            message("Query data already has PCA - returning unchanged (", n_cells_query, " cells)")
-            processed_query <- query_data
+    if (has_valid_pca) {
+        # PCA exists AND is valid - return unchanged (no downsampling)
+        message("Data already has valid PCA - returning unchanged (", n_cells, " cells)")
+        return(sce_object)
+    } else {
+        # PCA is missing or invalid - needs to be computed
+        if ("PCA" %in% reducedDimNames(sce_object)) {
+            message("Data has invalid PCA - recomputing...")
         } else {
-            # PCA needs to be computed
-            if (n_cells_query > max_cells) {
-                # Downsample before computing PCA
-                message("Downsampling query data from ", n_cells_query, " to ", max_cells, " cells before PCA computation")
-                cell_indices <- sample(n_cells_query, max_cells)
-                processed_query <- query_data[, cell_indices]
-            } else {
-                processed_query <- query_data
-            }
-
-            # Compute PCA
-            message("Computing PCA for query data (", ncol(processed_query), " cells)")
-            processed_query <- .computePCAWithHvgs(processed_query, genes_to_use)
+            message("Data missing PCA - computing...")
         }
-    }
 
-    # Process reference data
-    if (!is.null(reference_data)) {
-
-        n_cells_ref <- ncol(reference_data)
-        has_pca_ref <- "PCA" %in% reducedDimNames(reference_data)
-
-        if (has_pca_ref) {
-            # PCA exists - return unchanged (no downsampling)
-            message("Reference data already has PCA - returning unchanged (", n_cells_ref, " cells)")
-            processed_reference <- reference_data
-        } else {
-            # PCA needs to be computed
-            if (n_cells_ref > max_cells) {
-                # Downsample before computing PCA
-                message("Downsampling reference data from ", n_cells_ref, " to ", max_cells, " cells before PCA computation")
-                cell_indices <- sample(n_cells_ref, max_cells)
-                processed_reference <- reference_data[, cell_indices]
-            } else {
-                processed_reference <- reference_data
-            }
-
-            # Compute PCA
-            message("Computing PCA for reference data (", ncol(processed_reference), " cells)")
-            processed_reference <- .computePCAWithHvgs(processed_reference, genes_to_use)
+        # Downsample if needed
+        processed_sce <- sce_object
+        if (!is.null(max_cells) && n_cells > max_cells) {
+            message("Downsampling data from ", n_cells, " to ",
+                    max_cells, " cells before PCA computation")
+            cell_indices <- sample(n_cells, max_cells)
+            processed_sce <- sce_object[, cell_indices]
         }
-    }
 
-    # Return logic based on what was provided
-    if (!is.null(query_data) && !is.null(reference_data)) {
-        # Both datasets provided - return list
-        return(list(
-            query_data = processed_query,
-            reference_data = processed_reference
-        ))
-    } else if (!is.null(query_data)) {
-        # Only query provided - return SCE directly
-        return(processed_query)
-    } else if (!is.null(reference_data)) {
-        # Only reference provided - return SCE directly
-        return(processed_reference)
+        # Compute PCA
+        message("Computing PCA...")
+        processed_sce <- .computePCAWithHvgs(processed_sce,
+                                             n_hvgs,
+                                             assay_name)
+
+        return(processed_sce)
     }
 }

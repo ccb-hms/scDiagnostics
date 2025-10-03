@@ -76,8 +76,8 @@
 #' plot(similarity_mat, show_significance = TRUE)
 #'
 # Function to compare PCA of the SCE objects
-comparePCA <- function(reference_data,
-                       query_data,
+comparePCA <- function(query_data,
+                       reference_data,
                        query_cell_type_col,
                        ref_cell_type_col,
                        pc_subset = 1:5,
@@ -95,6 +95,12 @@ comparePCA <- function(reference_data,
                   pc_subset_query = pc_subset,
                   pc_subset_ref = pc_subset,
                   common_rotation_genes = TRUE)
+
+    # Convert cell type columns to character if needed
+    query_data <- convertColumnsToCharacter(sce_object = query_data,
+                                            convert_cols = query_cell_type_col)
+    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
+                                                convert_cols = ref_cell_type_col)
 
     # Match arguments
     metric <- match.arg(metric)

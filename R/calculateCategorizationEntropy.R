@@ -151,6 +151,7 @@ calculateEntropy <- function(p) {
 #'
 # Function to return the number of elements
 nElements <- function(X){
+
     return(ifelse(is.matrix(X), prod(dim(X)), length(X)))
 }
 
@@ -172,7 +173,8 @@ nElements <- function(X){
 #' @return A matrix or vector with the same dimensions as \code{X}, with values transformed using the inverse normal transformation.
 #'
 # Function to compute the inverse normal rank transformation
-inverseNormalTransformation <- function(X, constant = 3 / 8) {
+inverseNormalTransformation <- function(X,
+                                        constant = 3 / 8) {
 
     n <- nElements(X)
 

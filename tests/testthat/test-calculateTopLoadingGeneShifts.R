@@ -241,17 +241,21 @@ test_that("calculateTopLoadingGeneShifts handles different adjust methods", {
 
 test_that("processGenesSimple helper function works correctly", {
 
-    # Create test data
+    # Create test data with more cells for robust statistical testing
     test_genes <- c("GENE1", "GENE2")
     test_loadings <- c(0.5, -0.3)
 
-    # Create test expression matrices
-    query_matrix <- matrix(c(1, 2, 3, 4, 5, 6), nrow = 2, ncol = 3)
-    ref_matrix <- matrix(c(2, 3, 4, 5, 6, 7), nrow = 2, ncol = 3)
+    # Create test expression matrices with more cells (5 instead of 3)
+    set.seed(123)  # For reproducible results
+    query_matrix <- matrix(c(1, 2, 3, 4, 5,
+                             2, 3, 4, 5, 6), nrow = 2, ncol = 5, byrow = TRUE)
+    ref_matrix <- matrix(c(2, 3, 4, 5, 6,
+                           3, 4, 5, 6, 7), nrow = 2, ncol = 5, byrow = TRUE)
+
     rownames(query_matrix) <- test_genes
     rownames(ref_matrix) <- test_genes
 
-    result <- processGenesSimple(
+    result <- scDiagnostics:::processGenesSimple(
         top_genes = test_genes,
         top_loadings = test_loadings,
         query_expr_matrix = query_matrix,
@@ -269,8 +273,19 @@ test_that("processGenesSimple helper function works correctly", {
     expect_equal(gene1_result[["loading"]], 0.5)
     expect_equal(gene1_result[["cell_type"]], "TestCellType")
     expect_true(is.numeric(gene1_result[["p_value"]]))
+    expect_true(gene1_result[["p_value"]] >= 0 && gene1_result[["p_value"]] <= 1)
     expect_true(is.numeric(gene1_result[["mean_query"]]))
     expect_true(is.numeric(gene1_result[["mean_reference"]]))
+
+    # Test that means are calculated correctly
+    expect_equal(gene1_result[["mean_query"]], mean(c(1, 2, 3, 4, 5)))
+    expect_equal(gene1_result[["mean_reference"]], mean(c(2, 3, 4, 5, 6)))
+
+    # Test second gene result
+    gene2_result <- result[[2]]
+    expect_equal(gene2_result[["gene"]], "GENE2")
+    expect_equal(gene2_result[["loading"]], -0.3)
+    expect_equal(gene2_result[["cell_type"]], "TestCellType")
 })
 
 test_that("calculateTopLoadingGeneShifts preserves gene order by significance", {

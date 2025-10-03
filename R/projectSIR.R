@@ -75,6 +75,12 @@ projectSIR <- function(query_data,
                   max_cells_query = max_cells_query,
                   max_cells_ref = max_cells_ref)
 
+    # Convert cell type columns to character if needed
+    query_data <- convertColumnsToCharacter(sce_object = query_data,
+                                            convert_cols = query_cell_type_col)
+    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
+                                                convert_cols = ref_cell_type_col)
+
     # Downsample query and reference data
     query_data <- downsampleSCE(sce_object = query_data,
                                 cell_type_col = query_cell_type_col,

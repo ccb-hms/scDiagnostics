@@ -43,6 +43,10 @@ downsampleSCE <- function(sce_object,
                   query_cell_type_col = cell_type_col,
                   max_cells_query = max_cells)
 
+    # Convert cell type columns to character if needed
+    sce_object <- convertColumnsToCharacter(sce_object = sce_object,
+                                            convert_cols = cell_type_col)
+
     # Select cell types
     cell_types <- selectCellTypes(query_data = sce_object,
                                   query_cell_type_col = cell_type_col,

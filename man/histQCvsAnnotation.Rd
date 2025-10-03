@@ -5,7 +5,7 @@
 \title{Histograms: QC Stats and Annotation Scores Visualization}
 \usage{
 histQCvsAnnotation(
-  se_object,
+  sce_object,
   cell_type_col,
   cell_types = NULL,
   qc_col,
@@ -14,19 +14,19 @@ histQCvsAnnotation(
 )
 }
 \arguments{
-\item{se_object}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell
+\item{sce_object}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell
 expression data and metadata.}
 
-\item{cell_type_col}{The column name in the \code{colData} of \code{se_object}
+\item{cell_type_col}{The column name in the \code{colData} of \code{sce_object}
 that contains the cell type labels.}
 
 \item{cell_types}{A vector of cell types to plot (e.g., c("T-cell", "B-cell")).
 Defaults to \code{NULL}, which will include all the cells.}
 
-\item{qc_col}{A column name in the \code{colData} of \code{se_object} that
+\item{qc_col}{A column name in the \code{colData} of \code{sce_object} that
 contains the QC stats of interest.}
 
-\item{score_col}{The column name in the \code{colData} of \code{se_object} that
+\item{score_col}{The column name in the \code{colData} of \code{sce_object} that
 contains the cell type scores.}
 
 \item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
@@ -50,13 +50,13 @@ interpretation of cell type annotations.
 data("query_data")
 
 # Generate histograms
-histQCvsAnnotation(se_object = query_data,
+histQCvsAnnotation(sce_object = query_data,
                    cell_type_col = "SingleR_annotation",
                    cell_types = c("CD4", "CD8"),
                    qc_col = "percent_mito",
                    score_col = "annotation_scores")
 
-histQCvsAnnotation(se_object = query_data,
+histQCvsAnnotation(sce_object = query_data,
                    cell_type_col = "SingleR_annotation",
                    cell_types = NULL,
                    qc_col = "percent_mito",

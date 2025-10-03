@@ -70,6 +70,22 @@ plotPairwiseDistancesDensity <- function(
         max_cells_query = 5000,
         max_cells_ref = 5000) {
 
+    # Check standard input arguments
+    argumentCheck(query_data = query_data,
+                  reference_data = reference_data,
+                  query_cell_type_col = query_cell_type_col,
+                  ref_cell_type_col = ref_cell_type_col,
+                  pc_subset_ref = pc_subset,
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
+
+    # Convert cell type columns to character if needed
+    query_data <- convertColumnsToCharacter(sce_object = query_data,
+                                            convert_cols = query_cell_type_col)
+    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
+                                                convert_cols = ref_cell_type_col)
+
     # Match argument for distance_metric
     distance_metric <- match.arg(distance_metric)
 
@@ -85,16 +101,6 @@ plotPairwiseDistancesDensity <- function(
     if(length(cell_type) > 1){
         stop("\'cell_type\' should only contain one cell type.")
     }
-
-    # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  pc_subset_ref = pc_subset,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
 
     # Select cell types
     cell_type <- selectCellTypes(query_data = query_data,

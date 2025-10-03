@@ -2,7 +2,7 @@
 * Initial release of the `scDiagnostics` package.
 
 # CHANGES IN VERSION 1.2.0
-* Add functionality to process SCE objects for PCA computation via the new `processPCA` function.
+* Add functionality to process SCE objects for PCA computation via the new `processPCA` function. 
 * Add functionality to downsample SCE objects for diagnostic functions.
 * Add new diagnostic functions (`calculateTopLoadingGeneShifts`, `compareMarkers` and `calculateMMDPValue`).
 * Add graph integration diagnostic function in replacement of nearest neighbor diagnostic, `calculateGraphIntegration`.

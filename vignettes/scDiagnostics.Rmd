@@ -345,7 +345,7 @@ qc_data_subset <- qc_data[, !(qc_data$SingleR_annotation
 
 # Generate scatter plot
 library(ggplot2)
-p1 <- plotQCvsAnnotation(se_object = qc_data_subset,
+p1 <- plotQCvsAnnotation(sce_object = qc_data_subset,
                          cell_type_col = "SingleR_annotation",
                          qc_col = "total",
                          score_col = "annotation_scores")
@@ -419,8 +419,7 @@ plotPairwiseDistancesDensity(query_data = query_data,
                              reference_data = reference_data, 
                              query_cell_type_col = "expert_annotation", 
                              ref_cell_type_col = "expert_annotation", 
-                             cell_type_query = "CD8", 
-                             cell_type_ref = "CD8", 
+                             cell_type = "CD8", 
                              pc_subset = 1:10,
                              distance_metric = "correlation",
                              correlation_method = "pearson")

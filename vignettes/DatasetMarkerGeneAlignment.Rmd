@@ -70,8 +70,6 @@ In the realm of single-cell genomics, the ability to compare and integrate data 
 
 - `calculateHotellingPValue()`: This function performs Hotelling's T-squared test, a multivariate statistical test used to assess the differences between two groups of observations. It is useful for comparing the mean vectors of multiple variables and is commonly employed in single-cell data to evaluate group differences in principal component space.
 
-- `calculateNearestNeighborProbabilities()`: This function calculates the probability of nearest neighbor assignments in a high-dimensional space. It is used to evaluate the likelihood of a cell belonging to a specific cluster based on its proximity to neighboring cells. This function helps in assessing clustering quality and the robustness of cell type assignments.
-
 - `calculateAveragePairwiseCorrelation()`: This function computes the average pairwise correlation between variables or features across cells. It provides an overview of the relationships between different markers or genes, helping to identify correlated features and understand their interactions within the dataset.
 
 - `regressPC()`: This function performs linear regression of a covariate of interest onto one or more principal components derived from single-cell data. This analysis helps quantify the variance explained by the covariate and is useful for tasks such as assessing batch effects, clustering homogeneity, and alignment of query and reference datasets.
@@ -238,8 +236,7 @@ plotPairwiseDistancesDensity(query_data = query_data,
                              reference_data = reference_data, 
                              query_cell_type_col = "expert_annotation", 
                              ref_cell_type_col = "expert_annotation", 
-                             cell_type_query = "CD4", 
-                             cell_type_ref = "CD4", 
+                             cell_type = "CD4", 
                              pc_subset = 1:5,
                              distance_metric = "euclidean")
 ```

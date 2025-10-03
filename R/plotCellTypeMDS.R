@@ -4,10 +4,14 @@
 #' This function facilitates the assessment of similarity between reference and query datasets
 #' through Multidimensional Scaling (MDS) scatter plots. It allows the visualization of cell types,
 #' color-coded with user-defined custom colors, based on a dissimilarity matrix computed from a
-#' user-selected gene set.
+#' user-selected gene set. If MDS coordinates are precomputed in reducedDims, they will be used;
+#' otherwise, MDS will be computed from scratch.
 #'
 #' @details
-#' To evaluate dataset similarity, the function selects specific subsets of cells from
+#' The function first checks if MDS coordinates are available in the reducedDims of both datasets.
+#' If precomputed MDS is found, it uses those coordinates directly for visualization.
+#'
+#' If MDS is not precomputed, the function selects specific subsets of cells from
 #' both reference and query datasets. It then calculates Spearman correlations between gene expression profiles,
 #' deriving a dissimilarity matrix. This matrix undergoes Classical Multidimensional Scaling (MDS) for
 #' visualization, presenting cell types in a scatter plot, distinguished by colors defined by the user.
@@ -72,35 +76,102 @@ plotCellTypeMDS <- function(query_data,
                   max_cells_query = max_cells_query,
                   max_cells_ref = max_cells_ref)
 
-    # Get common cell types if they are not specified by user
-    if(is.null(cell_types)){
-        cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
-                                       query_data[[query_cell_type_col]])))
+    # Convert cell type columns to character if needed
+    query_data <- convertColumnsToCharacter(sce_object = query_data,
+                                            convert_cols = query_cell_type_col)
+    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
+                                                convert_cols = ref_cell_type_col)
+
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = query_data,
+                                  reference_data = reference_data,
+                                  query_cell_type_col = query_cell_type_col,
+                                  ref_cell_type_col = ref_cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = FALSE,
+                                  n_cell_types = 10)
+
+    # Check if MDS is precomputed in both datasets
+    query_has_mds <- "MDS" %in% reducedDimNames(query_data)
+    ref_has_mds <- "MDS" %in% reducedDimNames(reference_data)
+    use_precomputed_mds <- query_has_mds && ref_has_mds
+
+    if (use_precomputed_mds) {
+        message("Using precomputed MDS coordinates from reducedDims.")
+
+        # Downsample using precomputed MDS (coordinates will be preserved through subsetting)
+        query_data <- downsampleSCE(sce_object = query_data,
+                                    max_cells = max_cells_query,
+                                    cell_types = cell_types,
+                                    cell_type_col = query_cell_type_col)
+        reference_data <- downsampleSCE(sce_object = reference_data,
+                                        max_cells = max_cells_ref,
+                                        cell_types = cell_types,
+                                        cell_type_col = ref_cell_type_col)
+
+        # Extract precomputed MDS coordinates
+        query_mds <- reducedDim(query_data, "MDS")
+        ref_mds <- reducedDim(reference_data, "MDS")
+
+        # Validate MDS dimensions (ensure at least 2D)
+        if (ncol(query_mds) < 2 || ncol(ref_mds) < 2) {
+            warning("Precomputed MDS has fewer than 2 dimensions. Computing MDS from scratch.")
+            use_precomputed_mds <- FALSE
+        }
+
+        if (use_precomputed_mds) {
+            # Create data frame from precomputed coordinates
+            cmd <- data.frame(
+                Dim1 = c(ref_mds[, 1], query_mds[, 1]),
+                Dim2 = c(ref_mds[, 2], query_mds[, 2]),
+                dataset = c(rep("Reference", nrow(ref_mds)), rep("Query", nrow(query_mds))),
+                cellType = c(reference_data[[ref_cell_type_col]], query_data[[query_cell_type_col]]),
+                stringsAsFactors = FALSE
+            )
+        }
     }
 
-    # Downsample query and reference data (with cell type filtering)
-    query_data <- downsampleSCE(sce_object = query_data,
-                                max_cells = max_cells_query,
-                                cell_types = cell_types,
-                                cell_type_col = query_cell_type_col)
-    reference_data <- downsampleSCE(sce_object = reference_data,
-                                    max_cells = max_cells_ref,
+    # Fall back to computing MDS if not precomputed or validation failed
+    if (!use_precomputed_mds) {
+        if (query_has_mds || ref_has_mds) {
+            message("MDS not available in both datasets or validation failed. Computing MDS from expression data.")
+        } else {
+            message("Computing MDS from expression data.")
+        }
+
+        # Downsample query and reference data (with cell type filtering)
+        query_data <- downsampleSCE(sce_object = query_data,
+                                    max_cells = max_cells_query,
                                     cell_types = cell_types,
-                                    cell_type_col = ref_cell_type_col)
+                                    cell_type_col = query_cell_type_col)
+        reference_data <- downsampleSCE(sce_object = reference_data,
+                                        max_cells = max_cells_ref,
+                                        cell_types = cell_types,
+                                        cell_type_col = ref_cell_type_col)
 
-    # Extract assay matrices
-    query_assay <- as.matrix(assay(query_data, assay_name))
-    ref_assay <- as.matrix(assay(reference_data, assay_name))
+        # Extract assay matrices
+        query_assay <- as.matrix(assay(query_data, assay_name))
+        ref_assay <- as.matrix(assay(reference_data, assay_name))
 
-    # Compute correlation and dissimilarity matrix
-    df <- cbind(query_assay, ref_assay)
-    corMat <- cor(df, method = "spearman")
-    disMat <- (1 - corMat)
-    cmd <- data.frame(cmdscale(disMat), c(rep("Query", ncol(query_assay)),
-                                          rep("Reference", ncol(ref_assay))),
-                      c(query_data[[query_cell_type_col]],
-                        reference_data[[ref_cell_type_col]]))
-    colnames(cmd) <- c("Dim1", "Dim2", "dataset", "cellType")
+        # Compute correlation and dissimilarity matrix
+        df <- cbind(query_assay, ref_assay)
+        corMat <- cor(df, method = "spearman")
+        disMat <- (1 - corMat)
+
+        # Compute MDS coordinates
+        mds_coords <- cmdscale(disMat)
+
+        # Create data frame
+        cmd <- data.frame(
+            Dim1 = mds_coords[, 1],
+            Dim2 = mds_coords[, 2],
+            dataset = c(rep("Query", ncol(query_assay)), rep("Reference", ncol(ref_assay))),
+            cellType = c(query_data[[query_cell_type_col]], reference_data[[ref_cell_type_col]]),
+            stringsAsFactors = FALSE
+        )
+    }
+
+    # Clean up data and create combined cell type-dataset labels
     cmd <- na.omit(cmd)
     cmd[["cell_type_dataset"]] <- paste(cmd[["dataset"]], cmd[["cellType"]], sep = " ")
 
@@ -108,11 +179,12 @@ plotCellTypeMDS <- function(query_data,
     order_combinations <- paste(rep(c("Reference", "Query"), length(cell_types)),
                                 rep(sort(cell_types), each = 2))
     cmd[["cell_type_dataset"]] <- factor(cmd[["cell_type_dataset"]],
-                                    levels = order_combinations)
+                                         levels = order_combinations)
 
     # Define the colors for cell types
     cell_type_colors <- generateColors(order_combinations, paired = TRUE)
 
+    # Create the plot
     mds_plot <- ggplot2::ggplot(cmd,
                                 ggplot2::aes(
                                     x = .data[["Dim1"]],
@@ -130,5 +202,6 @@ plotCellTypeMDS <- function(query_data,
             axis.title = ggplot2::element_text(size = 12),
             axis.text = ggplot2::element_text(size = 10)) +
         ggplot2::guides(color = ggplot2::guide_legend(title = "Cell Types"))
+
     return(mds_plot)
 }

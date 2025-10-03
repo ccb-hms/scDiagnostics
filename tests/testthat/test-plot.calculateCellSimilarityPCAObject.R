@@ -17,7 +17,7 @@ anomaly_output <- detectAnomaly(reference_data = reference_data,
 top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores, decreasing = TRUE)[1:6])
 
 # Compute cosine similarity between anomalies and top PCs
-cosine_similarities <- calculateCellSimilarityPCA(se_object = reference_data,
+cosine_similarities <- calculateCellSimilarityPCA(sce_object = reference_data,
                                                   cell_names = top6_anomalies,
                                                   pc_subset = 1:25,
                                                   n_top_vars = 50)

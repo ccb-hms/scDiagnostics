@@ -43,10 +43,14 @@ A ggplot object representing the MDS scatter plot with cell type coloring.
 This function facilitates the assessment of similarity between reference and query datasets
 through Multidimensional Scaling (MDS) scatter plots. It allows the visualization of cell types,
 color-coded with user-defined custom colors, based on a dissimilarity matrix computed from a
-user-selected gene set.
+user-selected gene set. If MDS coordinates are precomputed in reducedDims, they will be used;
+otherwise, MDS will be computed from scratch.
 }
 \details{
-To evaluate dataset similarity, the function selects specific subsets of cells from
+The function first checks if MDS coordinates are available in the reducedDims of both datasets.
+If precomputed MDS is found, it uses those coordinates directly for visualization.
+
+If MDS is not precomputed, the function selects specific subsets of cells from
 both reference and query datasets. It then calculates Spearman correlations between gene expression profiles,
 deriving a dissimilarity matrix. This matrix undergoes Classical Multidimensional Scaling (MDS) for
 visualization, presenting cell types in a scatter plot, distinguished by colors defined by the user.

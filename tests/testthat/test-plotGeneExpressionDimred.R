@@ -8,7 +8,8 @@ data("query_data")
 test_that("plotGeneExpressionDimred generates plots correctly", {
     # Test PCA method - returns ggmatrix object
     p1 <- plotGeneExpressionDimred(
-        se_object = query_data,
+        sce_object = query_data,
+        cell_type_col = "SingleR_annotation",
         method = "PCA",
         pc_subset = 1:5,
         feature = "VPREB3"
@@ -21,7 +22,8 @@ test_that("plotGeneExpressionDimred generates plots correctly", {
     # (assuming query_data has UMAP coordinates)
     if ("UMAP" %in% reducedDimNames(query_data)) {
         p2 <- plotGeneExpressionDimred(
-            se_object = query_data,
+            sce_object = query_data,
+            cell_type_col = "SingleR_annotation",
             method = "UMAP",
             feature = "VPREB3"
         )
@@ -32,7 +34,8 @@ test_that("plotGeneExpressionDimred generates plots correctly", {
     # (assuming query_data has TSNE coordinates)
     if ("TSNE" %in% reducedDimNames(query_data)) {
         p3 <- plotGeneExpressionDimred(
-            se_object = query_data,
+            sce_object = query_data,
+            cell_type_col = "SingleR_annotation",
             method = "TSNE",
             feature = "VPREB3"
         )
@@ -46,7 +49,8 @@ test_that("plotGeneExpressionDimred handles different assay names", {
 
     if ("counts" %in% available_assays) {
         p1 <- plotGeneExpressionDimred(
-            se_object = query_data,
+            sce_object = query_data,
+            cell_type_col = "SingleR_annotation",
             method = "PCA",
             pc_subset = 1:3,
             feature = "VPREB3",
@@ -58,7 +62,8 @@ test_that("plotGeneExpressionDimred handles different assay names", {
     # Test with invalid assay name
     expect_error(
         plotGeneExpressionDimred(
-            se_object = query_data,
+            sce_object = query_data,
+            cell_type_col = "SingleR_annotation",
             method = "PCA",
             pc_subset = 1:3,
             feature = "VPREB3",

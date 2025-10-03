@@ -38,7 +38,7 @@ test_that("processPCA works with single dataset", {
     reducedDims(test_data) <- list()
 
     # Test single dataset without PCA
-    result <- processPCA(query_data = test_data, n_hvgs = 1000)
+    result <- processPCA(sce_object = test_data, n_hvgs = 1000)
 
     expect_s4_class(result, "SingleCellExperiment")
     expect_true("PCA" %in% reducedDimNames(result))
@@ -53,35 +53,11 @@ test_that("processPCA preserves existing PCA", {
     original_cells <- ncol(test_data)
 
     # Test with existing PCA - should not downsample
-    result <- processPCA(query_data = test_data, max_cells = 100)
+    result <- processPCA(sce_object = test_data, max_cells = 100)
 
     expect_s4_class(result, "SingleCellExperiment")
     expect_true("PCA" %in% reducedDimNames(result))
     expect_equal(ncol(result), original_cells)  # Should be unchanged
-})
-
-test_that("processPCA works with both datasets", {
-    setup_test_data()
-
-    # Create datasets without PCA
-    query_data <- test_query
-    ref_data <- test_ref
-    reducedDims(query_data) <- list()
-    reducedDims(ref_data) <- list()
-
-    # Test both datasets
-    result <- processPCA(
-        query_data = query_data,
-        reference_data = ref_data,
-        n_hvgs = 1000
-    )
-
-    expect_type(result, "list")
-    expect_named(result, c("query_data", "reference_data"))
-    expect_s4_class(result$query_data, "SingleCellExperiment")
-    expect_s4_class(result$reference_data, "SingleCellExperiment")
-    expect_true("PCA" %in% reducedDimNames(result$query_data))
-    expect_true("PCA" %in% reducedDimNames(result$reference_data))
 })
 
 test_that("processPCA handles downsampling correctly", {
@@ -92,41 +68,16 @@ test_that("processPCA handles downsampling correctly", {
     reducedDims(test_data) <- list()
 
     # Test downsampling
-    result <- processPCA(query_data = test_data, max_cells = 400, n_hvgs = 1000)
+    result <- processPCA(sce_object = test_data, max_cells = 400, n_hvgs = 1000)
 
     expect_s4_class(result, "SingleCellExperiment")
     expect_true("PCA" %in% reducedDimNames(result))
     expect_equal(ncol(result), 400)  # Should be downsampled
 })
 
-test_that("processPCA uses existing PCA genes", {
-    setup_test_data()
-
-    # Create datasets from same source
-    query_data <- test_query
-    ref_data <- test_ref
-
-    # Give query PCA, remove from reference
-    query_data <- scater::runPCA(query_data, ncomponents = 10)
-    reducedDims(ref_data) <- list()
-
-    # Test using existing PCA genes
-    result <- processPCA(
-        query_data = query_data,
-        reference_data = ref_data
-    )
-
-    expect_type(result, "list")
-    expect_true("PCA" %in% reducedDimNames(result$query_data))
-    expect_true("PCA" %in% reducedDimNames(result$reference_data))
-    expect_equal(ncol(result$query_data), 300)  # Query unchanged
-    expect_equal(ncol(result$reference_data), 300)  # Reference unchanged
-})
-
 test_that("processPCA input validation", {
     expect_error(
-        processPCA(),
-        "At least one of query_data or reference_data must be provided"
+        processPCA()
     )
 })
 

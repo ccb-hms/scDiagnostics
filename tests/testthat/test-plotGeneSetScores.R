@@ -8,7 +8,8 @@ data("query_data")
 test_that("plotGeneSetScores generates plots correctly", {
     # Test PCA method - returns ggmatrix object
     p1 <- plotGeneSetScores(
-        se_object = query_data,
+        sce_object = query_data,
+        cell_type_col = "SingleR_annotation",
         method = "PCA",
         score_col = "gene_set_scores",
         pc_subset = 1:5
@@ -21,7 +22,8 @@ test_that("plotGeneSetScores generates plots correctly", {
     # (assuming query_data has UMAP coordinates)
     if ("UMAP" %in% reducedDimNames(query_data)) {
         p2 <- plotGeneSetScores(
-            se_object = query_data,
+            sce_object = query_data,
+            cell_type_col = "SingleR_annotation",
             method = "UMAP",
             score_col = "gene_set_scores"
         )
@@ -32,7 +34,8 @@ test_that("plotGeneSetScores generates plots correctly", {
     # (assuming query_data has TSNE coordinates)
     if ("TSNE" %in% reducedDimNames(query_data)) {
         p3 <- plotGeneSetScores(
-            se_object = query_data,
+            sce_object = query_data,
+            cell_type_col = "SingleR_annotation",
             method = "TSNE",
             score_col = "gene_set_scores"
         )
@@ -48,11 +51,11 @@ test_that("plotGeneSetScores handles edge cases", {
     available_cell_types <- unique(colData(query_data)[["SingleR_annotation"]])
     if (length(available_cell_types) > 0) {
         p1 <- plotGeneSetScores(
-            se_object = query_data,
+            sce_object = query_data,
+            cell_type_col = "SingleR_annotation",
             method = "PCA",
             score_col = "gene_set_scores",
             pc_subset = 1:2,
-            cell_type_col = "SingleR_annotation",
             cell_types = available_cell_types[1]
         )
         expect_s3_class(p1, "ggmatrix")
@@ -67,7 +70,8 @@ test_that("plotGeneSetScores validates score column data", {
 
     # Test plot generation works with actual score data
     p1 <- plotGeneSetScores(
-        se_object = query_data,
+        sce_object = query_data,
+        cell_type_col = "SingleR_annotation",
         method = "PCA",
         score_col = "gene_set_scores",
         pc_subset = 1:3

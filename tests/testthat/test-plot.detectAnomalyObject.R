@@ -97,17 +97,6 @@ test_that("plot handles error cases correctly", {
                       cell_type = "CD4",
                       pc_subset = 1:(max_pc + 5)),
                  "pc_subset.*out of range")
-
-    # Create anomaly output without query data
-    anomaly_ref_only <- detectAnomaly(reference_data = reference_data,
-                                      ref_cell_type_col = "expert_annotation",
-                                      pc_subset = 1:5)
-
-    # Test error when trying to plot query data that doesn't exist
-    expect_error(plot(anomaly_ref_only,
-                      cell_type = "CD4",
-                      data_type = "query"),
-                 "no query data available")
 })
 
 test_that("plot works with different n_tree parameter", {

@@ -10,13 +10,13 @@
 #' For PCA, the function automatically includes the percentage of variance explained
 #' in the plot's legend.
 #'
-#' @param se_object An object of class \code{\linkS4class{SingleCellExperiment}} containing numeric expression matrix and other metadata.
+#' @param sce_object An object of class \code{\linkS4class{SingleCellExperiment}} containing numeric expression matrix and other metadata.
 #'        It can be either a reference or query dataset.
+#' @param cell_type_col The column name in the \code{colData} of \code{sce_object} that identifies the cell types.
 #' @param method A character string indicating the method for visualization ("PCA", "TSNE", or "UMAP").
-#' @param score_col A character string representing the name of the score_col (score) in the colData(se_object) to plot.
+#' @param score_col A character string representing the name of the score_col (score) in the colData(sce_object) to plot.
 #' @param pc_subset An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA".
 #'        Default is 1:5.
-#' @param cell_type_col The column name in the \code{colData} of \code{se_object} that identifies the cell types.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
 #'                  Default is 2000.
@@ -32,7 +32,7 @@
 #' data("query_data")
 #'
 #' # Plot gene set scores on PCA
-#' plotGeneSetScores(se_object = query_data,
+#' plotGeneSetScores(sce_object = query_data,
 #'                   method = "PCA",
 #'                   score_col = "gene_set_scores",
 #'                   pc_subset = 1:5,
@@ -40,22 +40,26 @@
 #'                   cell_type_col = "SingleR_annotation")
 #'
 # Function to plot the gene set scores
-plotGeneSetScores <- function(se_object,
+plotGeneSetScores <- function(sce_object,
+                              cell_type_col,
                               method = c("PCA", "TSNE", "UMAP"),
                               score_col,
                               pc_subset = 1:5,
-                              cell_type_col,
                               cell_types = NULL,
                               max_cells = 2000) {
 
     # Check standard input arguments
-    argumentCheck(query_data = se_object,
+    argumentCheck(query_data = sce_object,
                   pc_subset_query = pc_subset,
                   query_cell_type_col = cell_type_col,
                   max_cells_query = max_cells)
 
+    # Convert cell type columns to character if needed
+    sce_object <- convertColumnsToCharacter(sce_object = sce_object,
+                                            convert_cols = cell_type_col)
+
     # Select cell types
-    cell_types <- selectCellTypes(query_data = se_object,
+    cell_types <- selectCellTypes(query_data = sce_object,
                                   query_cell_type_col = cell_type_col,
                                   cell_types = cell_types,
                                   dual_only = FALSE,
@@ -66,42 +70,42 @@ plotGeneSetScores <- function(se_object,
 
     # Store PCA attributes BEFORE downsampling (if method is PCA)
     pca_percent_var <- NULL
-    if (method == "PCA" && "PCA" %in% reducedDimNames(se_object)) {
-        pca_attrs <- attributes(reducedDim(se_object, "PCA"))
+    if (method == "PCA" && "PCA" %in% reducedDimNames(sce_object)) {
+        pca_attrs <- attributes(reducedDim(sce_object, "PCA"))
         if (!is.null(pca_attrs[["percentVar"]])) {
             pca_percent_var <- pca_attrs[["percentVar"]]
         }
     }
 
     # Downsample SCE object
-    se_object <- downsampleSCE(sce_object = se_object,
+    sce_object <- downsampleSCE(sce_object = sce_object,
                                max_cells = max_cells,
                                cell_types = cell_types,
                                cell_type_col = cell_type_col)
 
     # Check if dimension reduction method is present in reference's reducedDims
-    if (!(method %in% names(reducedDims(se_object)))) {
-        stop("\'se_object\' must have pre-computed \'",
+    if (!(method %in% names(reducedDims(sce_object)))) {
+        stop("\'sce_object\' must have pre-computed \'",
              method,
              "\' in \'reducedDims\'.")
     }
 
-    # Check if score_col is a valid column name in se_object
-    if (!score_col %in% colnames(colData(se_object))) {
+    # Check if score_col is a valid column name in sce_object
+    if (!score_col %in% colnames(colData(sce_object))) {
         stop("score_col: '", score_col,
-             "' is not a valid column name in se_object.")
+             "' is not a valid column name in sce_object.")
     }
 
     # Handle cell type filtering
     filtered_to_specific_types <- FALSE
     if (!is.null(cell_type_col)) {
         # Check if cell type column exists
-        if (!cell_type_col %in% colnames(colData(se_object))) {
+        if (!cell_type_col %in% colnames(colData(sce_object))) {
             stop("Specified cell_type_col does not exist in colData.")
         }
 
         # Get available cell types
-        available_cell_types <- unique(colData(se_object)[[cell_type_col]])
+        available_cell_types <- unique(colData(sce_object)[[cell_type_col]])
 
         # If specific cell types are requested, filter to those
         if (!is.null(cell_types)) {
@@ -113,26 +117,26 @@ plotGeneSetScores <- function(se_object,
             }
 
             # Filter to cells of specified types
-            cell_mask <- colData(se_object)[[cell_type_col]] %in%
+            cell_mask <- colData(sce_object)[[cell_type_col]] %in%
                 cell_types
             filtered_to_specific_types <- TRUE
         } else {
             # Use all cells if no specific types requested
-            cell_mask <- rep(TRUE, ncol(se_object))
+            cell_mask <- rep(TRUE, ncol(sce_object))
             cell_types <- available_cell_types
         }
 
         # Filter the object
-        se_object <- se_object[, cell_mask]
+        sce_object <- sce_object[, cell_mask]
     }
 
     # Extract scores (after potential filtering)
-    scores <- colData(se_object)[[score_col]]
+    scores <- colData(sce_object)[[score_col]]
 
     if(method %in% c("TSNE", "UMAP")){
 
         # Extract dimension reduction coordinates from SingleCellExperiment object
-        reduction <- reducedDim(se_object, method)
+        reduction <- reducedDim(sce_object, method)
 
         # Prepare data for plotting
         df <- data.frame(Dim1 = reduction[, 1], Dim2 = reduction[, 2],
@@ -140,7 +144,7 @@ plotGeneSetScores <- function(se_object,
 
         # Add cell type information if available
         if (!is.null(cell_type_col)) {
-            df[["CellType"]] <- colData(se_object)[[cell_type_col]]
+            df[["CellType"]] <- colData(sce_object)[[cell_type_col]]
         }
 
         # Create the plot object with the original color scheme
@@ -182,11 +186,11 @@ plotGeneSetScores <- function(se_object,
     } else if (method == "PCA"){
 
         # Check input for pc_subset
-        if(!all(pc_subset %in% seq_len(ncol(reducedDim(se_object, "PCA")))))
+        if(!all(pc_subset %in% seq_len(ncol(reducedDim(sce_object, "PCA")))))
             stop("\'pc_subset\' is out of range.")
 
         # PCA data
-        plot_mat <- reducedDim(se_object, "PCA")[, pc_subset]
+        plot_mat <- reducedDim(sce_object, "PCA")[, pc_subset]
 
         # Create PC column names with variance explained (always show percentages if available)
         if (!is.null(pca_percent_var) && length(pca_percent_var) >= max(pc_subset)) {
@@ -212,7 +216,7 @@ plotGeneSetScores <- function(se_object,
 
         # Add cell type information if available
         if (!is.null(cell_type_col)) {
-            pc_df[["CellType"]] <- colData(se_object)[[cell_type_col]]
+            pc_df[["CellType"]] <- colData(sce_object)[[cell_type_col]]
         }
 
         # Create a simple plot to extract the legend with original color scheme

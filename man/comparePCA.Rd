@@ -6,8 +6,8 @@
 \title{Compare Principal Components Analysis (PCA) Results}
 \usage{
 comparePCA(
-  reference_data,
   query_data,
+  reference_data,
   query_cell_type_col,
   ref_cell_type_col,
   pc_subset = 1:5,
@@ -27,9 +27,9 @@ comparePCA(
 )
 }
 \arguments{
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
-
 \item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
 

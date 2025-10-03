@@ -102,6 +102,12 @@ calculateSIRSpace <- function(query_data,
                                   dual_only = FALSE,
                                   n_cell_types = NULL)
 
+    # Convert cell type columns to character if needed
+    query_data <- convertColumnsToCharacter(sce_object = query_data,
+                                            convert_cols = query_cell_type_col)
+    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
+                                                convert_cols = ref_cell_type_col)
+
     # Downsample query and reference data (with cell type filtering)
     query_data <- downsampleSCE(sce_object = query_data,
                                 cell_types = cell_types,

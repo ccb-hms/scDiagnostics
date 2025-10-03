@@ -74,6 +74,14 @@ calculateVarImpOverlap <- function(reference_data,
                   max_cells_ref = max_cells_ref,
                   max_cells_query = max_cells_query)
 
+    # Convert cell type columns to character if needed
+    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
+                                                convert_cols = ref_cell_type_col)
+    if(!is.null(query_data)){
+        query_data <- convertColumnsToCharacter(sce_object = query_data,
+                                                convert_cols = query_cell_type_col)
+    }
+
     # Check if n_tree is a positive integer
     if (!is.numeric(n_tree) || n_tree <= 0 || n_tree != as.integer(n_tree)) {
         stop("\'n_tree\' must be a positive integer.")
@@ -90,7 +98,7 @@ calculateVarImpOverlap <- function(reference_data,
                                   query_cell_type_col = query_cell_type_col,
                                   ref_cell_type_col = ref_cell_type_col,
                                   cell_types = cell_types,
-                                  dual_only = TRUE,
+                                  dual_only = FALSE,
                                   n_cell_types = NULL)
 
     # Downsample query and reference data (with cell type filtering)

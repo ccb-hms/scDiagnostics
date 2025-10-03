@@ -5,27 +5,27 @@
 \title{Visualization of gene sets or pathway scores on dimensional reduction plot}
 \usage{
 plotGeneSetScores(
-  se_object,
+  sce_object,
+  cell_type_col,
   method = c("PCA", "TSNE", "UMAP"),
   score_col,
   pc_subset = 1:5,
-  cell_type_col,
   cell_types = NULL,
   max_cells = 2000
 )
 }
 \arguments{
-\item{se_object}{An object of class \code{\linkS4class{SingleCellExperiment}} containing numeric expression matrix and other metadata.
+\item{sce_object}{An object of class \code{\linkS4class{SingleCellExperiment}} containing numeric expression matrix and other metadata.
 It can be either a reference or query dataset.}
+
+\item{cell_type_col}{The column name in the \code{colData} of \code{sce_object} that identifies the cell types.}
 
 \item{method}{A character string indicating the method for visualization ("PCA", "TSNE", or "UMAP").}
 
-\item{score_col}{A character string representing the name of the score_col (score) in the colData(se_object) to plot.}
+\item{score_col}{A character string representing the name of the score_col (score) in the colData(sce_object) to plot.}
 
 \item{pc_subset}{An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA".
 Default is 1:5.}
-
-\item{cell_type_col}{The column name in the \code{colData} of \code{se_object} that identifies the cell types.}
 
 \item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
 
@@ -50,7 +50,7 @@ in the plot's legend.
 data("query_data")
 
 # Plot gene set scores on PCA
-plotGeneSetScores(se_object = query_data,
+plotGeneSetScores(sce_object = query_data,
                   method = "PCA",
                   score_col = "gene_set_scores",
                   pc_subset = 1:5,

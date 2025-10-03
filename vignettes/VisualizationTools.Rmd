@@ -261,7 +261,7 @@ The `plotGeneExpressionDimred()` function plots the expression of a specific gen
 Let's visualize the expression of the gene **NKG7** for CD4 on a PCA plot:
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Visualize VPREB3 gene on a PCA plot
-plotGeneExpressionDimred(se_object = query_data,
+plotGeneExpressionDimred(sce_object = query_data,
                          method = "PCA",
                          pc_subset = 1:5,
                          feature = "NKG7",
@@ -311,7 +311,7 @@ qc_data_subset <- qc_data[, !(qc_data$SingleR_annotation
                                      "Neurons","Platelets"))]
 
 # Generate scatter plot
-p1 <- plotQCvsAnnotation(se_object = qc_data_subset,
+p1 <- plotQCvsAnnotation(sce_object = qc_data_subset,
                          cell_type_col = "SingleR_annotation",
                          qc_col = "total",
                          score_col = "annotation_scores")
@@ -329,7 +329,7 @@ Histograms provide a distribution view of QC metrics and annotation scores. They
 
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Generate histograms
-histQCvsAnnotation(se_object = query_data, 
+histQCvsAnnotation(sce_object = query_data, 
                    cell_type_col = "SingleR_annotation", 
                    qc_col = "percent_mito", 
                    score_col = "annotation_scores")
@@ -343,7 +343,9 @@ Histograms are useful for assessing the overall distribution of QC metrics and a
 Dimensional reduction plots (PCA, t-SNE, UMAP) are used to visualize the relationships between cells in reduced dimensions. Overlaying gene set scores on these plots provides insights into how specific gene activities are distributed across cell clusters.
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot gene set scores on PCA
-plotGeneSetScores(se_object = query_data, 
+plotGeneSetScores(sce_object = query_data, 
+                  cell_type_col = "SingleR_annotation",
+                  cell_types = "CD8",
                   method = "PCA", 
                   score_col = "gene_set_scores", 
                   pc_subset = 1:3)

@@ -5,61 +5,41 @@
 \title{Process PCA for SingleCellExperiment Objects}
 \usage{
 processPCA(
-  query_data = NULL,
-  reference_data = NULL,
-  n_hvgs = 2000,
+  sce_object,
   assay_name = "logcounts",
-  max_cells_query = NULL,
-  max_cells_ref = NULL
+  n_hvgs = 2000,
+  max_cells = NULL
 )
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object for query data.
-If NULL, no processing is performed on query data. Default is NULL.}
-
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object for reference data.
-If NULL, no processing is performed on reference data. Default is NULL.}
-
-\item{n_hvgs}{Number of highly variable genes to select for PCA computation.
-When both datasets lack PCA, this number is used for each dataset before
-taking the intersection. Default is 2000.}
+\item{sce_object}{A \code{\linkS4class{SingleCellExperiment}} object to process.}
 
 \item{assay_name}{Name of the assay to use for HVG selection and PCA computation.
 Should contain log-normalized expression values. Default is "logcounts".}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is NULL.}
+\item{n_hvgs}{Number of highly variable genes to select for PCA computation. Default is 2000.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is NULL.}
+\item{max_cells}{Maximum number of cells to retain if downsampling is needed for PCA computation.
+If NULL, no downsampling is performed. Default is NULL.}
 }
 \value{
-When only one dataset is provided, returns the processed SingleCellExperiment object directly.
-When both datasets are provided, returns a list containing:
-\itemize{
-  \item query_data: Processed query data
-  \item reference_data: Processed reference data
-}
-Each returned object will have:
-\itemize{
-  \item PCA in reducedDims slot
-  \item Original cell count if PCA existed, or at most max_cells if PCA was computed
-}
+A \code{\linkS4class{SingleCellExperiment}} object with valid PCA in the reducedDims slot,
+including rotation matrix and percentVar attributes. Will have original cell count if PCA was valid,
+or at most max_cells if PCA was computed.
 }
 \description{
-This function ensures that \code{\linkS4class{SingleCellExperiment}} objects have PCA computed using
+This function ensures that a \code{\linkS4class{SingleCellExperiment}} object has valid PCA computed using
 highly variable genes when needed. It only performs downsampling when PCA computation
-is required, preserving existing PCA computations without modification.
+is required, preserving existing valid PCA computations without modification.
 }
 \details{
 The function performs the following operations:
 \itemize{
-  \item Checks if PCA exists in the provided \code{\linkS4class{SingleCellExperiment}} objects
-  \item If PCA already exists, returns the object unchanged (no downsampling)
-  \item If PCA is missing and dataset is large, downsamples before computing PCA
-  \item Computes PCA using highly variable genes when PCA is missing
-  \item When both datasets are provided and one has existing PCA, uses the genes from the existing PCA for the other dataset
-  \item When both datasets lack PCA, uses the intersection of highly variable genes for consistent PCA spaces
+  \item Checks if PCA exists and is valid in the provided \code{\linkS4class{SingleCellExperiment}} object
+  \item Validates PCA integrity including rotation matrix, percentVar, gene consistency, and dimensions
+  \item If PCA is valid, returns the object unchanged (no downsampling)
+  \item If PCA is missing or invalid and dataset is large, downsamples before computing PCA
+  \item Computes PCA using highly variable genes when PCA is missing or invalid
   \item Utilizes scran for HVG selection and scater for PCA computation (soft dependencies)
 }
 
@@ -67,56 +47,39 @@ The downsampling strategy uses random sampling without replacement and only occu
 when PCA computation is necessary. This preserves expensive pre-computed PCA results
 while ensuring computational efficiency for new PCA computations.
 
-For datasets where one has existing PCA and the other doesn't, the function uses the genes
-from the existing PCA rotation matrix to ensure compatible PCA spaces. When both datasets
-lack PCA, it uses the intersection of highly variable genes from both datasets.
+PCA validation includes checking for:
+\itemize{
+  \item Presence of PCA in reducedDims
+  \item Existence of rotation matrix and percentVar attributes
+  \item Gene consistency between rotation matrix and current assay
+  \item Dimension consistency between PCA coordinates and cell count
+}
 }
 \note{
 This function requires the scran and scater packages for HVG selection and PCA computation.
 These packages should be installed via BiocManager::install(c("scran", "scater")).
 
-Objects with existing PCA are returned unchanged to preserve expensive pre-computations.
+Objects with existing valid PCA are returned unchanged to preserve expensive pre-computations.
 Only datasets requiring PCA computation are subject to downsampling.
 }
 \examples{
-# Example 1: Process single dataset
+# Load and prepare dataset
 library(TENxPBMCData)
 library(scuttle)
 
-# Load and prepare dataset
 pbmc_data <- TENxPBMCData("pbmc3k")
-pbmc_subset <- pbmc_data[, 1:500]  # Use subset for example
+pbmc_subset <- pbmc_data[, 1:500]
 pbmc_subset <- logNormCounts(pbmc_subset)
 
 # Remove any existing PCA
 reducedDims(pbmc_subset) <- list()
 
 # Process dataset - will compute PCA using HVGs
-processed_data <- processPCA(query_data = pbmc_subset, n_hvgs = 1000)
+processed_data <- processPCA(sce_object = pbmc_subset, n_hvgs = 1000)
 
 # Check results
 "PCA" \%in\% reducedDimNames(processed_data)  # Should be TRUE
 ncol(processed_data)  # Should be 500 (unchanged)
-
-# Example 2: Process both query and reference datasets
-# Create reference dataset
-pbmc_ref <- pbmc_data[, 501:1000]
-pbmc_ref <- logNormCounts(pbmc_ref)
-reducedDims(pbmc_ref) <- list()
-
-# Process both datasets - will use intersection of HVGs
-result <- processPCA(
-  query_data = pbmc_subset,
-  reference_data = pbmc_ref,
-  max_cells = 10000,
-  n_hvgs = 800
-)
-
-# Check results
-"PCA" \%in\% reducedDimNames(result$query_data)      # Should be TRUE
-"PCA" \%in\% reducedDimNames(result$reference_data)  # Should be TRUE
-ncol(result$query_data)      # Should be 500
-ncol(result$reference_data)  # Should be 500
 
 }
 \author{

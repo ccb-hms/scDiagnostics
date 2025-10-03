@@ -117,6 +117,19 @@ regressPC <- function(query_data,
                   max_cells_query = max_cells_query,
                   max_cells_ref = max_cells_ref)
 
+    # Convert cell type columns to character if needed
+    query_cols_to_convert <- c(query_cell_type_col)
+    if (!is.null(query_batch_col)) {
+        query_cols_to_convert <- c(query_cols_to_convert, query_batch_col)
+    }
+    query_data <- convertColumnsToCharacter(sce_object = query_data,
+                                            convert_cols = query_cols_to_convert)
+
+    if(!is.null(reference_data)){
+        reference_data <- convertColumnsToCharacter(sce_object = reference_data,
+                                                    convert_cols = ref_cell_type_col)
+    }
+
     # Additional check for batch column
     if(!is.null(query_batch_col)){
         if(!query_batch_col %in% colnames(colData(query_data))){
