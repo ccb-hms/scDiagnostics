@@ -271,8 +271,10 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 # Helper heatmap function
-plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
-                        n_genes, significance_threshold, show_anomalies, pseudo_bulk = FALSE) {
+plotHeatmap <- function(x, cell_type,
+                        available_pcs, plot_by,
+                        n_genes, significance_threshold,
+                        show_anomalies, pseudo_bulk = FALSE) {
 
     # Initialize gene collection
     all_genes_to_plot <- c()
@@ -342,15 +344,23 @@ plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
     # Prepare cell subset
     cell_subset <- x[["cell_metadata"]][x[["cell_metadata"]][["cell_type"]] == cell_type, ]
 
-    # NEW: Handle pseudo-bulk aggregation
+    # Handle pseudo-bulk aggregation
     if (pseudo_bulk) {
         # Create grouping categories
         if (show_anomalies && "anomaly_status" %in% names(cell_subset)) {
-            # 4 categories: Query_Normal, Query_Anomaly, Reference_Normal, Reference_Anomaly
-            cell_subset[["group"]] <- paste(cell_subset[["dataset"]],
-                                            cell_subset[["anomaly_status"]],
-                                            sep = "_")
-            group_order <- c("Query_Normal", "Query_Anomaly", "Reference_Normal", "Reference_Anomaly")
+            # Only show anomalies for query cells, treat all reference as normal
+            cell_subset_modified <- cell_subset
+            cell_subset_modified[["anomaly_status"]][cell_subset_modified[["dataset"]] == "Reference"] <- "Normal"
+
+            # 3 categories: Query_Normal, Query_Anomaly, Reference_Normal (no Reference_Anomaly)
+            cell_subset_modified[["group"]] <- paste(cell_subset_modified[["dataset"]],
+                                                     cell_subset_modified[["anomaly_status"]],
+                                                     sep = "_")
+            group_order <- c("Query_Normal", "Query_Anomaly", "Reference_Normal")
+
+            # Update cell_subset to use modified version
+            cell_subset <- cell_subset_modified
+            cell_subset[["group"]] <- cell_subset_modified[["group"]]
         } else {
             # 2 categories: Query, Reference
             cell_subset[["group"]] <- cell_subset[["dataset"]]
@@ -392,6 +402,9 @@ plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
         if (show_anomalies && "anomaly_status" %in% names(cell_subset)) {
             cell_subset_pseudo[["dataset"]] <- gsub("_.*", "", cell_subset_pseudo[["group"]])
             cell_subset_pseudo[["anomaly_status"]] <- gsub(".*_", "", cell_subset_pseudo[["group"]])
+
+            # Ensure reference cells are marked as Normal (redundant safety check)
+            cell_subset_pseudo[["anomaly_status"]][cell_subset_pseudo[["dataset"]] == "Reference"] <- "Normal"
         } else {
             cell_subset_pseudo[["dataset"]] <- cell_subset_pseudo[["group"]]
         }
@@ -400,6 +413,9 @@ plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
     } else {
         # Original ordering logic for individual cells
         if (show_anomalies && "anomaly_status" %in% names(cell_subset)) {
+            # Only show anomalies for query cells, treat all reference as normal
+            cell_subset[["anomaly_status"]][cell_subset[["dataset"]] == "Reference"] <- "Normal"
+
             cell_subset <- cell_subset[order(
                 factor(cell_subset[["dataset"]], levels = c("Query", "Reference")),
                 factor(cell_subset[["anomaly_status"]], levels = c("Anomaly", "Normal"))
@@ -460,18 +476,18 @@ plotHeatmap <- function(x, cell_type, available_pcs, plot_by,
     zscore_col_fun <- .createColorMapping(c(-2, 0, 2),
                                           c("#313695", "white", "#A50026"))
 
-    # Create top annotation - start with anomaly status (if available), then dataset below
+    # Create top annotation with query-only anomaly status
     annotation_list <- list()
     color_list <- list()
     legend_params <- list()
 
     if (show_anomalies && "anomaly_status" %in% names(cell_subset)) {
-        # Map anomaly status to new labels
+        # Map anomaly status to new labels (reference cells are already set to "Normal")
         anomaly_labels <- ifelse(cell_subset[["anomaly_status"]] == "Anomaly",
                                  "Anomalous", "Non-Anomalous")
         annotation_list[["Status"]] <- anomaly_labels
         color_list[["Status"]] <- anomaly_colors
-        legend_params[["Status"]] <- list(title = "Status")
+        legend_params[["Status"]] <- list(title = "Query Anomaly Status")
     }
 
     # Add dataset annotation below anomaly status
