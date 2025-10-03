@@ -121,7 +121,8 @@ test_that("plot.calculateGraphIntegrationObject", {
 
     # Test 18: Test themes
     p_void <- plot(diag_result, plot_type = "cell_network")
-    expect_true("theme" %in% names(p_void))
+    expect_true(!is.null(p_void$theme))
+    expect_s3_class(p_void$theme, "theme")
 
     # Test 19: Test scale transformations
     p_scales <- plot(diag_result, plot_type = "community_data")

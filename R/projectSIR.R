@@ -226,11 +226,12 @@ conditionalMeans <- function(reference_data,
             n_components <- min(which(cumulative_variance >= cumulative_variance_threshold))
             projections <- assay_mat %*%
                 assay_svd$v[, seq_len(n_components)]
-            clusters <- bluster::clusterRows(
-                projections,
-                BLUSPARAM = bluster::TwoStepParam(
-                    second = bluster::NNGraphParam(
-                        k = n_neighbor)))
+            clusters <- suppressWarnings(
+                bluster::clusterRows(
+                    projections,
+                    BLUSPARAM = bluster::TwoStepParam(
+                        second = bluster::NNGraphParam(
+                            k = n_neighbor))))
             cluster_means <- do.call(
                 rbind, lapply(unique(clusters),
                               function(cl) colMeans(assay_mat[clusters == cl,, drop = FALSE])))
