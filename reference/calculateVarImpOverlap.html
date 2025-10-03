@@ -83,7 +83,8 @@ and a reference dataset using Random Forest.</p>
 <span>  n_tree <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  n_top <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
-<span>  max_cells <span class="op">=</span> <span class="fl">2500</span></span>
+<span>  max_cells_ref <span class="op">=</span> <span class="fl">5000</span>,</span>
+<span>  max_cells_query <span class="op">=</span> <span class="fl">5000</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -124,9 +125,14 @@ If NULL, then the variable importance scores are only computed for the reference
 <dd><p>Name of the assay on which to perform computations. Defaults to <code>"logcounts"</code>.</p></dd>
 
 
-<dt id="arg-max-cells">max_cells<a class="anchor" aria-label="anchor" href="#arg-max-cells"></a></dt>
-<dd><p>Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.</p></dd>
+<dt id="arg-max-cells-ref">max_cells_ref<a class="anchor" aria-label="anchor" href="#arg-max-cells-ref"></a></dt>
+<dd><p>Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.</p></dd>
+
+
+<dt id="arg-max-cells-query">max_cells_query<a class="anchor" aria-label="anchor" href="#arg-max-cells-query"></a></dt>
+<dd><p>Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is 5000.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -177,9 +183,9 @@ the overlap in their importance scores.</p>
 <span class="r-in"><span><span class="co"># Comparison table</span></span></span>
 <span class="r-in"><span><span class="va">rf_output</span><span class="op">$</span><span class="va">var_imp_comparison</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              CD4-CD8     CD4-B_and_plasma          CD4-Myeloid </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 0.80                 0.82                 0.82 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 0.78                 0.80                 0.86 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     CD8-B_and_plasma          CD8-Myeloid B_and_plasma-Myeloid </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 0.72                 0.84                 0.80 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 0.78                 0.80                 0.80 </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

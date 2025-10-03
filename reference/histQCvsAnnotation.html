@@ -75,12 +75,12 @@ annotation scores associated with cell types in single-cell genomic data.</p>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">histQCvsAnnotation</span><span class="op">(</span></span>
-<span>  <span class="va">se_object</span>,</span>
+<span>  <span class="va">sce_object</span>,</span>
 <span>  <span class="va">cell_type_col</span>,</span>
 <span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">qc_col</span>,</span>
 <span>  <span class="va">score_col</span>,</span>
-<span>  max_cells <span class="op">=</span> <span class="fl">2500</span></span>
+<span>  max_cells <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -88,13 +88,13 @@ annotation scores associated with cell types in single-cell genomic data.</p>
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-se-object">se_object<a class="anchor" aria-label="anchor" href="#arg-se-object"></a></dt>
+<dl><dt id="arg-sce-object">sce_object<a class="anchor" aria-label="anchor" href="#arg-sce-object"></a></dt>
 <dd><p>A <code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></code> containing the single-cell
 expression data and metadata.</p></dd>
 
 
 <dt id="arg-cell-type-col">cell_type_col<a class="anchor" aria-label="anchor" href="#arg-cell-type-col"></a></dt>
-<dd><p>The column name in the <code>colData</code> of <code>se_object</code>
+<dd><p>The column name in the <code>colData</code> of <code>sce_object</code>
 that contains the cell type labels.</p></dd>
 
 
@@ -104,18 +104,18 @@ Defaults to <code>NULL</code>, which will include all the cells.</p></dd>
 
 
 <dt id="arg-qc-col">qc_col<a class="anchor" aria-label="anchor" href="#arg-qc-col"></a></dt>
-<dd><p>A column name in the <code>colData</code> of <code>se_object</code> that
+<dd><p>A column name in the <code>colData</code> of <code>sce_object</code> that
 contains the QC stats of interest.</p></dd>
 
 
 <dt id="arg-score-col">score_col<a class="anchor" aria-label="anchor" href="#arg-score-col"></a></dt>
-<dd><p>The column name in the <code>colData</code> of <code>se_object</code> that
+<dd><p>The column name in the <code>colData</code> of <code>sce_object</code> that
 contains the cell type scores.</p></dd>
 
 
 <dt id="arg-max-cells">max_cells<a class="anchor" aria-label="anchor" href="#arg-max-cells"></a></dt>
 <dd><p>Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.</p></dd>
+Default is NULL.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -136,14 +136,14 @@ interpretation of cell type annotations.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"query_data"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Generate histograms</span></span></span>
-<span class="r-in"><span><span class="fu">histQCvsAnnotation</span><span class="op">(</span>se_object <span class="op">=</span> <span class="va">query_data</span>,</span></span>
+<span class="r-in"><span><span class="fu">histQCvsAnnotation</span><span class="op">(</span>sce_object <span class="op">=</span> <span class="va">query_data</span>,</span></span>
 <span class="r-in"><span>                   cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
 <span class="r-in"><span>                   cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                   qc_col <span class="op">=</span> <span class="st">"percent_mito"</span>,</span></span>
 <span class="r-in"><span>                   score_col <span class="op">=</span> <span class="st">"annotation_scores"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="histQCvsAnnotation-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">histQCvsAnnotation</span><span class="op">(</span>se_object <span class="op">=</span> <span class="va">query_data</span>,</span></span>
+<span class="r-in"><span><span class="fu">histQCvsAnnotation</span><span class="op">(</span>sce_object <span class="op">=</span> <span class="va">query_data</span>,</span></span>
 <span class="r-in"><span>                   cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
 <span class="r-in"><span>                   cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>                   qc_col <span class="op">=</span> <span class="st">"percent_mito"</span>,</span></span>

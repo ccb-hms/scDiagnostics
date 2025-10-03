@@ -81,7 +81,6 @@ are present in the data.</p>
 <span>  reference_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  query_cell_type_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ref_cell_type_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  unique_cell_type <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  plot_function <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  cell_names_query <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -89,7 +88,9 @@ are present in the data.</p>
 <span>  pc_subset_query <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pc_subset_ref <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  common_rotation_genes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_cells_ref <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_cells_query <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -115,10 +116,6 @@ that identifies the cell types. If `NULL`, no check is performed.</p></dd>
 <dt id="arg-ref-cell-type-col">ref_cell_type_col<a class="anchor" aria-label="anchor" href="#arg-ref-cell-type-col"></a></dt>
 <dd><p>The column name in the <code>colData</code> of <code>reference_data</code>
 that identifies the cell types. If `NULL`, no check is performed.</p></dd>
-
-
-<dt id="arg-cell-types">cell_types<a class="anchor" aria-label="anchor" href="#arg-cell-types"></a></dt>
-<dd><p>A character vector specifying the cell types to include in the plot. If `NULL`, no check is performed.</p></dd>
 
 
 <dt id="arg-unique-cell-type">unique_cell_type<a class="anchor" aria-label="anchor" href="#arg-unique-cell-type"></a></dt>
@@ -154,6 +151,14 @@ Default is FALSE.</p></dd>
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
 <dd><p>Name of the assay on which to perform computations. If `NULL`, no check is performed.</p></dd>
 
+
+<dt id="arg-max-cells-ref">max_cells_ref<a class="anchor" aria-label="anchor" href="#arg-max-cells-ref"></a></dt>
+<dd><p>Maximum number of reference cells to retain. If `NULL`, no check is performed.</p></dd>
+
+
+<dt id="arg-max-cells-query">max_cells_query<a class="anchor" aria-label="anchor" href="#arg-max-cells-query"></a></dt>
+<dd><p>Maximum number of query cells to retain. If `NULL`, no check is performed.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -163,12 +168,11 @@ Default is FALSE.</p></dd>
     <h2>Details</h2>
     <p>The function performs a series of checks to ensure that:</p><ul><li><p>`query_data` and `reference_data` are <code>SingleCellExperiment</code> objects.</p></li>
 <li><p>`query_cell_type_col` and `ref_cell_type_col` exist in the column data of their respective <code>SingleCellExperiment</code> objects.</p></li>
-<li><p>The specified `cell_types` are available in the provided datasets.</p></li>
 <li><p>If `unique_cell_type` is `TRUE`, there should only be one cell type in the <code>SingleCellExperiment</code> objects.</p></li>
-<li><p>If `plot_function` is `TRUE`, the number of unique `cell_types` does not exceed 10.</p></li>
 <li><p>`cell_names_query` are valid cell names in the provided query dataset.</p></li>
 <li><p>`cell_names_ref` are valid cell names in the provided reference dataset.</p></li>
 <li><p>The PCA subsets specified by `pc_subset_query` and `pc_subset_ref` are valid.</p></li>
+<li><p>`max_cells_ref` and `max_cells_query` are positive integers when not NULL.</p></li>
 </ul></div>
     <div id="author">
     <h2>Author</h2>

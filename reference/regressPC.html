@@ -100,7 +100,8 @@ object.</p>
 <span>  adjust_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"BH"</span>, <span class="st">"holm"</span>, <span class="st">"hochberg"</span>, <span class="st">"hommel"</span>, <span class="st">"bonferroni"</span>, <span class="st">"BY"</span>, <span class="st">"fdr"</span>,</span>
 <span>    <span class="st">"none"</span><span class="op">)</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
-<span>  max_cells <span class="op">=</span> <span class="fl">2500</span></span>
+<span>  max_cells_ref <span class="op">=</span> <span class="fl">5000</span>,</span>
+<span>  max_cells_query <span class="op">=</span> <span class="fl">5000</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -172,9 +173,14 @@ Default is "BH" (Benjamini-Hochberg).</p></dd>
 <dd><p>Name of the assay on which to perform computations. Default is "logcounts".</p></dd>
 
 
-<dt id="arg-max-cells">max_cells<a class="anchor" aria-label="anchor" href="#arg-max-cells"></a></dt>
-<dd><p>Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.</p></dd>
+<dt id="arg-max-cells-ref">max_cells_ref<a class="anchor" aria-label="anchor" href="#arg-max-cells-ref"></a></dt>
+<dd><p>Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.</p></dd>
+
+
+<dt id="arg-max-cells-query">max_cells_query<a class="anchor" aria-label="anchor" href="#arg-max-cells-query"></a></dt>
+<dd><p>Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is 5000.</p></dd>
 
 </dl></div>
     <div id="value">

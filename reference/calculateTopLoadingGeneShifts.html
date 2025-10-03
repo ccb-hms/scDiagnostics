@@ -98,9 +98,11 @@ displays anomaly status when available.</p>
 <span>  adjust_method <span class="op">=</span> <span class="st">"fdr"</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
 <span>  detect_anomalies <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  anomaly_comparison <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  anomaly_threshold <span class="op">=</span> <span class="fl">0.6</span>,</span>
 <span>  n_tree <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>  max_cells <span class="op">=</span> <span class="fl">2500</span></span>
+<span>  max_cells_query <span class="op">=</span> <span class="fl">5000</span>,</span>
+<span>  max_cells_ref <span class="op">=</span> <span class="fl">5000</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'calculateTopLoadingGeneShiftsObject'</span></span>
@@ -113,7 +115,10 @@ displays anomaly status when available.</p>
 <span>  n_genes <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  significance_threshold <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  show_anomalies <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  pseudo_bulk <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  draw_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  max_cells_ref <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_cells_query <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -167,6 +172,13 @@ displays anomaly status when available.</p>
 Default is FALSE.</p></dd>
 
 
+<dt id="arg-anomaly-comparison">anomaly_comparison<a class="anchor" aria-label="anchor" href="#arg-anomaly-comparison"></a></dt>
+<dd><p>Logical indicating whether to perform statistical comparisons
+between non-anomalous reference cells and anomalous query cells instead of all-vs-all
+comparisons. When TRUE, only non-anomalous reference cells are compared against only
+anomalous query cells for each cell type. Requires detect_anomalies = TRUE. Default is FALSE.</p></dd>
+
+
 <dt id="arg-anomaly-threshold">anomaly_threshold<a class="anchor" aria-label="anchor" href="#arg-anomaly-threshold"></a></dt>
 <dd><p>A numeric value specifying the threshold for identifying anomalies when
 <code>detect_anomalies</code> is TRUE. Default is 0.6.</p></dd>
@@ -177,9 +189,14 @@ Default is FALSE.</p></dd>
 <code>detect_anomalies</code> is TRUE. Default is 500.</p></dd>
 
 
-<dt id="arg-max-cells">max_cells<a class="anchor" aria-label="anchor" href="#arg-max-cells"></a></dt>
-<dd><p>Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.</p></dd>
+<dt id="arg-max-cells-query">max_cells_query<a class="anchor" aria-label="anchor" href="#arg-max-cells-query"></a></dt>
+<dd><p>Maximum number of query cells to include in the plot. If NULL,
+all available query cells are plotted. Default is NULL.</p></dd>
+
+
+<dt id="arg-max-cells-ref">max_cells_ref<a class="anchor" aria-label="anchor" href="#arg-max-cells-ref"></a></dt>
+<dd><p>Maximum number of reference cells to include in the plot. If NULL,
+all available reference cells are plotted. Default is NULL.</p></dd>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
@@ -215,6 +232,13 @@ selection or annotation. Default is 0.05.</p></dd>
 Default is FALSE. Requires anomaly results to be present in the object.</p></dd>
 
 
+<dt id="arg-pseudo-bulk">pseudo_bulk<a class="anchor" aria-label="anchor" href="#arg-pseudo-bulk"></a></dt>
+<dd><p>Logical indicating whether to create pseudo-bulk profiles instead of
+showing individual cells. When TRUE, expression values are averaged within groups
+(dataset and optionally anomaly status). Not compatible with boxplot visualization.
+Default is FALSE.</p></dd>
+
+
 <dt id="arg-draw-plot">draw_plot<a class="anchor" aria-label="anchor" href="#arg-draw-plot"></a></dt>
 <dd><p>Logical indicating whether to draw the plot immediately (TRUE) or return
 the undrawn plot object (FALSE). For heatmaps, FALSE returns a ComplexHeatmap
@@ -247,6 +271,11 @@ between datasets. A key feature is the calculation of cell-type-specific varianc
 global PCs, providing a more nuanced view of how major biological axes affect individual populations.
 When anomaly detection is enabled, isolation forests are used to identify anomalous cells based on
 their PCA projections.</p>
+<p>When <code>anomaly_comparison = TRUE</code>, the statistical analysis focuses specifically on
+comparing non-anomalous reference cells against anomalous query cells. This can help
+identify genes that are differentially expressed between "normal" reference cells and
+potentially problematic query cells, providing insights into what makes certain query
+cells anomalous.</p>
 <p>This function visualizes the results from <code>calculateTopLoadingGeneShifts</code>.
 The "heatmap" option displays a hierarchically clustered set of genes.
 The "boxplot" option creates a two-panel plot using `ggplot2`: the left panel shows

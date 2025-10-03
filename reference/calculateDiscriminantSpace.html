@@ -90,7 +90,8 @@ data. Similarity between the query and reference projections can be assessed usi
 <span>  calculate_metrics <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  alpha <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
-<span>  max_cells <span class="op">=</span> <span class="fl">2500</span></span>
+<span>  max_cells_ref <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_cells_query <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'calculateDiscriminantSpaceObject'</span></span>
@@ -101,6 +102,8 @@ data. Similarity between the query and reference projections can be assessed usi
 <span>  lower_facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"scatter"</span>, <span class="st">"contour"</span>, <span class="st">"ellipse"</span>, <span class="st">"blank"</span><span class="op">)</span>,</span>
 <span>  diagonal_facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ridge"</span>, <span class="st">"density"</span>, <span class="st">"boxplot"</span>, <span class="st">"blank"</span><span class="op">)</span>,</span>
 <span>  upper_facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blank"</span>, <span class="st">"scatter"</span>, <span class="st">"contour"</span>, <span class="st">"ellipse"</span><span class="op">)</span>,</span>
+<span>  max_cells_ref <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_cells_query <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -154,9 +157,14 @@ If NULL, only the projected reference data is returned. Default is NULL.</p></dd
 <dd><p>Name of the assay on which to perform computations. Default is "logcounts".</p></dd>
 
 
-<dt id="arg-max-cells">max_cells<a class="anchor" aria-label="anchor" href="#arg-max-cells"></a></dt>
-<dd><p>Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.</p></dd>
+<dt id="arg-max-cells-ref">max_cells_ref<a class="anchor" aria-label="anchor" href="#arg-max-cells-ref"></a></dt>
+<dd><p>Maximum number of reference cells to include in the plot. If NULL,
+all available reference cells are plotted. Default is NULL.</p></dd>
+
+
+<dt id="arg-max-cells-query">max_cells_query<a class="anchor" aria-label="anchor" href="#arg-max-cells-query"></a></dt>
+<dd><p>Maximum number of query cells to include in the plot. If NULL,
+all available query cells are plotted. Default is NULL.</p></dd>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
@@ -266,14 +274,14 @@ structure and cell type separability.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Generate scatter and boxplot</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">disc_output</span>, plot_type <span class="op">=</span> <span class="st">"scatterplot"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.113</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.125</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.162</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.11</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.128</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.152</span>
 <span class="r-plt img"><img src="calculateDiscriminantSpace-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">disc_output</span>, cell_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4"</span>, <span class="st">"CD8"</span><span class="op">)</span>, plot_type <span class="op">=</span> <span class="st">"boxplot"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.0378</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.085</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.221</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.0375</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.0824</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Picking joint bandwidth of 0.205</span>
 <span class="r-plt img"><img src="calculateDiscriminantSpace-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Check comparison</span></span></span>

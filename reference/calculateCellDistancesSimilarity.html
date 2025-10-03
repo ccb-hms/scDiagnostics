@@ -79,10 +79,11 @@ distributions between query cells and reference data for each cell type.</p>
 <span>  <span class="va">reference_data</span>,</span>
 <span>  <span class="va">query_cell_type_col</span>,</span>
 <span>  <span class="va">ref_cell_type_col</span>,</span>
-<span>  <span class="va">cell_names</span>,</span>
+<span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">cell_names_query</span>,</span>
 <span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
-<span>  max_cells <span class="op">=</span> <span class="fl">2500</span></span>
+<span>  max_cells_ref <span class="op">=</span> <span class="fl">5000</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -108,7 +109,12 @@ that identifies the cell types.</p></dd>
 that identifies the cell types.</p></dd>
 
 
-<dt id="arg-cell-names">cell_names<a class="anchor" aria-label="anchor" href="#arg-cell-names"></a></dt>
+<dt id="arg-cell-types">cell_types<a class="anchor" aria-label="anchor" href="#arg-cell-types"></a></dt>
+<dd><p>A character vector specifying the cell types to include in the plot. If NULL, all cell types are
+included.</p></dd>
+
+
+<dt id="arg-cell-names-query">cell_names_query<a class="anchor" aria-label="anchor" href="#arg-cell-names-query"></a></dt>
 <dd><p>A character vector specifying the names of the query cells for which to compute distance measures.</p></dd>
 
 
@@ -120,9 +126,9 @@ that identifies the cell types.</p></dd>
 <dd><p>Name of the assay on which to perform computations. Default is "logcounts".</p></dd>
 
 
-<dt id="arg-max-cells">max_cells<a class="anchor" aria-label="anchor" href="#arg-max-cells"></a></dt>
-<dd><p>Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.</p></dd>
+<dt id="arg-max-cells-ref">max_cells_ref<a class="anchor" aria-label="anchor" href="#arg-max-cells-ref"></a></dt>
+<dd><p>Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -178,28 +184,28 @@ closer to 1 indicates lower similarity.</p>
 <span class="r-in"><span><span class="co"># Get overlap measures</span></span></span>
 <span class="r-in"><span><span class="va">overlap_measures</span> <span class="op">&lt;-</span> <span class="fu">calculateCellDistancesSimilarity</span><span class="op">(</span>query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
 <span class="r-in"><span>                                                     reference_data <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
-<span class="r-in"><span>                                                     cell_names <span class="op">=</span> <span class="va">cd4_top6_anomalies</span>,</span></span>
+<span class="r-in"><span>                                                     cell_names_query <span class="op">=</span> <span class="va">cd4_top6_anomalies</span>,</span></span>
 <span class="r-in"><span>                                                     query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
 <span class="r-in"><span>                                                     ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
 <span class="r-in"><span>                                                     pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">overlap_measures</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $bhattacharyya_coef</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 Cell        CD4        CD8 B_and_plasma   Myeloid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 AACCGCGCAAACCCAT-1 0.14963173 0.15973512    0.6063560 0.2146414</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 GTTACAGCAGCTGTGC-1 0.05978566 0.07361651    0.5716079 0.1379982</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 TGAGCATTCCAAACTG-1 0.21854137 0.24409183    0.5797450 0.2559222</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 TGCTACCTCGGTTCGG-1 0.76503890 0.96527336    0.3480598 0.2815120</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 TCAGCTCCATACTCTT-1 0.72368485 0.98681446    0.2903559 0.2965596</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 CTCGAAATCAGTCCCT-1 0.75713220 0.93154956    0.2975623 0.2300326</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       Cell B_and_plasma        CD4        CD8   Myeloid</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Query_AACCGCGCAAACCCAT-1    0.6063560 0.14963173 0.15973512 0.2146414</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Query_GTTACAGCAGCTGTGC-1    0.5716079 0.05978566 0.07361651 0.1379982</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Query_TGAGCATTCCAAACTG-1    0.5797450 0.21854137 0.24409183 0.2559222</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Query_TGCTACCTCGGTTCGG-1    0.3480598 0.76503890 0.96527336 0.2815120</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Query_TCAGCTCCATACTCTT-1    0.2903559 0.72368485 0.98681446 0.2965596</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Query_CTCGAAATCAGTCCCT-1    0.2975623 0.75713220 0.93154956 0.2300326</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $hellinger_dist</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 Cell       CD4       CD8 B_and_plasma   Myeloid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 AACCGCGCAAACCCAT-1 0.9221541 0.9166596    0.6274106 0.8862046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 GTTACAGCAGCTGTGC-1 0.9696465 0.9624882    0.6545167 0.9284405</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 TGAGCATTCCAAACTG-1 0.8840015 0.8694298    0.6482708 0.8625994</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 TGCTACCTCGGTTCGG-1 0.4847279 0.1863509    0.8074282 0.8476367</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 TCAGCTCCATACTCTT-1 0.5256569 0.1148283    0.8424037 0.8387135</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 CTCGAAATCAGTCCCT-1 0.4928162 0.2616304    0.8381156 0.8774779</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       Cell B_and_plasma       CD4       CD8   Myeloid</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Query_AACCGCGCAAACCCAT-1    0.6274106 0.9221541 0.9166596 0.8862046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Query_GTTACAGCAGCTGTGC-1    0.6545167 0.9696465 0.9624882 0.9284405</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Query_TGAGCATTCCAAACTG-1    0.6482708 0.8840015 0.8694298 0.8625994</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Query_TGCTACCTCGGTTCGG-1    0.8074282 0.4847279 0.1863509 0.8476367</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Query_TCAGCTCCATACTCTT-1    0.8424037 0.5256569 0.1148283 0.8387135</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Query_CTCGAAATCAGTCCCT-1    0.8381156 0.4928162 0.2616304 0.8774779</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

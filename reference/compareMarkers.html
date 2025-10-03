@@ -89,12 +89,13 @@ with quality assessment and detailed annotations.</p>
 <span>  <span class="va">reference_data</span>,</span>
 <span>  <span class="va">query_cell_type_col</span>,</span>
 <span>  <span class="va">ref_cell_type_col</span>,</span>
+<span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n_markers <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  min_cells <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  anomaly_filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"anomalous_only"</span>, <span class="st">"non_anomalous_only"</span><span class="op">)</span>,</span>
-<span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
-<span>  max_cells <span class="op">=</span> <span class="fl">2500</span>,</span>
+<span>  max_cells_query <span class="op">=</span> <span class="fl">5000</span>,</span>
+<span>  max_cells_ref <span class="op">=</span> <span class="fl">5000</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -122,6 +123,10 @@ with quality assessment and detailed annotations.</p>
 <dd><p>The column name in the <code>colData</code> of <code>reference_data</code> that identifies the cell types.</p></dd>
 
 
+<dt id="arg-cell-types">cell_types<a class="anchor" aria-label="anchor" href="#arg-cell-types"></a></dt>
+<dd><p>Character vector specifying which cell types to plot. If NULL, all cell types are plotted.</p></dd>
+
+
 <dt id="arg-n-markers">n_markers<a class="anchor" aria-label="anchor" href="#arg-n-markers"></a></dt>
 <dd><p>Number of top marker genes to consider for each cell type. Default is 50.</p></dd>
 
@@ -135,17 +140,18 @@ with quality assessment and detailed annotations.</p>
 Options: "none" (default), "anomalous_only", "non_anomalous_only".</p></dd>
 
 
-<dt id="arg-cell-types">cell_types<a class="anchor" aria-label="anchor" href="#arg-cell-types"></a></dt>
-<dd><p>Character vector specifying which cell types to plot. If NULL, all cell types are plotted.</p></dd>
-
-
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
 <dd><p>Name of the assay to use for computations. Default is "logcounts".</p></dd>
 
 
-<dt id="arg-max-cells">max_cells<a class="anchor" aria-label="anchor" href="#arg-max-cells"></a></dt>
-<dd><p>Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2500.</p></dd>
+<dt id="arg-max-cells-query">max_cells_query<a class="anchor" aria-label="anchor" href="#arg-max-cells-query"></a></dt>
+<dd><p>Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is 5000.</p></dd>
+
+
+<dt id="arg-max-cells-ref">max_cells_ref<a class="anchor" aria-label="anchor" href="#arg-max-cells-ref"></a></dt>
+<dd><p>Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
