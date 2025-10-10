@@ -39,10 +39,3 @@ test_that("plot works with specific cell types", {
     expect_s3_class(plot_obj, "ggplot")
 })
 
-test_that("plot includes probability annotations", {
-    plot_obj <- plot(wasserstein_data)
-
-    # Check for text annotations (probability of superiority)
-    text_layers <- sapply(plot_obj$layers, function(layer) inherits(layer$geom, "GeomText"))
-    expect_true(any(text_layers))
-})

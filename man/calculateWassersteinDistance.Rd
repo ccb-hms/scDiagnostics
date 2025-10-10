@@ -64,8 +64,7 @@ a shared PCA space. It then computes the probability of superiority to assess wh
 reference-query distances tend to be larger than reference-reference distances.
 
 This function generates ridge plots comparing reference-reference
-and reference-query Wasserstein distance distributions for each cell type,
-along with the probability of superiority metric.
+and reference-query Wasserstein distance distributions for each cell type.
 }
 \details{
 The function projects the query dataset onto the PCA space defined by the reference dataset.
@@ -77,8 +76,7 @@ a randomly selected ref-ref distance.
 
 The function creates faceted ridge plots showing two clearly separated density curves for each
 cell type: one for the reference-reference distribution (null) and one for the
-reference-query distribution. The probability of superiority is displayed for each
-comparison, representing the probability that a ref-query distance exceeds a ref-ref distance.
+reference-query distribution.
 }
 \examples{
 # Load data

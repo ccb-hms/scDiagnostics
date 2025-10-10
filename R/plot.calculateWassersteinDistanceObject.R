@@ -2,14 +2,12 @@
 #'
 #' @description
 #' This function generates ridge plots comparing reference-reference
-#' and reference-query Wasserstein distance distributions for each cell type,
-#' along with the probability of superiority metric.
+#' and reference-query Wasserstein distance distributions for each cell type.
 #'
 #' @details
 #' The function creates faceted ridge plots showing two clearly separated density curves for each
 #' cell type: one for the reference-reference distribution (null) and one for the
-#' reference-query distribution. The probability of superiority is displayed for each
-#' comparison, representing the probability that a ref-query distance exceeds a ref-ref distance.
+#' reference-query distribution.
 #'
 #' @param x A list object containing the Wasserstein distance results from the \code{calculateWassersteinDistance} function.
 #' @param cell_types A character vector specifying which cell types to plot. If NULL, all cell types are plotted.
@@ -90,18 +88,6 @@ plot.calculateWassersteinDistanceObject <- function(
         generateColors(levels(plot_data[["cell_type_distribution"]]),
                        paired = TRUE)
 
-    # Prepare annotation data
-    annotation_data <- data.frame(
-        cell_type = names(x$probability_superiority),
-        probability = x$probability_superiority,
-        label = paste0("P(Ref-Query > Ref-Ref): ",
-                       sprintf("%.3f", x$probability_superiority))
-    )
-
-    # Filter annotation data to match selected cell types and preserve order
-    annotation_data <- annotation_data[annotation_data$cell_type %in% cell_types, ]
-    annotation_data$cell_type <- factor(annotation_data$cell_type, levels = cell_types)
-
     # Create the ridge plot
     ridge_plot <- ggplot2::ggplot(plot_data,
                                   ggplot2::aes(
@@ -150,18 +136,6 @@ plot.calculateWassersteinDistanceObject <- function(
             panel.grid.major.x = ggplot2::element_line(color = "gray",
                                                        linetype = "dotted"),
             panel.grid.major.y = ggplot2::element_blank()
-        ) +
-        ggplot2::geom_text(
-            data = annotation_data,
-            ggplot2::aes(
-                x = Inf, y = Inf,
-                label = .data[["label"]]
-            ),
-            hjust = 1.05, vjust = 1.1,
-            inherit.aes = FALSE,
-            size = 3,
-            fontface = "bold",
-            color = "darkblue"
         ) +
         ggplot2::guides(
             fill = ggplot2::guide_legend(override.aes = list(alpha = 0.8))
