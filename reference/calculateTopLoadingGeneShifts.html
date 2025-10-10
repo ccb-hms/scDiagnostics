@@ -5,8 +5,8 @@ It also calculates the proportion of variance explained by each principal compon
 specific cell types. Optionally, it can detect anomalous cells using isolation forests.
 This function creates visualizations showing expression distributions for top loading genes
 that exhibit distributional differences between query and reference datasets. Can display
-results as elegant complex heatmaps or as information-rich summary boxplots. Optionally
-displays anomaly status when available."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+results as elegant complex heatmaps, information-rich summary boxplots, or pseudo-bulk fold
+change barplots. Optionally displays anomaly status when available."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
@@ -81,8 +81,8 @@ It also calculates the proportion of variance explained by each principal compon
 specific cell types. Optionally, it can detect anomalous cells using isolation forests.</p>
 <p>This function creates visualizations showing expression distributions for top loading genes
 that exhibit distributional differences between query and reference datasets. Can display
-results as elegant complex heatmaps or as information-rich summary boxplots. Optionally
-displays anomaly status when available.</p>
+results as elegant complex heatmaps, information-rich summary boxplots, or pseudo-bulk fold
+change barplots. Optionally displays anomaly status when available.</p>
     </div>
 
     <div id="ref-usage">
@@ -110,13 +110,15 @@ displays anomaly status when available.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">cell_type</span>,</span>
 <span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,</span>
-<span>  plot_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"heatmap"</span>, <span class="st">"boxplot"</span><span class="op">)</span>,</span>
+<span>  plot_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"heatmap"</span>, <span class="st">"barplot"</span>, <span class="st">"boxplot"</span><span class="op">)</span>,</span>
 <span>  plot_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"p_adjusted"</span>, <span class="st">"top_loading"</span><span class="op">)</span>,</span>
 <span>  n_genes <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  significance_threshold <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  show_anomalies <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  pseudo_bulk <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  cluster_cols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  draw_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_all_query <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  max_cells_ref <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_cells_query <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -208,7 +210,7 @@ all available reference cells are plotted. Default is NULL.</p></dd>
 
 
 <dt id="arg-plot-type">plot_type<a class="anchor" aria-label="anchor" href="#arg-plot-type"></a></dt>
-<dd><p>A character string specifying visualization type. Either "heatmap" or "boxplot".
+<dd><p>A character string specifying visualization type. Either "heatmap", "barplot", or "boxplot".
 Default is "heatmap".</p></dd>
 
 
@@ -236,7 +238,15 @@ Default is FALSE. Requires anomaly results to be present in the object.</p></dd>
 <dd><p>Logical indicating whether to create pseudo-bulk profiles instead of
 showing individual cells. When TRUE, expression values are averaged within groups
 (dataset and optionally anomaly status). Not compatible with boxplot visualization.
-Default is FALSE.</p></dd>
+Required for barplot visualization. Default is FALSE.</p></dd>
+
+
+<dt id="arg-cluster-cols">cluster_cols<a class="anchor" aria-label="anchor" href="#arg-cluster-cols"></a></dt>
+<dd><p>Logical indicating whether to cluster columns in the heatmap when
+`pseudo_bulk = TRUE`. When TRUE, columns (pseudo-bulk profiles) will be
+hierarchically clustered. When FALSE, columns maintain their original ordering
+(Query groups followed by Reference groups). Only applicable when
+`pseudo_bulk = TRUE` and `plot_type = "heatmap"`. Default is FALSE.</p></dd>
 
 
 <dt id="arg-draw-plot">draw_plot<a class="anchor" aria-label="anchor" href="#arg-draw-plot"></a></dt>
@@ -245,8 +255,13 @@ the undrawn plot object (FALSE). For heatmaps, FALSE returns a ComplexHeatmap
 object that can be further customized before drawing. Default is TRUE.</p></dd>
 
 
+<dt id="arg-show-all-query">show_all_query<a class="anchor" aria-label="anchor" href="#arg-show-all-query"></a></dt>
+<dd><p>Logical indicating whether to show the yellow bar for all query vs reference
+comparison. Default is TRUE. When FALSE, only green and red bars are shown.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html" class="external-link">draw</a></code> or not used for boxplot.</p></dd>
+<dd><p>Additional arguments passed to <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html" class="external-link">draw</a></code> or not used for other plot types.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -260,7 +275,8 @@ object that can be further customized before drawing. Default is TRUE.</p></dd>
 <li><p>anomaly_results: If <code>detect_anomalies</code> is TRUE, contains the full output from <code>detectAnomaly</code>.</p></li>
 </ul><p>The `cell_type_variance` data frame contains columns: pc, cell_type, dataset, percent_variance.
 When anomaly detection is enabled, `cell_metadata` includes an additional `anomaly_status` column.</p>
-<p>A plot object.</p>
+<p>A plot object. For heatmaps when <code>draw_plot = FALSE</code>, returns a ComplexHeatmap object.
+For boxplots and barplots, returns a ggplot2 object.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -280,9 +296,13 @@ cells anomalous.</p>
 The "heatmap" option displays a hierarchically clustered set of genes.
 The "boxplot" option creates a two-panel plot using `ggplot2`: the left panel shows
 horizontal expression boxplots for up to 5 PCs, while the right panel displays their
-corresponding PC loadings and adjusted p-values. When anomaly detection results are
-available and <code>show_anomalies</code> is TRUE, an additional annotation bar highlights
-anomalous cells.</p>
+corresponding PC loadings and adjusted p-values.
+The "barplot" option creates horizontal barplots showing log2 fold changes between
+pseudo-bulk expression profiles (query vs reference), with genes ordered identically
+to the heatmap clustering. Bars show comparisons for query non-anomaly (green),
+optionally all query cells (yellow), and query anomaly cells (red) versus reference.
+When anomaly detection results are available and <code>show_anomalies</code> is TRUE,
+additional annotation bars or visual cues highlight anomalous cells.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>

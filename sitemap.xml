@@ -37,6 +37,7 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/detectAnomaly.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/dot-getAvailableCoefficients.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/downsampleSCE.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/extractGeneOrder.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/generateColors.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/histQCvsAnnotation.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/hotellingT2.html</loc></url>
@@ -44,6 +45,7 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/inverseNormalTransformation.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/ledoitWolf.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/nElements.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotBarplot.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotBoxplot.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotCellTypeMDS.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotCellTypePCA.html</loc></url>

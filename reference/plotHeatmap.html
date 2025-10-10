@@ -86,7 +86,8 @@ Optionally includes anomaly status annotations with proper cell ordering.</p>
 <span>  <span class="va">n_genes</span>,</span>
 <span>  <span class="va">significance_threshold</span>,</span>
 <span>  <span class="va">show_anomalies</span>,</span>
-<span>  pseudo_bulk <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  pseudo_bulk <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  cluster_cols <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -128,6 +129,14 @@ expression data and analysis results.</p></dd>
 showing individual cells. When TRUE, expression values are averaged within groups
 (dataset and optionally anomaly status). Not compatible with boxplot visualization.
 Default is FALSE.</p></dd>
+
+
+<dt id="arg-cluster-cols">cluster_cols<a class="anchor" aria-label="anchor" href="#arg-cluster-cols"></a></dt>
+<dd><p>Logical indicating whether to cluster columns in the heatmap when
+`pseudo_bulk = TRUE`. When TRUE, columns (pseudo-bulk profiles) will be
+hierarchically clustered. When FALSE, columns maintain their original ordering
+(Query groups followed by Reference groups). Only applicable when
+`pseudo_bulk = TRUE` and `plot_type = "heatmap"`. Default is FALSE.</p></dd>
 
 </dl></div>
     <div id="value">
