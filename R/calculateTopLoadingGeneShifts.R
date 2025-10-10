@@ -70,7 +70,6 @@
 #' @importFrom stats wilcox.test var p.adjust na.omit setNames
 #'
 # Function to calculate expression shifts for genes with top loadings
-# Function to calculate expression shifts for genes with top loadings
 calculateTopLoadingGeneShifts <- function(query_data,
                                           reference_data,
                                           query_cell_type_col,

@@ -12,7 +12,8 @@ plotHeatmap(
   n_genes,
   significance_threshold,
   show_anomalies,
-  pseudo_bulk = FALSE
+  pseudo_bulk = FALSE,
+  cluster_cols = FALSE
 )
 }
 \arguments{
@@ -35,6 +36,12 @@ expression data and analysis results.}
 showing individual cells. When TRUE, expression values are averaged within groups
 (dataset and optionally anomaly status). Not compatible with boxplot visualization.
 Default is FALSE.}
+
+\item{cluster_cols}{Logical indicating whether to cluster columns in the heatmap when
+`pseudo_bulk = TRUE`. When TRUE, columns (pseudo-bulk profiles) will be
+hierarchically clustered. When FALSE, columns maintain their original ordering
+(Query groups followed by Reference groups). Only applicable when
+`pseudo_bulk = TRUE` and `plot_type = "heatmap"`. Default is FALSE.}
 }
 \value{
 A ComplexHeatmap object ready for plotting, or NULL if no genes meet selection criteria.

@@ -3,22 +3,26 @@
 #' @description
 #' This function creates visualizations showing expression distributions for top loading genes
 #' that exhibit distributional differences between query and reference datasets. Can display
-#' results as elegant complex heatmaps or as information-rich summary boxplots. Optionally
-#' displays anomaly status when available.
+#' results as elegant complex heatmaps, information-rich summary boxplots, or pseudo-bulk fold
+#' change barplots. Optionally displays anomaly status when available.
 #'
 #' @details
 #' This function visualizes the results from \code{calculateTopLoadingGeneShifts}.
 #' The "heatmap" option displays a hierarchically clustered set of genes.
 #' The "boxplot" option creates a two-panel plot using `ggplot2`: the left panel shows
 #' horizontal expression boxplots for up to 5 PCs, while the right panel displays their
-#' corresponding PC loadings and adjusted p-values. When anomaly detection results are
-#' available and \code{show_anomalies} is TRUE, an additional annotation bar highlights
-#' anomalous cells.
+#' corresponding PC loadings and adjusted p-values.
+#' The "barplot" option creates horizontal barplots showing log2 fold changes between
+#' pseudo-bulk expression profiles (query vs reference), with genes ordered identically
+#' to the heatmap clustering. Bars show comparisons for query non-anomaly (green),
+#' optionally all query cells (yellow), and query anomaly cells (red) versus reference.
+#' When anomaly detection results are available and \code{show_anomalies} is TRUE,
+#' additional annotation bars or visual cues highlight anomalous cells.
 #'
 #' @param x An object of class \code{calculateTopLoadingGeneShiftsObject}.
 #' @param cell_type A character string specifying the cell type to plot (must be exactly one).
 #' @param pc_subset A numeric vector specifying which principal components to plot. Default is 1:3.
-#' @param plot_type A character string specifying visualization type. Either "heatmap" or "boxplot".
+#' @param plot_type A character string specifying visualization type. Either "heatmap", "barplot", or "boxplot".
 #'                  Default is "heatmap".
 #' @param plot_by A character string specifying gene selection method when `n_genes` is not NULL.
 #'                Either "top_loading" or "p_adjusted". Default is "p_adjusted".
@@ -28,20 +32,31 @@
 #'   selection or annotation. Default is 0.05.
 #' @param show_anomalies Logical indicating whether to display anomaly status annotations.
 #'                      Default is FALSE. Requires anomaly results to be present in the object.
+#' @param show_all_query Logical indicating whether to show the yellow bar representing all
+#'                       query cells vs reference in barplot visualization. Only applies when
+#'                       \code{plot_type = "barplot"} and anomaly data is available. Default is TRUE.
 #' @param pseudo_bulk Logical indicating whether to create pseudo-bulk profiles instead of
 #'                    showing individual cells. When TRUE, expression values are averaged within groups
 #'                    (dataset and optionally anomaly status). Not compatible with boxplot visualization.
-#'                    Default is FALSE.
+#'                    Required for barplot visualization. Default is FALSE.
+#' @param cluster_cols Logical indicating whether to cluster columns in the heatmap when
+#'                    `pseudo_bulk = TRUE`. When TRUE, columns (pseudo-bulk profiles) will be
+#'                    hierarchically clustered. When FALSE, columns maintain their original ordering
+#'                    (Query groups followed by Reference groups). Only applicable when
+#'                    `pseudo_bulk = TRUE` and `plot_type = "heatmap"`. Default is FALSE.
 #' @param draw_plot Logical indicating whether to draw the plot immediately (TRUE) or return
 #'                  the undrawn plot object (FALSE). For heatmaps, FALSE returns a ComplexHeatmap
 #'                  object that can be further customized before drawing. Default is TRUE.
+#' @param show_all_query Logical indicating whether to show the yellow bar for all query vs reference
+#'                       comparison. Default is TRUE. When FALSE, only green and red bars are shown.
 #' @param max_cells_ref Maximum number of reference cells to include in the plot. If NULL,
 #' all available reference cells are plotted. Default is NULL.
 #' @param max_cells_query Maximum number of query cells to include in the plot. If NULL,
 #' all available query cells are plotted. Default is NULL.
-#' @param ... Additional arguments passed to \code{\link[ComplexHeatmap]{draw}} or not used for boxplot.
+#' @param ... Additional arguments passed to \code{\link[ComplexHeatmap]{draw}} or not used for other plot types.
 #'
-#' @return A plot object.
+#' @return A plot object. For heatmaps when \code{draw_plot = FALSE}, returns a ComplexHeatmap object.
+#' For boxplots and barplots, returns a ggplot2 object.
 #'
 #' @export
 #'
@@ -58,13 +73,15 @@
 plot.calculateTopLoadingGeneShiftsObject <- function(x,
                                                      cell_type,
                                                      pc_subset = 1:3,
-                                                     plot_type = c("heatmap", "boxplot"),
+                                                     plot_type = c("heatmap", "barplot", "boxplot"),
                                                      plot_by = c("p_adjusted", "top_loading"),
                                                      n_genes = 10,
                                                      significance_threshold = 0.05,
                                                      show_anomalies = FALSE,
                                                      pseudo_bulk = FALSE,
+                                                     cluster_cols = FALSE,
                                                      draw_plot = TRUE,
+                                                     show_all_query = TRUE,
                                                      max_cells_ref = NULL,
                                                      max_cells_query = NULL,
                                                      ...) {
@@ -101,10 +118,25 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
         stop("pseudo_bulk must be a logical value.")
     }
 
+    if (!is.logical(cluster_cols) || length(cluster_cols) != 1) {
+        stop("cluster_cols must be a logical value.")
+    }
+
     # Restrict boxplot with pseudo_bulk
     if (pseudo_bulk && plot_type == "boxplot") {
         stop("Boxplot visualization is not compatible with pseudo_bulk = TRUE. ",
              "Please use plot_type = 'heatmap' or set pseudo_bulk = FALSE.")
+    }
+
+    # Require pseudo_bulk for barplot
+    if (plot_type == "barplot" && !pseudo_bulk) {
+        stop("Barplot visualization requires pseudo_bulk = TRUE. ",
+             "Please set pseudo_bulk = TRUE for barplot.")
+    }
+
+    # Restrict cluster_cols without pseudo_bulk
+    if (cluster_cols && !pseudo_bulk) {
+        stop("cluster_cols = TRUE requires pseudo_bulk = TRUE.")
     }
 
     # Check if anomaly data is available when requested
@@ -116,8 +148,8 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
     }
 
     # Validate plot-type specific requirements
-    if (plot_type == "boxplot" && is.null(n_genes)) {
-        stop("For 'boxplot' plot type, 'n_genes' must be specified.")
+    if (plot_type %in% c("boxplot", "barplot") && is.null(n_genes)) {
+        stop("For '", plot_type, "' plot type, 'n_genes' must be specified.")
     }
     if (plot_type == "heatmap" &&
         is.null(n_genes) &&
@@ -197,15 +229,16 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
     # Update the object with downsampled data for plotting
     x_plotting <- x
     x_plotting[["cell_metadata"]] <- cell_subset_final
-    x_plotting[["expression_data"]] <- x[["expression_data"]][, cell_subset_final[["cell_id"]], drop = FALSE]
+    x_plotting[["expression_data"]] <- x[["expression_data"]][, cell_subset_final[["cell_id"]],
+                                                              drop = FALSE]
 
     # Route to Plotting Functions
-    if (plot_type == "boxplot") {
-        return(plotBoxplot(x_plotting, cell_type, available_pcs,
-                           plot_by, n_genes, significance_threshold, show_anomalies))
-    } else {
-        ht <- plotHeatmap(x_plotting, cell_type, available_pcs,
-                          plot_by, n_genes, significance_threshold, show_anomalies, pseudo_bulk)
+    if (plot_type == "heatmap") {
+        ht <- plotHeatmap(x_plotting, cell_type,
+                          available_pcs, plot_by, n_genes,
+                          significance_threshold, show_anomalies,
+                          pseudo_bulk, cluster_cols)
+
         if (is.null(ht)) {
             message("No data available to generate a heatmap for the specified parameters.")
             return(invisible(NULL))
@@ -225,6 +258,16 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
             # Return the undrawn Heatmap object for further customization
             return(ht)
         }
+    } else if (plot_type == "barplot") {
+        return(plotBarplot(x_plotting, cell_type,
+                           available_pcs, plot_by,
+                           n_genes, significance_threshold,
+                           show_anomalies, show_all_query))
+    } else {
+        return(plotBoxplot(x_plotting, cell_type,
+                           available_pcs, plot_by,
+                           n_genes, significance_threshold,
+                           show_anomalies))
     }
 }
 
@@ -263,6 +306,11 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
 #'                    showing individual cells. When TRUE, expression values are averaged within groups
 #'                    (dataset and optionally anomaly status). Not compatible with boxplot visualization.
 #'                    Default is FALSE.
+#' @param cluster_cols Logical indicating whether to cluster columns in the heatmap when
+#'                    `pseudo_bulk = TRUE`. When TRUE, columns (pseudo-bulk profiles) will be
+#'                    hierarchically clustered. When FALSE, columns maintain their original ordering
+#'                    (Query groups followed by Reference groups). Only applicable when
+#'                    `pseudo_bulk = TRUE` and `plot_type = "heatmap"`. Default is FALSE.
 #'
 #' @keywords internal
 #'
@@ -274,7 +322,8 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
 plotHeatmap <- function(x, cell_type,
                         available_pcs, plot_by,
                         n_genes, significance_threshold,
-                        show_anomalies, pseudo_bulk = FALSE) {
+                        show_anomalies, pseudo_bulk = FALSE,
+                        cluster_cols = FALSE) {
 
     # Initialize gene collection
     all_genes_to_plot <- c()
@@ -449,7 +498,7 @@ plotHeatmap <- function(x, cell_type,
     scaled_matrix[scaled_matrix > 2] <- 2
 
     # Define color schemes
-    dataset_colors <- c("Query" = "#9932CC", "Reference" = "#377EB8")
+    dataset_colors <- c("Query" = "#B565D8", "Reference" = "#5A9BD8")
     anomaly_colors <- c("Non-Anomalous" = "#228B22", "Anomalous" = "#DC143C")
 
     # Create custom color mapping function
@@ -526,8 +575,8 @@ plotHeatmap <- function(x, cell_type,
             row_names_gp = row_gp,
             cluster_rows = TRUE,
             show_column_names = FALSE,
-            cluster_columns = FALSE,
-            column_order = cell_subset[["cell_id"]],
+            cluster_columns = if(pseudo_bulk && cluster_cols) TRUE else FALSE,
+            column_order = if(pseudo_bulk && cluster_cols) NULL else cell_subset[["cell_id"]],
             top_annotation = top_ha,
             border = TRUE,
             use_raster = TRUE,
@@ -547,10 +596,11 @@ plotHeatmap <- function(x, cell_type,
             ),
             show_row_names = TRUE,
             row_labels = row_labels,
+            row_names_gp = row_gp,
             cluster_rows = TRUE,
             show_column_names = FALSE,
-            cluster_columns = FALSE,
-            column_order = cell_subset[["cell_id"]],
+            cluster_columns = if(pseudo_bulk && cluster_cols) TRUE else FALSE,
+            column_order = if(pseudo_bulk && cluster_cols) NULL else cell_subset[["cell_id"]],
             top_annotation = top_ha,
             border = TRUE,
             use_raster = TRUE,
@@ -559,6 +609,295 @@ plotHeatmap <- function(x, cell_type,
     }
 
     return(ht)
+}
+
+#' @title Plot Barplots for Top Loading Gene Fold Changes (Pseudo-Bulk)
+#'
+#' @description
+#' This internal helper function creates a barplot visualization showing pseudo-bulk fold changes
+#' between different cell groups for top loading genes.
+#'
+#' @details
+#' This function generates a ggplot2 barplot where genes are arranged vertically
+#' in hierarchically clustered order (identical to heatmap gene ordering), and horizontal bars show log2 fold changes
+#' for different pseudo-bulk comparisons vs reference. The function creates an internal heatmap
+#' object with the same parameters to extract the exact gene clustering order, ensuring
+#' consistency between plot types.
+#'
+#' Bar colors:
+#' \itemize{
+#'   \item Green: Query non-anomaly (pseudo-bulk) vs Reference (pseudo-bulk)
+#'   \item Yellow: All Query (pseudo-bulk) vs Reference (pseudo-bulk) (shown when show_all_query = TRUE and anomaly data available)
+#'   \item Red: Query anomaly (pseudo-bulk) vs Reference (pseudo-bulk)
+#' }
+#'
+#' @param x An object of class \code{calculateTopLoadingGeneShiftsObject} containing
+#'          expression data and analysis results.
+#' @param cell_type A character string specifying the cell type to visualize.
+#' @param available_pcs A character vector of principal components to include in analysis.
+#' @param plot_by A character string indicating gene selection criterion ("top_loading" or "p_adjusted").
+#' @param n_genes An integer specifying the number of top genes to display per PC.
+#' @param significance_threshold A numeric value between 0 and 1 for significance annotation.
+#' @param show_anomalies Logical indicating whether to show anomaly-related bars.
+#' @param show_all_query Logical indicating whether to show the yellow bar for all query vs reference
+#'                       comparison. Default is TRUE. When FALSE, only green and red bars are shown.
+#'
+#' @keywords internal
+#'
+#' @return A ggplot2 object ready for display, or NULL if no genes meet selection criteria.
+#'
+#' @author
+#' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#'
+plotBarplot <- function(x, cell_type, available_pcs, plot_by,
+                        n_genes, significance_threshold, show_anomalies,
+                        show_all_query = TRUE) {
+
+    # Validate required parameters
+    if (is.null(n_genes)) {
+        stop("'plot_type = \"barplot\"' requires 'n_genes' to be set.")
+    }
+
+    # Validate show_all_query parameter
+    if (!is.logical(show_all_query) || length(show_all_query) != 1) {
+        stop("show_all_query must be a logical value.")
+    }
+
+    # Create internal heatmap object to extract gene order
+    # Use the same parameters as would be used for heatmap plotting
+    internal_heatmap <- tryCatch({
+        plotHeatmap(x, cell_type, available_pcs, plot_by, n_genes,
+                    significance_threshold, show_anomalies,
+                    pseudo_bulk = TRUE, cluster_cols = FALSE)
+    }, error = function(e) {
+        stop("Failed to create internal heatmap for gene ordering: ", e$message)
+    })
+
+    if (is.null(internal_heatmap)) {
+        warning("No genes met the selection criteria for the barplot.")
+        return(NULL)
+    }
+
+    # Extract gene order from the heatmap
+    gene_order_clustered <- extractGeneOrder(internal_heatmap)
+
+    # Get expression data for these genes
+    cell_subset <- x[["cell_metadata"]][x[["cell_metadata"]][["cell_type"]] == cell_type, ]
+    expr_matrix <- as.matrix(
+        x[["expression_data"]][gene_order_clustered, cell_subset[["cell_id"]], drop = FALSE]
+    )
+
+    # Check if anomaly data is available
+    has_anomaly_data <- show_anomalies && "anomaly_status" %in% names(cell_subset)
+
+    # Create pseudo-bulk profiles for each group
+    if (has_anomaly_data) {
+        # Only show anomalies for query cells, treat all reference as normal
+        cell_subset_modified <- cell_subset
+        cell_subset_modified[["anomaly_status"]][cell_subset_modified[["dataset"]] == "Reference"] <- "Normal"
+
+        # 3 categories: Query_Normal, Query_Anomaly, Reference_Normal
+        cell_subset_modified[["group"]] <- paste(cell_subset_modified[["dataset"]],
+                                                 cell_subset_modified[["anomaly_status"]],
+                                                 sep = "_")
+        group_order <- c("Query_Normal", "Query_Anomaly", "Reference_Normal")
+        cell_subset <- cell_subset_modified
+    } else {
+        # 2 categories: Query, Reference
+        cell_subset[["group"]] <- cell_subset[["dataset"]]
+        group_order <- c("Query", "Reference")
+    }
+
+    # Calculate pseudo-bulk expression profiles
+    pseudo_bulk_matrix <- matrix(0, nrow = nrow(expr_matrix), ncol = length(group_order))
+    rownames(pseudo_bulk_matrix) <- rownames(expr_matrix)
+    colnames(pseudo_bulk_matrix) <- group_order
+
+    for (group in group_order) {
+        group_cells <- cell_subset[cell_subset[["group"]] == group, "cell_id"]
+        if (length(group_cells) > 0) {
+            if (length(group_cells) == 1) {
+                pseudo_bulk_matrix[, group] <- expr_matrix[, group_cells]
+            } else {
+                pseudo_bulk_matrix[, group] <- rowMeans(expr_matrix[, group_cells, drop = FALSE])
+            }
+        }
+    }
+
+    # Calculate fold changes for different comparisons
+    fold_change_data <- list()
+
+    # Reference pseudo-bulk (always Reference_Normal or Reference)
+    ref_column <- if (has_anomaly_data) "Reference_Normal" else "Reference"
+
+    for (gene in gene_order_clustered) {
+        ref_expr <- pseudo_bulk_matrix[gene, ref_column]
+
+        # Query non-anomaly vs Reference (always calculated)
+        query_normal_column <- if (has_anomaly_data) "Query_Normal" else "Query"
+        query_normal_expr <- pseudo_bulk_matrix[gene, query_normal_column]
+        query_normal_fc <- query_normal_expr - ref_expr  # Log2 fold change
+
+        # All Query vs Reference (calculated when anomaly data available AND show_all_query is TRUE)
+        if (has_anomaly_data && show_all_query) {
+            # Calculate overall query mean from both normal and anomaly
+            query_normal_cells <- cell_subset[cell_subset[["group"]] == "Query_Normal", "cell_id"]
+            query_anomaly_cells <- cell_subset[cell_subset[["group"]] == "Query_Anomaly", "cell_id"]
+            all_query_cells <- c(query_normal_cells, query_anomaly_cells)
+
+            if (length(all_query_cells) > 0) {
+                query_all_expr <- mean(expr_matrix[gene, all_query_cells], na.rm = TRUE)
+                query_all_fc <- query_all_expr - ref_expr
+            } else {
+                query_all_fc <- NA
+            }
+        } else {
+            query_all_fc <- NA
+        }
+
+        # Query anomaly vs Reference (calculated when anomaly data available)
+        if (has_anomaly_data) {
+            query_anomaly_expr <- pseudo_bulk_matrix[gene, "Query_Anomaly"]
+            query_anomaly_fc <- query_anomaly_expr - ref_expr
+        } else {
+            query_anomaly_fc <- NA
+        }
+
+        # Store fold change data
+        gene_fc_data <- data.frame(
+            gene = gene,
+            query_normal_fc = query_normal_fc,
+            query_all_fc = query_all_fc,
+            query_anomaly_fc = query_anomaly_fc,
+            stringsAsFactors = FALSE
+        )
+
+        fold_change_data[[length(fold_change_data) + 1]] <- gene_fc_data
+    }
+
+    # Combine fold change data
+    fc_df <- do.call(rbind, fold_change_data)
+
+    # Identify significant genes for annotation
+    significant_genes <- c()
+    if (!is.null(significance_threshold)) {
+        sig_gene_list <- lapply(available_pcs, function(pc_name) {
+            pc_results <- x[[pc_name]]
+            if (is.null(pc_results) || nrow(pc_results) == 0) {
+                return(NULL)
+            }
+
+            sig_df <- pc_results[pc_results[["cell_type"]] == cell_type &
+                                     pc_results[["p_adjusted"]] < significance_threshold, ]
+            return(sig_df[["gene"]])
+        })
+        significant_genes <- unique(unlist(sig_gene_list))
+    }
+
+    # Reshape data for plotting
+    plot_data_list <- list()
+
+    # Query non-anomaly vs Reference (always shown)
+    normal_data <- data.frame(
+        gene = fc_df[["gene"]],
+        fold_change = fc_df[["query_normal_fc"]],
+        comparison = "Query Non-Anomaly vs Reference",
+        color_group = "normal",
+        stringsAsFactors = FALSE
+    )
+    plot_data_list[[length(plot_data_list) + 1]] <- normal_data
+
+    # All Query vs Reference (shown when anomaly data available AND show_all_query is TRUE)
+    if (has_anomaly_data && show_all_query && !all(is.na(fc_df[["query_all_fc"]]))) {
+        all_data <- data.frame(
+            gene = fc_df[["gene"]],
+            fold_change = fc_df[["query_all_fc"]],
+            comparison = "All Query vs Reference",
+            color_group = "all",
+            stringsAsFactors = FALSE
+        )
+        plot_data_list[[length(plot_data_list) + 1]] <- all_data
+    }
+
+    # Query anomaly vs Reference (shown when anomaly data available)
+    if (has_anomaly_data && !all(is.na(fc_df[["query_anomaly_fc"]]))) {
+        anomaly_data <- data.frame(
+            gene = fc_df[["gene"]],
+            fold_change = fc_df[["query_anomaly_fc"]],
+            comparison = "Query Anomaly vs Reference",
+            color_group = "anomaly",
+            stringsAsFactors = FALSE
+        )
+        plot_data_list[[length(plot_data_list) + 1]] <- anomaly_data
+    }
+
+    # Combine plot data
+    if (length(plot_data_list) == 0) {
+        warning("No fold change data available for plotting.")
+        return(NULL)
+    }
+
+    plot_df <- do.call(rbind, plot_data_list)
+    plot_df <- plot_df[!is.na(plot_df[["fold_change"]]), ]
+
+    if (nrow(plot_df) == 0) {
+        warning("No valid fold change data for plotting.")
+        return(NULL)
+    }
+
+    # Set gene factor levels in clustered order (reversed for y-axis display)
+    plot_df[["gene"]] <- factor(plot_df[["gene"]], levels = rev(gene_order_clustered))
+
+    # Set comparison factor levels for proper ordering
+    comparison_levels <- c("Query Non-Anomaly vs Reference",
+                           "All Query vs Reference",
+                           "Query Anomaly vs Reference")
+    plot_df[["comparison"]] <- factor(plot_df[["comparison"]], levels = comparison_levels)
+
+    # Define colors
+    bar_colors <- c("normal" = "#228B22",    # Green
+                    "all" = "#FFD700",        # Yellow/Gold
+                    "anomaly" = "#DC143C")    # Red
+
+    # Prepare gene labels with significance indicators
+    gene_labels <- sapply(gene_order_clustered, function(g) {
+        paste0(g, ifelse(g %in% significant_genes, "*", ""))
+    })
+    names(gene_labels) <- gene_order_clustered
+
+    # Create the plot
+    p <- ggplot2::ggplot(data = plot_df,
+                         ggplot2::aes(x = .data[["fold_change"]],
+                                      y = .data[["gene"]],
+                                      fill = .data[["color_group"]])) +
+        ggplot2::geom_col(position = ggplot2::position_dodge(width = 0.8),
+                          alpha = 0.8, width = 0.7) +
+        ggplot2::geom_vline(xintercept = 0, linetype = "dashed",
+                            color = "grey50", alpha = 0.7) +
+        ggplot2::scale_fill_manual(name = "Comparison",
+                                   values = bar_colors,
+                                   labels = c("normal" = "Query Non-Anomaly vs Ref",
+                                              "all" = "All Query vs Ref",
+                                              "anomaly" = "Query Anomaly vs Ref"),
+                                   guide = ggplot2::guide_legend(reverse = TRUE)) +
+        ggplot2::scale_y_discrete(labels = rev(gene_labels), name = NULL) +
+        ggplot2::scale_x_continuous(name = "Log2 Fold Change (Pseudo-Bulk)",
+                                    expand = ggplot2::expansion(mult = c(0.05, 0.05))) +
+        ggplot2::labs(title = NULL, subtitle = NULL) +
+        ggplot2::theme_bw() +
+        ggplot2::theme(
+            axis.text.y = ggplot2::element_text(face = "bold", size = 10),
+            axis.text.x = ggplot2::element_text(size = 9),
+            axis.title.x = ggplot2::element_text(face = "bold", size = 11),
+            legend.position = "right",
+            legend.title = ggplot2::element_text(face = "bold", size = 10),
+            legend.text = ggplot2::element_text(size = 9),
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.grid.major.y = ggplot2::element_line(color = "grey90", linewidth = 0.3),
+            panel.border = ggplot2::element_rect(color = "grey70", linewidth = 0.5)
+        )
+
+    return(p)
 }
 
 #' @title Plot Boxplots for Top Loading Gene Shifts (Two-Panel Summary using ggplot2)
@@ -899,4 +1238,59 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
         )
 
     return(p)
+}
+
+#' @title Extract Gene Order from ComplexHeatmap Object
+#'
+#' @description
+#' Extracts the hierarchically clustered gene order from a ComplexHeatmap Heatmap object.
+#'
+#' @details
+#' This function initializes a ComplexHeatmap object (without displaying it) to perform
+#' hierarchical clustering, then extracts the resulting gene order. This allows matching
+#' gene ordering between heatmap and other plot types. The function uses a null graphics
+#' device to initialize the heatmap clustering without actually drawing the plot.
+#'
+#' @param heatmap_object A ComplexHeatmap Heatmap object (undrawn or drawn).
+#'
+#' @keywords internal
+#'
+#' @return A character vector of gene names in the clustered order (top to bottom as they appear in heatmap).
+#'
+#' @author
+#' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#'
+# Function to extract genes used by heatmap plot
+extractGeneOrder <- function(heatmap_object) {
+
+    # Check if it's a ComplexHeatmap object
+    if (!inherits(heatmap_object, "Heatmap")) {
+        stop("Input must be a ComplexHeatmap Heatmap object")
+    }
+
+    tryCatch({
+        # Open a null device to draw without displaying
+        pdf(NULL)
+        on.exit(dev.off(), add = TRUE)
+
+        # Draw to initialize the heatmap clustering
+        drawn_ht <- ComplexHeatmap::draw(heatmap_object, show_heatmap_legend = FALSE,
+                                         show_annotation_legend = FALSE)
+
+        # Extract row order from the drawn heatmap
+        gene_order_indices <- ComplexHeatmap::row_order(drawn_ht)
+
+        # Get the matrix and extract gene names in clustered order
+        heatmap_matrix <- heatmap_object@matrix
+        if (is.null(rownames(heatmap_matrix))) {
+            stop("Heatmap matrix has no row names (gene names)")
+        }
+
+        # Return genes in clustered order
+        clustered_genes <- rownames(heatmap_matrix)[gene_order_indices]
+        return(clustered_genes)
+
+    }, error = function(e) {
+        stop("Failed to extract gene order from heatmap object. Error: ", e$message)
+    })
 }

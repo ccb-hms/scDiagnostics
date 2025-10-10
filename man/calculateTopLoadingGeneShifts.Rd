@@ -29,13 +29,15 @@ calculateTopLoadingGeneShifts(
   x,
   cell_type,
   pc_subset = 1:3,
-  plot_type = c("heatmap", "boxplot"),
+  plot_type = c("heatmap", "barplot", "boxplot"),
   plot_by = c("p_adjusted", "top_loading"),
   n_genes = 10,
   significance_threshold = 0.05,
   show_anomalies = FALSE,
   pseudo_bulk = FALSE,
+  cluster_cols = FALSE,
   draw_plot = TRUE,
+  show_all_query = TRUE,
   max_cells_ref = NULL,
   max_cells_query = NULL,
   ...
@@ -86,7 +88,7 @@ all available reference cells are plotted. Default is NULL.}
 
 \item{cell_type}{A character string specifying the cell type to plot (must be exactly one).}
 
-\item{plot_type}{A character string specifying visualization type. Either "heatmap" or "boxplot".
+\item{plot_type}{A character string specifying visualization type. Either "heatmap", "barplot", or "boxplot".
 Default is "heatmap".}
 
 \item{plot_by}{A character string specifying gene selection method when `n_genes` is not NULL.
@@ -104,13 +106,22 @@ Default is FALSE. Requires anomaly results to be present in the object.}
 \item{pseudo_bulk}{Logical indicating whether to create pseudo-bulk profiles instead of
 showing individual cells. When TRUE, expression values are averaged within groups
 (dataset and optionally anomaly status). Not compatible with boxplot visualization.
-Default is FALSE.}
+Required for barplot visualization. Default is FALSE.}
+
+\item{cluster_cols}{Logical indicating whether to cluster columns in the heatmap when
+`pseudo_bulk = TRUE`. When TRUE, columns (pseudo-bulk profiles) will be
+hierarchically clustered. When FALSE, columns maintain their original ordering
+(Query groups followed by Reference groups). Only applicable when
+`pseudo_bulk = TRUE` and `plot_type = "heatmap"`. Default is FALSE.}
 
 \item{draw_plot}{Logical indicating whether to draw the plot immediately (TRUE) or return
 the undrawn plot object (FALSE). For heatmaps, FALSE returns a ComplexHeatmap
 object that can be further customized before drawing. Default is TRUE.}
 
-\item{...}{Additional arguments passed to \code{\link[ComplexHeatmap]{draw}} or not used for boxplot.}
+\item{show_all_query}{Logical indicating whether to show the yellow bar for all query vs reference
+comparison. Default is TRUE. When FALSE, only green and red bars are shown.}
+
+\item{...}{Additional arguments passed to \code{\link[ComplexHeatmap]{draw}} or not used for other plot types.}
 }
 \value{
 A list containing:
@@ -127,7 +138,8 @@ A list containing:
 The `cell_type_variance` data frame contains columns: pc, cell_type, dataset, percent_variance.
 When anomaly detection is enabled, `cell_metadata` includes an additional `anomaly_status` column.
 
-A plot object.
+A plot object. For heatmaps when \code{draw_plot = FALSE}, returns a ComplexHeatmap object.
+For boxplots and barplots, returns a ggplot2 object.
 }
 \description{
 This function identifies genes with the highest loadings for specified principal components
@@ -137,8 +149,8 @@ specific cell types. Optionally, it can detect anomalous cells using isolation f
 
 This function creates visualizations showing expression distributions for top loading genes
 that exhibit distributional differences between query and reference datasets. Can display
-results as elegant complex heatmaps or as information-rich summary boxplots. Optionally
-displays anomaly status when available.
+results as elegant complex heatmaps, information-rich summary boxplots, or pseudo-bulk fold
+change barplots. Optionally displays anomaly status when available.
 }
 \details{
 This function extracts the top loading genes for each specified principal component from the reference
@@ -159,9 +171,13 @@ This function visualizes the results from \code{calculateTopLoadingGeneShifts}.
 The "heatmap" option displays a hierarchically clustered set of genes.
 The "boxplot" option creates a two-panel plot using `ggplot2`: the left panel shows
 horizontal expression boxplots for up to 5 PCs, while the right panel displays their
-corresponding PC loadings and adjusted p-values. When anomaly detection results are
-available and \code{show_anomalies} is TRUE, an additional annotation bar highlights
-anomalous cells.
+corresponding PC loadings and adjusted p-values.
+The "barplot" option creates horizontal barplots showing log2 fold changes between
+pseudo-bulk expression profiles (query vs reference), with genes ordered identically
+to the heatmap clustering. Bars show comparisons for query non-anomaly (green),
+optionally all query cells (yellow), and query anomaly cells (red) versus reference.
+When anomaly detection results are available and \code{show_anomalies} is TRUE,
+additional annotation bars or visual cues highlight anomalous cells.
 }
 \seealso{
 \code{\link{plot.calculateTopLoadingGeneShiftsObject}}, \code{\link{detectAnomaly}}
