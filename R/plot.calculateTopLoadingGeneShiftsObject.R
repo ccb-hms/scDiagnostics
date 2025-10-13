@@ -1260,6 +1260,8 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
 #' @author
 #' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
+#' @importFrom grDevices dev.off pdf
+#'
 # Function to extract genes used by heatmap plot
 extractGeneOrder <- function(heatmap_object) {
 
