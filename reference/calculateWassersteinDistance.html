@@ -96,7 +96,7 @@ and reference-query Wasserstein distance distributions for each cell type.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'calculateWassersteinDistanceObject'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, cell_types <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, cell_types <span class="op">=</span> <span class="cn">NULL</span>, bandwidth <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -147,6 +147,10 @@ no downsampling of reference cells is performed. Default is 5000.</p></dd>
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A list object containing the Wasserstein distance results from the <code>calculateWassersteinDistance</code> function.</p></dd>
+
+
+<dt id="arg-bandwidth">bandwidth<a class="anchor" aria-label="anchor" href="#arg-bandwidth"></a></dt>
+<dd><p>A numeric value specifying the bandwidth for density estimation. If NULL (default), automatic bandwidth selection is used.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
