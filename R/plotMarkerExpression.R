@@ -200,7 +200,7 @@ plotMarkerExpression <- function(query_data,
                              length(query_gene_expression_specific)))
 
     # Combine the gene expression values and dataset types
-    data <- data.frame(
+    marker_data <- data.frame(
         GeneExpression = combined_gene_expression,
         Dataset = dataset_types,
         plot_type = rep(c("Overall Distribution", "Cell Type-Specific Distribution"),
@@ -208,25 +208,43 @@ plotMarkerExpression <- function(query_data,
                                       length(query_gene_expression),
                                   length(ref_gene_expression_specific) +
                                       length(query_gene_expression_specific))))
+    marker_data[["Dataset"]] <- factor(marker_data[["Dataset"]],
+                                       levels = c("Reference", "Query"))
+
 
     # Create a stacked density plot
     plot_obj <- ggplot2::ggplot(
-        data,
+        marker_data,
         ggplot2::aes(x = .data[["GeneExpression"]],
+                     y = .data[["Dataset"]],
                      fill = .data[["Dataset"]])) +
-        ggplot2::geom_density(alpha = 0.5) +
+        ggridges::geom_density_ridges(
+            alpha = 0.7,
+            scale = 1,
+            rel_min_height = 0.01
+        ) +
+        ggplot2::scale_y_discrete(
+            expand = ggplot2::expansion(mult = c(0.02, 0.02))
+        ) +
+        ggplot2::scale_fill_manual(
+            values = c("Query" = "#B565D8", "Reference" = "#5A9BD8"),
+            name = "Dataset"
+        ) +
         ggplot2::facet_wrap(~ .data[["plot_type"]], scales = "free") +
         ggplot2::labs(title = NULL,
                       x = x_label,
-                      y = "Density") +
+                      y = "") +
         ggplot2::theme_bw() +
         ggplot2::theme(
             panel.grid.minor = ggplot2::element_blank(),
             panel.grid.major = ggplot2::element_line(color = "gray",
                                                      linetype = "dotted"),
+            panel.grid.major.y = ggplot2::element_blank(),
             strip.background = ggplot2::element_rect(fill = "white",
                                                      color = "black"),
             axis.title = ggplot2::element_text(size = 12),
-            axis.text = ggplot2::element_text(size = 10))
+            axis.text = ggplot2::element_text(size = 10),
+            axis.text.y = ggplot2::element_blank(),
+            axis.ticks.y = ggplot2::element_blank())
     return(plot_obj)
 }
