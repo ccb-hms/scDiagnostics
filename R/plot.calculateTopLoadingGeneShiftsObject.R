@@ -499,7 +499,7 @@ plotHeatmap <- function(x, cell_type,
 
     # Define color schemes
     dataset_colors <- c("Query" = "#B565D8", "Reference" = "#5A9BD8")
-    anomaly_colors <- c("Non-Anomalous" = "#228B22", "Anomalous" = "#DC143C")
+    anomaly_colors <- c("Non-Anomalous" = "#C8C8C8", "Anomalous" = "#D2314C")
 
     # Create custom color mapping function
     .createColorMapping <- function(breaks, colors) {
@@ -849,15 +849,18 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
     plot_df[["gene"]] <- factor(plot_df[["gene"]], levels = rev(gene_order_clustered))
 
     # Set comparison factor levels for proper ordering
-    comparison_levels <- c("Query Non-Anomaly vs Reference",
-                           "All Query vs Reference",
+    comparison_levels <- c("All Query vs Reference",
+                           "Query Non-Anomaly vs Reference",
                            "Query Anomaly vs Reference")
     plot_df[["comparison"]] <- factor(plot_df[["comparison"]], levels = comparison_levels)
 
-    # Define colors
-    bar_colors <- c("normal" = "#228B22",    # Green
-                    "all" = "#FFD700",        # Yellow/Gold
-                    "anomaly" = "#DC143C")    # Red
+    # Set factor levels on color_group to control bar order
+    plot_df[["color_group"]] <- factor(plot_df[["color_group"]],
+                                       levels = c("anomaly", "normal", "all"))
+
+    bar_colors <- c("normal" = "#BEBEBE",
+                    "all" = "#666666",
+                    "anomaly" = "#DC2F41")
 
     # Prepare gene labels with significance indicators
     gene_labels <- sapply(gene_order_clustered, function(g) {
@@ -871,7 +874,7 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
                                       y = .data[["gene"]],
                                       fill = .data[["color_group"]])) +
         ggplot2::geom_col(position = ggplot2::position_dodge(width = 0.8),
-                          alpha = 0.8, width = 0.7) +
+                          alpha = 0.8, width = 0.4) +
         ggplot2::geom_vline(xintercept = 0, linetype = "dashed",
                             color = "grey50", alpha = 0.7) +
         ggplot2::scale_fill_manual(name = "Comparison",
