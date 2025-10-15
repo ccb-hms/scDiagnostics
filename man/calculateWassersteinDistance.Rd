@@ -19,7 +19,7 @@ calculateWassersteinDistance(
   max_cells_ref = 5000
 )
 
-\method{plot}{calculateWassersteinDistanceObject}(x, cell_types = NULL, ...)
+\method{plot}{calculateWassersteinDistanceObject}(x, cell_types = NULL, bandwidth = NULL, ...)
 }
 \arguments{
 \item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing a numeric expression matrix for the query cells.}
@@ -45,6 +45,8 @@ no downsampling of query cells is performed. Default is 5000.}
 no downsampling of reference cells is performed. Default is 5000.}
 
 \item{x}{A list object containing the Wasserstein distance results from the \code{calculateWassersteinDistance} function.}
+
+\item{bandwidth}{A numeric value specifying the bandwidth for density estimation. If NULL (default), automatic bandwidth selection is used.}
 
 \item{...}{Additional arguments for future extensions.}
 }

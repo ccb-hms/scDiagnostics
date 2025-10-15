@@ -11,6 +11,7 @@
 #'
 #' @param x A list object containing the Wasserstein distance results from the \code{calculateWassersteinDistance} function.
 #' @param cell_types A character vector specifying which cell types to plot. If NULL, all cell types are plotted.
+#' @param bandwidth A numeric value specifying the bandwidth for density estimation. If NULL (default), automatic bandwidth selection is used.
 #' @param ... Additional arguments for future extensions.
 #'
 #' @keywords internal
@@ -29,6 +30,7 @@
 plot.calculateWassersteinDistanceObject <- function(
         x,
         cell_types = NULL,
+        bandwidth = NULL,
         ...){
 
     # Determine which cell types to plot
@@ -88,19 +90,27 @@ plot.calculateWassersteinDistanceObject <- function(
         generateColors(levels(plot_data[["cell_type_distribution"]]),
                        paired = TRUE)
 
+    # Build geom_density_ridges arguments conditionally
+    ridge_args <- list(
+        alpha = 0.7,
+        scale = 0.8,
+        rel_min_height = 0.01,
+        jittered_points = FALSE,
+        position = "identity"
+    )
+
+    # Add bandwidth if provided
+    if (!is.null(bandwidth)) {
+        ridge_args[["bandwidth"]] <- bandwidth
+    }
+
     # Create the ridge plot
     ridge_plot <- ggplot2::ggplot(plot_data,
                                   ggplot2::aes(
                                       x = .data[["wasserstein_dist"]],
                                       y = .data[["distribution"]],
                                       fill = .data[["cell_type_distribution"]])) +
-        ggridges::geom_density_ridges(
-            alpha = 0.7,
-            scale = 0.8,
-            rel_min_height = 0.01,
-            jittered_points = FALSE,
-            position = "identity"
-        ) +
+        do.call(ggridges::geom_density_ridges, ridge_args) +
         ggplot2::facet_wrap(~ .data[["cell_type"]], scales = "free_x", ncol = 2) +
         ggplot2::scale_fill_manual(
             name = "Distribution",
