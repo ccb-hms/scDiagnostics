@@ -63,23 +63,36 @@ Objects with existing valid PCA are returned unchanged to preserve expensive pre
 Only datasets requiring PCA computation are subject to downsampling.
 }
 \examples{
-# Load and prepare dataset
-library(TENxPBMCData)
-library(scuttle)
+# Load data
+data("reference_data")
+data("query_data")
 
-pbmc_data <- TENxPBMCData("pbmc3k")
-pbmc_subset <- pbmc_data[, 1:500]
-pbmc_subset <- logNormCounts(pbmc_subset)
+# Example 1: Dataset without PCA (will compute PCA)
+query_no_pca <- query_data
+reducedDims(query_no_pca) <- list()  # Remove existing PCA
 
-# Remove any existing PCA
-reducedDims(pbmc_subset) <- list()
+processed_query <- processPCA(sce_object = query_no_pca, n_hvgs = 500)
+"PCA" \%in\% reducedDimNames(processed_query)  # Should be TRUE
+ncol(processed_query)  # Should be 503 (unchanged)
 
-# Process dataset - will compute PCA using HVGs
-processed_data <- processPCA(sce_object = pbmc_subset, n_hvgs = 1000)
+# Example 2: Dataset with existing valid PCA (will be preserved)
+processed_existing <- processPCA(sce_object = query_data, n_hvgs = 500)
+ncol(processed_existing)  # Should be 503 (unchanged, no downsampling)
 
-# Check results
-"PCA" \%in\% reducedDimNames(processed_data)  # Should be TRUE
-ncol(processed_data)  # Should be 500 (unchanged)
+# Example 3: Large dataset requiring downsampling for PCA computation
+ref_no_pca <- reference_data
+reducedDims(ref_no_pca) <- list()  # Remove existing PCA
+
+processed_large <- processPCA(sce_object = ref_no_pca,
+                              n_hvgs = 800,
+                              max_cells = 1000)
+ncol(processed_large)  # Should be 1000 (downsampled for PCA computation)
+
+# Example 4: Large dataset with existing PCA (no downsampling)
+processed_large_existing <- processPCA(sce_object = reference_data,
+                                       n_hvgs = 800,
+                                       max_cells = 1000)
+ncol(processed_large_existing)  # Should be 1500 (preserved, no downsampling)
 
 }
 \author{

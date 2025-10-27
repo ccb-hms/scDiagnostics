@@ -58,7 +58,6 @@ Suggests:
     scuttle,
     scater,
     dplyr,
-    TENxPBMCData,
     ComplexHeatmap,
     grid,
     testthat (>= 3.0.0)

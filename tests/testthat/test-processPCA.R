@@ -2,82 +2,92 @@
 library(testthat)
 library(scDiagnostics)
 
-# Load test data once at the top level
-skip_if_not_installed("TENxPBMCData")
-skip_if_not_installed("scater")
-skip_if_not_installed("scran")
+# Load the datasets that come with the package
+data("query_data", package = "scDiagnostics")
+data("reference_data", package = "scDiagnostics")
 
-# Create shared test datasets
-pbmc_data <- NULL
-test_query <- NULL
-test_ref <- NULL
-test_large <- NULL
-
-setup_test_data <- function() {
-    if (is.null(pbmc_data)) {
-        library(TENxPBMCData)
-        pbmc_data <<- TENxPBMCData("pbmc3k")
-
-        # Create test datasets with reasonable sizes to avoid PCA warnings
-        test_query <<- pbmc_data[, 1:300]  # Larger to avoid SVD warnings
-        test_query <<- scater::logNormCounts(test_query)
-
-        test_ref <<- pbmc_data[, 301:600]
-        test_ref <<- scater::logNormCounts(test_ref)
-
-        test_large <<- pbmc_data[, 1:800]
-        test_large <<- scater::logNormCounts(test_large)
-    }
-}
-
-test_that("processPCA works with single dataset", {
-    setup_test_data()
+test_that("processPCA works with single dataset without existing PCA", {
+    skip_if_not_installed("scater")
+    skip_if_not_installed("scran")
 
     # Create test dataset without PCA
-    test_data <- test_query
-    reducedDims(test_data) <- list()
+    test_data <- query_data
+    reducedDims(test_data) <- list()  # Remove all existing PCA
 
     # Test single dataset without PCA
-    result <- processPCA(sce_object = test_data, n_hvgs = 1000)
+    result <- processPCA(sce_object = test_data, n_hvgs = 300)
 
     expect_s4_class(result, "SingleCellExperiment")
     expect_true("PCA" %in% reducedDimNames(result))
-    expect_equal(ncol(result), 300)
+    expect_equal(ncol(result), 503)  # Should preserve all cells
+
+    # Check PCA attributes exist
+    pca_attrs <- attributes(reducedDim(result, "PCA"))
+    expect_true("rotation" %in% names(pca_attrs))
+    expect_true("percentVar" %in% names(pca_attrs))
 })
 
-test_that("processPCA preserves existing PCA", {
-    setup_test_data()
+test_that("processPCA preserves existing valid PCA", {
+    skip_if_not_installed("scater")
+    skip_if_not_installed("scran")
 
-    # Create dataset with existing PCA
-    test_data <- scater::runPCA(test_query, ncomponents = 10)
-    original_cells <- ncol(test_data)
+    # Use dataset that already has PCA
+    test_data <- query_data
+    original_pca <- reducedDim(test_data, "PCA")
 
-    # Test with existing PCA - should not downsample
-    result <- processPCA(sce_object = test_data, max_cells = 100)
+    # Process data that already has valid PCA
+    result <- processPCA(sce_object = test_data, n_hvgs = 300)
 
     expect_s4_class(result, "SingleCellExperiment")
     expect_true("PCA" %in% reducedDimNames(result))
-    expect_equal(ncol(result), original_cells)  # Should be unchanged
+    expect_equal(ncol(result), 503)  # Should preserve all cells
+
+    # Should return the same object unchanged
+    expect_identical(reducedDim(result, "PCA"), original_pca)
 })
 
-test_that("processPCA handles downsampling correctly", {
-    setup_test_data()
+test_that("processPCA works with larger dataset", {
+    skip_if_not_installed("scater")
+    skip_if_not_installed("scran")
 
-    # Use large dataset without PCA
-    test_data <- test_large
-    reducedDims(test_data) <- list()
+    # Use reference dataset (larger) without PCA
+    test_data <- reference_data
+    reducedDims(test_data) <- list()  # Remove existing PCA
 
-    # Test downsampling
-    result <- processPCA(sce_object = test_data, max_cells = 400, n_hvgs = 1000)
+    # Test with max_cells limit
+    result <- processPCA(sce_object = test_data, n_hvgs = 500, max_cells = 800)
 
     expect_s4_class(result, "SingleCellExperiment")
     expect_true("PCA" %in% reducedDimNames(result))
-    expect_equal(ncol(result), 400)  # Should be downsampled
+    expect_equal(ncol(result), 800)  # Should be downsampled to max_cells
+})
+
+test_that("processPCA preserves large dataset with valid PCA", {
+    skip_if_not_installed("scater")
+    skip_if_not_installed("scran")
+
+    # Use reference dataset that already has PCA
+    test_data <- reference_data
+
+    # Process data that already has valid PCA - should NOT downsample
+    result <- processPCA(sce_object = test_data, n_hvgs = 500, max_cells = 800)
+
+    expect_s4_class(result, "SingleCellExperiment")
+    expect_true("PCA" %in% reducedDimNames(result))
+    expect_equal(ncol(result), 1500)  # Should preserve all 1500 cells (no downsampling)
 })
 
 test_that("processPCA input validation", {
-    expect_error(
-        processPCA()
-    )
-})
+    # Test invalid input
+    expect_error(processPCA("not_an_sce"),
+                 "'sce_object' must be a SingleCellExperiment object")
 
+    expect_error(processPCA(query_data, assay_name = "nonexistent"),
+                 "'sce_object' does not contain the specified assay")
+
+    expect_error(processPCA(query_data, n_hvgs = -1),
+                 "'n_hvgs' must be a single positive integer")
+
+    expect_error(processPCA(query_data, max_cells = -1),
+                 "'max_cells' must be a positive integer")
+})
