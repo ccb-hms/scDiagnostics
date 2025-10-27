@@ -20,6 +20,10 @@
 #' If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.
 #' @param correlation_method The correlation method to use for calculating pairwise correlations.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 5000
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000
 #'
 #' @return A matrix containing the average pairwise correlation values.
 #'         Rows and columns are labeled with the cell types. Each element
@@ -51,6 +55,8 @@
 #' @importFrom stats cor
 #'
 #' @export
+#'
+# Function to calculate average pairwise correlation between cell types
 calculateAveragePairwiseCorrelation <- function(
         query_data,
         reference_data,
@@ -59,7 +65,9 @@ calculateAveragePairwiseCorrelation <- function(
         cell_types = NULL,
         pc_subset = 1:10,
         correlation_method = c("spearman", "pearson"),
-        assay_name = "logcounts") {
+        assay_name = "logcounts",
+        max_cells_query = 5000,
+        max_cells_ref = 5000) {
 
     # Match correlation method argument
     correlation_method <- match.arg(correlation_method)
@@ -69,15 +77,25 @@ calculateAveragePairwiseCorrelation <- function(
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_types,
                   pc_subset_ref = pc_subset,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
 
-    # Get common cell types if they are not specified by user
-    if(is.null(cell_types)){
-        cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
-                                       query_data[[query_cell_type_col]])))
-    }
+    # Convert cell type columns to character if needed
+    query_data <- convertColumnsToCharacter(sce_object = query_data,
+                                            convert_cols = query_cell_type_col)
+    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
+                                                convert_cols = ref_cell_type_col)
+
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = query_data,
+                                  reference_data = reference_data,
+                                  query_cell_type_col = query_cell_type_col,
+                                  ref_cell_type_col = ref_cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = TRUE,
+                                  n_cell_types = NULL)
 
     # Function to compute correlation between two cell types
     .computeCorrelation <- function(type1, type2) {
@@ -89,8 +107,11 @@ calculateAveragePairwiseCorrelation <- function(
                 reference_data = reference_data,
                 query_cell_type_col = query_cell_type_col,
                 ref_cell_type_col = ref_cell_type_col,
+                cell_types = cell_types,
                 pc_subset = pc_subset,
-                assay_name = assay_name)
+                assay_name = assay_name,
+                max_cells_ref = max_cells_ref,
+                max_cells_query = max_cells_query)
             ref_mat <- pca_output[which(
                 pca_output[["dataset"]] == "Reference" &
                     pca_output[["cell_type"]] == type2),
@@ -101,7 +122,7 @@ calculateAveragePairwiseCorrelation <- function(
                 paste0("PC", pc_subset)]
         } else{
 
-            # Subset query data to the specified cell type
+            # Subset query and reference data to the specified cell type
             query_subset <- query_data[, which(
                 query_data[[query_cell_type_col]] == type1), drop = FALSE]
             ref_subset <- reference_data[, which(

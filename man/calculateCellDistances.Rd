@@ -13,7 +13,9 @@ calculateCellDistances(
   ref_cell_type_col,
   cell_types = NULL,
   pc_subset = 1:5,
-  assay_name = "logcounts"
+  assay_name = "logcounts",
+  max_cells_query = 5000,
+  max_cells_ref = 5000
 )
 
 \method{plot}{calculateCellDistancesObject}(x, ref_cell_type, cell_names, ...)
@@ -34,6 +36,12 @@ that identifies the cell types.}
 \item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default 1:5.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+
+\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is 5000.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.}
 
 \item{x}{A list containing the distance data computed by \code{calculatecellDistances}.}
 
@@ -90,7 +98,7 @@ cd4_anomalies <- detectAnomaly(reference_data = reference_data,
                                ref_cell_type_col = "expert_annotation",
                                pc_subset = 1:10,
                                n_tree = 500,
-                               anomaly_treshold = 0.5)
+                               anomaly_threshold = 0.5)
 cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE)[1:6])
 
 # Plot the densities of the distances

@@ -7,7 +7,7 @@
 \title{Calculate Cell Similarity Using PCA Loadings}
 \usage{
 calculateCellSimilarityPCA(
-  se_object,
+  sce_object,
   cell_names,
   pc_subset = 1:5,
   n_top_vars = 50,
@@ -17,7 +17,7 @@ calculateCellSimilarityPCA(
 \method{plot}{calculateCellSimilarityPCAObject}(x, pc_subset = 1:5, ...)
 }
 \arguments{
-\item{se_object}{A \code{\linkS4class{SingleCellExperiment}} object containing expression data.}
+\item{sce_object}{A \code{\linkS4class{SingleCellExperiment}} object containing expression data.}
 
 \item{cell_names}{A character vector specifying the cell names for which to compute the similarity.}
 
@@ -65,7 +65,7 @@ anomaly_output <- detectAnomaly(reference_data = reference_data,
                                 query_cell_type_col = "SingleR_annotation",
                                 pc_subset = 1:10,
                                 n_tree = 500,
-                                anomaly_treshold = 0.5)
+                                anomaly_threshold = 0.5)
 top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores,
                              decreasing = TRUE)[1:6])
 

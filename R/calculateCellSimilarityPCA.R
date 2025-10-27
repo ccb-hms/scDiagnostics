@@ -10,7 +10,7 @@
 #' \code{\linkS4class{SingleCellExperiment}} object and identifies the high-loading variables for each selected PC.
 #' Then, it computes the cosine similarity between cells using the high-loading variables for each PC.
 #'
-#' @param se_object A \code{\linkS4class{SingleCellExperiment}} object containing expression data.
+#' @param sce_object A \code{\linkS4class{SingleCellExperiment}} object containing expression data.
 #' @param cell_names A character vector specifying the cell names for which to compute the similarity.
 #' @param pc_subset A numeric vector specifying the subset of principal components to consider. Default is 1:5..
 #' @param n_top_vars An integer indicating the number of top loading variables to consider for each PC. Default is 50.
@@ -36,7 +36,7 @@
 #'                                 query_cell_type_col = "SingleR_annotation",
 #'                                 pc_subset = 1:10,
 #'                                 n_tree = 500,
-#'                                 anomaly_treshold = 0.5)
+#'                                 anomaly_threshold = 0.5)
 #' top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores,
 #'                              decreasing = TRUE)[1:6])
 #'
@@ -51,14 +51,18 @@
 #' plot(cosine_similarities, pc_subset = 15:25)
 #'
 # Function to calculate cosine similarities between cells and PCs
-calculateCellSimilarityPCA <- function(se_object,
+calculateCellSimilarityPCA <- function(sce_object,
                                        cell_names,
                                        pc_subset = 1:5,
                                        n_top_vars = 50,
                                        assay_name = "logcounts"){
 
+    # Format the cell names - remove "Query_" prefix if present
+    cell_names <- gsub("^Query_", "", cell_names)
+    cell_names <- gsub("^Reference_", "", cell_names)
+
     # Check standard input arguments
-    argumentCheck(query_data = se_object,
+    argumentCheck(query_data = sce_object,
                   cell_names_query = cell_names,
                   pc_subset_query = pc_subset,
                   assay_name = assay_name)
@@ -69,22 +73,23 @@ calculateCellSimilarityPCA <- function(se_object,
         stop("\'n_top_vars\' must be a positive integer.")
     }
     if(is.null(n_top_vars)){
-        n_top_vars <- nrow(se_object)
+        n_top_vars <- nrow(sce_object)
     }
 
     # Extract rotation matrix for SingleCellExperiment object
     rotation_mat <- attributes(
-        reducedDim(se_object, "PCA"))$rotation[, pc_subset]
+        reducedDim(sce_object, "PCA"))$rotation[, pc_subset]
 
     # Function to identify high-loading variables for each PC
     .getHighLoadingVars <- function(rotation_mat, n_top_vars) {
         high_loading_vars <- lapply(
             seq_len(ncol(rotation_mat)), function(pc) {
                 abs_loadings <- abs(rotation_mat[, pc])
-                top_vars <- names(sort(abs_loadings,
-                                       decreasing = TRUE))[seq_len(n_top_vars)]
-            return(top_vars)
-        })
+                top_vars <-
+                    names(sort(abs_loadings,
+                               decreasing = TRUE))[seq_len(n_top_vars)]
+                return(top_vars)
+            })
         return(high_loading_vars)
     }
 
@@ -93,7 +98,8 @@ calculateCellSimilarityPCA <- function(se_object,
 
     # Function to compute cosine similarity
     .cosine_similarity <- function(vector1, vector2) {
-        sum(vector1 * vector2) / (sqrt(sum(vector1^2)) * sqrt(sum(vector2^2)))
+        sum(vector1 * vector2) / (sqrt(sum(vector1^2)) *
+                                      sqrt(sum(vector2^2)))
     }
 
     # Function to compute cosine similarity for each PC using high-loading variables
@@ -105,13 +111,14 @@ calculateCellSimilarityPCA <- function(se_object,
                 vars <- high_loading_vars[[pc]]
                 cell_subset <- cell_names[, vars, drop = FALSE]
                 pc_vector <- rotation_mat[vars, pc]
-                apply(cell_subset, 1, .cosine_similarity, vector2 = pc_vector)
-        })
+                apply(cell_subset, 1, .cosine_similarity,
+                      vector2 = pc_vector)
+            })
         return(similarities)
     }
 
     # Calculate similarities
-    assay_mat <- t(as.matrix(assay(se_object[, cell_names, drop = FALSE],
+    assay_mat <- t(as.matrix(assay(sce_object[, cell_names, drop = FALSE],
                                    assay_name)))
     similarities <- .computeCosineSimilarity(assay_mat, rotation_mat,
                                              high_loading_vars)

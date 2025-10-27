@@ -38,7 +38,7 @@ test_that("comparePCASubspace returns expected output structure", {
 
     # Check the structure of the output list
     expect_true(is.list(subspace_comparison))
-    expect_named(subspace_comparison, c("cosine_similarity", "cosine_id", "var_explained_avg", "weighted_cosine_similarity"))
+    expect_named(subspace_comparison, c("cosine_similarity", "cosine_id", "var_explained_ref", "var_explained_query", "var_explained_avg", "weighted_cosine_similarity"))
 })
 
 test_that("comparePCASubspace handles invalid n_top_vars argument", {
@@ -93,7 +93,7 @@ test_that("comparePCASubspace returns correct dimensions for cosine_id", {
     expect_equal(dim(subspace_comparison$cosine_id), c(5, 2))
 })
 
-test_that("comparePCASubspace returns average variance explained as a numeric vector", {
+test_that("comparePCASubspace returns variance explained components correctly", {
     # Run the comparePCASubspace function
     subspace_comparison <- comparePCASubspace(query_data = query_data_subset,
                                               reference_data = reference_data_subset,
@@ -102,9 +102,16 @@ test_that("comparePCASubspace returns average variance explained as a numeric ve
                                               pc_subset = 1:5,
                                               n_top_vars = 50)
 
+    # Check that var_explained_ref is a numeric vector
+    expect_type(subspace_comparison$var_explained_ref, "double")
+    expect_equal(length(subspace_comparison$var_explained_ref), length(1:5))
+
+    # Check that var_explained_query is a numeric vector
+    expect_type(subspace_comparison$var_explained_query, "double")
+    expect_equal(length(subspace_comparison$var_explained_query), length(1:5))
+
     # Check that var_explained_avg is a numeric vector
     expect_type(subspace_comparison$var_explained_avg, "double")
-    # Check the length of var_explained_avg matches pc_subset
     expect_equal(length(subspace_comparison$var_explained_avg), length(1:5))
 })
 

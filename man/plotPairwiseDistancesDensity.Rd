@@ -9,12 +9,14 @@ plotPairwiseDistancesDensity(
   reference_data,
   query_cell_type_col,
   ref_cell_type_col,
-  cell_type_query,
-  cell_type_ref,
+  cell_type,
   pc_subset = 1:5,
   distance_metric = c("correlation", "euclidean"),
   correlation_method = c("spearman", "pearson"),
-  assay_name = "logcounts"
+  bandwidth = 0.25,
+  assay_name = "logcounts",
+  max_cells_query = 5000,
+  max_cells_ref = 5000
 )
 }
 \arguments{
@@ -28,9 +30,7 @@ expression data and metadata.}
 
 \item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
 
-\item{cell_type_query}{The query cell type for which distances or correlations are calculated.}
-
-\item{cell_type_ref}{The reference cell type for which distances or correlations are calculated.}
+\item{cell_type}{The cell type for which distances or correlations are calculated.}
 
 \item{pc_subset}{A numeric vector specifying which principal components to use in the analysis. Default is 1:5.
 If set to \code{NULL}, the assay data is used directly for computations without dimensionality reduction.}
@@ -41,7 +41,15 @@ Set to "correlation" to calculate correlation coefficients.}
 \item{correlation_method}{The correlation method to use when \code{distance_metric} is "correlation".
 Possible values are "pearson" and "spearman".}
 
+\item{bandwidth}{Numeric value controlling the smoothness of the density estimate; smaller values create more detailed curves. Default is 0.25.}
+
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+
+\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is 5000.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.}
 }
 \value{
 A ggplot2 object showing ridgeline plots of calculated distances or correlations.
@@ -51,7 +59,7 @@ This function calculates pairwise distances or correlations between query and re
 and visualizes the results using ridgeline plots, displaying the density distribution for each comparison.
 }
 \details{
-Designed for \code{\linkS4class{SingleCellExperiment}} objects, this function subsets data for specified cell types,
+Designed for \code{\linkS4class{SingleCellExperiment}} objects, this function subsets data for the specified cell type,
 computes pairwise distances or correlations, and visualizes these measurements through ridgeline plots.
 The plots help evaluate the consistency and differentiation of annotated cell types within single-cell datasets.
 }
@@ -65,8 +73,7 @@ plotPairwiseDistancesDensity(query_data = query_data,
                              reference_data = reference_data,
                              query_cell_type_col = "SingleR_annotation",
                              ref_cell_type_col = "expert_annotation",
-                             cell_type_query = "CD8",
-                             cell_type_ref = "CD8",
+                             cell_type = "CD8",
                              pc_subset = 1:5,
                              distance_metric = "euclidean",
                              correlation_method = "pearson")

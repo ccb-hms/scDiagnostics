@@ -5,47 +5,71 @@
 \alias{regressPC}
 \title{Plot Regression Results on Principal Components}
 \usage{
-\method{plot}{regressPCObject}(x, plot_type = c("r_squared", "p-value"), alpha = 0.05, ...)
+\method{plot}{regressPCObject}(
+  x,
+  plot_type = c("r_squared", "variance_contribution", "coefficient_heatmap"),
+  alpha = 0.05,
+  coefficients_include = NULL,
+  ...
+)
 
 regressPC(
-  reference_data,
-  query_data = NULL,
-  ref_cell_type_col,
-  query_cell_type_col = NULL,
+  query_data,
+  reference_data = NULL,
+  query_cell_type_col,
+  ref_cell_type_col = NULL,
+  query_batch_col = NULL,
   cell_types = NULL,
   pc_subset = 1:10,
   adjust_method = c("BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr",
     "none"),
-  assay_name = "logcounts"
+  assay_name = "logcounts",
+  max_cells_ref = 5000,
+  max_cells_query = 5000
 )
 }
 \arguments{
-\item{x}{An object of class \code{regressPC} containing the output of the \code{regressPC} function}
+\item{x}{An object of class \code{regressPCObject} containing the output of the \code{regressPC} function.}
 
-\item{plot_type}{Type of plot to generate. Options are "r_squared" and "p-value". Default is "r-squared".}
+\item{plot_type}{Type of plot to generate. Available options:
+"r_squared", "variance_contribution", "coefficient_heatmap".}
 
-\item{alpha}{Significance threshold p-values of coefficients. Default is 0.05.}
+\item{alpha}{Significance threshold for p-values. Default is 0.05.}
+
+\item{coefficients_include}{Character vector specifying which coefficient types to include
+in the coefficient heatmap. Options are \code{c("cell_type", "batch", "interaction")}.
+Default is \code{NULL}, which includes all available coefficient types. Only applies
+to \code{plot_type = "coefficient_heatmap"}.}
 
 \item{...}{Additional arguments to be passed to the plotting functions.}
 
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
-If NULL, the PC scores are regressed against the cell types of the reference data.}
-
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
+If NULL, the PC scores are regressed against the cell types of the query data.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
 
-\item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.}
+\item{query_batch_col}{The column name in the \code{colData} of \code{query_data} that identifies the batch or sample.
+If provided, performs interaction analysis with cell types. Default is NULL.}
+
+\item{cell_types}{A character vector specifying the cell types to include in the analysis. If NULL, all cell types are included.}
+
+\item{pc_subset}{A numeric vector specifying which principal components to include in the analysis. Default is PC1 to PC10.}
 
 \item{adjust_method}{A character string specifying the method to adjust the p-values.
 Options include "BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr", or "none".
-Default is "BH" (Benjamini-Hochberg). Default is "BH".}
+Default is "BH" (Benjamini-Hochberg).}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.}
+
+\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is 5000.}
 }
 \value{
 The S3 plot method returns a \code{ggplot} object representing the specified plot type.
@@ -57,62 +81,57 @@ each principal component, and \item the total variance explained.}
 }
 \description{
 The S3 plot method generates plots to visualize the results of regression analyses
-performed on principal components (PCs) against cell types or dataset origin (query vs. reference).
+performed on principal components (PCs) against cell types, datasets, or their interactions.
 
 This function performs linear regression of a covariate of interest onto one
 or more principal components, based on the data in a \code{\linkS4class{SingleCellExperiment}}
 object.
 }
 \details{
-The S3 plot method generates, depending on the specified plot type, either the R-squared
-values or p-values resulting from the regression of principal components onto
-cell types or dataset origin (query vs. reference). For cell type regression, the plots show how well each
-PC correlates with different cell types. For dataset regression, the plots
-compare the PCs between query and reference datasets.
-
 Principal component regression, derived from PCA, can be used to quantify the
 variance explained by a covariate of interest. Applications for single-cell
 analysis include quantification of batch effects, assessing clustering
 homogeneity, and evaluating alignment of query and reference datasets in cell
 type annotation settings.
 
-Briefly, the \eqn{R^2} is calculated from a linear regression of the covariate \eqn{B} of
-interest onto each principal component. The variance contribution of the
-covariate effect per principal component is then calculated as the product of
-the variance explained by the i-th principal component (PC) and the
-corresponding \eqn{R^2(PC_i | B)}. The sum across all variance contributions by the
-covariate effects in all principal components gives the total variance
-explained by the covariate as follows:
+The function supports multiple regression scenarios:
+\itemize{
+  \item Query only, no batch: PC  cell_type
+  \item Query only, with batch: PC  cell_type * batch
+  \item Query + Reference, no batch: PC  cell_type * dataset
+  \item Query + Reference, with batch: PC  cell_type * batch (where batch includes Reference)
+}
 
-\deqn{Var(C|B) = \sum_{i=1}^G \text{Var}(C|PC_i) \times R^2(PC_i | B)}
-
-where, \eqn{\text{Var}(C \mid PC_i)} is the variance of the data matrix \eqn{C}
-explained by the i-th principal component. See references for details.
+When batch information is provided with reference data, batches are labeled as
+"Reference" for reference data and "Query_BatchName" for query batches, with
+Reference set as the first factor level for interpretation.
 }
 \examples{
 # Load data
 data("reference_data")
 data("query_data")
 
-# Plot the PC data (no query data)
-regress_res <- regressPC(reference_data = reference_data,
-                         ref_cell_type_col = "expert_annotation",
+# Query only analysis
+regress_res <- regressPC(query_data = query_data,
+                         query_cell_type_col = "expert_annotation",
                          cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                         pc_subset = 1:15)
-# Plot results
+                         pc_subset = 1:10)
+# Visualize results
 plot(regress_res, plot_type = "r_squared")
-plot(regress_res, plot_type = "p-value")
+plot(regress_res, plot_type = "variance_contribution")
+plot(regress_res, plot_type = "coefficient_heatmap")
 
-# Plot the PC data (with query data)
-regress_res <- regressPC(reference_data = reference_data,
-                         query_data = query_data,
-                         ref_cell_type_col = "expert_annotation",
+# Query + Reference analysis
+regress_res <- regressPC(query_data = query_data,
+                         reference_data = reference_data,
                          query_cell_type_col = "SingleR_annotation",
+                         ref_cell_type_col = "expert_annotation",
                          cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                         pc_subset = 1:15)
-# Plot results
+                         pc_subset = 1:10)
+# Visualize results
 plot(regress_res, plot_type = "r_squared")
-plot(regress_res, plot_type = "p-value")
+plot(regress_res, plot_type = "variance_contribution")
+plot(regress_res, plot_type = "coefficient_heatmap")
 
 }
 \references{
@@ -127,4 +146,3 @@ single-cell genomics. Nature Methods, 19:41-50, 2022.
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 }
-\keyword{internal}

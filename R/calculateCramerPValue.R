@@ -12,14 +12,17 @@
 #'   \item Performs the Cramer test for each cell type using the \code{cramer.test} function in the \code{cramer} package.
 #' }
 #'
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
-#' If NULL, the PC scores are regressed against the cell types of the reference data.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
+#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000.
 #'
 #' @return A named vector of p-values from the Cramer test for each cell type.
 #'
@@ -43,43 +46,51 @@
 #' cramer_test
 #'
 # Function to perform Cramer test for two-sample comparison of multivariate ECDFs
-calculateCramerPValue <- function(reference_data,
-                                  query_data = NULL,
+calculateCramerPValue <- function(query_data,
+                                  reference_data,
+                                  query_cell_type_col,
                                   ref_cell_type_col,
-                                  query_cell_type_col = NULL,
                                   cell_types = NULL,
                                   pc_subset = 1:5,
-                                  assay_name = "logcounts") {
+                                  assay_name = "logcounts",
+                                  max_cells_query = 5000,
+                                  max_cells_ref = 5000) {
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_types,
                   pc_subset_ref = pc_subset,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
 
-    # Get common cell types if they are not specified by user
-    if(is.null(cell_types)){
-        if(is.null(query_data)){
-            cell_types <- na.omit(
-                unique(c(reference_data[[ref_cell_type_col]])))
-        } else{
-            cell_types <- na.omit(
-                unique(c(reference_data[[ref_cell_type_col]],
-                                           query_data[[query_cell_type_col]])))
-        }
-    }
+    # Convert cell type columns to character if needed
+    query_data <- convertColumnsToCharacter(sce_object = query_data,
+                                            convert_cols = query_cell_type_col)
+    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
+                                                convert_cols = ref_cell_type_col)
+
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = query_data,
+                                  reference_data = reference_data,
+                                  query_cell_type_col = query_cell_type_col,
+                                  ref_cell_type_col = ref_cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = TRUE,
+                                  n_cell_types = NULL)
 
     # Get the projected PCA data
     pca_output <- projectPCA(query_data = query_data,
                              reference_data = reference_data,
                              query_cell_type_col = query_cell_type_col,
                              ref_cell_type_col = ref_cell_type_col,
+                             cell_types = cell_types,
                              pc_subset = pc_subset,
-                             assay_name = assay_name)
-    pca_output <- pca_output[pca_output[["cell_type"]] %in% cell_types,]
+                             assay_name = assay_name,
+                             max_cells_ref = max_cells_ref,
+                             max_cells_query = max_cells_query)
 
     # Set data for Cramer test
     cell_list <- split(pca_output, pca_output[["cell_type"]])

@@ -1,7 +1,7 @@
 Type: Package
 Package: scDiagnostics
 Title: Cell type annotation diagnostics
-Version: 1.3.0
+Version: 1.3.1
 Authors@R: c(
     person("Anthony", "Christidis", role = c("aut", "cre"), 
             email = "anthony-alexander_christidis@hms.harvard.edu", 
@@ -30,21 +30,26 @@ Imports:
     SingleCellExperiment,
     methods,
     isotree,
+    FNN,
+    igraph,
     ggplot2,
+    GGally,
     ggridges,
     SummarizedExperiment,
     ranger,
     transport,
-    speedglm,
     cramer,
     rlang,
     bluster,
-    patchwork
+    scales,
+    MASS,
+    stringr,
+    Matrix,
+    grDevices
 Suggests:
     AUCell,
     BiocStyle,
     knitr,
-    Matrix,
     rmarkdown,
     scran,
     scRNAseq,
@@ -53,6 +58,9 @@ Suggests:
     scuttle,
     scater,
     dplyr,
+    TENxPBMCData,
+    ComplexHeatmap,
+    grid,
     testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
@@ -69,3 +77,4 @@ Encoding: UTF-8
 LazyDataCompression: xz
 RoxygenNote: 7.3.2
 Config/testthat/edition: 3
+LazyData: true

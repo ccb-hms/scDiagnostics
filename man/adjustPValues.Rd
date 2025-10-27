@@ -8,21 +8,19 @@ adjustPValues(
   regress_res,
   adjust_method = c("BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr",
     "none"),
-  indep_var = c("cell_type", "dataset")
+  indep_var = c("cell_type", "cell_type_dataset_interaction",
+    "cell_type_batch_interaction")
 )
 }
 \arguments{
-\item{regress_res}{A list containing regression results. The structure of the list
-depends on the \code{indep_var} argument: if \code{indep_var} is "cell_type",
-the list should contain regression summaries for each principal component (PC);
-if \code{indep_var} is "dataset", it should contain summaries for each dataset.}
+\item{regress_res}{A list containing regression results. The structure varies by analysis type.}
 
 \item{adjust_method}{A character string specifying the method to adjust the p-values.
 Options include "BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr", or "none".
-Default is "BH" (Benjamini-Hochberg). Default is "BH".}
+Default is "BH" (Benjamini-Hochberg).}
 
 \item{indep_var}{A character string specifying the independent variable for the adjustment.
-Options are "cell_type" (default) or "dataset".}
+Options are "cell_type", "cell_type_dataset_interaction", or "cell_type_batch_interaction".}
 }
 \value{
 A list similar to \code{regress_res}, but with an added column for adjusted p-values
@@ -30,14 +28,14 @@ A list similar to \code{regress_res}, but with an added column for adjusted p-va
 }
 \description{
 Adjusts the p-values in the regression results using a specified adjustment method.
-The adjustment is performed either for each principal component (PC) by cell type
-or for each dataset, depending on the selected independent variable.
+The adjustment is performed for different regression types including cell type,
+dataset, and cell type-batch interaction analyses.
 }
 \details{
 This function adjusts p-values from regression results stored in a list. The adjustment
-can be applied either across cell types or datasets, depending on the user’s choice.
-The method for adjusting p-values can be selected from various options such as Benjamini-Hochberg (BH),
-Holm, and others, which are supported by the `p.adjust` function in R.
+can be applied across different regression structures depending on the analysis type.
+The method for adjusting p-values can be selected from various options such as
+Benjamini-Hochberg (BH), Holm, and others, which are supported by the `p.adjust` function in R.
 }
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}

@@ -18,6 +18,10 @@
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
 #' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default 1:5.
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000.
 #'
 #' @return A list containing distance data for each cell type. Each entry in the list contains:
 #' \describe{
@@ -50,7 +54,7 @@
 #'                                ref_cell_type_col = "expert_annotation",
 #'                                pc_subset = 1:10,
 #'                                n_tree = 500,
-#'                                anomaly_treshold = 0.5)
+#'                                anomaly_threshold = 0.5)
 #' cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE)[1:6])
 #'
 #' # Plot the densities of the distances
@@ -64,37 +68,53 @@ calculateCellDistances <- function(query_data,
                                    ref_cell_type_col,
                                    cell_types = NULL,
                                    pc_subset = 1:5,
-                                   assay_name = "logcounts") {
+                                   assay_name = "logcounts",
+                                   max_cells_query = 5000,
+                                   max_cells_ref = 5000) {
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_types,
                   pc_subset_ref = pc_subset,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
 
-    # Get common cell types if they are not specified by user
-    if(is.null(cell_types)){
-        cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
-                                       query_data[[query_cell_type_col]])))
-    }
+    # Convert cell type columns to character if needed
+    query_data <- convertColumnsToCharacter(sce_object = query_data,
+                                            convert_cols = query_cell_type_col)
+    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
+                                                convert_cols = ref_cell_type_col)
+
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = query_data,
+                                  reference_data = reference_data,
+                                  query_cell_type_col = query_cell_type_col,
+                                  ref_cell_type_col = ref_cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = FALSE,
+                                  n_cell_types = NULL)
+
 
     # Get the projected PCA data
     pca_output <- projectPCA(query_data = query_data,
                              reference_data = reference_data,
                              query_cell_type_col = query_cell_type_col,
                              ref_cell_type_col = ref_cell_type_col,
+                             cell_types = cell_types,
                              pc_subset = pc_subset,
-                             assay_name = assay_name)
+                             assay_name = assay_name,
+                             max_cells_ref = max_cells_ref,
+                             max_cells_query = max_cells_query)
 
     # Create a list to store distance data for each cell type
     distance_data <- vector("list", length = length(cell_types))
     names(distance_data) <- cell_types
 
     # Function to compute Euclidean distance between a vector and each row of a matrix
-    .compute_distances <- function(matrix, vector) {
+    .computeDistances <- function(matrix, vector) {
 
         # Apply the distance function to each row of the matrix
         distances <- apply(matrix, 1, function(row) {
@@ -118,8 +138,10 @@ calculateCellDistances <- function(query_data,
 
         # Compute distances from each query cell to all reference cells
         query_to_ref_distances <- apply(
-            query_subset_scores, 1, function(query_cell, ref_subset_scores) {
-                .compute_distances(ref_subset_scores, query_cell)
+            query_subset_scores, 1, function(query_cell,
+                                             ref_subset_scores) {
+                .computeDistances(ref_subset_scores,
+                                   query_cell)
                 }, ref_subset_scores = ref_subset_scores)
 
         # Store the distances
@@ -130,7 +152,8 @@ calculateCellDistances <- function(query_data,
     }
 
     # Add class of object
-    class(distance_data) <- c(class(distance_data), "calculateCellDistancesObject")
+    class(distance_data) <- c(class(distance_data),
+                              "calculateCellDistancesObject")
 
     # Return the distance data
     return(distance_data)

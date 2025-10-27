@@ -13,8 +13,10 @@ detectAnomaly(
   cell_types = NULL,
   pc_subset = 1:5,
   n_tree = 500,
-  anomaly_treshold = 0.6,
+  anomaly_threshold = 0.6,
   assay_name = "logcounts",
+  max_cells_query = 5000,
+  max_cells_ref = 5000,
   ...
 )
 
@@ -23,6 +25,11 @@ detectAnomaly(
   cell_type = NULL,
   pc_subset = NULL,
   data_type = c("query", "reference"),
+  n_tree = 500,
+  upper_facet = c("blank", "contour", "ellipse"),
+  diagonal_facet = c("density", "ridge", "boxplot", "blank"),
+  max_cells_ref = NULL,
+  max_cells_query = NULL,
   ...
 )
 }
@@ -43,11 +50,17 @@ in \code{reference_mat_subset} will be included.}
 
 \item{n_tree}{An integer specifying the number of trees for the isolation forest. Default is 500}
 
-\item{anomaly_treshold}{A numeric value specifying the threshold for identifying anomalies, Default is 0.6.}
+\item{anomaly_threshold}{A numeric value specifying the threshold for identifying anomalies, Default is 0.6.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
 
-\item{...}{Additional arguments.}
+\item{max_cells_query}{Maximum number of query cells to include in the plot. If NULL,
+all available query cells are plotted. Default is NULL.}
+
+\item{max_cells_ref}{Maximum number of reference cells to include in the plot. If NULL,
+all available reference cells are plotted. Default is NULL.}
+
+\item{...}{Additional arguments passed to the `isolation.forest` function.}
 
 \item{x}{A list object containing the anomaly detection results from the \code{detectAnomaly} function.
 Each element of the list should correspond to a cell type and contain \code{reference_mat_subset}, \code{query_mat_subset},
@@ -57,6 +70,10 @@ Each element of the list should correspond to a cell type and contain \code{refe
 be a name present in \code{x}. If NULL, the "Combined" cell type will be plotted. Default is NULL.}
 
 \item{data_type}{A character string specifying whether to plot the "query" data or the "reference" data. Default is "query".}
+
+\item{upper_facet}{Either "blank" (default), "contour", or "ellipse" for the upper facet plots.}
+
+\item{diagonal_facet}{Either "density" (default), "ridge", "boxplot" or "blank" for the diagonal plots.}
 }
 \value{
 A list containing the following components for each cell type and the combined data:
@@ -66,15 +83,16 @@ A list containing the following components for each cell type and the combined d
 \item{query_mat_subset}{PCA projections of the query data (if provided).}
 \item{var_explained}{Proportion of variance explained by the retained principal components.}
 
-The S3 plot method returns a \code{ggplot} object representing the PCA plots with anomalies highlighted.
+The S3 plot method returns a \code{GGally::ggpairs} object representing the PCA plots with anomalies highlighted.
 }
 \description{
 This function detects anomalies in single-cell data by projecting the data onto a PCA space and using an isolation forest
 algorithm to identify anomalies.
 
-The S3 plot method generates faceted scatter plots for specified principal component (PC) combinations
-within an anomaly detection object. It allows visualization of the relationship between specified
-PCs and highlights anomalies detected by the Isolation Forest algorithm.
+This S3 plot method generates faceted scatter plots for specified principal component (PC) combinations
+within an anomaly detection object. It visualizes the relationship between specified PCs, highlights
+anomalies detected by the Isolation Forest algorithm, and provides a background gradient representing
+anomaly scores.
 }
 \details{
 This function projects the query data onto the PCA space of the reference data. An isolation forest is then built on the
@@ -82,9 +100,13 @@ reference data to identify anomalies in the query data based on their PCA projec
 the anomaly scores are computed on the reference data itself. Anomaly scores for the data with all combined cell types are also
 provided as part of the output.
 
-The S3 plot method extracts the specified PCs from the given anomaly detection object and generates
-scatter plots for each pair of PCs. It uses \code{ggplot2} to create a faceted plot where each facet represents
-a pair of PCs. Anomalies are highlighted in red, while normal points are shown in black.
+The function extracts the specified PCs from the given anomaly detection object and generates
+scatter plots for each pair of PCs. It uses \code{GGally} to create a pairs plot where each facet
+represents a pair of PCs. The plot includes:
+
+1. Lower facets: Scatter plots with a background gradient representing anomaly scores from green (low) to red (high)
+2. Diagonal facets: Density, ridge, boxplot or blank visualizations showing the distribution of each PC, separated by anomaly status
+3. Upper facets: Blank panels by default, or contour/ellipse plots separated by anomaly status if specified
 }
 \examples{
 # Load data
@@ -98,12 +120,12 @@ anomaly_output <- detectAnomaly(reference_data = reference_data,
                                 query_cell_type_col = "SingleR_annotation",
                                 pc_subset = 1:5,
                                 n_tree = 500,
-                                anomaly_treshold = 0.6)
+                                anomaly_threshold = 0.6)
 
 # Plot the output for a cell type
 plot(anomaly_output,
      cell_type = "CD4",
-     pc_subset = 1:5,
+     pc_subset = 1:3,
      data_type = "query")
 
 }
@@ -121,4 +143,3 @@ plot(anomaly_output,
 \author{
 Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 }
-\keyword{internal}

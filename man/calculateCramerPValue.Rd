@@ -5,30 +5,37 @@
 \title{Calculate Cramer Test P-Values for Two-Sample Comparison of Multivariate ECDFs}
 \usage{
 calculateCramerPValue(
+  query_data,
   reference_data,
-  query_data = NULL,
+  query_cell_type_col,
   ref_cell_type_col,
-  query_cell_type_col = NULL,
   cell_types = NULL,
   pc_subset = 1:5,
-  assay_name = "logcounts"
+  assay_name = "logcounts",
+  max_cells_query = 5000,
+  max_cells_ref = 5000
 )
 }
 \arguments{
+\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+
 \item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
-If NULL, the PC scores are regressed against the cell types of the reference data.}
+\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
 
 \item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
-
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
 
 \item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
 
 \item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+
+\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is 5000.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is 5000.}
 }
 \value{
 A named vector of p-values from the Cramer test for each cell type.

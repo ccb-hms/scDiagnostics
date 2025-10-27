@@ -70,8 +70,6 @@ In the realm of single-cell genomics, the ability to compare and integrate data 
 
 - `calculateHotellingPValue()`: This function performs Hotelling's T-squared test, a multivariate statistical test used to assess the differences between two groups of observations. It is useful for comparing the mean vectors of multiple variables and is commonly employed in single-cell data to evaluate group differences in principal component space.
 
-- `calculateNearestNeighborProbabilities()`: This function calculates the probability of nearest neighbor assignments in a high-dimensional space. It is used to evaluate the likelihood of a cell belonging to a specific cluster based on its proximity to neighboring cells. This function helps in assessing clustering quality and the robustness of cell type assignments.
-
 - `calculateAveragePairwiseCorrelation()`: This function computes the average pairwise correlation between variables or features across cells. It provides an overview of the relationships between different markers or genes, helping to identify correlated features and understand their interactions within the dataset.
 
 - `regressPC()`: This function performs linear regression of a covariate of interest onto one or more principal components derived from single-cell data. This analysis helps quantify the variance explained by the covariate and is useful for tasks such as assessing batch effects, clustering homogeneity, and alignment of query and reference datasets.
@@ -142,36 +140,6 @@ query_data_cd4 <- runPCA(query_data_cd4)
 
 # Evaluation of Dataset Alignment
 
-## `compareCCA()`
-
-In single-cell genomics, datasets from different sources or experimental conditions often need to be compared to understand how well they align. The `compareCCA` function facilitates this comparison by performing Canonical Correlation Analysis (CCA) between a query dataset and a reference dataset. This function is particularly useful when datasets have different sample sizes or distributions, and it helps in assessing the similarity between them after projecting them onto a common principal component space.
-
-
-`compareCCA()` performs the following steps:
-
-- **Project Data**: Project the query dataset onto the principal component space of the reference dataset. This ensures that both datasets are represented in the same reduced-dimensional space for a meaningful comparison.
-- **Perform CCA**: Conduct Canonical Correlation Analysis to find the relationships between the projected datasets. CCA helps to identify how the canonical variables derived from the query dataset correlate with those from the reference dataset.
-- **Compare Alignment**: Evaluate the alignment between the datasets by computing cosine similarities between the canonical correlation vectors derived from the CCA. This provides a measure of how well the two datasets correspond to each other in the canonical space.
-
-```{r, fig.height=5, fig.width=10, fig.show='hide'}
-# Perform CCA 
-cca_comparison <- compareCCA(query_data = query_data_cd4, 
-                             reference_data = ref_data_cd4, 
-                             query_cell_type_col = "expert_annotation", 
-                             ref_cell_type_col = "expert_annotation", 
-                             pc_subset = 1:5)
-plot(cca_comparison)
-```
-![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/compareCCA.png)
-
-Canonical Correlation Analysis (CCA) produces several key outputs:
-
-- **Canonical Variables**: For each dataset, CCA computes a set of canonical variables that maximize the correlation between the datasets. These variables are linear combinations of the original variables.
-- **Canonical Correlation Coefficients**: These coefficients indicate the strength of the correlation between the canonical variables of the two datasets. Higher values suggest stronger correlations.
-- **Cosine Similarities**: After obtaining the canonical variables, the function computes the cosine similarity between these variables from the query and reference datasets. This similarity measure helps assess how closely the canonical variables align between the two datasets.
-
-In summary, the `compareCCA` function allows you to compare how well two datasets are aligned by projecting them into a shared PCA space, performing CCA, and then evaluating the similarity of the canonical variables. This approach is valuable for integrative analyses and understanding the relationships between different datasets in single-cell studies.
-
 ## `comparePCA()`
 
 The `comparePCA()` function compares the PCA subspaces between the query and reference datasets. It calculates the principal angles between the PCA subspaces to assess the alignment and similarity between them. This is useful for understanding how well the dimensionality reduction spaces of your datasets match.
@@ -194,6 +162,7 @@ pca_comparison <- comparePCA(query_data = query_data_cd4,
 plot(pca_comparison)
 ```
 
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/comparePCA.png)
 
 
 
@@ -268,8 +237,7 @@ plotPairwiseDistancesDensity(query_data = query_data,
                              reference_data = reference_data, 
                              query_cell_type_col = "expert_annotation", 
                              ref_cell_type_col = "expert_annotation", 
-                             cell_type_query = "CD4", 
-                             cell_type_ref = "CD4", 
+                             cell_type = "CD4", 
                              pc_subset = 1:5,
                              distance_metric = "euclidean")
 ```
@@ -399,56 +367,107 @@ In this example, `calculateAveragePairwiseCorrelation()` computes the average pa
 
 The `regressPC()` function performs linear regression of a covariate of interest onto one or more principal components using data from a `r BiocStyle::Biocpkg("SingleCellExperiment")` object. This method helps quantify the variance explained by a covariate, which can be useful in applications such as quantifying batch effects, assessing clustering homogeneity, and evaluating alignment between query and reference datasets in cell type annotation settings.
 
-The function calculates the R-squared value from the linear regression of the covariate onto each principal component. The variance contribution of the covariate effect per principal component is computed as the product of the variance explained by the principal component and the R-squared value. The total variance explained by the covariate is obtained by summing these contributions across all principal components.
+The function supports multiple regression scenarios depending on the data provided:
+
+- **Query only**: Regresses principal components against cell types (`PC ~ cell_type`)
+- **Query + Reference**: Uses an interaction model to assess annotation quality (`PC ~ cell_type * dataset`)
+
+When reference data is provided, the function projects query data onto the reference PCA space and performs unified interaction modeling to identify cell types with annotation inconsistencies between datasets.
+
+The function calculates the R-squared value from the linear regression for each principal component. For query-only analyses, variance contributions are computed as the product of the variance explained by each principal component and its corresponding R-squared value. The total variance explained by the covariate is obtained by summing these contributions across all principal components.
 
 Here is how you can use the `regressPC()` function:
+
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
-# Perform regression analysis using only reference data
-regress_res <- regressPC(
-    reference_data = reference_data,
-    ref_cell_type_col = "expert_annotation",
+# Query-only analysis: How well do cell types separate in PCA space?
+regress_res_query <- regressPC(
+    query_data = query_data,
+    query_cell_type_col = "expert_annotation",
     cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-    pc_subset = 1:15
+    pc_subset = 1:10
 )
 
-# Plot results showing R-squared values
-plot(regress_res, plot_type = "r_squared")
+# Visualize results
+plot(regress_res_query, plot_type = "r_squared")
+plot(regress_res_query, plot_type = "variance_contribution")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC1.png)
-```{r, fig.height=5, fig.width=10, fig.show='hide'}
-# Plot results showing p-values
-plot(regress_res, plot_type = "p-value")
-```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC2.png)
 
-In this example, `regressPC()` is used to perform regression analysis on principal components 1 to 15 from the reference dataset. The results are then visualized using plots showing the R-squared values and p-values.
-
-If you also have a query dataset and want to compare it with the reference dataset, you can include it in the analysis:
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
-# Perform regression analysis using both reference and query data
-regress_res <- regressPC(
-    reference_data = reference_data,
-    query_data = query_data,
-    ref_cell_type_col = "expert_annotation",
-    query_cell_type_col = "SingleR_annotation",
-    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-    pc_subset = 1:15
-)
-
-# Plot results showing R-squared values
-plot(regress_res, plot_type = "r_squared")
+# Plot results showing p-values
+plot(regress_res_query, plot_type = "coefficient_heatmap")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC3.png)
 
+In this example, `regressPC()` is used to perform regression analysis on principal components 1 to 10 from the query dataset. The results are then visualized using plots showing the R-squared values and cell type coefficients, with PC labels displaying the percentage of variance explained by each component.
+
+If you also have a reference dataset and want to assess annotation quality by comparing it with the query dataset, you can include it in the analysis:
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
-# Plot results showing p-values
-plot(regress_res, plot_type = "p-value")
+# Perform regression analysis using both reference and query data
+regress_res <- regressPC(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    pc_subset = 1:10
+)
+
+# Visualize results
+plot(regress_res, plot_type = "r_squared")
+plot(regress_res, plot_type = "variance_contribution")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC4.png)
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC5.png)
 
-In this case, the function projects the query data onto the principal components of the reference data and performs regression analysis. The results are visualized in the same way, providing insights into how well the principal components from the query data align with those from the reference data.
+```{r, fig.height=5, fig.width=10, fig.show='hide'}
+# Plot results showing p-values
+plot(regress_res, plot_type = "coefficient_heatmap")
+```
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC6.png)
 
-This function is useful for understanding the impact of different covariates on principal components and for comparing how cell types in different datasets are represented in the principal component space.
+The `regressPC()` function also supports batch effect analysis when sample or batch information is available. This capability is particularly useful for assessing whether cell type annotations are consistent across different batches or samples, and for identifying batch-specific annotation problems.
+
+When batch information is provided via the `query_batch_col` parameter, the function performs different regression analyses depending on the data configuration:
+
+### Query-only with Batch Information
+
+For query data with multiple batches, the function fits an interaction model:
+
+**PC ~ cell_type × batch**
+
+This model captures:
+- **Main effects of cell types**: How each cell type contributes to PC variation overall
+- **Main effects of batches**: How each batch contributes to PC variation overall  
+- **Interaction effects**: How cell type effects vary across different batches
+
+Large interaction effects indicate that certain cell types behave differently across batches, which could suggest batch-specific technical artifacts or genuine biological differences between samples.
+
+### Query + Reference with Batch Information  
+
+When both reference and query data are provided along with batch information, the analysis becomes more sophisticated. The function creates a unified batch labeling system where:
+- Reference data is labeled as "Reference" 
+- Query batches are labeled as "Query_BatchName" (e.g., "Query_Sample1", "Query_Sample2")
+
+The regression model then becomes:
+
+**PC ~ cell_type × batch**
+
+where the batch variable now includes both the reference and all query batches. This allows assessment of:
+- How consistently each cell type is annotated between reference and query datasets
+- Whether annotation quality varies across different query batches
+- Which specific query batches show the most deviation from reference annotations
+
+### Diagnostic Value
+
+The interaction effects in batch analysis are particularly diagnostic:
+- **Small interactions**: Consistent cell type annotations across batches
+- **Large interactions for specific cell types**: Potential annotation problems in particular batches
+- **Large interactions for specific batches**: Systematic annotation issues in those batches
+
+This analysis framework enables identification of batch-specific annotation problems and helps determine whether observed differences between datasets are due to technical batch effects or genuine biological variation.
+
 
 # Marker Gene Alignment
 

@@ -5,49 +5,59 @@
 \title{Plot gene expression distribution from overall and cell type-specific perspective}
 \usage{
 plotMarkerExpression(
-  reference_data,
   query_data,
+  reference_data,
   ref_cell_type_col,
   query_cell_type_col,
   cell_type,
   gene_name,
-  assay_name = "logcounts"
+  assay_name = "logcounts",
+  normalization = c("z_score", "min_max", "rank", "none"),
+  max_cells_query = NULL,
+  max_cells_ref = NULL
 )
 }
 \arguments{
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
-
 \item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+
+\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
 \item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
 
-\item{cell_type}{A vector of cell type cell_types to plot (e.g., c("T-cell", "B-cell")).}
+\item{cell_type}{A cell type to plot (e.g., c("T-cell", "B-cell")).}
 
 \item{gene_name}{The gene name for which the distribution is to be visualized.}
 
 \item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+
+\item{normalization}{Method for normalizing expression values. Options: "z_score" (default), "min_max", "rank", "none".}
+
+\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
+no downsampling of query cells is performed. Default is NULL.}
+
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
+no downsampling of reference cells is performed. Default is NULL.}
 }
 \value{
-A gtable object containing two arranged density plots as grobs. 
-        The first plot shows the overall gene expression distribution, 
-        and the second plot displays the cell type-specific expression 
-        distribution.
+A ggplot object containing density plots comparing reference and query distributions.
 }
 \description{
-This function generates density plots to visualize the distribution of gene expression values 
+This function generates density plots to visualize the distribution of gene expression values
 for a specific gene across the overall dataset and within a specified cell type.
 }
 \details{
-This function generates density plots to compare the distribution of a specific marker 
-gene between reference and query datasets. The aim is to inspect the alignment of gene expression 
-levels as a surrogate for dataset similarity. Similar distributions suggest a good alignment, 
-while differences may indicate discrepancies or incompatibilities between the datasets. 
-To make the gene expression scales comparable between the datasets, the gene expression values 
-are transformed using z-rank normalization. This transformation ranks the expression values 
-and then scales the ranks to have a mean of 0 and a standard deviation of 1, which helps 
-in standardizing the distributions for comparison.
+This function generates density plots to compare the distribution of a specific marker
+gene between reference and query datasets. The aim is to inspect the alignment of gene expression
+levels as a surrogate for dataset similarity. Similar distributions suggest a good alignment,
+while differences may indicate discrepancies or incompatibilities between the datasets.
+
+Multiple normalization options are available:
+- "z_score": Standard z-score normalization within each dataset
+- "min_max": Min-max scaling to [0,1] range within each dataset
+- "rank": Maps values to quantile ranks (0-100 scale)
+- "none": No transformation (preserves original scale differences)
 }
 \examples{
 # Load data
@@ -55,12 +65,13 @@ data("reference_data")
 data("query_data")
 
 # Note: Users can use SingleR or any other method to obtain the cell type annotations.
-plotMarkerExpression(reference_data = reference_data, 
-                     query_data = query_data, 
-                     ref_cell_type_col = "expert_annotation", 
-                     query_cell_type_col = "SingleR_annotation", 
-                     gene_name = "VPREB3", 
-                     cell_type = "B_and_plasma")
+plotMarkerExpression(reference_data = reference_data,
+                     query_data = query_data,
+                     ref_cell_type_col = "expert_annotation",
+                     query_cell_type_col = c("expert_annotation", "SingleR_annotation")[1],
+                     gene_name = "CD8A",
+                     cell_type = "CD4",
+                     normalization = "z_score")
 
 }
 \author{

@@ -21,11 +21,15 @@
 #' @param cell_types A character vector of cell types for which to compute conditional means in the reference data.
 #' @param multiple_cond_means A logical value indicating whether to compute multiple conditional means per cell type
 #' (through PCA and clustering). Defaults to \code{TRUE}.
-#' @param assay_name A character string specifying the assay name on which to perform computations. Defaults to \code{"logcounts"}.
 #' @param cumulative_variance_threshold A numeric value between 0 and 1 specifying the variance threshold for PCA
 #' when computing multiple conditional means. Defaults to \code{0.7}.
 #' @param n_neighbor An integer specifying the number of nearest neighbors for clustering when computing multiple
 #' conditional means. Defaults to \code{1}.
+#' @param assay_name A character string specifying the assay name on which to perform computations. Defaults to \code{"logcounts"}.
+#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
+#' no downsampling of query cells is performed. Default is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
+#' no downsampling of reference cells is performed. Default is 5000.
 #'
 #' @return A list containing:
 #' \item{cond_means}{A matrix of the conditional means computed for the reference data.}
@@ -56,17 +60,34 @@ projectSIR <- function(query_data,
                        ref_cell_type_col,
                        cell_types = NULL,
                        multiple_cond_means = TRUE,
-                       assay_name = "logcounts",
                        cumulative_variance_threshold = 0.7,
-                       n_neighbor = 1){
+                       n_neighbor = 1,
+                       assay_name = "logcounts",
+                       max_cells_query = 5000,
+                       max_cells_ref = 5000){
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
                   reference_data = reference_data,
                   query_cell_type_col = query_cell_type_col,
                   ref_cell_type_col = ref_cell_type_col,
-                  cell_types = cell_types,
-                  assay_name = assay_name)
+                  assay_name = assay_name,
+                  max_cells_query = max_cells_query,
+                  max_cells_ref = max_cells_ref)
+
+    # Convert cell type columns to character if needed
+    query_data <- convertColumnsToCharacter(sce_object = query_data,
+                                            convert_cols = query_cell_type_col)
+    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
+                                                convert_cols = ref_cell_type_col)
+
+    # Downsample query and reference data
+    query_data <- downsampleSCE(sce_object = query_data,
+                                cell_type_col = query_cell_type_col,
+                                max_cells = max_cells_query)
+    reference_data <- downsampleSCE(sce_object = reference_data,
+                                    cell_type_col = ref_cell_type_col,
+                                    max_cells = max_cells_ref)
 
     # Check if cumulative_variance_threshold is between 0 and 1
     if (!is.numeric(cumulative_variance_threshold) ||
@@ -79,11 +100,14 @@ projectSIR <- function(query_data,
         stop("n_neighbor must be a positive integer.")
     }
 
-    # Get common cell types if they are not specified by user
-    if(is.null(cell_types)){
-        cell_types <- na.omit(unique(c(reference_data[[ref_cell_type_col]],
-                                       query_data[[query_cell_type_col]])))
-    }
+    # Select cell types
+    cell_types <- selectCellTypes(query_data = query_data,
+                                  reference_data = reference_data,
+                                  query_cell_type_col = query_cell_type_col,
+                                  ref_cell_type_col = ref_cell_type_col,
+                                  cell_types = cell_types,
+                                  dual_only = FALSE,
+                                  n_cell_types = NULL)
 
     # Compute conditional means for each cell type of reference data
     cond_means <- conditionalMeans(reference_data = reference_data,
@@ -202,11 +226,12 @@ conditionalMeans <- function(reference_data,
             n_components <- min(which(cumulative_variance >= cumulative_variance_threshold))
             projections <- assay_mat %*%
                 assay_svd$v[, seq_len(n_components)]
-            clusters <- bluster::clusterRows(
-                projections,
-                BLUSPARAM = bluster::TwoStepParam(
-                    second = bluster::NNGraphParam(
-                        k = n_neighbor)))
+            clusters <- suppressWarnings(
+                bluster::clusterRows(
+                    projections,
+                    BLUSPARAM = bluster::TwoStepParam(
+                        second = bluster::NNGraphParam(
+                            k = n_neighbor))))
             cluster_means <- do.call(
                 rbind, lapply(unique(clusters),
                               function(cl) colMeans(assay_mat[clusters == cl,, drop = FALSE])))

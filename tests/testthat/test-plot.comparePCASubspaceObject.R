@@ -1,6 +1,6 @@
 # Load necessary libraries
 library(testthat)
-library(scDiagnostics) 
+library(scDiagnostics)
 
 # Load example datasets
 data("reference_data")
@@ -24,17 +24,34 @@ reference_data_subset <- scater::runPCA(reference_data_subset)
 query_data_subset <- scater::runPCA(query_data_subset)
 
 # Compare PCA subspaces
-subspace_comparison <- comparePCASubspace(reference_data = reference_data_subset, 
-                                          query_data = query_data_subset, 
-                                          query_cell_type_col = "expert_annotation", 
+subspace_comparison <- comparePCASubspace(reference_data = reference_data_subset,
+                                          query_data = query_data_subset,
+                                          query_cell_type_col = "expert_annotation",
                                           ref_cell_type_col = "expert_annotation",
                                           n_top_vars = 50,
                                           pc_subset = 1:5)
 
-test_that("plot.comparePCASubspace generates plots correctly", {
+test_that("plot.comparePCASubspaceObject generates plots correctly", {
     # Generate plot using the function
     p1 <- plot(subspace_comparison)
-    
+
     # Check if output is a ggplot object
     expect_s3_class(p1, "ggplot")
+})
+
+test_that("plot.comparePCASubspaceObject creates expected plot elements", {
+    # Generate plot using the function
+    p1 <- plot(subspace_comparison)
+
+    # Check if output is a ggplot object
+    expect_s3_class(p1, "ggplot")
+
+    # Check that the plot has the expected layers
+    expect_true(length(p1$layers) > 0)
+
+    # Check that the plot has appropriate labels
+    expect_true(!is.null(p1$labels$title))
+    expect_true(!is.null(p1$labels$subtitle))
+    expect_true(!is.null(p1$labels$x))
+    expect_true(!is.null(p1$labels$y))
 })

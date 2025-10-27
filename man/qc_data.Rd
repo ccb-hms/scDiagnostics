@@ -14,8 +14,8 @@ Bunis DG et al. (2021). Single-Cell Mapping of Progressive Fetal-to-Adult Transi
 qc_data
 }
 \description{
-This dataset contains the processed query dataset from the Bunis haematopoietic stem and progenitor cell data. 
-It has been preprocessed to include log-normalized counts, QC metrics, SingleR cell type predictions, 
+This dataset contains the processed query dataset from the Bunis haematopoietic stem and progenitor cell data.
+It has been preprocessed to include log-normalized counts, QC metrics, SingleR cell type predictions,
 and annotation scores.
 }
 \details{

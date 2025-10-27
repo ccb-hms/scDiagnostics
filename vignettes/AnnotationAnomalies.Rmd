@@ -129,11 +129,11 @@ anomaly_output <- detectAnomaly(reference_data = reference_data,
                                 query_cell_type_col = "SingleR_annotation",
                                 pc_subset = 1:5,
                                 n_tree = 500,
-                                anomaly_treshold = 0.6)
+                                anomaly_threshold = 0.6)
 
 # Plot the output for the "CD4" cell type
 plot(anomaly_output, 
-     cell_type = "CD4", 
+     cell_type = "CD8", 
      pc_subset = 1:5, 
      data_type = "query")
 ```
@@ -153,7 +153,7 @@ anomaly_output <- detectAnomaly(reference_data = reference_data,
                                 query_cell_type_col = "SingleR_annotation",
                                 pc_subset = 1:5,
                                 n_tree = 500,
-                                anomaly_treshold = 0.6)
+                                anomaly_threshold = 0.6)
 
 # Plot the global anomaly scores
 plot(anomaly_output, 
@@ -181,7 +181,7 @@ anomaly_output <- detectAnomaly(reference_data = reference_data,
                                 query_cell_type_col = "SingleR_annotation",
                                 pc_subset = 1:10,
                                 n_tree = 500,
-                                anomaly_treshold = 0.5)
+                                anomaly_threshold = 0.5)
 
 # Select the top 6 anomalies based on the anomaly scores
 top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores, 
@@ -244,7 +244,7 @@ cd4_anomalies <- detectAnomaly(
   ref_cell_type_col = "expert_annotation",
   pc_subset = 1:10,
   n_tree = 500,
-  anomaly_treshold = 0.5)
+  anomaly_threshold = 0.5)
 
 # Top 6 CD4 anomalies
 cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE)[1:6])

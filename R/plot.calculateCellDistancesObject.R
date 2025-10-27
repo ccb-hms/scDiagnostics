@@ -58,7 +58,7 @@ plot.calculateCellDistancesObject <- function(x, ref_cell_type, cell_names, ...)
 
         # Create a data frame for the current cell and reference distances
         cell_data <- data.frame(cell = s, Distance = cell_distances,
-                                Distance_Type = "Cell")
+                                Distance_Type = "Query")
         ref_data <- data.frame(cell = s, Distance = ref_distances,
                                Distance_Type = "Reference")
 
@@ -73,29 +73,31 @@ plot.calculateCellDistancesObject <- function(x, ref_cell_type, cell_names, ...)
     plot_data <- do.call(rbind, plot_data_list)
 
     # Keep order of cell names
-    plot_data[["Cell"]] <- factor(plot_data$cell, levels = cell_names)
+    plot_data[["Query"]] <- factor(plot_data[["cell"]], levels = cell_names)
 
     # Plot density comparison with facets for each cell
     density_plot <- ggplot2::ggplot(plot_data, ggplot2::aes(
         x = .data[["Distance"]], fill = .data[["Distance_Type"]])) +
         ggplot2::geom_density(alpha = 0.5) +
-        ggplot2::labs(title = paste(
-            "Distance Density Comparison for Cell Type:", ref_cell_type),
-            x = "Distance", y = "Density") +
-        ggplot2::scale_fill_manual(name = "Distance Type",
-                                   values = c("Reference" = "blue",
-                                              "Cell" = "red")) +
-        ggplot2::facet_wrap(~ .data[["Cell"]], scales = "free_y") +
+        ggplot2::labs(title = NULL,
+                      x = "Distance", y = "Density",
+                      fill = "Distance Type") +
+        ggplot2::facet_wrap(~ .data[["Query"]], scales = "free_y") +
         ggplot2::theme_bw() +
-        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                       panel.grid.major = ggplot2::element_line(
-                           color = "gray",
-                           linetype = "dotted"),
-                       plot.title = ggplot2::element_text(size = 14,
-                                                          face = "bold",
-                                                          hjust = 0.5),
-                       axis.title = ggplot2::element_text(size = 12),
-                       axis.text = ggplot2::element_text(size = 10))
+        ggplot2::theme(
+            strip.background = ggplot2::element_rect(fill = "white",
+                                                     color = "black",
+                                                     linewidth = 0.5),
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_line(
+                color = "gray",
+                linetype = "dotted"),
+            plot.title = ggplot2::element_text(size = 14,
+                                               face = "bold",
+                                               hjust = 0.5),
+            axis.title = ggplot2::element_text(size = 12),
+            axis.text = ggplot2::element_text(size = 10),
+            legend.position = "bottom")
     return(density_plot)
 }
 
