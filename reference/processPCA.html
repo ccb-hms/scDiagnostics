@@ -142,63 +142,50 @@ Only datasets requiring PCA computation are subject to downsampling.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load and prepare dataset</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">TENxPBMCData</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: HDF5Array</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: SparseArray</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: Matrix</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘Matrix’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:S4Vectors’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     expand</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: S4Arrays</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: abind</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘S4Arrays’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:abind’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     abind</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:base’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     rowsum</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: DelayedArray</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘DelayedArray’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     apply, scale, sweep</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: h5mread</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: rhdf5</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘h5mread’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:rhdf5’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     h5ls</span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scuttle</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load data</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"reference_data"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"query_data"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">pbmc_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/TENxPBMCData/man/TENxPBMCData.html" class="external-link">TENxPBMCData</a></span><span class="op">(</span><span class="st">"pbmc3k"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> see ?TENxPBMCData and browseVignettes('TENxPBMCData') for documentation</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> downloading 1 resources</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> retrieving 1 resource</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> loading from cache</span>
-<span class="r-in"><span><span class="va">pbmc_subset</span> <span class="op">&lt;-</span> <span class="va">pbmc_data</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">500</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">pbmc_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/logNormCounts.html" class="external-link">logNormCounts</a></span><span class="op">(</span><span class="va">pbmc_subset</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Example 1: Dataset without PCA (will compute PCA)</span></span></span>
+<span class="r-in"><span><span class="va">query_no_pca</span> <span class="op">&lt;-</span> <span class="va">query_data</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDims</a></span><span class="op">(</span><span class="va">query_no_pca</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>  <span class="co"># Remove existing PCA</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Remove any existing PCA</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDims</a></span><span class="op">(</span><span class="va">pbmc_subset</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Process dataset - will compute PCA using HVGs</span></span></span>
-<span class="r-in"><span><span class="va">processed_data</span> <span class="op">&lt;-</span> <span class="fu">processPCA</span><span class="op">(</span>sce_object <span class="op">=</span> <span class="va">pbmc_subset</span>, n_hvgs <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">processed_query</span> <span class="op">&lt;-</span> <span class="fu">processPCA</span><span class="op">(</span>sce_object <span class="op">=</span> <span class="va">query_no_pca</span>, n_hvgs <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Data missing PCA - computing...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Computing PCA...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Using 1000 highly variable genes for PCA computation</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Check results</span></span></span>
-<span class="r-in"><span><span class="st">"PCA"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDimNames</a></span><span class="op">(</span><span class="va">processed_data</span><span class="op">)</span>  <span class="co"># Should be TRUE</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Using 231 highly variable genes for PCA computation</span>
+<span class="r-in"><span><span class="st">"PCA"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDimNames</a></span><span class="op">(</span><span class="va">processed_query</span><span class="op">)</span>  <span class="co"># Should be TRUE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">processed_data</span><span class="op">)</span>  <span class="co"># Should be 500 (unchanged)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 500</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">processed_query</span><span class="op">)</span>  <span class="co"># Should be 503 (unchanged)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 503</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example 2: Dataset with existing valid PCA (will be preserved)</span></span></span>
+<span class="r-in"><span><span class="va">processed_existing</span> <span class="op">&lt;-</span> <span class="fu">processPCA</span><span class="op">(</span>sce_object <span class="op">=</span> <span class="va">query_data</span>, n_hvgs <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Data already has valid PCA - returning unchanged (503 cells)</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">processed_existing</span><span class="op">)</span>  <span class="co"># Should be 503 (unchanged, no downsampling)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 503</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example 3: Large dataset requiring downsampling for PCA computation</span></span></span>
+<span class="r-in"><span><span class="va">ref_no_pca</span> <span class="op">&lt;-</span> <span class="va">reference_data</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDims</a></span><span class="op">(</span><span class="va">ref_no_pca</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>  <span class="co"># Remove existing PCA</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">processed_large</span> <span class="op">&lt;-</span> <span class="fu">processPCA</span><span class="op">(</span>sce_object <span class="op">=</span> <span class="va">ref_no_pca</span>,</span></span>
+<span class="r-in"><span>                              n_hvgs <span class="op">=</span> <span class="fl">800</span>,</span></span>
+<span class="r-in"><span>                              max_cells <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Data missing PCA - computing...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Downsampling data from 1500 to 1000 cells before PCA computation</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing PCA...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Using 232 highly variable genes for PCA computation</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">processed_large</span><span class="op">)</span>  <span class="co"># Should be 1000 (downsampled for PCA computation)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1000</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example 4: Large dataset with existing PCA (no downsampling)</span></span></span>
+<span class="r-in"><span><span class="va">processed_large_existing</span> <span class="op">&lt;-</span> <span class="fu">processPCA</span><span class="op">(</span>sce_object <span class="op">=</span> <span class="va">reference_data</span>,</span></span>
+<span class="r-in"><span>                                       n_hvgs <span class="op">=</span> <span class="fl">800</span>,</span></span>
+<span class="r-in"><span>                                       max_cells <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Data already has valid PCA - returning unchanged (1500 cells)</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">processed_large_existing</span><span class="op">)</span>  <span class="co"># Should be 1500 (preserved, no downsampling)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1500</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
