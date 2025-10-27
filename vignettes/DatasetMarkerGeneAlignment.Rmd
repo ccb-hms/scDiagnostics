@@ -162,6 +162,7 @@ pca_comparison <- comparePCA(query_data = query_data_cd4,
 plot(pca_comparison)
 ```
 
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/comparePCA.png)
 
 
 
@@ -391,11 +392,13 @@ plot(regress_res_query, plot_type = "r_squared")
 plot(regress_res_query, plot_type = "variance_contribution")
 ```
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC1.png)
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC2.png)
+
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot results showing p-values
 plot(regress_res_query, plot_type = "coefficient_heatmap")
 ```
-![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC2.png)
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC3.png)
 
 In this example, `regressPC()` is used to perform regression analysis on principal components 1 to 10 from the query dataset. The results are then visualized using plots showing the R-squared values and cell type coefficients, with PC labels displaying the percentage of variance explained by each component.
 
@@ -415,13 +418,14 @@ regress_res <- regressPC(
 plot(regress_res, plot_type = "r_squared")
 plot(regress_res, plot_type = "variance_contribution")
 ```
-![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC3.png)
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC4.png)
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC5.png)
 
 ```{r, fig.height=5, fig.width=10, fig.show='hide'}
 # Plot results showing p-values
 plot(regress_res, plot_type = "coefficient_heatmap")
 ```
-![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC4.png)
+![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/regressPC6.png)
 
 The `regressPC()` function also supports batch effect analysis when sample or batch information is available. This capability is particularly useful for assessing whether cell type annotations are consistent across different batches or samples, and for identifying batch-specific annotation problems.
 

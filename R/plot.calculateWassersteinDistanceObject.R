@@ -35,15 +35,15 @@ plot.calculateWassersteinDistanceObject <- function(
 
     # Determine which cell types to plot
     if (is.null(cell_types)) {
-        cell_types <- x$cell_types
+        cell_types <- x[["cell_types"]]
     } else {
         # Check that requested cell types are available
-        missing_types <- setdiff(cell_types, x$cell_types)
+        missing_types <- setdiff(cell_types, x[["cell_types"]])
         if (length(missing_types) > 0) {
             warning(paste("Cell types not found in data:",
                           paste(missing_types, collapse = ", ")))
         }
-        cell_types <- intersect(cell_types, x$cell_types)
+        cell_types <- intersect(cell_types, x[["cell_types"]])
     }
 
     if (length(cell_types) == 0) {
@@ -56,14 +56,14 @@ plot.calculateWassersteinDistanceObject <- function(
     for (cell_type in cell_types) {
         # Reference-reference distribution
         ref_ref_data <- data.frame(
-            wasserstein_dist = x$ref_ref_dist[[cell_type]],
+            wasserstein_dist = x[["ref_ref_dist"]][[cell_type]],
             distribution = "Reference-Reference",
             cell_type = cell_type
         )
 
         # Reference-query distribution
         ref_query_data <- data.frame(
-            wasserstein_dist = x$ref_query_dist[[cell_type]],
+            wasserstein_dist = x[["ref_query_dist"]][[cell_type]],
             distribution = "Reference-Query",
             cell_type = cell_type
         )
@@ -72,12 +72,12 @@ plot.calculateWassersteinDistanceObject <- function(
     }
 
     # Set factor levels to control order (Reference-Reference at bottom, Reference-Query at top)
-    plot_data$distribution <- factor(plot_data$distribution,
-                                     levels = c("Reference-Reference",
-                                                "Reference-Query"))
+    plot_data[["distribution"]] <- factor(plot_data[["distribution"]],
+                                     levels = c("Reference-Query",
+                                                "Reference-Reference"))
 
     # Set factor levels for cell_type to preserve the order specified in cell_types parameter
-    plot_data$cell_type <- factor(plot_data$cell_type, levels = cell_types)
+    plot_data[["cell_type"]] <- factor(plot_data[["cell_type"]], levels = cell_types)
 
     # Setting up color data
     plot_data[["cell_type_distribution"]] <-
@@ -93,7 +93,7 @@ plot.calculateWassersteinDistanceObject <- function(
     # Build geom_density_ridges arguments conditionally
     ridge_args <- list(
         alpha = 0.7,
-        scale = 0.8,
+        scale = 1.25,
         rel_min_height = 0.01,
         jittered_points = FALSE,
         position = "identity"

@@ -209,7 +209,7 @@ plotMarkerExpression <- function(query_data,
                                   length(ref_gene_expression_specific) +
                                       length(query_gene_expression_specific))))
     marker_data[["Dataset"]] <- factor(marker_data[["Dataset"]],
-                                       levels = c("Reference", "Query"))
+                                       levels = c("Query", "Reference"))
 
 
     # Create a stacked density plot
