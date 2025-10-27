@@ -47,7 +47,7 @@
 #' Only datasets requiring PCA computation are subject to downsampling.
 #'
 #' @examples
-#' #' library(SingleCellExperiment)
+#' library(SingleCellExperiment)
 #'
 #' # Load data
 #' data("reference_data")

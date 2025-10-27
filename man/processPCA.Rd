@@ -63,7 +63,7 @@ Objects with existing valid PCA are returned unchanged to preserve expensive pre
 Only datasets requiring PCA computation are subject to downsampling.
 }
 \examples{
-#' library(SingleCellExperiment)
+library(SingleCellExperiment)
 
 # Load data
 data("reference_data")
