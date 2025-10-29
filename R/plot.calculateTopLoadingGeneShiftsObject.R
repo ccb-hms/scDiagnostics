@@ -401,19 +401,19 @@ plotHeatmap <- function(x, cell_type,
             cell_subset_modified <- cell_subset
             cell_subset_modified[["anomaly_status"]][cell_subset_modified[["dataset"]] == "Reference"] <- "Normal"
 
-            # 3 categories: Query_Normal, Query_Anomaly, Reference_Normal (no Reference_Anomaly)
+            # 3 categories: Reference_Normal, Query_Normal, Query_Anomaly (no Reference_Anomaly)
             cell_subset_modified[["group"]] <- paste(cell_subset_modified[["dataset"]],
                                                      cell_subset_modified[["anomaly_status"]],
                                                      sep = "_")
-            group_order <- c("Query_Normal", "Query_Anomaly", "Reference_Normal")
+            group_order <- c("Reference_Normal", "Query_Normal", "Query_Anomaly")
 
             # Update cell_subset to use modified version
             cell_subset <- cell_subset_modified
             cell_subset[["group"]] <- cell_subset_modified[["group"]]
         } else {
-            # 2 categories: Query, Reference
+            # 2 categories: Reference, Query
             cell_subset[["group"]] <- cell_subset[["dataset"]]
-            group_order <- c("Query", "Reference")
+            group_order <- c("Reference", "Query")
         }
 
         # Aggregate expression data by groups
@@ -466,12 +466,12 @@ plotHeatmap <- function(x, cell_type,
             cell_subset[["anomaly_status"]][cell_subset[["dataset"]] == "Reference"] <- "Normal"
 
             cell_subset <- cell_subset[order(
-                factor(cell_subset[["dataset"]], levels = c("Query", "Reference")),
-                factor(cell_subset[["anomaly_status"]], levels = c("Anomaly", "Normal"))
+                factor(cell_subset[["dataset"]], levels = c("Reference", "Query")),
+                factor(cell_subset[["anomaly_status"]], levels = c("Normal", "Anomaly"))
             ), ]
         } else {
             cell_subset <- cell_subset[order(
-                factor(cell_subset[["dataset"]], levels = c("Query", "Reference"))
+                factor(cell_subset[["dataset"]], levels = c("Reference", "Query"))
             ), ]
         }
 
@@ -703,9 +703,9 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
         group_order <- c("Query_Normal", "Query_Anomaly", "Reference_Normal")
         cell_subset <- cell_subset_modified
     } else {
-        # 2 categories: Query, Reference
+        # 2 categories: Reference, Query
         cell_subset[["group"]] <- cell_subset[["dataset"]]
-        group_order <- c("Query", "Reference")
+        group_order <- c("Reference", "Query")
     }
 
     # Calculate pseudo-bulk expression profiles
