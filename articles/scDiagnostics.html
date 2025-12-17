@@ -196,36 +196,36 @@ datasets available in the reference manual.</p>
 </h3>
 <p>In these datasets available in the <code>scDiagnostics</code>
 package, <code>reference_data</code>, <code>query_data</code>, and
-<code>qc_data</code> are all <em><a href="https://bioconductor.org/packages/3.21/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+<code>qc_data</code> are all <em><a href="https://bioconductor.org/packages/3.22/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects that include a <code>logcounts</code> assay, which stores the
 log-transformed expression values for the genes.</p>
 <p>The <code>reference_data</code> and <code>query_data</code> objects
 both originate from scRNA-seq experiments on hematopoietic tissues,
-specifically bone marrow samples, as provided by the <em><a href="https://bioconductor.org/packages/3.21/scRNAseq" class="external-link">scRNAseq</a></em>
+specifically bone marrow samples, as provided by the <em><a href="https://bioconductor.org/packages/3.22/scRNAseq" class="external-link">scRNAseq</a></em>
 package. These datasets have undergone comprehensive processing and
 cleaning, ensuring high-quality data for downstream analysis.
-Log-normalized counts were added to both datasets using the <em><a href="https://bioconductor.org/packages/3.21/scuttle" class="external-link">scuttle</a></em>
+Log-normalized counts were added to both datasets using the <em><a href="https://bioconductor.org/packages/3.22/scuttle" class="external-link">scuttle</a></em>
 package. The <code>query_data</code> object has been further annotated
-with cell type assignments using the <em><a href="https://bioconductor.org/packages/3.21/SingleR" class="external-link">SingleR</a></em>
+with cell type assignments using the <em><a href="https://bioconductor.org/packages/3.22/SingleR" class="external-link">SingleR</a></em>
 package, and it includes <code>annotation_scores</code> that reflect the
 confidence in these annotations. Additionally, gene set scores were
 computed and incorporated into the <code>query_data</code> using the
-<em><a href="https://bioconductor.org/packages/3.21/AUCell" class="external-link">AUCell</a></em>
+<em><a href="https://bioconductor.org/packages/3.22/AUCell" class="external-link">AUCell</a></em>
 package. For feature selection, the top 500 highly variable genes (HVGs)
-common to both datasets were identified and retained using the <em><a href="https://bioconductor.org/packages/3.21/scran" class="external-link">scran</a></em>
+common to both datasets were identified and retained using the <em><a href="https://bioconductor.org/packages/3.22/scran" class="external-link">scran</a></em>
 package. Finally, dimensionality reduction techniques including PCA,
 t-SNE, and UMAP were applied to both datasets, with the results stored
-within each object using the <em><a href="https://bioconductor.org/packages/3.21/scater" class="external-link">scater</a></em>
+within each object using the <em><a href="https://bioconductor.org/packages/3.22/scater" class="external-link">scater</a></em>
 package.</p>
 <p>The <code>qc_data</code> dataset in this package is derived from the
-<code>hpca</code> dataset available in the <em><a href="https://bioconductor.org/packages/3.21/celldex" class="external-link">celldex</a></em>
+<code>hpca</code> dataset available in the <em><a href="https://bioconductor.org/packages/3.22/celldex" class="external-link">celldex</a></em>
 package. Like the other datasets, <code>qc_data</code> has undergone
 significant cleaning and processing to ensure high data quality. Quality
-control (QC) metrics were added using the <em><a href="https://bioconductor.org/packages/3.21/scuttle" class="external-link">scuttle</a></em>
+control (QC) metrics were added using the <em><a href="https://bioconductor.org/packages/3.22/scuttle" class="external-link">scuttle</a></em>
 package. Cell type annotations and associated annotation_scores were
-generated using the <em><a href="https://bioconductor.org/packages/3.21/SingleR" class="external-link">SingleR</a></em>
+generated using the <em><a href="https://bioconductor.org/packages/3.22/SingleR" class="external-link">SingleR</a></em>
 package. Additionally, the top highly variable genes were selected using
-the <em><a href="https://bioconductor.org/packages/3.21/scran" class="external-link">scran</a></em>
+the <em><a href="https://bioconductor.org/packages/3.22/scran" class="external-link">scran</a></em>
 package to enhance the dataset’s utility for downstream analyses.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load datasets</span></span>
@@ -240,7 +240,7 @@ package to enhance the dataset’s utility for downstream analyses.</p>
 assigned by experts. On the other hand, <code>query_data</code> also
 includes <code>expert_annotation</code>, but it additionally features
 <code>SingleR_annotation</code>, which is the cell type annotation
-generated by the <em><a href="https://bioconductor.org/packages/3.21/SingleR" class="external-link">SingleR</a></em>
+generated by the <em><a href="https://bioconductor.org/packages/3.22/SingleR" class="external-link">SingleR</a></em>
 package, a popular package for cell type assignment based on reference
 datasets. The <code>qc_data</code> object contains a special column
 called <code>annotation_scores</code>, which holds the scores from the
@@ -255,9 +255,9 @@ and evaluates cluster heterogeneity and marker gene alignment.</p>
 <div class="section level3">
 <h3 id="subsetting-the-datasets">Subsetting the Datasets<a class="anchor" aria-label="anchor" href="#subsetting-the-datasets"></a>
 </h3>
-<p>Some functions in the vignette are designed to work with <em><a href="https://bioconductor.org/packages/3.21/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+<p>Some functions in the vignette are designed to work with <em><a href="https://bioconductor.org/packages/3.22/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects that contain data from only one cell type. We will create
-separate <em><a href="https://bioconductor.org/packages/3.21/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+separate <em><a href="https://bioconductor.org/packages/3.22/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects that only CD4 cells, to ensure compatibility with these
 functions.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -483,7 +483,7 @@ effective data integration.</p>
 and visualizes pairwise distances or correlations between cell types in
 query and reference datasets, aiding in the evaluation of cell type
 annotation consistency in single-cell RNA sequencing (scRNA-seq)
-analysis. Operating on <em><a href="https://bioconductor.org/packages/3.21/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+analysis. Operating on <em><a href="https://bioconductor.org/packages/3.22/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects, it allows users to specify cell types of interest and compute
 either distances or correlation coefficients, with the option to project
 data into PCA space for focused analysis. The function generates a
@@ -663,7 +663,7 @@ visualize patterns within the data.</p>
 <div class="section level2">
 <h2 id="r-session-info">R Session Info<a class="anchor" aria-label="anchor" href="#r-session-info"></a>
 </h2>
-<pre><code>R version 4.5.1 (2025-06-13)
+<pre><code>R version 4.5.2 (2025-10-31)
 Platform: x86_64-pc-linux-gnu
 Running under: Ubuntu 24.04.3 LTS
 
@@ -685,48 +685,46 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] scater_1.36.0               ggplot2_4.0.0              
- [3] scran_1.36.0                scuttle_1.18.0             
- [5] SingleCellExperiment_1.30.1 SummarizedExperiment_1.38.1
- [7] Biobase_2.68.0              GenomicRanges_1.60.0       
- [9] GenomeInfoDb_1.44.3         IRanges_2.42.0             
-[11] S4Vectors_0.46.0            BiocGenerics_0.54.1        
-[13] generics_0.1.4              MatrixGenerics_1.20.0      
+ [1] scater_1.38.0               ggplot2_4.0.1              
+ [3] scran_1.38.0                scuttle_1.20.0             
+ [5] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0
+ [7] Biobase_2.70.0              GenomicRanges_1.62.1       
+ [9] Seqinfo_1.0.0               IRanges_2.44.0             
+[11] S4Vectors_0.48.0            BiocGenerics_0.56.0        
+[13] generics_0.1.4              MatrixGenerics_1.22.0      
 [15] matrixStats_1.5.0           scDiagnostics_1.3.3        
-[17] BiocStyle_2.36.0           
+[17] BiocStyle_2.38.0           
 
 loaded via a namespace (and not attached):
- [1] gridExtra_2.3           rlang_1.1.6             magrittr_2.0.4         
- [4] ggridges_0.5.7          compiler_4.5.1          systemfonts_1.3.1      
- [7] vctrs_0.6.5             pkgconfig_2.0.3         crayon_1.5.3           
-[10] fastmap_1.2.0           XVector_0.48.0          labeling_0.4.3         
-[13] rmarkdown_2.30          UCSC.utils_1.4.0        ggbeeswarm_0.7.2       
-[16] ragg_1.5.0              purrr_1.1.0             xfun_0.53              
-[19] bluster_1.18.0          cachem_1.1.0            beachmat_2.24.0        
-[22] jsonlite_2.0.0          DelayedArray_0.34.1     BiocParallel_1.42.2    
-[25] irlba_2.3.5.1           parallel_4.5.1          cluster_2.1.8.1        
-[28] R6_2.6.1                bslib_0.9.0             RColorBrewer_1.1-3     
-[31] ranger_0.17.0           limma_3.64.3            GGally_2.4.0           
-[34] jquerylib_0.1.4         Rcpp_1.1.0              bookdown_0.45          
-[37] knitr_1.50              Matrix_1.7-3            igraph_2.2.1           
-[40] tidyselect_1.2.1        abind_1.4-8             yaml_2.3.10            
-[43] viridis_0.6.5           codetools_0.2-20        lattice_0.22-7         
-[46] tibble_3.3.0            withr_3.0.2             S7_0.2.0               
-[49] evaluate_1.0.5          desc_1.4.3              ggstats_0.11.0         
-[52] pillar_1.11.1           BiocManager_1.30.26     scales_1.4.0           
-[55] RhpcBLASctl_0.23-42     glue_1.8.0              metapod_1.16.0         
-[58] tools_4.5.1             data.table_1.17.8       BiocNeighbors_2.2.0    
-[61] ScaledMatrix_1.16.0     locfit_1.5-9.12         fs_1.6.6               
-[64] grid_4.5.1              tidyr_1.3.1             edgeR_4.6.3            
-[67] GenomeInfoDbData_1.2.14 beeswarm_0.4.0          BiocSingular_1.24.0    
-[70] vipor_0.4.7             cli_3.6.5               rsvd_1.0.5             
-[73] textshaping_1.0.4       S4Arrays_1.8.1          viridisLite_0.4.2      
-[76] dplyr_1.1.4             gtable_0.3.6            isotree_0.6.1-4        
-[79] sass_0.4.10             digest_0.6.37           SparseArray_1.8.1      
-[82] ggrepel_0.9.6           dqrng_0.4.1             htmlwidgets_1.6.4      
-[85] farver_2.1.2            htmltools_0.5.8.1       pkgdown_2.1.3          
-[88] lifecycle_1.0.4         httr_1.4.7              transport_0.15-4       
-[91] statmod_1.5.1          </code></pre>
+ [1] gridExtra_2.3       rlang_1.1.6         magrittr_2.0.4     
+ [4] ggridges_0.5.7      compiler_4.5.2      systemfonts_1.3.1  
+ [7] vctrs_0.6.5         pkgconfig_2.0.3     fastmap_1.2.0      
+[10] XVector_0.50.0      labeling_0.4.3      rmarkdown_2.30     
+[13] ggbeeswarm_0.7.3    ragg_1.5.0          purrr_1.2.0        
+[16] xfun_0.55           bluster_1.20.0      cachem_1.1.0       
+[19] beachmat_2.26.0     jsonlite_2.0.0      DelayedArray_0.36.0
+[22] BiocParallel_1.44.0 irlba_2.3.5.1       parallel_4.5.2     
+[25] cluster_2.1.8.1     R6_2.6.1            bslib_0.9.0        
+[28] RColorBrewer_1.1-3  ranger_0.17.0       limma_3.66.0       
+[31] GGally_2.4.0        jquerylib_0.1.4     Rcpp_1.1.0         
+[34] bookdown_0.46       knitr_1.50          Matrix_1.7-4       
+[37] igraph_2.2.1        tidyselect_1.2.1    abind_1.4-8        
+[40] yaml_2.3.12         viridis_0.6.5       codetools_0.2-20   
+[43] lattice_0.22-7      tibble_3.3.0        withr_3.0.2        
+[46] S7_0.2.1            evaluate_1.0.5      desc_1.4.3         
+[49] ggstats_0.11.0      pillar_1.11.1       BiocManager_1.30.27
+[52] scales_1.4.0        RhpcBLASctl_0.23-42 glue_1.8.0         
+[55] metapod_1.18.0      tools_4.5.2         BiocNeighbors_2.4.0
+[58] data.table_1.17.8   ScaledMatrix_1.18.0 locfit_1.5-9.12    
+[61] fs_1.6.6            grid_4.5.2          tidyr_1.3.1        
+[64] edgeR_4.8.1         beeswarm_0.4.0      BiocSingular_1.26.1
+[67] vipor_0.4.7         cli_3.6.5           rsvd_1.0.5         
+[70] textshaping_1.0.4   S4Arrays_1.10.1     viridisLite_0.4.2  
+[73] dplyr_1.1.4         gtable_0.3.6        isotree_0.6.1-4    
+[76] sass_0.4.10         digest_0.6.39       SparseArray_1.10.7 
+[79] ggrepel_0.9.6       dqrng_0.4.1         htmlwidgets_1.6.4  
+[82] farver_2.1.2        htmltools_0.5.9     pkgdown_2.2.0      
+[85] lifecycle_1.0.4     statmod_1.5.1       transport_0.15-4   </code></pre>
 </div>
   </div>
 
@@ -745,7 +743,7 @@ loaded via a namespace (and not attached):
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>
