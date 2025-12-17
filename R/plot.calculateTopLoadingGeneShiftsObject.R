@@ -499,7 +499,7 @@ plotHeatmap <- function(x, cell_type,
 
     # Define color schemes
     dataset_colors <- c("Query" = "#B565D8", "Reference" = "#5A9BD8")
-    anomaly_colors <- c("Non-Anomalous" = "#C8C8C8", "Anomalous" = "#D2314C")
+    anomaly_colors <- c("Non-Anomalous" = "#9E9E9E", "Anomalous" = "#D2314C")
 
     # Create custom color mapping function
     .createColorMapping <- function(breaks, colors) {
@@ -858,7 +858,7 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
     plot_df[["color_group"]] <- factor(plot_df[["color_group"]],
                                        levels = c("anomaly", "normal", "all"))
 
-    bar_colors <- c("normal" = "#BEBEBE",
+    bar_colors <- c("normal" = "#9E9E9E",
                     "all" = "#666666",
                     "anomaly" = "#DC2F41")
 
