@@ -71,20 +71,20 @@
 #'
 # Function to visualize genes with top loadings
 plot.calculateGeneShiftsObject <- function(x,
-                                                     cell_type,
-                                                     pc_subset = 1:3,
-                                                     plot_type = c("heatmap", "barplot", "boxplot"),
-                                                     plot_by = c("p_adjusted", "top_loading"),
-                                                     n_genes = 10,
-                                                     significance_threshold = 0.05,
-                                                     show_anomalies = FALSE,
-                                                     pseudo_bulk = FALSE,
-                                                     cluster_cols = FALSE,
-                                                     draw_plot = TRUE,
-                                                     show_all_query = TRUE,
-                                                     max_cells_ref = NULL,
-                                                     max_cells_query = NULL,
-                                                     ...) {
+                                           cell_type,
+                                           pc_subset = 1:3,
+                                           plot_type = c("heatmap", "barplot", "boxplot"),
+                                           plot_by = c("p_adjusted", "top_loading"),
+                                           n_genes = 10,
+                                           significance_threshold = 0.05,
+                                           show_anomalies = FALSE,
+                                           pseudo_bulk = FALSE,
+                                           cluster_cols = FALSE,
+                                           draw_plot = TRUE,
+                                           show_all_query = TRUE,
+                                           max_cells_ref = NULL,
+                                           max_cells_query = NULL,
+                                           ...) {
 
     #Input Validation
     if (missing(cell_type) || length(cell_type) != 1) {
