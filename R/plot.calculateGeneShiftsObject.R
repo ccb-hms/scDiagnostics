@@ -7,7 +7,7 @@
 #' change barplots. Optionally displays anomaly status when available.
 #'
 #' @details
-#' This function visualizes the results from \code{calculateTopLoadingGeneShifts}.
+#' This function visualizes the results from \code{calculateGeneShifts}.
 #' The "heatmap" option displays a hierarchically clustered set of genes.
 #' The "boxplot" option creates a two-panel plot using `ggplot2`: the left panel shows
 #' horizontal expression boxplots for up to 5 PCs, while the right panel displays their
@@ -19,7 +19,7 @@
 #' When anomaly detection results are available and \code{show_anomalies} is TRUE,
 #' additional annotation bars or visual cues highlight anomalous cells.
 #'
-#' @param x An object of class \code{calculateTopLoadingGeneShiftsObject}.
+#' @param x An object of class \code{calculateGeneShiftsObject}.
 #' @param cell_type A character string specifying the cell type to plot (must be exactly one).
 #' @param pc_subset A numeric vector specifying which principal components to plot. Default is 1:3.
 #' @param plot_type A character string specifying visualization type. Either "heatmap", "barplot", or "boxplot".
@@ -63,14 +63,14 @@
 #' @author
 #' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
-#' @seealso \code{\link{calculateTopLoadingGeneShifts}}
+#' @seealso \code{\link{calculateGeneShifts}}
 #'
-#' @rdname calculateTopLoadingGeneShifts
+#' @rdname calculateGeneShifts
 #'
 #' @importFrom stats wilcox.test var p.adjust na.omit setNames aggregate reshape
 #'
 # Function to visualize genes with top loadings
-plot.calculateTopLoadingGeneShiftsObject <- function(x,
+plot.calculateGeneShiftsObject <- function(x,
                                                      cell_type,
                                                      pc_subset = 1:3,
                                                      plot_type = c("heatmap", "barplot", "boxplot"),
@@ -143,7 +143,7 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
     if (show_anomalies) {
         if (!"anomaly_status" %in% names(x[["cell_metadata"]])) {
             stop("Anomaly visualization requested but anomaly data not found in object. ",
-                 "Please re-run calculateTopLoadingGeneShifts() with detect_anomalies = TRUE.")
+                 "Please re-run calculateGeneShifts() with detect_anomalies = TRUE.")
         }
     }
 
@@ -294,7 +294,7 @@ plot.calculateTopLoadingGeneShiftsObject <- function(x,
 #' This ensures clear dataset separation while grouping anomalous cells together
 #' within each dataset for easy visual identification.
 #'
-#' @param x An object of class \code{calculateTopLoadingGeneShiftsObject} containing
+#' @param x An object of class \code{calculateGeneShiftsObject} containing
 #'          expression data and analysis results.
 #' @param cell_type A character string specifying the cell type to visualize.
 #' @param available_pcs A character vector of principal components to include in analysis.
@@ -631,7 +631,7 @@ plotHeatmap <- function(x, cell_type,
 #'   \item Red: Query anomaly (pseudo-bulk) vs Reference (pseudo-bulk)
 #' }
 #'
-#' @param x An object of class \code{calculateTopLoadingGeneShiftsObject} containing
+#' @param x An object of class \code{calculateGeneShiftsObject} containing
 #'          expression data and analysis results.
 #' @param cell_type A character string specifying the cell type to visualize.
 #' @param available_pcs A character vector of principal components to include in analysis.
@@ -930,7 +930,7 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
 #'   \item PC identity: Point colors and shapes in loading panel
 #' }
 #'
-#' @param x An object of class \code{calculateTopLoadingGeneShiftsObject} containing
+#' @param x An object of class \code{calculateGeneShiftsObject} containing
 #'   expression data and analysis results.
 #' @param cell_type A character string specifying the cell type to visualize.
 #' @param available_pcs A character vector of principal components to include in analysis.
@@ -954,7 +954,7 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
 #'
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
-#' @seealso \code{\link{plotHeatmap}}, \code{\link{plot.calculateTopLoadingGeneShiftsObject}}
+#' @seealso \code{\link{plotHeatmap}}, \code{\link{plot.calculateGeneShiftsObject}}
 #'
 # Helper boxplot function
 plotBoxplot <- function(x, cell_type, available_pcs, plot_by,

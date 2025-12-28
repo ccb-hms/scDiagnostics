@@ -65,12 +65,12 @@
 #' @author
 #' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
-#' @seealso \code{\link{plot.calculateTopLoadingGeneShiftsObject}}, \code{\link{detectAnomaly}}
+#' @seealso \code{\link{plot.calculateGeneShiftsObject}}, \code{\link{detectAnomaly}}
 #'
 #' @importFrom stats wilcox.test var p.adjust na.omit setNames
 #'
 # Function to calculate expression shifts for genes with top loadings
-calculateTopLoadingGeneShifts <- function(query_data,
+calculateGeneShifts <- function(query_data,
                                           reference_data,
                                           query_cell_type_col,
                                           ref_cell_type_col,
@@ -522,7 +522,7 @@ calculateTopLoadingGeneShifts <- function(query_data,
         final_results[["anomaly_results"]] <- anomaly_results
     }
 
-    class(final_results) <- c(class(final_results), "calculateTopLoadingGeneShiftsObject")
+    class(final_results) <- c(class(final_results), "calculateGeneShiftsObject")
     return(final_results)
 }
 

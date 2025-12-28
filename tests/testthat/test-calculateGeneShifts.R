@@ -6,11 +6,11 @@ library(scDiagnostics)
 data("reference_data")
 data("query_data")
 
-# Test calculateTopLoadingGeneShifts function
-test_that("calculateTopLoadingGeneShifts works with valid inputs", {
+# Test calculateGeneShifts function
+test_that("calculateGeneShifts works with valid inputs", {
 
     # Test with default parameters
-    result <- calculateTopLoadingGeneShifts(
+    result <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
@@ -19,7 +19,7 @@ test_that("calculateTopLoadingGeneShifts works with valid inputs", {
 
     # Test return structure
     expect_type(result, "list")
-    expect_s3_class(result, "calculateTopLoadingGeneShiftsObject")
+    expect_s3_class(result, "calculateGeneShiftsObject")
 
     # Test required elements exist
     expected_elements <- c("expression_data", "cell_metadata", "gene_metadata", "percent_var")
@@ -51,10 +51,10 @@ test_that("calculateTopLoadingGeneShifts works with valid inputs", {
     expect_true(all(result[["percent_var"]] <= 100))
 })
 
-test_that("calculateTopLoadingGeneShifts works with custom parameters", {
+test_that("calculateGeneShifts works with custom parameters", {
 
     # Test with custom pc_subset
-    result <- calculateTopLoadingGeneShifts(
+    result <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
@@ -77,7 +77,7 @@ test_that("calculateTopLoadingGeneShifts works with custom parameters", {
     expect_true(all(result[["gene_metadata"]][["pc"]] %in% 1:3))
 })
 
-test_that("calculateTopLoadingGeneShifts works with specific cell types", {
+test_that("calculateGeneShifts works with specific cell types", {
 
     # Get available cell types
     common_cell_types <- intersect(
@@ -87,7 +87,7 @@ test_that("calculateTopLoadingGeneShifts works with specific cell types", {
 
     # Test with specific cell types
     selected_cell_types <- head(common_cell_types, 2)
-    result <- calculateTopLoadingGeneShifts(
+    result <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
@@ -108,10 +108,10 @@ test_that("calculateTopLoadingGeneShifts works with specific cell types", {
     }
 })
 
-test_that("calculateTopLoadingGeneShifts handles edge cases", {
+test_that("calculateGeneShifts handles edge cases", {
 
     # Test with single PC
-    result <- calculateTopLoadingGeneShifts(
+    result <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
@@ -125,7 +125,7 @@ test_that("calculateTopLoadingGeneShifts handles edge cases", {
     expect_length(result[["percent_var"]], 1)
 
     # Test with small n_top_loadings
-    result_small <- calculateTopLoadingGeneShifts(
+    result_small <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
@@ -137,11 +137,11 @@ test_that("calculateTopLoadingGeneShifts handles edge cases", {
     expect_true(nrow(result_small[["gene_metadata"]]) <= 10)  # 5 genes * 2 PCs
 })
 
-test_that("calculateTopLoadingGeneShifts input validation works", {
+test_that("calculateGeneShifts input validation works", {
 
     # Test invalid n_top_loadings
     expect_error(
-        calculateTopLoadingGeneShifts(
+        calculateGeneShifts(
             query_data = query_data,
             reference_data = reference_data,
             query_cell_type_col = "SingleR_annotation",
@@ -152,7 +152,7 @@ test_that("calculateTopLoadingGeneShifts input validation works", {
     )
 
     expect_error(
-        calculateTopLoadingGeneShifts(
+        calculateGeneShifts(
             query_data = query_data,
             reference_data = reference_data,
             query_cell_type_col = "SingleR_annotation",
@@ -164,7 +164,7 @@ test_that("calculateTopLoadingGeneShifts input validation works", {
 
     # Test invalid p_value_threshold
     expect_error(
-        calculateTopLoadingGeneShifts(
+        calculateGeneShifts(
             query_data = query_data,
             reference_data = reference_data,
             query_cell_type_col = "SingleR_annotation",
@@ -175,7 +175,7 @@ test_that("calculateTopLoadingGeneShifts input validation works", {
     )
 
     expect_error(
-        calculateTopLoadingGeneShifts(
+        calculateGeneShifts(
             query_data = query_data,
             reference_data = reference_data,
             query_cell_type_col = "SingleR_annotation",
@@ -187,7 +187,7 @@ test_that("calculateTopLoadingGeneShifts input validation works", {
 
     # Test invalid cell type columns
     expect_error(
-        calculateTopLoadingGeneShifts(
+        calculateGeneShifts(
             query_data = query_data,
             reference_data = reference_data,
             query_cell_type_col = "nonexistent_column",
@@ -196,7 +196,7 @@ test_that("calculateTopLoadingGeneShifts input validation works", {
     )
 
     expect_error(
-        calculateTopLoadingGeneShifts(
+        calculateGeneShifts(
             query_data = query_data,
             reference_data = reference_data,
             query_cell_type_col = "SingleR_annotation",
@@ -205,12 +205,12 @@ test_that("calculateTopLoadingGeneShifts input validation works", {
     )
 })
 
-test_that("calculateTopLoadingGeneShifts handles different adjust methods", {
+test_that("calculateGeneShifts handles different adjust methods", {
 
     methods <- c("fdr", "bonferroni", "holm", "none")
 
     for (method in methods) {
-        result <- calculateTopLoadingGeneShifts(
+        result <- calculateGeneShifts(
             query_data = query_data,
             reference_data = reference_data,
             query_cell_type_col = "SingleR_annotation",
@@ -220,7 +220,7 @@ test_that("calculateTopLoadingGeneShifts handles different adjust methods", {
             adjust_method = method
         )
 
-        expect_s3_class(result, "calculateTopLoadingGeneShiftsObject")
+        expect_s3_class(result, "calculateGeneShiftsObject")
 
         # Test that p_adjusted values are reasonable
         for (pc_name in paste0("PC", 1:2)) {
@@ -288,9 +288,9 @@ test_that("processGenesSimple helper function works correctly", {
     expect_equal(gene2_result[["cell_type"]], "TestCellType")
 })
 
-test_that("calculateTopLoadingGeneShifts preserves gene order by significance", {
+test_that("calculateGeneShifts preserves gene order by significance", {
 
-    result <- calculateTopLoadingGeneShifts(
+    result <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
