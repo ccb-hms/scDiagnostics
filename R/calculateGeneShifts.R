@@ -71,21 +71,21 @@
 #'
 # Function to calculate expression shifts for genes with top loadings
 calculateGeneShifts <- function(query_data,
-                                          reference_data,
-                                          query_cell_type_col,
-                                          ref_cell_type_col,
-                                          cell_types = NULL,
-                                          pc_subset = 1:5,
-                                          n_top_loadings = 50,
-                                          p_value_threshold = 0.05,
-                                          adjust_method = "fdr",
-                                          assay_name = "logcounts",
-                                          detect_anomalies = FALSE,
-                                          anomaly_comparison = FALSE,
-                                          anomaly_threshold = 0.6,
-                                          n_tree = 500,
-                                          max_cells_query = 5000,
-                                          max_cells_ref = 5000) {
+                                reference_data,
+                                query_cell_type_col,
+                                ref_cell_type_col,
+                                cell_types = NULL,
+                                pc_subset = 1:5,
+                                n_top_loadings = 50,
+                                p_value_threshold = 0.05,
+                                adjust_method = "fdr",
+                                assay_name = "logcounts",
+                                detect_anomalies = FALSE,
+                                anomaly_comparison = FALSE,
+                                anomaly_threshold = 0.6,
+                                n_tree = 500,
+                                max_cells_query = 5000,
+                                max_cells_ref = 5000) {
 
     # Check standard input arguments
     argumentCheck(query_data = query_data,
