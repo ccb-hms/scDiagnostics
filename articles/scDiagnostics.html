@@ -377,9 +377,9 @@ provide another metric to assess the similarity between the
 datasets.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">disc_output</span>, plot_type <span class="op">=</span> <span class="st">"scatterplot"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Picking joint bandwidth of 0.103</span></span>
-<span><span class="co">#&gt; Picking joint bandwidth of 0.155</span></span>
-<span><span class="co">#&gt; Picking joint bandwidth of 0.164</span></span></code></pre></div>
+<span><span class="co">#&gt; Picking joint bandwidth of 0.117</span></span>
+<span><span class="co">#&gt; Picking joint bandwidth of 0.162</span></span>
+<span><span class="co">#&gt; Picking joint bandwidth of 0.169</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/calculateDiscriminantSpace.png"></p>
 <p>Alternatively, you can create a boxplot comparing query and reference
 projections for a specific cell type. See the reference manual for an
@@ -469,7 +469,7 @@ effective data integration.</p>
 <span></span>
 <span><span class="co"># View weighted cosine similarity score</span></span>
 <span><span class="va">subspace_comparison</span><span class="op">$</span><span class="va">weighted_cosine_similarity</span></span>
-<span><span class="co">#&gt; [1] 0.2620419</span></span>
+<span><span class="co">#&gt; [1] 0.2609384</span></span>
 <span></span>
 <span><span class="co"># Plot output for PCA subspace comparison (if a plot method is available)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">subspace_comparison</span><span class="op">)</span></span></code></pre></div>
@@ -520,7 +520,7 @@ differences between the datasets are statistically significant.</p>
 <span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wasserstein_data</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Picking joint bandwidth of 0.00895</span></span></code></pre></div>
+<span><span class="co">#&gt; Picking joint bandwidth of 0.00905</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/plotWassersteinDistance.png"></p>
 </div>
 <div class="section level3">
@@ -717,7 +717,7 @@ loaded via a namespace (and not attached):
 [55] glue_1.8.0          metapod_1.18.0      tools_4.5.2        
 [58] BiocNeighbors_2.4.0 data.table_1.18.0   ScaledMatrix_1.18.0
 [61] locfit_1.5-9.12     fs_1.6.6            grid_4.5.2         
-[64] tidyr_1.3.2         edgeR_4.8.1         beeswarm_0.4.0     
+[64] tidyr_1.3.2         edgeR_4.8.2         beeswarm_0.4.0     
 [67] BiocSingular_1.26.1 vipor_0.4.7         cli_3.6.5          
 [70] rsvd_1.0.5          textshaping_1.0.4   S4Arrays_1.10.1    
 [73] viridisLite_0.4.2   dplyr_1.1.4         gtable_0.3.6       
