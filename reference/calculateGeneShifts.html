@@ -94,6 +94,7 @@ change barplots. Optionally displays anomaly status when available.</p>
 <span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  n_top_loadings <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  genes_to_analyze <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  p_value_threshold <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  adjust_method <span class="op">=</span> <span class="st">"fdr"</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"logcounts"</span>,</span>
@@ -155,6 +156,11 @@ change barplots. Optionally displays anomaly status when available.</p>
 
 <dt id="arg-n-top-loadings">n_top_loadings<a class="anchor" aria-label="anchor" href="#arg-n-top-loadings"></a></dt>
 <dd><p>Number of top loading genes to analyze per PC. Default is 50.</p></dd>
+
+
+<dt id="arg-genes-to-analyze">genes_to_analyze<a class="anchor" aria-label="anchor" href="#arg-genes-to-analyze"></a></dt>
+<dd><p>A character vector specifying genes to analyze. If NULL (default),
+genes are selected based on top loadings from specified principal components (see <code>n_top_loadings</code>). Default is NULL.</p></dd>
 
 
 <dt id="arg-p-value-threshold">p_value_threshold<a class="anchor" aria-label="anchor" href="#arg-p-value-threshold"></a></dt>

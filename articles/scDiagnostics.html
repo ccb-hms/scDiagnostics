@@ -377,9 +377,9 @@ provide another metric to assess the similarity between the
 datasets.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">disc_output</span>, plot_type <span class="op">=</span> <span class="st">"scatterplot"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Picking joint bandwidth of 0.117</span></span>
-<span><span class="co">#&gt; Picking joint bandwidth of 0.162</span></span>
-<span><span class="co">#&gt; Picking joint bandwidth of 0.169</span></span></code></pre></div>
+<span><span class="co">#&gt; Picking joint bandwidth of 0.103</span></span>
+<span><span class="co">#&gt; Picking joint bandwidth of 0.155</span></span>
+<span><span class="co">#&gt; Picking joint bandwidth of 0.164</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/calculateDiscriminantSpace.png"></p>
 <p>Alternatively, you can create a boxplot comparing query and reference
 projections for a specific cell type. See the reference manual for an
@@ -469,7 +469,7 @@ effective data integration.</p>
 <span></span>
 <span><span class="co"># View weighted cosine similarity score</span></span>
 <span><span class="va">subspace_comparison</span><span class="op">$</span><span class="va">weighted_cosine_similarity</span></span>
-<span><span class="co">#&gt; [1] 0.2609384</span></span>
+<span><span class="co">#&gt; [1] 0.2620419</span></span>
 <span></span>
 <span><span class="co"># Plot output for PCA subspace comparison (if a plot method is available)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">subspace_comparison</span><span class="op">)</span></span></code></pre></div>
@@ -520,7 +520,7 @@ differences between the datasets are statistically significant.</p>
 <span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wasserstein_data</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Picking joint bandwidth of 0.00905</span></span></code></pre></div>
+<span><span class="co">#&gt; Picking joint bandwidth of 0.00895</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/plotWassersteinDistance.png"></p>
 </div>
 <div class="section level3">
@@ -696,21 +696,21 @@ other attached packages:
 [17] BiocStyle_2.38.0           
 
 loaded via a namespace (and not attached):
- [1] gridExtra_2.3       rlang_1.1.6         magrittr_2.0.4     
+ [1] gridExtra_2.3       rlang_1.1.7         magrittr_2.0.4     
  [4] otel_0.2.0          ggridges_0.5.7      compiler_4.5.2     
- [7] systemfonts_1.3.1   vctrs_0.6.5         pkgconfig_2.0.3    
+ [7] systemfonts_1.3.1   vctrs_0.7.0         pkgconfig_2.0.3    
 [10] fastmap_1.2.0       XVector_0.50.0      labeling_0.4.3     
 [13] rmarkdown_2.30      ggbeeswarm_0.7.3    ragg_1.5.0         
-[16] purrr_1.2.0         xfun_0.55           bluster_1.20.0     
+[16] purrr_1.2.1         xfun_0.56           bluster_1.20.0     
 [19] cachem_1.1.0        beachmat_2.26.0     jsonlite_2.0.0     
 [22] DelayedArray_0.36.0 BiocParallel_1.44.0 irlba_2.3.5.1      
 [25] parallel_4.5.2      cluster_2.1.8.1     R6_2.6.1           
-[28] bslib_0.9.0         RColorBrewer_1.1-3  ranger_0.17.0      
+[28] bslib_0.9.0         RColorBrewer_1.1-3  ranger_0.18.0      
 [31] limma_3.66.0        GGally_2.4.0        jquerylib_0.1.4    
-[34] Rcpp_1.1.0          bookdown_0.46       knitr_1.51         
+[34] Rcpp_1.1.1          bookdown_0.46       knitr_1.51         
 [37] Matrix_1.7-4        igraph_2.2.1        tidyselect_1.2.1   
 [40] abind_1.4-8         yaml_2.3.12         viridis_0.6.5      
-[43] codetools_0.2-20    lattice_0.22-7      tibble_3.3.0       
+[43] codetools_0.2-20    lattice_0.22-7      tibble_3.3.1       
 [46] withr_3.0.2         S7_0.2.1            evaluate_1.0.5     
 [49] desc_1.4.3          ggstats_0.12.0      pillar_1.11.1      
 [52] BiocManager_1.30.27 scales_1.4.0        RhpcBLASctl_0.23-42
@@ -724,7 +724,7 @@ loaded via a namespace (and not attached):
 [76] isotree_0.6.1-4     sass_0.4.10         digest_0.6.39      
 [79] SparseArray_1.10.8  ggrepel_0.9.6       dqrng_0.4.1        
 [82] htmlwidgets_1.6.4   farver_2.1.2        htmltools_0.5.9    
-[85] pkgdown_2.2.0       lifecycle_1.0.4     statmod_1.5.1      
+[85] pkgdown_2.2.0       lifecycle_1.0.5     statmod_1.5.1      
 [88] transport_0.15-4   </code></pre>
 </div>
   </div>
