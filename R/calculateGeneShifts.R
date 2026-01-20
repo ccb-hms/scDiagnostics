@@ -28,19 +28,21 @@
 #' @param cell_types A character vector specifying the cell types to analyze. If NULL, all common cell types are used.
 #' @param pc_subset A numeric vector specifying which principal components to analyze. Default is 1:5.
 #' @param n_top_loadings Number of top loading genes to analyze per PC. Default is 50.
+#' @param genes_to_analyze A character vector specifying genes to analyze. If NULL (default),
+#'                         genes are selected based on top loadings from specified principal components (see \code{n_top_loadings}). Default is NULL.
 #' @param p_value_threshold P-value threshold for statistical significance. Default is 0.05.
 #' @param adjust_method Method for multiple testing correction. Default is "fdr".
 #' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
 #' @param detect_anomalies Logical indicating whether to perform anomaly detection using isolation forests.
-#'                        Default is FALSE.
+#'                         Default is FALSE.
 #' @param anomaly_comparison Logical indicating whether to perform statistical comparisons
 #'                           between non-anomalous reference cells and anomalous query cells instead of all-vs-all
 #'                           comparisons. When TRUE, only non-anomalous reference cells are compared against only
 #'                           anomalous query cells for each cell type. Requires detect_anomalies = TRUE. Default is FALSE.
 #' @param anomaly_threshold A numeric value specifying the threshold for identifying anomalies when
-#'                         \code{detect_anomalies} is TRUE. Default is 0.6.
+#'                          \code{detect_anomalies} is TRUE. Default is 0.6.
 #' @param n_tree An integer specifying the number of trees for the isolation forest when
-#'              \code{detect_anomalies} is TRUE. Default is 500.
+#'               \code{detect_anomalies} is TRUE. Default is 500.
 #' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
 #' no downsampling of query cells is performed. Default is 5000.
 #' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
@@ -77,6 +79,7 @@ calculateGeneShifts <- function(query_data,
                                 cell_types = NULL,
                                 pc_subset = 1:5,
                                 n_top_loadings = 50,
+                                genes_to_analyze = NULL,
                                 p_value_threshold = 0.05,
                                 adjust_method = "fdr",
                                 assay_name = "logcounts",
@@ -106,6 +109,13 @@ calculateGeneShifts <- function(query_data,
     # Input validation
     if (!is.numeric(n_top_loadings) || length(n_top_loadings) != 1 || n_top_loadings <= 0) {
         stop("n_top_loadings must be a positive integer")
+    }
+
+    # Validate genes_to_analyze parameter
+    if (!is.null(genes_to_analyze)) {
+        if (!is.character(genes_to_analyze) || length(genes_to_analyze) == 0) {
+            stop("genes_to_analyze must be a non-empty character vector or NULL")
+        }
     }
 
     if (!is.numeric(p_value_threshold) || length(p_value_threshold) != 1 ||
@@ -219,6 +229,7 @@ calculateGeneShifts <- function(query_data,
 
     # Perform anomaly detection FIRST (before any downsampling)
     # This ensures the rotation matrix is intact
+    # Anomaly detection always uses all genes in the datasets (genome-wide)
     anomaly_results <- NULL
     if (detect_anomalies) {
         tryCatch({
@@ -279,24 +290,61 @@ calculateGeneShifts <- function(query_data,
         return(list())
     }
 
+    # Determine which genes to analyze
+    if (!is.null(genes_to_analyze)) {
+        # Use user-specified genes
+        genes_to_use <- genes_to_analyze
+        # Check if all specified genes are available in the data
+        available_genes <- genes_to_use[genes_to_use %in% rownames(query_data) &
+                                            genes_to_use %in% rownames(reference_data)]
+        if (length(available_genes) == 0) {
+            stop("None of the specified genes in genes_to_analyze are found in both query and reference data.")
+        }
+        if (length(available_genes) < length(genes_to_use)) {
+            warning("Some genes in genes_to_analyze were not found in both datasets. Using ",
+                    length(available_genes), " out of ", length(genes_to_use), " genes.")
+        }
+        genes_to_use <- available_genes
+
+        # Create gene metadata for user-specified genes
+        gene_metadata_list <- list()
+        pc_name_placeholder <- paste0("PC", pc_subset[1])  # Use first PC as placeholder
+        gene_metadata_list[[pc_name_placeholder]] <- data.frame(
+            gene = genes_to_use,
+            pc = NA_integer_,
+            loading = NA_real_,
+            stringsAsFactors = FALSE
+        )
+
+        all_top_genes <- genes_to_use
+        pc_results <- stats::setNames(vector("list", length(pc_subset)), paste0("PC", pc_subset))
+
+    } else {
+        # Use original top loading gene selection logic
+        all_top_genes <- character(0)
+        gene_metadata_list <- list()
+        pc_results <- stats::setNames(vector("list", length(pc_subset)), paste0("PC", pc_subset))
+
+        for (pc in pc_subset) {
+            pc_name <- paste0("PC", pc)
+            pc_loadings <- pca_rotation[, pc]
+            top_loading_indices <- order(abs(pc_loadings),
+                                         decreasing = TRUE)[1:min(n_top_loadings, length(pc_loadings))]
+            top_genes <- names(pc_loadings)[top_loading_indices]
+            top_loadings_vals <- pc_loadings[top_loading_indices]
+
+            all_top_genes <- unique(c(all_top_genes, top_genes))
+            gene_metadata_list[[pc_name]] <- data.frame(gene = top_genes,
+                                                        pc = pc,
+                                                        loading = top_loadings_vals,
+                                                        stringsAsFactors = FALSE)
+        }
+    }
+
     # Gene-level statistical analysis
-    all_top_genes <- character(0)
-    gene_metadata_list <- list()
-    pc_results <- stats::setNames(vector("list", length(pc_subset)), paste0("PC", pc_subset))
-
-    for (pc in pc_subset) {
-        pc_name <- paste0("PC", pc)
-        pc_loadings <- pca_rotation[, pc]
-        top_loading_indices <- order(abs(pc_loadings),
-                                     decreasing = TRUE)[1:min(n_top_loadings, length(pc_loadings))]
-        top_genes <- names(pc_loadings)[top_loading_indices]
-        top_loadings_vals <- pc_loadings[top_loading_indices]
-
-        all_top_genes <- unique(c(all_top_genes, top_genes))
-        gene_metadata_list[[pc_name]] <- data.frame(gene = top_genes,
-                                                    pc = pc,
-                                                    loading = top_loadings_vals,
-                                                    stringsAsFactors = FALSE)
+    if (!is.null(genes_to_analyze)) {
+        # Analysis for user-specified genes
+        genes_to_use <- all_top_genes
 
         pc_result_list <- list()
         for (ct in available_cell_types) {
@@ -340,14 +388,16 @@ calculateGeneShifts <- function(query_data,
             }
 
             query_expr_ct <- SummarizedExperiment::assay(query_data,
-                                                         assay_name)[top_genes,
+                                                         assay_name)[genes_to_use,
                                                                      query_cells_ct, drop = FALSE]
             ref_expr_ct <- SummarizedExperiment::assay(reference_data,
-                                                       assay_name)[top_genes,
+                                                       assay_name)[genes_to_use,
                                                                    ref_cells_ct, drop = FALSE]
 
-            gene_results <- processGenesSimple(top_genes,
-                                               top_loadings_vals,
+            # For user-specified genes, use NA for loadings
+            loadings_placeholder <- rep(NA_real_, length(genes_to_use))
+            gene_results <- processGenesSimple(genes_to_use,
+                                               loadings_placeholder,
                                                query_expr_ct,
                                                ref_expr_ct,
                                                ct)
@@ -359,12 +409,93 @@ calculateGeneShifts <- function(query_data,
             df <- do.call(rbind, pc_result_list)
             df[["p_adjusted"]] <- stats::p.adjust(df[["p_value"]], method = adjust_method)
             df[["significant"]] <- df[["p_adjusted"]] <= p_value_threshold
-            pc_results[[pc_name]] <- df[order(df[["p_adjusted"]]), ]
-            rownames(pc_results[[pc_name]]) <- NULL
+            df <- df[order(df[["p_adjusted"]]), ]
+            rownames(df) <- NULL
+            # Place results in first PC slot since genes_to_analyze aren't tied to specific PCs
+            pc_results[[1]] <- df
         } else {
-            pc_results[[pc_name]] <- data.frame()
+            pc_results[[1]] <- data.frame()
+        }
+
+    } else {
+        # Original PC-specific analysis logic
+        for (pc in pc_subset) {
+            pc_name <- paste0("PC", pc)
+            pc_loadings <- pca_rotation[, pc]
+            top_loading_indices <- order(abs(pc_loadings),
+                                         decreasing = TRUE)[1:min(n_top_loadings, length(pc_loadings))]
+            top_genes <- names(pc_loadings)[top_loading_indices]
+            top_loadings_vals <- pc_loadings[top_loading_indices]
+
+            pc_result_list <- list()
+            for (ct in available_cell_types) {
+                query_cells_ct <- query_cell_indices[[ct]]
+                ref_cells_ct <- ref_cell_indices[[ct]]
+
+                # Apply anomaly filtering if requested
+                if (anomaly_comparison && !is.null(anomaly_results)) {
+                    # Filter reference cells: keep only NON-anomalous
+                    ref_cells_ct <- .filterCellsByAnomalyStatus(
+                        ref_cells_ct,
+                        colnames(reference_data),
+                        anomaly_results,
+                        ct,
+                        "reference",
+                        keep_anomalous = FALSE
+                    )
+
+                    # Filter query cells: keep only ANOMALOUS
+                    query_cells_ct <- .filterCellsByAnomalyStatus(
+                        query_cells_ct,
+                        colnames(query_data),
+                        anomaly_results,
+                        ct,
+                        "query",
+                        keep_anomalous = TRUE
+                    )
+
+                    # Check if we have enough cells after filtering
+                    if (length(query_cells_ct) < 3) {
+                        warning("Cell type '", ct, "' has fewer than 3 anomalous query cells. Skipping statistical analysis.")
+                        next
+                    }
+                    if (length(ref_cells_ct) < 3) {
+                        warning("Cell type '", ct, "' has fewer than 3 non-anomalous reference cells. Skipping statistical analysis.")
+                        next
+                    }
+                } else {
+                    # Original check for minimum cell counts
+                    if (length(query_cells_ct) < 3 || length(ref_cells_ct) < 3) next
+                }
+
+                query_expr_ct <- SummarizedExperiment::assay(query_data,
+                                                             assay_name)[top_genes,
+                                                                         query_cells_ct, drop = FALSE]
+                ref_expr_ct <- SummarizedExperiment::assay(reference_data,
+                                                           assay_name)[top_genes,
+                                                                       ref_cells_ct, drop = FALSE]
+
+                gene_results <- processGenesSimple(top_genes,
+                                                   top_loadings_vals,
+                                                   query_expr_ct,
+                                                   ref_expr_ct,
+                                                   ct)
+                if (length(gene_results) > 0)
+                    pc_result_list <- c(pc_result_list, gene_results)
+            }
+
+            if (length(pc_result_list) > 0) {
+                df <- do.call(rbind, pc_result_list)
+                df[["p_adjusted"]] <- stats::p.adjust(df[["p_value"]], method = adjust_method)
+                df[["significant"]] <- df[["p_adjusted"]] <= p_value_threshold
+                pc_results[[pc_name]] <- df[order(df[["p_adjusted"]]), ]
+                rownames(pc_results[[pc_name]]) <- NULL
+            } else {
+                pc_results[[pc_name]] <- data.frame()
+            }
         }
     }
+
     gene_metadata <- do.call(rbind, gene_metadata_list)
     rownames(gene_metadata) <- NULL
 

@@ -14,6 +14,7 @@ calculateGeneShifts(
   cell_types = NULL,
   pc_subset = 1:5,
   n_top_loadings = 50,
+  genes_to_analyze = NULL,
   p_value_threshold = 0.05,
   adjust_method = "fdr",
   assay_name = "logcounts",
@@ -57,6 +58,9 @@ calculateGeneShifts(
 \item{pc_subset}{A numeric vector specifying which principal components to plot. Default is 1:3.}
 
 \item{n_top_loadings}{Number of top loading genes to analyze per PC. Default is 50.}
+
+\item{genes_to_analyze}{A character vector specifying genes to analyze. If NULL (default),
+genes are selected based on top loadings from specified principal components (see \code{n_top_loadings}). Default is NULL.}
 
 \item{p_value_threshold}{P-value threshold for statistical significance. Default is 0.05.}
 
