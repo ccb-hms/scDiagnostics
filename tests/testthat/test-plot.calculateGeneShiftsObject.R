@@ -9,8 +9,8 @@ data("query_data")
 
 test_that("plot method works correctly", {
 
-    # Use package data to create a proper calculateTopLoadingGeneShiftsObject
-    result <- calculateTopLoadingGeneShifts(
+    # Use package data to create a proper calculateGeneShiftsObject
+    result <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
@@ -81,7 +81,7 @@ test_that("plot method works correctly", {
     expect_warning(
         {
             # Create result with more PCs to trigger the warning
-            result_many_pcs <- calculateTopLoadingGeneShifts(
+            result_many_pcs <- calculateGeneShifts(
                 query_data = query_data,
                 reference_data = reference_data,
                 query_cell_type_col = "SingleR_annotation",
@@ -100,7 +100,7 @@ test_that("plot method works correctly", {
 
 test_that("plot method argument matching works", {
 
-    result <- calculateTopLoadingGeneShifts(
+    result <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
@@ -128,7 +128,7 @@ test_that("plot method argument matching works", {
 
 test_that("plot method returns appropriate objects for boxplot", {
 
-    result <- calculateTopLoadingGeneShifts(
+    result <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
@@ -146,7 +146,7 @@ test_that("plot method returns appropriate objects for boxplot", {
 
 test_that("plot method object structure validation works", {
 
-    result <- calculateTopLoadingGeneShifts(
+    result <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
@@ -169,7 +169,7 @@ test_that("plot method object structure validation works", {
 
 test_that("plot method works with different parameter combinations", {
 
-    result <- calculateTopLoadingGeneShifts(
+    result <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
@@ -203,7 +203,7 @@ test_that("plot method works with different parameter combinations", {
 
 test_that("plot method handles different pc_subset configurations", {
 
-    result <- calculateTopLoadingGeneShifts(
+    result <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
@@ -232,7 +232,7 @@ test_that("plot method handles different pc_subset configurations", {
 
 test_that("plot method handles significance_threshold correctly", {
 
-    result <- calculateTopLoadingGeneShifts(
+    result <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
@@ -266,7 +266,7 @@ test_that("plot method heatmap functionality works when ComplexHeatmap is availa
 
     skip_if_not_installed("ComplexHeatmap")
 
-    result <- calculateTopLoadingGeneShifts(
+    result <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
@@ -297,7 +297,7 @@ test_that("plot method heatmap functionality works when ComplexHeatmap is availa
 
 test_that("plot method handles empty gene selection gracefully", {
 
-    result <- calculateTopLoadingGeneShifts(
+    result <- calculateGeneShifts(
         query_data = query_data,
         reference_data = reference_data,
         query_cell_type_col = "SingleR_annotation",
