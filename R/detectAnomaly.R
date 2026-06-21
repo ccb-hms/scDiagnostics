@@ -16,7 +16,7 @@
 #' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
 #' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
-#' @param pc_subset A numeric vector specifying which principal components to use in the analysis. Default is 1:5
+#' @param pc_subset A numeric vector specifying which principal components to use in the analysis. Default is NULL.
 #' If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.
 #' @param n_hvgs An integer specifying the number of highly variable genes to retain when `pc_subset` is NULL.
 #' If a query dataset is provided, the top `n_hvgs` are computed for both reference and query, and their union is used. Default is 100.
@@ -63,7 +63,7 @@
 #'                                 query_data = query_data,
 #'                                 ref_cell_type_col = "expert_annotation",
 #'                                 query_cell_type_col = "SingleR_annotation",
-#'                                 pc_subset = 1:5,
+#'                                 pc_subset = NULL,
 #'                                 n_tree = 500,
 #'                                 threshold_method = "MAD",
 #'                                 mad_multiplier = 2)
@@ -84,7 +84,7 @@ detectAnomaly <- function(reference_data,
                           ref_cell_type_col,
                           query_cell_type_col = NULL,
                           cell_types = NULL,
-                          pc_subset = 1:5,
+                          pc_subset = NULL,
                           n_hvgs = 100,
                           n_tree = 500,
                           threshold_method = c("MAD", "absolute"),
