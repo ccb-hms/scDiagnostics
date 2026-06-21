@@ -22,12 +22,12 @@ Source:
 
 Christidis A, Ghazi A, Chawla S, Geistlinger L, Gentleman R (2026).
 *scDiagnostics: Cell type annotation diagnostics*. R package version
-1.5.1, <https://github.com/ccb-hms/scDiagnostics>.
+1.7.1, <https://github.com/ccb-hms/scDiagnostics>.
 
     @Manual{,
       title = {scDiagnostics: Cell type annotation diagnostics},
       author = {Anthony Christidis and Andrew Ghazi and Smriti Chawla and Ludwig Geistlinger and Robert Gentleman},
       year = {2026},
-      note = {R package version 1.5.1},
+      note = {R package version 1.7.1},
       url = {https://github.com/ccb-hms/scDiagnostics},
     }

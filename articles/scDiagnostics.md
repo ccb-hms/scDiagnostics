@@ -642,7 +642,7 @@ plot(distance_data, ref_cell_type = "CD4", cell_names = cd4_top6_anomalies)
      [9] Seqinfo_1.2.0               IRanges_2.46.0             
     [11] S4Vectors_0.50.1            BiocGenerics_0.58.1        
     [13] generics_0.1.4              MatrixGenerics_1.24.0      
-    [15] matrixStats_1.5.0           scDiagnostics_1.5.1        
+    [15] matrixStats_1.5.0           scDiagnostics_1.7.1        
     [17] BiocStyle_2.40.0           
 
     loaded via a namespace (and not attached):

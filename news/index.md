@@ -37,3 +37,23 @@
 - Improved
   [`calculateGeneShifts()`](https://ccb-hms.github.io/scDiagnostics/reference/calculateGeneShifts.md)
   function, plot method, and color scheme
+
+## CHANGES IN VERSION 1.8.0
+
+- Added
+  [`calculateReconstructionError()`](https://ccb-hms.github.io/scDiagnostics/reference/calculateReconstructionError.md)
+  to detect out-of-distribution anomalies using cell-type-specific PCA
+  reconstruction errors.
+- Added
+  [`plot.calculateReconstructionErrorObject()`](https://ccb-hms.github.io/scDiagnostics/reference/calculateReconstructionError.md)
+  featuring robust visualization options (violin, boxplot, ridge, and
+  ComplexHeatmap).
+- Upgraded
+  [`detectAnomaly()`](https://ccb-hms.github.io/scDiagnostics/reference/detectAnomaly.md)
+  to resolve the curse of dimensionality by allowing Isolation Forests
+  to run on the union of query and reference Highly Variable Genes (via
+  `n_hvgs`) when `pc_subset = NULL`.
+- Improved anomaly detection by switching default thresholding to a
+  dynamic, data-driven Median Absolute Deviation method
+  (`threshold_method = "MAD"`, `mad_multiplier = 2`) across relevant
+  functions.

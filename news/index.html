@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">scDiagnostics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,6 +58,13 @@
 <li>Added gene specification parameter to <code><a href="../reference/calculateGeneShifts.html">calculateGeneShifts()</a></code>
 </li>
 <li>Improved <code><a href="../reference/calculateGeneShifts.html">calculateGeneShifts()</a></code> function, plot method, and color scheme</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.8.0" id="changes-in-version-180">CHANGES IN VERSION 1.8.0<a class="anchor" aria-label="anchor" href="#changes-in-version-180"></a></h2>
+<ul><li>Added <code><a href="../reference/calculateReconstructionError.html">calculateReconstructionError()</a></code> to detect out-of-distribution anomalies using cell-type-specific PCA reconstruction errors.</li>
+<li>Added <code><a href="../reference/calculateReconstructionError.html">plot.calculateReconstructionErrorObject()</a></code> featuring robust visualization options (violin, boxplot, ridge, and ComplexHeatmap).</li>
+<li>Upgraded <code><a href="../reference/detectAnomaly.html">detectAnomaly()</a></code> to resolve the curse of dimensionality by allowing Isolation Forests to run on the union of query and reference Highly Variable Genes (via <code>n_hvgs</code>) when <code>pc_subset = NULL</code>.</li>
+<li>Improved anomaly detection by switching default thresholding to a dynamic, data-driven Median Absolute Deviation method (<code>threshold_method = "MAD"</code>, <code>mad_multiplier = 2</code>) across relevant functions.</li>
 </ul></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

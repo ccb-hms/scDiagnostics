@@ -447,7 +447,7 @@ overlap_measures
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-    [1] scDiagnostics_1.5.1 BiocStyle_2.40.0   
+    [1] scDiagnostics_1.7.1 BiocStyle_2.40.0   
 
     loaded via a namespace (and not attached):
      [1] SummarizedExperiment_1.42.0 gtable_0.3.6               
