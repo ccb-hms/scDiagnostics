@@ -63,7 +63,7 @@ If highly variable genes (HVGs) were used (<code>pc_subset</code> is NULL), it g
 <span>  query_cell_type_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
-<span>  n_hvgs <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  n_hvgs <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  n_tree <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  threshold_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MAD"</span>, <span class="st">"absolute"</span><span class="op">)</span>,</span>
 <span>  mad_multiplier <span class="op">=</span> <span class="fl">2</span>,</span>
@@ -122,7 +122,7 @@ If NULL, all PCs in <code>reference_mat_subset</code> will be included. Ignored 
 
 <dt id="arg-n-hvgs">n_hvgs<a class="anchor" aria-label="anchor" href="#arg-n-hvgs"></a></dt>
 <dd><p>An integer specifying the number of highly variable genes to retain when `pc_subset` is NULL.
-If a query dataset is provided, the top `n_hvgs` are computed for both reference and query, and their union is used. Default is 1000.</p></dd>
+If a query dataset is provided, the top `n_hvgs` are computed for both reference and query, and their union is used. Default is 100.</p></dd>
 
 
 <dt id="arg-n-tree">n_tree<a class="anchor" aria-label="anchor" href="#arg-n-tree"></a></dt>

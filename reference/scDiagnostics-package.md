@@ -161,6 +161,8 @@ Useful links:
 
 - <https://github.com/ccb-hms/scDiagnostics>
 
+- <https://ccb-hms.github.io/scDiagnostics>
+
 - Report bugs at <https://github.com/ccb-hms/scDiagnostics/issues>
 
 ## Author
