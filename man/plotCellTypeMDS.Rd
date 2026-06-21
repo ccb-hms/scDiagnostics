@@ -16,10 +16,10 @@ plotCellTypeMDS(
 )
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell
+\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} containing the single-cell
 expression data and metadata.}
 
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell
+\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing the single-cell
 expression data and metadata.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}

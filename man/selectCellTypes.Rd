@@ -15,10 +15,10 @@ selectCellTypes(
 )
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 Can be \code{NULL} if only reference data is available.}
 
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
+\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 Can be \code{NULL} if only query data is available.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data}
@@ -41,7 +41,7 @@ highest cell count. If \code{NULL}, all valid cell types are returned. Default i
 A character vector of selected cell types that meet the specified criteria.
 }
 \description{
-This function selects and validates cell types for functions that analyze \code{\linkS4class{SingleCellExperiment}}
+This function selects and validates cell types for functions that analyze \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}}
 objects. It determines which cell types to include based on availability in datasets, applies filtering
 criteria, and optionally selects the top cell types by cell count.
 }

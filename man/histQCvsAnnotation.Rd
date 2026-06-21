@@ -14,7 +14,7 @@ histQCvsAnnotation(
 )
 }
 \arguments{
-\item{sce_object}{A \code{\linkS4class{SingleCellExperiment}} containing the single-cell
+\item{sce_object}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} containing the single-cell
 expression data and metadata.}
 
 \item{cell_type_col}{The column name in the \code{colData} of \code{sce_object}

@@ -3,7 +3,7 @@
 #' @description
 #' This function plots gene expression on a dimensional reduction plot using methods like t-SNE, UMAP, or PCA. Each single cell is color-coded based on the expression of a specific gene or feature.
 #'
-#' @param sce_object An object of class \code{\linkS4class{SingleCellExperiment}} containing log-transformed expression matrix and other metadata.
+#' @param sce_object An object of class \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} containing log-transformed expression matrix and other metadata.
 #'        It can be either a reference or query dataset.
 #' @param method The reduction method to use for visualization. It should be one of the supported methods: "TSNE", "UMAP", or "PCA".
 #' @param pc_subset An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA".

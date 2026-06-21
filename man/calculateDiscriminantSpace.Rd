@@ -35,9 +35,9 @@ calculateDiscriminantSpace(
 )
 }
 \arguments{
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 If NULL, only the projected reference data is returned. Default is NULL.}
 
 \item{ref_cell_type_col}{The column name in \code{reference_data} indicating cell type labels.}

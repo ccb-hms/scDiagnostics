@@ -16,7 +16,7 @@ plotGeneExpressionDimred(
 )
 }
 \arguments{
-\item{sce_object}{An object of class \code{\linkS4class{SingleCellExperiment}} containing log-transformed expression matrix and other metadata.
+\item{sce_object}{An object of class \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} containing log-transformed expression matrix and other metadata.
 It can be either a reference or query dataset.}
 
 \item{method}{The reduction method to use for visualization. It should be one of the supported methods: "TSNE", "UMAP", or "PCA".}

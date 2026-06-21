@@ -13,7 +13,7 @@ downsampleSCE(
 )
 }
 \arguments{
-\item{sce_object}{A \code{\linkS4class{SingleCellExperiment}} object to potentially downsample.
+\item{sce_object}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object to potentially downsample.
 May contain PCA, UMAP, TSNE, or other reducedDims.}
 
 \item{cell_type_col}{The column name in colData that contains cell type information.
@@ -30,12 +30,12 @@ Default is 2500.}
 Default is NULL.}
 }
 \value{
-A \code{\linkS4class{SingleCellExperiment}} object with at most max_cells cells
+A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object with at most max_cells cells
 and optionally filtered by cell types. ReducedDims coordinates are preserved through
 standard subsetting. If max_cells is NULL, the original object is returned unchanged.
 }
 \description{
-This internal function downsamples \code{\linkS4class{SingleCellExperiment}} objects while preserving
+This internal function downsamples \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} objects while preserving
 reducedDims coordinate information (PCA, UMAP, t-SNE, etc.). Optionally, it can also subset by cell types
 before downsampling.
 }

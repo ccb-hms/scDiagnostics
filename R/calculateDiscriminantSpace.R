@@ -16,8 +16,8 @@
 #'   \item Assesses similarity of the query data projection to the reference data using cosine similarity and Mahalanobis distance.
 #' }
 #'
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
-#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
+#' @param query_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 #' If NULL, only the projected reference data is returned. Default is NULL.
 #' @param ref_cell_type_col The column name in \code{reference_data} indicating cell type labels.
 #' @param query_cell_type_col The column name in \code{query_data} indicating cell type labels.

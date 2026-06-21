@@ -12,8 +12,8 @@
 #' SVD on these conditional means to obtain the rotation matrix used for projecting both the reference
 #' and query datasets. The query data is centered and scaled based on the reference data.
 #'
-#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
+#' @param query_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param query_cell_type_col A character string specifying the column in the \code{colData} of \code{query_data}
 #' that identifies the cell types.
 #' @param ref_cell_type_col A character string specifying the column in the \code{colData} of \code{reference_data}

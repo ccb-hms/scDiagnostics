@@ -13,9 +13,9 @@
 #' and downsampling are performed AFTER projection to preserve the statistical properties of the PCA space.
 #' Cell names from the original SCE objects are preserved as rownames in the output.
 #'
-#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix
+#' @param query_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix
 #' for the query cells.
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix
+#' @param reference_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix
 #' for the reference cells.
 #' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data}
 #' that identifies the cell types.

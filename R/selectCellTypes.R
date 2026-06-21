@@ -1,7 +1,7 @@
 #' @title Cell Type Selection and Validation for SingleCellExperiment Analysis
 #'
 #' @description
-#' This function selects and validates cell types for functions that analyze \code{\linkS4class{SingleCellExperiment}}
+#' This function selects and validates cell types for functions that analyze \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}}
 #' objects. It determines which cell types to include based on availability in datasets, applies filtering
 #' criteria, and optionally selects the top cell types by cell count.
 #'
@@ -18,9 +18,9 @@
 #'  \item Returns the selected and validated cell types as character strings.
 #' }
 #'
-#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param query_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
 #' Can be \code{NULL} if only reference data is available.
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
+#' @param reference_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' Can be \code{NULL} if only query data is available.
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data}
 #' that identifies the cell types. Should be \code{NULL} if \code{query_data} is \code{NULL}.

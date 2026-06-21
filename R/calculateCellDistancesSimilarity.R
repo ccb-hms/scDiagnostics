@@ -17,8 +17,8 @@
 #' Hellinger distances range between 0 and 1. A value closer to 0 indicates higher similarity between distributions, while a value
 #' closer to 1 indicates lower similarity.
 #'
-#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
+#' @param query_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data}
 #' that identifies the cell types.
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data}

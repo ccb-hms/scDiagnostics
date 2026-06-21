@@ -14,8 +14,8 @@
 #' which represents the probability that a randomly selected ref-query distance is larger than
 #' a randomly selected ref-ref distance.
 #'
-#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing a numeric expression matrix for the query cells.
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object with a numeric expression matrix for the reference cells.
+#' @param query_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing a numeric expression matrix for the query cells.
+#' @param reference_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object with a numeric expression matrix for the reference cells.
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies cell types.
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies cell types.
 #' @param cell_types A character vector specifying the cell types to include in the analysis. If NULL, all common cell types are included.

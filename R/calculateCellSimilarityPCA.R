@@ -7,10 +7,10 @@
 #' @details
 #' This function calculates the cosine similarity between cells based on the loadings of the selected
 #' principal components obtained from PCA. It extracts the rotation matrix from the PCA results of the
-#' \code{\linkS4class{SingleCellExperiment}} object and identifies the high-loading variables for each selected PC.
+#' \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object and identifies the high-loading variables for each selected PC.
 #' Then, it computes the cosine similarity between cells using the high-loading variables for each PC.
 #'
-#' @param sce_object A \code{\linkS4class{SingleCellExperiment}} object containing expression data.
+#' @param sce_object A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing expression data.
 #' @param cell_names A character vector specifying the cell names for which to compute the similarity.
 #' @param pc_subset A numeric vector specifying the subset of principal components to consider. Default is 1:5..
 #' @param n_top_vars An integer indicating the number of top loading variables to consider for each PC. Default is 50.

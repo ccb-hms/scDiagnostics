@@ -8,7 +8,7 @@
 #' where understanding the distribution of these metrics is crucial for quality assessment and
 #' interpretation of cell type annotations.
 #'
-#' @param sce_object  A \code{\linkS4class{SingleCellExperiment}} containing the single-cell
+#' @param sce_object  A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} containing the single-cell
 #' expression data and metadata.
 #' @param cell_type_col The column name in the \code{colData} of \code{sce_object}
 #' that contains the cell type labels.

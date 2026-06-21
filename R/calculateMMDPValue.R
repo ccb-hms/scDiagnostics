@@ -13,8 +13,8 @@
 #'   \item Performs a custom MMD test with permutation-based p-values for each cell type.
 #' }
 #'
-#' @param query_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
+#' @param query_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
 #' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.

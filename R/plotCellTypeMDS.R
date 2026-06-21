@@ -16,9 +16,9 @@
 #' deriving a dissimilarity matrix. This matrix undergoes Classical Multidimensional Scaling (MDS) for
 #' visualization, presenting cell types in a scatter plot, distinguished by colors defined by the user.
 #'
-#' @param query_data A \code{\linkS4class{SingleCellExperiment}} containing the single-cell
+#' @param query_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} containing the single-cell
 #' expression data and metadata.
-#' @param reference_data A \code{\linkS4class{SingleCellExperiment}} object containing the single-cell
+#' @param reference_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing the single-cell
 #' expression data and metadata.
 #' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
 #' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.

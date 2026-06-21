@@ -21,9 +21,9 @@ calculateCellDistances(
 \method{plot}{calculateCellDistancesObject}(x, ref_cell_type, cell_names, ...)
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data}
 that identifies the cell types.}

@@ -22,9 +22,9 @@ calculateAveragePairwiseCorrelation(
 \method{plot}{calculateAveragePairwiseCorrelationObject}(x, ...)
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
 
@@ -65,7 +65,7 @@ The S3 plot method takes the output of the `calculateAveragePairwiseCorrelation`
 which should be a matrix of pairwise correlations, and plots it as a heatmap.
 }
 \details{
-This function operates on \code{\linkS4class{SingleCellExperiment}} objects,
+This function operates on \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} objects,
 ideal for single-cell analysis workflows. It calculates pairwise correlations between query and
 reference cells using a specified correlation method, then averages these correlations for each
 cell type pair. This function aids in assessing the similarity between cells in reference and query datasets,
