@@ -20,7 +20,9 @@ calculateGeneShifts(
   assay_name = "logcounts",
   detect_anomalies = FALSE,
   anomaly_comparison = FALSE,
-  anomaly_threshold = 0.6,
+  threshold_method = c("MAD", "absolute"),
+  mad_multiplier = 2,
+  anomaly_threshold = 0.5,
   n_tree = 500,
   max_cells_query = 5000,
   max_cells_ref = 5000
@@ -45,9 +47,9 @@ calculateGeneShifts(
 )
 }
 \arguments{
-\item{query_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \code{\linkS4class{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
 
@@ -76,8 +78,14 @@ between non-anomalous reference cells and anomalous query cells instead of all-v
 comparisons. When TRUE, only non-anomalous reference cells are compared against only
 anomalous query cells for each cell type. Requires detect_anomalies = TRUE. Default is FALSE.}
 
-\item{anomaly_threshold}{A numeric value specifying the threshold for identifying anomalies when
-\code{detect_anomalies} is TRUE. Default is 0.6.}
+\item{threshold_method}{A character string specifying the method to determine anomaly cutoffs.
+Options are \code{"MAD"} (Median Absolute Deviation) or \code{"absolute"}. Default is \code{"MAD"}.}
+
+\item{mad_multiplier}{A numeric value specifying the number of MADs above the reference median to use as the cutoff
+when \code{threshold_method = "MAD"}. Default is 2.}
+
+\item{anomaly_threshold}{A numeric value specifying the absolute threshold for identifying anomalies when
+\code{threshold_method = "absolute"}. Default is 0.5.}
 
 \item{n_tree}{An integer specifying the number of trees for the isolation forest when
 \code{detect_anomalies} is TRUE. Default is 500.}
@@ -138,9 +146,6 @@ A list containing:
   \item cell_type_variance: A data frame detailing the percent of variance a global PC explains within specific cell types for both query and reference datasets.
   \item anomaly_results: If \code{detect_anomalies} is TRUE, contains the full output from \code{detectAnomaly}.
 }
-
-The `cell_type_variance` data frame contains columns: pc, cell_type, dataset, percent_variance.
-When anomaly detection is enabled, `cell_metadata` includes an additional `anomaly_status` column.
 
 A plot object. For heatmaps when \code{draw_plot = FALSE}, returns a ComplexHeatmap object.
 For boxplots and barplots, returns a ggplot2 object.
