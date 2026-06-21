@@ -5,6 +5,7 @@
 ^\.github$
 ^docs$
 ^pkgdown$
+^_pkgdown\.yml$
 sandbox
 ^inst/extdata
 ^inst/script
