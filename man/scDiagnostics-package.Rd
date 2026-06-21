@@ -110,6 +110,7 @@ The package is built to facilitate in-depth analysis and visualization of single
 Useful links:
 \itemize{
   \item \url{https://github.com/ccb-hms/scDiagnostics}
+  \item \url{https://ccb-hms.github.io/scDiagnostics}
   \item Report bugs at \url{https://github.com/ccb-hms/scDiagnostics/issues}
 }
 

@@ -12,7 +12,7 @@ detectAnomaly(
   query_cell_type_col = NULL,
   cell_types = NULL,
   pc_subset = 1:5,
-  n_hvgs = 1000,
+  n_hvgs = 100,
   n_tree = 500,
   threshold_method = c("MAD", "absolute"),
   mad_multiplier = 2,
@@ -53,7 +53,7 @@ If NULL, then the isolation forest anomaly scores are computed for the reference
 If NULL, all PCs in \code{reference_mat_subset} will be included. Ignored if HVGs were used.}
 
 \item{n_hvgs}{An integer specifying the number of highly variable genes to retain when `pc_subset` is NULL.
-If a query dataset is provided, the top `n_hvgs` are computed for both reference and query, and their union is used. Default is 1000.}
+If a query dataset is provided, the top `n_hvgs` are computed for both reference and query, and their union is used. Default is 100.}
 
 \item{n_tree}{An integer specifying the number of trees for the isolation forest. Default is 500.}
 
