@@ -262,7 +262,7 @@ subspace_comparison <- comparePCASubspace(
 
 # View weighted cosine similarity score
 subspace_comparison$weighted_cosine_similarity
-#> [1] 0.2620419
+#> [1] 0.2609384
 
 # Plot output for PCA subspace comparison (if a plot method is available)
 plot(subspace_comparison)
@@ -405,7 +405,7 @@ wasserstein_data <- calculateWassersteinDistance(
     pc_subset = 1:10,
 )
 plot(wasserstein_data)
-#> Picking joint bandwidth of 0.00906
+#> Picking joint bandwidth of 0.00905
 ```
 
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/plotWassersteinDistance.png)

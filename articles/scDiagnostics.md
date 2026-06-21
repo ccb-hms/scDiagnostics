@@ -293,9 +293,9 @@ provide another metric to assess the similarity between the datasets.
 ``` r
 
 plot(disc_output, plot_type = "scatterplot")
-#> Picking joint bandwidth of 0.103
-#> Picking joint bandwidth of 0.155
-#> Picking joint bandwidth of 0.164
+#> Picking joint bandwidth of 0.117
+#> Picking joint bandwidth of 0.162
+#> Picking joint bandwidth of 0.169
 ```
 
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/calculateDiscriminantSpace.png)
@@ -396,7 +396,7 @@ subspace_comparison <- comparePCASubspace(
 
 # View weighted cosine similarity score
 subspace_comparison$weighted_cosine_similarity
-#> [1] 0.2620419
+#> [1] 0.2609384
 
 # Plot output for PCA subspace comparison (if a plot method is available)
 plot(subspace_comparison)
@@ -454,7 +454,7 @@ wasserstein_data <- calculateWassersteinDistance(
     pc_subset = 1:10,
 )
 plot(wasserstein_data)
-#> Picking joint bandwidth of 0.00895
+#> Picking joint bandwidth of 0.00905
 ```
 
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/plotWassersteinDistance.png)
@@ -592,8 +592,29 @@ cd4_anomalies <- detectAnomaly(reference_data = reference_data,
                                query_data = query_data, 
                                query_cell_type_col = "SingleR_annotation", 
                                ref_cell_type_col = "expert_annotation")
+#> Warning in fitTrendVar(fm, fv, ...): 'fitTrendVar' is deprecated.
+#> Use 'scrapper::fitVarianceTrend' instead.
+#> See help("Deprecated")
+#> Warning in combineBlocks(collected, method = method, equiweight = equiweight, : 'combineBlocks' is deprecated.
+#> See help("Deprecated")
+#> Warning in scran::getTopHVGs(var_ref, n = n_hvgs): 'scran::getTopHVGs' is deprecated.
+#> Use 'scrapper::chooseHighlyVariableGenes' instead.
+#> See help("Deprecated")
+#> Warning in fitTrendVar(fm, fv, ...): 'fitTrendVar' is deprecated.
+#> Use 'scrapper::fitVarianceTrend' instead.
+#> See help("Deprecated")
+#> Warning in combineBlocks(collected, method = method, equiweight = equiweight, : 'combineBlocks' is deprecated.
+#> See help("Deprecated")
+#> Warning in scran::getTopHVGs(var_query, n = n_hvgs): 'scran::getTopHVGs' is deprecated.
+#> Use 'scrapper::chooseHighlyVariableGenes' instead.
+#> See help("Deprecated")
+
+# Get the names of the top 6 anomalies
 cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, 
                                  decreasing = TRUE)[1:6])
+
+# Fix: Add the "Query_" prefix so the names match the distance_data matrix!
+cd4_top6_anomalies <- paste0("Query_", cd4_top6_anomalies)
 
 # Plot the PC data
 distance_data <- calculateCellDistances(

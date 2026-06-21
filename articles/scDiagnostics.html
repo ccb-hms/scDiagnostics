@@ -360,9 +360,9 @@ provide another metric to assess the similarity between the
 datasets.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">disc_output</span>, plot_type <span class="op">=</span> <span class="st">"scatterplot"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Picking joint bandwidth of 0.103</span></span>
-<span><span class="co">#&gt; Picking joint bandwidth of 0.155</span></span>
-<span><span class="co">#&gt; Picking joint bandwidth of 0.164</span></span></code></pre></div>
+<span><span class="co">#&gt; Picking joint bandwidth of 0.117</span></span>
+<span><span class="co">#&gt; Picking joint bandwidth of 0.162</span></span>
+<span><span class="co">#&gt; Picking joint bandwidth of 0.169</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/calculateDiscriminantSpace.png"></p>
 <p>Alternatively, you can create a boxplot comparing query and reference
 projections for a specific cell type. See the reference manual for an
@@ -452,7 +452,7 @@ effective data integration.</p>
 <span></span>
 <span><span class="co"># View weighted cosine similarity score</span></span>
 <span><span class="va">subspace_comparison</span><span class="op">$</span><span class="va">weighted_cosine_similarity</span></span>
-<span><span class="co">#&gt; [1] 0.2620419</span></span>
+<span><span class="co">#&gt; [1] 0.2609384</span></span>
 <span></span>
 <span><span class="co"># Plot output for PCA subspace comparison (if a plot method is available)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">subspace_comparison</span><span class="op">)</span></span></code></pre></div>
@@ -503,7 +503,7 @@ differences between the datasets are statistically significant.</p>
 <span>    pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wasserstein_data</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Picking joint bandwidth of 0.00895</span></span></code></pre></div>
+<span><span class="co">#&gt; Picking joint bandwidth of 0.00905</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/plotWassersteinDistance.png"></p>
 </div>
 <div class="section level3">
@@ -626,8 +626,29 @@ visualize patterns within the data.</p>
 <span>                               query_data <span class="op">=</span> <span class="va">query_data</span>, </span>
 <span>                               query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>, </span>
 <span>                               ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in fitTrendVar(fm, fv, ...): 'fitTrendVar' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'scrapper::fitVarianceTrend' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="co">#&gt; Warning in combineBlocks(collected, method = method, equiweight = equiweight, : 'combineBlocks' is deprecated.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="co">#&gt; Warning in scran::getTopHVGs(var_ref, n = n_hvgs): 'scran::getTopHVGs' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'scrapper::chooseHighlyVariableGenes' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="co">#&gt; Warning in fitTrendVar(fm, fv, ...): 'fitTrendVar' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'scrapper::fitVarianceTrend' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="co">#&gt; Warning in combineBlocks(collected, method = method, equiweight = equiweight, : 'combineBlocks' is deprecated.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="co">#&gt; Warning in scran::getTopHVGs(var_query, n = n_hvgs): 'scran::getTopHVGs' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'scrapper::chooseHighlyVariableGenes' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span></span>
+<span><span class="co"># Get the names of the top 6 anomalies</span></span>
 <span><span class="va">cd4_top6_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">cd4_anomalies</span><span class="op">$</span><span class="va">CD4</span><span class="op">$</span><span class="va">query_anomaly_scores</span>, </span>
 <span>                                 decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fix: Add the "Query_" prefix so the names match the distance_data matrix!</span></span>
+<span><span class="va">cd4_top6_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Query_"</span>, <span class="va">cd4_top6_anomalies</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the PC data</span></span>
 <span><span class="va">distance_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateCellDistances.html">calculateCellDistances</a></span><span class="op">(</span></span>

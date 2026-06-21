@@ -62,7 +62,7 @@ If highly variable genes (HVGs) were used (<code>pc_subset</code> is NULL), it g
 <span>  <span class="va">ref_cell_type_col</span>,</span>
 <span>  query_cell_type_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cell_types <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
+<span>  pc_subset <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n_hvgs <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  n_tree <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  threshold_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MAD"</span>, <span class="st">"absolute"</span><span class="op">)</span>,</span>
@@ -250,7 +250,7 @@ is Z-score scaled across cells for optimal visual contrast.</p>
 <span class="r-in"><span>                                query_data <span class="op">=</span> <span class="va">query_data</span>,</span></span>
 <span class="r-in"><span>                                ref_cell_type_col <span class="op">=</span> <span class="st">"expert_annotation"</span>,</span></span>
 <span class="r-in"><span>                                query_cell_type_col <span class="op">=</span> <span class="st">"SingleR_annotation"</span>,</span></span>
-<span class="r-in"><span>                                pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span></span>
+<span class="r-in"><span>                                pc_subset <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,</span></span>
 <span class="r-in"><span>                                n_tree <span class="op">=</span> <span class="fl">500</span>,</span></span>
 <span class="r-in"><span>                                threshold_method <span class="op">=</span> <span class="st">"MAD"</span>,</span></span>
 <span class="r-in"><span>                                mad_multiplier <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
