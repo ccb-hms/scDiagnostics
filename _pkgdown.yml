@@ -2,14 +2,10 @@ title: "scDiagnostics"
 
 url: https://ccb-hms.github.io/scDiagnostics/
 
-pandoc: 3.1.11
-pkgdown: 2.1.0
-pkgdown_sha: ~
-last_built: 2024-08-24T18:56Z
-
+# Updated to use Bootstrap 5 to resolve deprecation warnings
 template:
-  params:
-    bootswatch: flatly
+  bootstrap: 5
+  bootswatch: flatly
 
 navbar:
   title: "scDiagnostics"
@@ -29,6 +25,9 @@ navbar:
       href: reference/index.html
     - text: News
       href: news/index.html
+  right:
+    - icon: fa-github
+      href: https://github.com/ccb-hms/scDiagnostics
 
 reference:
   - title: Visualization of Cell Type Annotations
@@ -38,6 +37,7 @@ reference:
       - calculateSIRSpace
       - plotCellTypeMDS
       - plotCellTypePCA
+      
   - title: Evaluation of Dataset Alignment
     contents:
       - calculateGraphIntegration
@@ -45,6 +45,7 @@ reference:
       - comparePCA
       - comparePCASubspace
       - plotPairwiseDistancesDensity
+      
   - title: Calculation of Statistical Measures to Compare Two Datasets
     contents:
       - calculateAveragePairwiseCorrelation
@@ -52,41 +53,45 @@ reference:
       - calculateHotellingPValue
       - calculateMMDPValue
       - regressPC
+      
   - title: Anomaly Detection (Global and Cell Type-Specific)
     contents:
       - detectAnomaly
+      - calculateReconstructionError
       - calculateCellSimilarityPCA
+      
   - title: Calculation of Distances Between Specific Cells and Cell Populations
     contents:
       - calculateCellDistances
       - calculateCellDistancesSimilarity
+      
   - title: Evaluation of Marker Gene Alignment
     contents:
       - calculateHVGOverlap
       - calculateGeneShifts
       - calculateVarImpOverlap
       - compareMarkers
+      
   - title: Visualization of Marker Expressions
     contents:
       - plotGeneExpressionDimred
       - plotMarkerExpression
+      
   - title: Visualization of QC and Annotation Scores
     contents:
       - histQCvsAnnotation
       - plotQCvsAnnotation
       - plotGeneSetScores
+      
   - title: Misc
     contents:
       - processPCA
       - projectPCA
       - projectSIR
       - calculateCategorizationEntropy
+      
   - title: Datasets
     contents:
       - reference_data
       - query_data
       - qc_data
-
-right:
-  - icon: fa-github
-    href: https://github.com/ccb-hms/scDiagnostics
