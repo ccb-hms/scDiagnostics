@@ -483,20 +483,24 @@ plot.detectAnomalyObject <- function(x,
         ggplot2::scale_color_manual(values = anomaly_colors, name = "Anomalous") +
         ggplot2::theme(legend.position = "right", legend.box = "vertical", legend.key = ggplot2::element_rect(fill = "white"))
 
+    pca_title <- paste0("Isolation Forest Anomaly Plot: ", cell_type)
+
     plot_obj <- suppressMessages(
         GGally::ggpairs(
             pc_df, columns = seq_len(length(pc_subset)), mapping = ggplot2::aes(color = anomaly),
             lower = list(continuous = .anomalyScatterFunc), diag = list(continuous = diag_func),
-            upper = list(continuous = upper_func), progress = FALSE, legend = GGally::grab_legend(legend_plot)
+            upper = list(continuous = upper_func), progress = FALSE, 
+            title = pca_title,
+            legend = GGally::grab_legend(legend_plot)
         )
     )
 
     plot_obj <- plot_obj +
         ggplot2::theme(
             strip.background = ggplot2::element_rect(fill = "white", color = "black", linewidth = 0.5),
-            strip.text = ggplot2::element_text(color = "black"), plot.title = ggplot2::element_text(hjust = 0.5)
-        ) +
-        ggplot2::ggtitle(paste0("Isolation Forest Anomaly Plot: ", cell_type))
+            strip.text = ggplot2::element_text(color = "black"), 
+            plot.title = ggplot2::element_text(size = 14, hjust = 0.5)
+        )
 
     if (draw_plot) {
         print(plot_obj)
