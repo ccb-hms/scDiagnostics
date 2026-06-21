@@ -1,0 +1,119 @@
+# Project Query Data Onto PCA Space of Reference Data
+
+This function projects a query singleCellExperiment object onto the PCA
+space of a reference singleCellExperiment object. The PCA analysis on
+the reference data is assumed to be pre-computed and stored within the
+object. Optionally filters by cell types and downsamples the results.
+
+## Usage
+
+``` r
+projectPCA(
+  query_data,
+  reference_data,
+  query_cell_type_col,
+  ref_cell_type_col,
+  cell_types = NULL,
+  pc_subset = 1:10,
+  assay_name = "logcounts",
+  max_cells_query = NULL,
+  max_cells_ref = NULL
+)
+```
+
+## Arguments
+
+- query_data:
+
+  A
+  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  object containing numeric expression matrix for the query cells.
+
+- reference_data:
+
+  A
+  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  object containing numeric expression matrix for the reference cells.
+
+- query_cell_type_col:
+
+  character. The column name in the `colData` of `query_data` that
+  identifies the cell types.
+
+- ref_cell_type_col:
+
+  character. The column name in the `colData` of `reference_data` that
+  identifies the cell types.
+
+- cell_types:
+
+  A character vector specifying which cell types to retain in the
+  output. If NULL, no cell type filtering is performed. Default is NULL.
+
+- pc_subset:
+
+  A numeric vector specifying the subset of principal components (PCs)
+  to compare. Default is 1:10.
+
+- assay_name:
+
+  Name of the assay on which to perform computations. Defaults to
+  `"logcounts"`.
+
+- max_cells_query:
+
+  Maximum number of query cells to retain after cell type filtering. If
+  NULL, no downsampling of query cells is performed. Default is NULL.
+
+- max_cells_ref:
+
+  Maximum number of reference cells to retain after cell type filtering.
+  If NULL, no downsampling of reference cells is performed. Default is
+  NULL.
+
+## Value
+
+A `data.frame` containing the projected data in rows (reference and
+query data combined), optionally filtered by cell types and downsampled.
+Rownames preserve the original cell names from the SCE objects.
+
+## Details
+
+This function assumes that the "PCA" element exists within the
+`reducedDims` of the reference data (obtained using
+`reducedDim(reference_data)`) and that the genes used for PCA are
+present in both the reference and query data. It performs centering and
+scaling of the query data based on the reference data before projection
+using the FULL datasets to maintain proper mean centering. Cell type
+filtering and downsampling are performed AFTER projection to preserve
+the statistical properties of the PCA space. Cell names from the
+original SCE objects are preserved as rownames in the output.
+
+## Author
+
+Anthony Christidis, <anthony-alexander_christidis@hms.harvard.edu>
+
+## Examples
+
+``` r
+# Load data
+data("reference_data")
+data("query_data")
+
+# Project the query data onto PCA space of reference
+pca_output <- projectPCA(query_data = query_data,
+                         reference_data = reference_data,
+                         query_cell_type_col = "SingleR_annotation",
+                         ref_cell_type_col = "expert_annotation",
+                         pc_subset = 1:10)
+
+# Project with cell type filtering and balanced downsampling
+pca_output_filtered <- projectPCA(query_data = query_data,
+                                  reference_data = reference_data,
+                                  query_cell_type_col = "SingleR_annotation",
+                                  ref_cell_type_col = "expert_annotation",
+                                  pc_subset = 1:5,
+                                  cell_types = c("CD4", "CD8"),
+                                  max_cells_ref = 1000,
+                                  max_cells_query = 1000)
+```

@@ -1,0 +1,39 @@
+# Changelog
+
+## CHANGES IN VERSION 1.0.0
+
+- Initial release of the `scDiagnostics` package.
+
+## CHANGES IN VERSION 1.4.0
+
+- Add functionality to process SCE objects for PCA computation via the
+  new
+  [`processPCA()`](https://ccb-hms.github.io/scDiagnostics/reference/processPCA.md)
+  function.
+- Add functionality to downsample SCE objects for diagnostic functions.
+- Add new diagnostic functions (`calculateTopLoadingGeneShifts()`,
+  [`compareMarkers()`](https://ccb-hms.github.io/scDiagnostics/reference/compareMarkers.md)
+  and
+  [`calculateMMDPValue()`](https://ccb-hms.github.io/scDiagnostics/reference/calculateMMDPValue.md)).
+- Add graph integration diagnostic function in replacement of nearest
+  neighbor diagnostic,
+  [`calculateGraphIntegration()`](https://ccb-hms.github.io/scDiagnostics/reference/calculateGraphIntegration.md).
+- Improve
+  [`regressPC()`](https://ccb-hms.github.io/scDiagnostics/reference/regressPC.md)
+  function and plot method, which can now also regress against cell
+  types and batches.
+- Improve normalization for
+  [`plotMarkerExpression()`](https://ccb-hms.github.io/scDiagnostics/reference/plotMarkerExpression.md)
+  diagnostic function.
+- Improve user control and options for plot methods.
+- Update vignettes to reflect all new changes.
+
+## CHANGES IN VERSION 1.6.0
+
+- Renamed gene shift function for consistency (previously
+  `calculateTopLoadingGeneShifts()`)
+- Added gene specification parameter to
+  [`calculateGeneShifts()`](https://ccb-hms.github.io/scDiagnostics/reference/calculateGeneShifts.md)
+- Improved
+  [`calculateGeneShifts()`](https://ccb-hms.github.io/scDiagnostics/reference/calculateGeneShifts.md)
+  function, plot method, and color scheme

@@ -1,0 +1,101 @@
+# Plot Principal Components for Different Cell Types
+
+This function plots the principal components for different cell types in
+the query and reference datasets.
+
+## Usage
+
+``` r
+plotCellTypePCA(
+  query_data,
+  reference_data,
+  query_cell_type_col,
+  ref_cell_type_col,
+  cell_types = NULL,
+  pc_subset = 1:5,
+  assay_name = "logcounts",
+  lower_facet = c("scatter", "contour", "ellipse", "blank"),
+  diagonal_facet = c("ridge", "density", "boxplot"),
+  upper_facet = c("blank", "scatter", "contour", "ellipse"),
+  max_cells_query = 2000,
+  max_cells_ref = 2000
+)
+```
+
+## Arguments
+
+- query_data:
+
+  A
+  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  object containing numeric expression matrix for the query cells.
+
+- reference_data:
+
+  A
+  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  object containing numeric expression matrix for the reference cells.
+
+- query_cell_type_col:
+
+  The column name in the `colData` of `query_data` that identifies the
+  cell types.
+
+- ref_cell_type_col:
+
+  The column name in the `colData` of `reference_data` that identifies
+  the cell types.
+
+- cell_types:
+
+  A character vector specifying the cell types to include in the plot.
+  If NULL, all cell types are included.
+
+- pc_subset:
+
+  A numeric vector specifying which principal components to include in
+  the plot. Default is 1:5.
+
+- assay_name:
+
+  Name of the assay on which to perform computations. Default is
+  "logcounts".
+
+- lower_facet:
+
+  Type of plot to use for the lower panels. Either "scatter" (default),
+  "contour", "ellipse", or "blank".
+
+- diagonal_facet:
+
+  Type of plot to use for the diagonal panels. Either "ridge" (default),
+  "density", or "boxplot".
+
+- upper_facet:
+
+  Type of plot to use for the upper panels. Either "blank" (default),
+  "scatter", "contour", or "ellipse".
+
+- max_cells_query:
+
+  Maximum number of query cells to retain after cell type filtering. If
+  NULL, no downsampling of query cells is performed. Default is 2000.
+
+- max_cells_ref:
+
+  Maximum number of reference cells to retain after cell type filtering.
+  If NULL, no downsampling of reference cells is performed. Default is
+  2000.
+
+## Value
+
+A ggmatrix object representing a pairs plot of specified principal
+components for the given cell types and datasets.
+
+## Details
+
+This function projects the query dataset onto the principal component
+space of the reference dataset and then plots the specified principal
+components for the specified cell types. It uses the \`projectPCA\`
+function to perform the projection and `GGally` to create the pairs
+plot.

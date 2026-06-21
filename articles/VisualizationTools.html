@@ -4,90 +4,60 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Visualization of Cell Type Annotations • scDiagnostics</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Visualization of Cell Type Annotations">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">scDiagnostics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
-      </span>
-    </div>
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="default" aria-label="Site navigation"><div class="container">
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Vignettes
+    <a class="navbar-brand me-2" href="../index.html">scDiagnostics</a>
 
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/scDiagnostics.html">Getting Started with scDiagnostics</a>
-    </li>
-    <li>
-      <a href="../articles/VisualizationTools.html">Visualization of Cell Type Annotations</a>
-    </li>
-    <li>
-      <a href="../articles/DatasetMarkerGeneAlignment.html">Evaluation of Dataset and Marker Gene Alignment</a>
-    </li>
-    <li>
-      <a href="../articles/AnnotationAnomalies.html">Detection and Analysis of Annotation Anomalies</a>
-    </li>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.1</small>
+
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
+<li><a class="dropdown-item" href="../articles/scDiagnostics.html">Getting Started with scDiagnostics</a></li>
+    <li><a class="dropdown-item" href="../articles/VisualizationTools.html">Visualization of Cell Type Annotations</a></li>
+    <li><a class="dropdown-item" href="../articles/DatasetMarkerGeneAlignment.html">Evaluation of Dataset and Marker Gene Alignment</a></li>
+    <li><a class="dropdown-item" href="../articles/AnnotationAnomalies.html">Detection and Analysis of Annotation Anomalies</a></li>
   </ul>
 </li>
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li>
-  <a href="../news/index.html">News</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/ccb-hms/scDiagnostics/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ccb-hms/scDiagnostics"><span class="fa fa-github"></span></a></li>
       </ul>
 </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
+</nav><div class="container template-article">
 
 
 
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Visualization of Cell Type Annotations</h1>
+
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+
+      <h1>Visualization of Cell Type Annotations</h1>
                         <h4 data-toc-skip class="author">Anthony
 Christidis</h4>
             <address class="author_afil">
@@ -113,8 +83,7 @@ Gentleman</h4>
             <address class="author_afil">
       Core for Computational Biomedicine, Harvard Medical
 School<br><small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/vignettes/VisualizationTools.Rmd" class="external-link"><code>vignettes/VisualizationTools.Rmd</code></a></small>
-      <div class="hidden name"><code>VisualizationTools.Rmd</code></div>
-
+      <div class="d-none name"><code>VisualizationTools.Rmd</code></div>
     </address>
 </address>
 </address>
@@ -159,13 +128,13 @@ providing a robust benchmark for assessing the quality of annotations.
 It serves as a standard reference to evaluate and detect anomalies or
 inconsistencies within the cell type annotations.</p></li>
 <li><p><code>query_data</code>: This dataset includes annotations both
-from expert assessments and those generated by the <em><a href="https://bioconductor.org/packages/3.22/SingleR" class="external-link">SingleR</a></em>
+from expert assessments and those generated by the <em><a href="https://bioconductor.org/packages/3.23/SingleR" class="external-link">SingleR</a></em>
 package. By comparing these annotations, you can identify discrepancies
 between manual and automated results, thereby pinpointing potential
 inconsistencies or areas that may need further scrutiny.</p></li>
 <li><p><code>qc_data</code>: This dataset includes data from
 haematopoietic stem and progenitor cells, including QC metrics like
-library size and mitochondrial content, <em><a href="https://bioconductor.org/packages/3.22/SingleR" class="external-link">SingleR</a></em>-predicted
+library size and mitochondrial content, <em><a href="https://bioconductor.org/packages/3.23/SingleR" class="external-link">SingleR</a></em>-predicted
 cell types and annotation scores indicating prediction
 confidence.</p></li>
 </ul>
@@ -573,9 +542,9 @@ pathways in various cell states or types.</p>
 <div class="section level2">
 <h2 id="r-session-info">R Session Info<a class="anchor" aria-label="anchor" href="#r-session-info"></a>
 </h2>
-<pre><code>R version 4.5.2 (2025-10-31)
+<pre><code>R version 4.6.0 (2026-04-24)
 Platform: x86_64-pc-linux-gnu
-Running under: Ubuntu 24.04.3 LTS
+Running under: Ubuntu 24.04.4 LTS
 
 Matrix products: default
 BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -594,72 +563,65 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ggplot2_4.0.1       scDiagnostics_1.5.1 BiocStyle_2.38.0   
+[1] ggplot2_4.0.3       scDiagnostics_1.5.1 BiocStyle_2.40.0   
 
 loaded via a namespace (and not attached):
- [1] SummarizedExperiment_1.40.0 gtable_0.3.6               
- [3] xfun_0.56                   bslib_0.9.0                
- [5] htmlwidgets_1.6.4           Biobase_2.70.0             
- [7] GGally_2.4.0                lattice_0.22-7             
- [9] vctrs_0.7.1                 tools_4.5.2                
-[11] generics_0.1.4              parallel_4.5.2             
-[13] stats4_4.5.2                tibble_3.3.1               
-[15] cluster_2.1.8.1             BiocNeighbors_2.4.0        
-[17] pkgconfig_2.0.3             Matrix_1.7-4               
-[19] RColorBrewer_1.1-3          S7_0.2.1                   
-[21] desc_1.4.3                  S4Vectors_0.48.0           
+ [1] SummarizedExperiment_1.42.0 gtable_0.3.6               
+ [3] xfun_0.59                   bslib_0.11.0               
+ [5] htmlwidgets_1.6.4           Biobase_2.72.0             
+ [7] GGally_2.4.0                lattice_0.22-9             
+ [9] vctrs_0.7.3                 tools_4.6.0                
+[11] generics_0.1.4              parallel_4.6.0             
+[13] stats4_4.6.0                tibble_3.3.1               
+[15] cluster_2.1.8.2             BiocNeighbors_2.6.0        
+[17] pkgconfig_2.0.3             Matrix_1.7-5               
+[19] RColorBrewer_1.1-3          S7_0.2.2                   
+[21] desc_1.4.3                  S4Vectors_0.50.1           
 [23] ggridges_0.5.7              lifecycle_1.0.5            
-[25] compiler_4.5.2              farver_2.1.2               
-[27] textshaping_1.0.4           bluster_1.20.0             
-[29] codetools_0.2-20            Seqinfo_1.0.0              
+[25] compiler_4.6.0              farver_2.1.2               
+[27] textshaping_1.0.5           bluster_1.22.0             
+[29] codetools_0.2-20            Seqinfo_1.2.0              
 [31] htmltools_0.5.9             sass_0.4.10                
 [33] yaml_2.3.12                 tidyr_1.3.2                
 [35] pkgdown_2.2.0               pillar_1.11.1              
-[37] jquerylib_0.1.4             BiocParallel_1.44.0        
-[39] SingleCellExperiment_1.32.0 DelayedArray_0.36.0        
+[37] jquerylib_0.1.4             BiocParallel_1.46.0        
+[39] SingleCellExperiment_1.34.0 DelayedArray_0.38.2        
 [41] cachem_1.1.0                abind_1.4-8                
-[43] ggstats_0.12.0              tidyselect_1.2.1           
-[45] digest_0.6.39               purrr_1.2.1                
-[47] dplyr_1.1.4                 bookdown_0.46              
+[43] ggstats_0.13.0              tidyselect_1.2.1           
+[45] digest_0.6.39               purrr_1.2.2                
+[47] dplyr_1.2.1                 bookdown_0.47              
 [49] labeling_0.4.3              fastmap_1.2.0              
-[51] grid_4.5.2                  cli_3.6.5                  
-[53] SparseArray_1.10.8          magrittr_2.0.4             
-[55] S4Arrays_1.10.1             withr_3.0.2                
-[57] scales_1.4.0                rmarkdown_2.30             
-[59] XVector_0.50.0              matrixStats_1.5.0          
-[61] igraph_2.2.1                otel_0.2.0                 
-[63] ranger_0.18.0               ragg_1.5.0                 
+[51] grid_4.6.0                  cli_3.6.6                  
+[53] SparseArray_1.12.2          magrittr_2.0.5             
+[55] S4Arrays_1.12.0             withr_3.0.3                
+[57] scales_1.4.0                rmarkdown_2.31             
+[59] XVector_0.52.0              matrixStats_1.5.0          
+[61] igraph_2.3.2                otel_0.2.0                 
+[63] ranger_0.18.0               ragg_1.5.2                 
 [65] evaluate_1.0.5              knitr_1.51                 
-[67] GenomicRanges_1.62.1        IRanges_2.44.0             
-[69] rlang_1.1.7                 Rcpp_1.1.1                 
-[71] glue_1.8.0                  BiocManager_1.30.27        
-[73] BiocGenerics_0.56.0         jsonlite_2.0.0             
-[75] R6_2.6.1                    MatrixGenerics_1.22.0      
-[77] systemfonts_1.3.1           fs_1.6.6                   </code></pre>
+[67] GenomicRanges_1.64.0        IRanges_2.46.0             
+[69] rlang_1.2.0                 Rcpp_1.1.1-1.1             
+[71] glue_1.8.1                  BiocManager_1.30.27        
+[73] BiocGenerics_0.58.1         jsonlite_2.0.0             
+[75] R6_2.6.1                    MatrixGenerics_1.24.0      
+[77] systemfonts_1.3.2           fs_2.1.0                   </code></pre>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-      </div>
-
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by Anthony Christidis, Andrew Ghazi, Smriti Chawla, Ludwig Geistlinger, Robert Gentleman.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by Anthony Christidis, Andrew Ghazi, Smriti Chawla, Ludwig Geistlinger, Robert Gentleman.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
-
 
 
 

@@ -1,0 +1,54 @@
+# Adjust P-Values in Regression Results
+
+Adjusts the p-values in the regression results using a specified
+adjustment method. The adjustment is performed for different regression
+types including cell type, dataset, and cell type-batch interaction
+analyses.
+
+## Usage
+
+``` r
+adjustPValues(
+  regress_res,
+  adjust_method = c("BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr",
+    "none"),
+  indep_var = c("cell_type", "cell_type_dataset_interaction",
+    "cell_type_batch_interaction")
+)
+```
+
+## Arguments
+
+- regress_res:
+
+  A list containing regression results. The structure varies by analysis
+  type.
+
+- adjust_method:
+
+  A character string specifying the method to adjust the p-values.
+  Options include "BH", "holm", "hochberg", "hommel", "bonferroni",
+  "BY", "fdr", or "none". Default is "BH" (Benjamini-Hochberg).
+
+- indep_var:
+
+  A character string specifying the independent variable for the
+  adjustment. Options are "cell_type", "cell_type_dataset_interaction",
+  or "cell_type_batch_interaction".
+
+## Value
+
+A list similar to `regress_res`, but with an added column for adjusted
+p-values in the coefficients tables.
+
+## Details
+
+This function adjusts p-values from regression results stored in a list.
+The adjustment can be applied across different regression structures
+depending on the analysis type. The method for adjusting p-values can be
+selected from various options such as Benjamini-Hochberg (BH), Holm, and
+others, which are supported by the \`p.adjust\` function in R.
+
+## Author
+
+Anthony Christidis, <anthony-alexander_christidis@hms.harvard.edu>

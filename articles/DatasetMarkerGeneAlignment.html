@@ -4,91 +4,60 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Evaluation of Dataset and Marker Gene Alignment • scDiagnostics</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Evaluation of Dataset and Marker Gene Alignment">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">scDiagnostics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
-      </span>
-    </div>
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="default" aria-label="Site navigation"><div class="container">
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Vignettes
+    <a class="navbar-brand me-2" href="../index.html">scDiagnostics</a>
 
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/scDiagnostics.html">Getting Started with scDiagnostics</a>
-    </li>
-    <li>
-      <a href="../articles/VisualizationTools.html">Visualization of Cell Type Annotations</a>
-    </li>
-    <li>
-      <a href="../articles/DatasetMarkerGeneAlignment.html">Evaluation of Dataset and Marker Gene Alignment</a>
-    </li>
-    <li>
-      <a href="../articles/AnnotationAnomalies.html">Detection and Analysis of Annotation Anomalies</a>
-    </li>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.1</small>
+
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
+<li><a class="dropdown-item" href="../articles/scDiagnostics.html">Getting Started with scDiagnostics</a></li>
+    <li><a class="dropdown-item" href="../articles/VisualizationTools.html">Visualization of Cell Type Annotations</a></li>
+    <li><a class="dropdown-item" href="../articles/DatasetMarkerGeneAlignment.html">Evaluation of Dataset and Marker Gene Alignment</a></li>
+    <li><a class="dropdown-item" href="../articles/AnnotationAnomalies.html">Detection and Analysis of Annotation Anomalies</a></li>
   </ul>
 </li>
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li>
-  <a href="../news/index.html">News</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/ccb-hms/scDiagnostics/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ccb-hms/scDiagnostics"><span class="fa fa-github"></span></a></li>
       </ul>
 </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
+</nav><div class="container template-article">
 
 
 
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Evaluation of Dataset and Marker Gene
-Alignment</h1>
+
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+
+      <h1>Evaluation of Dataset and Marker Gene Alignment</h1>
                         <h4 data-toc-skip class="author">Anthony
 Christidis</h4>
             <address class="author_afil">
@@ -114,8 +83,7 @@ Gentleman</h4>
             <address class="author_afil">
       Core for Computational Biomedicine, Harvard Medical
 School<br><small class="dont-index">Source: <a href="https://github.com/ccb-hms/scDiagnostics/blob/main/vignettes/DatasetMarkerGeneAlignment.Rmd" class="external-link"><code>vignettes/DatasetMarkerGeneAlignment.Rmd</code></a></small>
-      <div class="hidden name"><code>DatasetMarkerGeneAlignment.Rmd</code></div>
-
+      <div class="d-none name"><code>DatasetMarkerGeneAlignment.Rmd</code></div>
     </address>
 </address>
 </address>
@@ -237,7 +205,7 @@ annotations across different datasets, offering a reliable standard
 against which other annotations can be assessed.</li>
 <li>
 <code>query_data</code>: This dataset contains cell type annotations
-from both expert assessments and those generated using the <em><a href="https://bioconductor.org/packages/3.22/SingleR" class="external-link">SingleR</a></em>
+from both expert assessments and those generated using the <em><a href="https://bioconductor.org/packages/3.23/SingleR" class="external-link">SingleR</a></em>
 package. By comparing these annotations with those from the reference
 dataset, you can identify discrepancies between manual and automated
 results, highlighting potential inconsistencies or areas requiring
@@ -253,9 +221,9 @@ further investigation.</li>
 <span></span>
 <span><span class="co"># Set seed for reproducibility</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p>Some functions in the vignette are designed to work with <em><a href="https://bioconductor.org/packages/3.22/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+<p>Some functions in the vignette are designed to work with <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects that contain data from only one cell type. We will create
-separate <em><a href="https://bioconductor.org/packages/3.22/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+separate <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects that only CD4 cells, to ensure compatibility with these
 functions.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -271,7 +239,23 @@ functions.</p>
 <span></span>
 <span><span class="co"># Select highly variable genes</span></span>
 <span><span class="va">ref_top_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scran/man/getTopHVGs.html" class="external-link">getTopHVGs</a></span><span class="op">(</span><span class="va">ref_data_cd4</span>, n <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in getTopHVGs(ref_data_cd4, n = 500): 'getTopHVGs' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'scrapper::chooseHighlyVariableGenes' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="co">#&gt; Warning in fitTrendVar(fm, fv, ...): 'fitTrendVar' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'scrapper::fitVarianceTrend' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="co">#&gt; Warning in combineBlocks(collected, method = method, equiweight = equiweight, : 'combineBlocks' is deprecated.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
 <span><span class="va">query_top_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scran/man/getTopHVGs.html" class="external-link">getTopHVGs</a></span><span class="op">(</span><span class="va">query_data_cd4</span>, n <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in getTopHVGs(query_data_cd4, n = 500): 'getTopHVGs' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'scrapper::chooseHighlyVariableGenes' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="co">#&gt; Warning in fitTrendVar(fm, fv, ...): 'fitTrendVar' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'scrapper::fitVarianceTrend' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="co">#&gt; Warning in combineBlocks(collected, method = method, equiweight = equiweight, : 'combineBlocks' is deprecated.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
 <span><span class="va">common_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">ref_top_genes</span>, <span class="va">query_top_genes</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Subset data by common genes</span></span>
@@ -417,7 +401,7 @@ cell type annotations by comparing their expression profiles.</p>
 <div class="section level4">
 <h4 id="functionality">Functionality<a class="anchor" aria-label="anchor" href="#functionality"></a>
 </h4>
-<p>The function operates on <em><a href="https://bioconductor.org/packages/3.22/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+<p>The function operates on <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects, which are commonly used to store single-cell data, including
 expression matrices and associated metadata. Users specify the cell
 types of interest in both the query and reference datasets, and the
@@ -551,7 +535,7 @@ components (PCs) differ significantly between the reference and query
 datasets for specific cell types.</p>
 <p>To use this function, you first need to provide two key inputs:
 <code>reference_data</code> and <code>query_data</code>, both of which
-should be <em><a href="https://bioconductor.org/packages/3.22/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+should be <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects containing numeric expression matrices. If
 <code>query_data</code> is not supplied, the function will only use the
 <code>reference_data.</code> You should also specify the column names
@@ -603,7 +587,7 @@ the context of single-cell RNA-seq data. This statistical test is
 particularly useful for assessing whether the mean vectors of principal
 components (PCs) differ significantly between the two datasets, which
 can be indicative of differences in the cell type distributions.</p>
-<p>To use this function, you need to provide two <em><a href="https://bioconductor.org/packages/3.22/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+<p>To use this function, you need to provide two <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects: <code>query_data</code> and <code>reference_data</code>, each
 containing numeric expression matrices. You also need to specify the
 column names for cell type annotations in both datasets with
@@ -651,7 +635,7 @@ significant disparities in cell type distributions.</p>
 <p>The <code><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code> function is
 designed to compute the average pairwise correlations between specified
 cell types in single-cell gene expression data. This function operates
-on <em><a href="https://bioconductor.org/packages/3.22/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+on <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects and is ideal for single-cell analysis workflows. It calculates
 pairwise correlations between query and reference cells using a
 specified correlation method, and then averages these correlations for
@@ -659,7 +643,7 @@ each cell type pair. This helps in assessing the similarity between
 cells in the reference and query datasets and provides insights into the
 reliability of cell type annotations.</p>
 <p>To use the <code><a href="../reference/calculateAveragePairwiseCorrelation.html">calculateAveragePairwiseCorrelation()</a></code>
-function, you need to supply it with two <em><a href="https://bioconductor.org/packages/3.22/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+function, you need to supply it with two <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 objects: one for the query cells and one for the reference cells. The
 function also requires column names specifying cell type annotations in
 both datasets, and optionally a vector of cell types to include in the
@@ -696,7 +680,7 @@ data correspond to those in the reference data.</p>
 </h3>
 <p>The <code><a href="../reference/regressPC.html">regressPC()</a></code> function performs linear regression of a
 covariate of interest onto one or more principal components using data
-from a <em><a href="https://bioconductor.org/packages/3.22/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+from a <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
 object. This method helps quantify the variance explained by a
 covariate, which can be useful in applications such as quantifying batch
 effects, assessing clustering homogeneity, and evaluating alignment
@@ -875,7 +859,23 @@ are less comparable.</p>
 <span></span>
 <span><span class="co"># Select the top 500 highly variable genes from both datasets</span></span>
 <span><span class="va">ref_var_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scran/man/getTopHVGs.html" class="external-link">getTopHVGs</a></span><span class="op">(</span><span class="va">reference_data</span>, n <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in getTopHVGs(reference_data, n = 500): 'getTopHVGs' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'scrapper::chooseHighlyVariableGenes' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="co">#&gt; Warning in fitTrendVar(fm, fv, ...): 'fitTrendVar' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'scrapper::fitVarianceTrend' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="co">#&gt; Warning in combineBlocks(collected, method = method, equiweight = equiweight, : 'combineBlocks' is deprecated.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
 <span><span class="va">query_var_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scran/man/getTopHVGs.html" class="external-link">getTopHVGs</a></span><span class="op">(</span><span class="va">query_data</span>, n <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in getTopHVGs(query_data, n = 500): 'getTopHVGs' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'scrapper::chooseHighlyVariableGenes' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="co">#&gt; Warning in fitTrendVar(fm, fv, ...): 'fitTrendVar' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'scrapper::fitVarianceTrend' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="co">#&gt; Warning in combineBlocks(collected, method = method, equiweight = equiweight, : 'combineBlocks' is deprecated.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
 <span></span>
 <span><span class="co"># Calculate the overlap coefficient between the reference and query HVGs</span></span>
 <span><span class="va">overlap_coefficient</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculateHVGOverlap.html">calculateHVGOverlap</a></span><span class="op">(</span>reference_genes <span class="op">=</span> <span class="va">ref_var_genes</span>, </span>
@@ -957,9 +957,9 @@ robust markers.</p>
 <div class="section level2">
 <h2 id="r-session-info">R Session Info<a class="anchor" aria-label="anchor" href="#r-session-info"></a>
 </h2>
-<pre><code>R version 4.5.2 (2025-10-31)
+<pre><code>R version 4.6.0 (2026-04-24)
 Platform: x86_64-pc-linux-gnu
-Running under: Ubuntu 24.04.3 LTS
+Running under: Ubuntu 24.04.4 LTS
 
 Matrix products: default
 BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -979,70 +979,63 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] scater_1.38.0               ggplot2_4.0.1              
- [3] scran_1.38.0                scuttle_1.20.0             
- [5] SingleCellExperiment_1.32.0 SummarizedExperiment_1.40.0
- [7] Biobase_2.70.0              GenomicRanges_1.62.1       
- [9] Seqinfo_1.0.0               IRanges_2.44.0             
-[11] S4Vectors_0.48.0            BiocGenerics_0.56.0        
-[13] generics_0.1.4              MatrixGenerics_1.22.0      
+ [1] scater_1.40.1               ggplot2_4.0.3              
+ [3] scran_1.40.0                scuttle_1.22.0             
+ [5] SingleCellExperiment_1.34.0 SummarizedExperiment_1.42.0
+ [7] Biobase_2.72.0              GenomicRanges_1.64.0       
+ [9] Seqinfo_1.2.0               IRanges_2.46.0             
+[11] S4Vectors_0.50.1            BiocGenerics_0.58.1        
+[13] generics_0.1.4              MatrixGenerics_1.24.0      
 [15] matrixStats_1.5.0           scDiagnostics_1.5.1        
-[17] BiocStyle_2.38.0           
+[17] BiocStyle_2.40.0           
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.2.1    viridisLite_0.4.2   vipor_0.4.7        
- [4] dplyr_1.1.4         farver_2.1.2        viridis_0.6.5      
- [7] S7_0.2.1            fastmap_1.2.0       bluster_1.20.0     
+ [1] tidyselect_1.2.1    viridisLite_0.4.3   vipor_0.4.7        
+ [4] dplyr_1.2.1         farver_2.1.2        viridis_0.6.5      
+ [7] S7_0.2.2            fastmap_1.2.0       bluster_1.22.0     
 [10] transport_0.15-4    digest_0.6.39       rsvd_1.0.5         
-[13] lifecycle_1.0.5     cluster_2.1.8.1     statmod_1.5.1      
-[16] magrittr_2.0.4      compiler_4.5.2      rlang_1.1.7        
-[19] sass_0.4.10         tools_4.5.2         igraph_2.2.1       
-[22] yaml_2.3.12         data.table_1.18.0   knitr_1.51         
-[25] labeling_0.4.3      S4Arrays_1.10.1     dqrng_0.4.1        
-[28] htmlwidgets_1.6.4   DelayedArray_0.36.0 RColorBrewer_1.1-3 
-[31] abind_1.4-8         BiocParallel_1.44.0 withr_3.0.2        
-[34] desc_1.4.3          grid_4.5.2          cramer_0.9-4       
-[37] beachmat_2.26.0     edgeR_4.8.2         scales_1.4.0       
-[40] ggridges_0.5.7      cli_3.6.5           rmarkdown_2.30     
-[43] ragg_1.5.0          otel_0.2.0          metapod_1.18.0     
+[13] lifecycle_1.0.5     cluster_2.1.8.2     statmod_1.5.2      
+[16] magrittr_2.0.5      compiler_4.6.0      rlang_1.2.0        
+[19] sass_0.4.10         tools_4.6.0         igraph_2.3.2       
+[22] yaml_2.3.12         data.table_1.18.4   knitr_1.51         
+[25] labeling_0.4.3      S4Arrays_1.12.0     dqrng_0.4.1        
+[28] htmlwidgets_1.6.4   DelayedArray_0.38.2 RColorBrewer_1.1-3 
+[31] abind_1.4-8         BiocParallel_1.46.0 withr_3.0.3        
+[34] desc_1.4.3          grid_4.6.0          cramer_0.9-4       
+[37] beachmat_2.28.0     edgeR_4.10.1        scales_1.4.0       
+[40] ggridges_0.5.7      cli_3.6.6           rmarkdown_2.31     
+[43] ragg_1.5.2          otel_0.2.0          metapod_1.20.0     
 [46] ggbeeswarm_0.7.3    cachem_1.1.0        stringr_1.6.0      
-[49] parallel_4.5.2      BiocManager_1.30.27 XVector_0.50.0     
-[52] vctrs_0.7.1         boot_1.3-32         Matrix_1.7-4       
-[55] jsonlite_2.0.0      bookdown_0.46       BiocSingular_1.26.1
-[58] BiocNeighbors_2.4.0 ggrepel_0.9.6       beeswarm_0.4.0     
-[61] irlba_2.3.5.1       systemfonts_1.3.1   locfit_1.5-9.12    
-[64] limma_3.66.0        jquerylib_0.1.4     glue_1.8.0         
+[49] parallel_4.6.0      BiocManager_1.30.27 XVector_0.52.0     
+[52] vctrs_0.7.3         boot_1.3-32         Matrix_1.7-5       
+[55] jsonlite_2.0.0      bookdown_0.47       BiocSingular_1.28.0
+[58] BiocNeighbors_2.6.0 ggrepel_0.9.8       beeswarm_0.4.0     
+[61] irlba_2.3.7         systemfonts_1.3.2   locfit_1.5-9.12    
+[64] limma_3.68.4        jquerylib_0.1.4     glue_1.8.1         
 [67] pkgdown_2.2.0       codetools_0.2-20    stringi_1.8.7      
-[70] gtable_0.3.6        ScaledMatrix_1.18.0 tibble_3.3.1       
+[70] gtable_0.3.6        ScaledMatrix_1.20.0 tibble_3.3.1       
 [73] pillar_1.11.1       htmltools_0.5.9     R6_2.6.1           
-[76] textshaping_1.0.4   evaluate_1.0.5      lattice_0.22-7     
-[79] bslib_0.9.0         Rcpp_1.1.1          gridExtra_2.3      
-[82] SparseArray_1.10.8  ranger_0.18.0       xfun_0.56          
-[85] fs_1.6.6            pkgconfig_2.0.3    </code></pre>
+[76] textshaping_1.0.5   evaluate_1.0.5      lattice_0.22-9     
+[79] bslib_0.11.0        Rcpp_1.1.1-1.1      gridExtra_2.3      
+[82] SparseArray_1.12.2  ranger_0.18.0       xfun_0.59          
+[85] fs_2.1.0            pkgconfig_2.0.3    </code></pre>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-      </div>
-
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by Anthony Christidis, Andrew Ghazi, Smriti Chawla, Ludwig Geistlinger, Robert Gentleman.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by Anthony Christidis, Andrew Ghazi, Smriti Chawla, Ludwig Geistlinger, Robert Gentleman.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
-
 
 
 
