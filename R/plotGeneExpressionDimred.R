@@ -245,8 +245,15 @@ plotGeneExpressionDimred <- function(sce_object,
                     axis.title = ggplot2::element_blank(),
                     panel.grid = ggplot2::element_blank())
         }
+        
+        # Determine the plot title dynamically
+        if (!is.null(cell_type_col) && !is.null(cell_types)) {
+            pca_title <- paste0(feature, " Expression in ", paste(cell_types, collapse = ", "), " Cells")
+        } else {
+            pca_title <- paste0(feature, " Expression")
+        }
 
-        # Create pairs plot using GGally
+        # Create pairs plot using GGally (Passing title directly here!)
         plot_obj <- suppressMessages(
             GGally::ggpairs(
                 pc_df,
@@ -255,6 +262,7 @@ plotGeneExpressionDimred <- function(sce_object,
                 lower = list(continuous = .expressionScatterFunc),
                 upper = list(continuous = .blankFunc),
                 diag = list(continuous = .blankFunc),
+                title = pca_title,
                 progress = FALSE,
                 legend = GGally::grab_legend(legend_plot)
             )
@@ -265,16 +273,9 @@ plotGeneExpressionDimred <- function(sce_object,
             ggplot2::theme(
                 strip.background = ggplot2::element_rect(
                     fill = "white", color = "black", linewidth = 0.5),
-                strip.text = ggplot2::element_text(color = "black")
+                strip.text = ggplot2::element_text(color = "black"),
+                plot.title = ggplot2::element_text(size = 14, hjust = 0.5)
             )
-
-        # Add title with cell type info if filtered
-        if (!is.null(cell_type_col) && !is.null(cell_types)) {
-            plot_obj <- plot_obj +
-                ggplot2::labs(title = paste0(feature, " Expression in ",
-                                             paste(cell_types, collapse = ", "),
-                                             " Cells"))
-        }
     }
 
     return(plot_obj)
