@@ -57,6 +57,7 @@ Suggests:
     celldex,
     scuttle,
     scater,
+    BiocSingular,
     dplyr,
     ComplexHeatmap,
     circlize,

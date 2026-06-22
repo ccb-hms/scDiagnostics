@@ -151,15 +151,18 @@ processPCA <- function(sce_object,
         return(TRUE)
     }
 
-    # Helper function to compute PCA with HVGs
+    # Helper function to compute PCA with HVGs (UPDATED FOR SCALABILITY)
     .computePCAWithHvgs <- function(sce, n_hvgs, assay_name) {
 
         # Check if required packages are available
         if (!requireNamespace("scran", quietly = TRUE)) {
-            stop("Package 'scran' is required but not installed. Please install it with: BiocManager::install('scran')")
+            stop("Package 'scran' is required but not installed.")
         }
         if (!requireNamespace("scater", quietly = TRUE)) {
-            stop("Package 'scater' is required but not installed. Please install it with: BiocManager::install('scater')")
+            stop("Package 'scater' is required but not installed.")
+        }
+        if (!requireNamespace("BiocSingular", quietly = TRUE)) {
+            stop("Package 'BiocSingular' is required for fast PCA. Please install it.")
         }
 
         # Get HVGs
@@ -168,10 +171,19 @@ processPCA <- function(sce_object,
 
         message("Using ", length(hvg_genes), " highly variable genes for PCA computation")
 
+        # SMART SVD SELECTION: Use exact SVD for small datasets, fast IRLBA for large ones
+        if (ncol(sce) > 10000) {
+            message("Large dataset detected (>10,000 cells). Using fast IRLBA SVD...")
+            svd_algo <- BiocSingular::IrlbaParam()
+        } else {
+            svd_algo <- BiocSingular::ExactParam()
+        }
+
         # Compute PCA on HVGs
         sce <- scater::runPCA(sce,
                               assay.type = assay_name,
-                              subset_row = hvg_genes)
+                              subset_row = hvg_genes,
+                              BSPARAM = svd_algo) # The scalability magic happens here
 
         return(sce)
     }
