@@ -262,7 +262,7 @@ subspace_comparison <- comparePCASubspace(
 
 # View weighted cosine similarity score
 subspace_comparison$weighted_cosine_similarity
-#> [1] 0.2609384
+#> [1] 0.2620419
 
 # Plot output for PCA subspace comparison (if a plot method is available)
 plot(subspace_comparison)
@@ -405,7 +405,7 @@ wasserstein_data <- calculateWassersteinDistance(
     pc_subset = 1:10,
 )
 plot(wasserstein_data)
-#> Picking joint bandwidth of 0.00905
+#> Picking joint bandwidth of 0.00906
 ```
 
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/DatasetMarkerGeneAlignment/plotWassersteinDistance.png)
@@ -913,7 +913,7 @@ markers.
 
 ## R Session Info
 
-    R version 4.6.0 (2026-04-24)
+    R version 4.6.1 (2026-06-24)
     Platform: x86_64-pc-linux-gnu
     Running under: Ubuntu 24.04.4 LTS
 
@@ -951,18 +951,18 @@ markers.
      [7] S7_0.2.2            fastmap_1.2.0       bluster_1.22.0     
     [10] transport_0.15-4    digest_0.6.39       rsvd_1.0.5         
     [13] lifecycle_1.0.5     cluster_2.1.8.2     statmod_1.5.2      
-    [16] magrittr_2.0.5      compiler_4.6.0      rlang_1.2.0        
-    [19] sass_0.4.10         tools_4.6.0         igraph_2.3.2       
+    [16] magrittr_2.0.5      compiler_4.6.1      rlang_1.2.0        
+    [19] sass_0.4.10         tools_4.6.1         igraph_2.3.3       
     [22] yaml_2.3.12         data.table_1.18.4   knitr_1.51         
     [25] labeling_0.4.3      S4Arrays_1.12.0     dqrng_0.4.1        
     [28] htmlwidgets_1.6.4   DelayedArray_0.38.2 RColorBrewer_1.1-3 
     [31] abind_1.4-8         BiocParallel_1.46.0 withr_3.0.3        
-    [34] desc_1.4.3          grid_4.6.0          cramer_0.9-4       
+    [34] desc_1.4.3          grid_4.6.1          cramer_0.9-4       
     [37] beachmat_2.28.0     edgeR_4.10.1        scales_1.4.0       
     [40] ggridges_0.5.7      cli_3.6.6           rmarkdown_2.31     
     [43] ragg_1.5.2          otel_0.2.0          metapod_1.20.0     
     [46] ggbeeswarm_0.7.3    cachem_1.1.0        stringr_1.6.0      
-    [49] parallel_4.6.0      BiocManager_1.30.27 XVector_0.52.0     
+    [49] parallel_4.6.1      BiocManager_1.30.27 XVector_0.52.0     
     [52] vctrs_0.7.3         boot_1.3-32         Matrix_1.7-5       
     [55] jsonlite_2.0.0      bookdown_0.47       BiocSingular_1.28.0
     [58] BiocNeighbors_2.6.0 ggrepel_0.9.8       beeswarm_0.4.0     
@@ -972,6 +972,6 @@ markers.
     [70] gtable_0.3.6        ScaledMatrix_1.20.0 tibble_3.3.1       
     [73] pillar_1.11.1       htmltools_0.5.9     R6_2.6.1           
     [76] textshaping_1.0.5   evaluate_1.0.5      lattice_0.22-9     
-    [79] bslib_0.11.0        Rcpp_1.1.1-1.1      gridExtra_2.3      
+    [79] bslib_0.11.0        Rcpp_1.1.1-1.1      gridExtra_2.3.1    
     [82] SparseArray_1.12.2  ranger_0.18.0       xfun_0.59          
     [85] fs_2.1.0            pkgconfig_2.0.3    

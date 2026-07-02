@@ -293,9 +293,9 @@ provide another metric to assess the similarity between the datasets.
 ``` r
 
 plot(disc_output, plot_type = "scatterplot")
-#> Picking joint bandwidth of 0.117
-#> Picking joint bandwidth of 0.162
-#> Picking joint bandwidth of 0.169
+#> Picking joint bandwidth of 0.103
+#> Picking joint bandwidth of 0.155
+#> Picking joint bandwidth of 0.164
 ```
 
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/calculateDiscriminantSpace.png)
@@ -396,7 +396,7 @@ subspace_comparison <- comparePCASubspace(
 
 # View weighted cosine similarity score
 subspace_comparison$weighted_cosine_similarity
-#> [1] 0.2609384
+#> [1] 0.2620419
 
 # Plot output for PCA subspace comparison (if a plot method is available)
 plot(subspace_comparison)
@@ -454,7 +454,7 @@ wasserstein_data <- calculateWassersteinDistance(
     pc_subset = 1:10,
 )
 plot(wasserstein_data)
-#> Picking joint bandwidth of 0.00905
+#> Picking joint bandwidth of 0.00895
 ```
 
 ![](https://raw.githubusercontent.com/ccb-hms/scDiagnostics/main/inst/extdata/compressed/scDiagnostics/plotWassersteinDistance.png)
@@ -634,7 +634,7 @@ plot(distance_data, ref_cell_type = "CD4", cell_names = cd4_top6_anomalies)
 
 ## R Session Info
 
-    R version 4.6.0 (2026-04-24)
+    R version 4.6.1 (2026-06-24)
     Platform: x86_64-pc-linux-gnu
     Running under: Ubuntu 24.04.4 LTS
 
@@ -667,27 +667,27 @@ plot(distance_data, ref_cell_type = "CD4", cell_names = cd4_top6_anomalies)
     [17] BiocStyle_2.40.0           
 
     loaded via a namespace (and not attached):
-     [1] gridExtra_2.3       rlang_1.2.0         magrittr_2.0.5     
-     [4] otel_0.2.0          ggridges_0.5.7      compiler_4.6.0     
+     [1] gridExtra_2.3.1     rlang_1.2.0         magrittr_2.0.5     
+     [4] otel_0.2.0          ggridges_0.5.7      compiler_4.6.1     
      [7] systemfonts_1.3.2   vctrs_0.7.3         pkgconfig_2.0.3    
     [10] fastmap_1.2.0       XVector_0.52.0      labeling_0.4.3     
     [13] rmarkdown_2.31      ggbeeswarm_0.7.3    ragg_1.5.2         
     [16] purrr_1.2.2         xfun_0.59           bluster_1.22.0     
     [19] cachem_1.1.0        beachmat_2.28.0     jsonlite_2.0.0     
     [22] DelayedArray_0.38.2 BiocParallel_1.46.0 irlba_2.3.7        
-    [25] parallel_4.6.0      cluster_2.1.8.2     R6_2.6.1           
+    [25] parallel_4.6.1      cluster_2.1.8.2     R6_2.6.1           
     [28] bslib_0.11.0        RColorBrewer_1.1-3  ranger_0.18.0      
     [31] limma_3.68.4        GGally_2.4.0        jquerylib_0.1.4    
     [34] Rcpp_1.1.1-1.1      bookdown_0.47       knitr_1.51         
-    [37] Matrix_1.7-5        igraph_2.3.2        tidyselect_1.2.1   
+    [37] Matrix_1.7-5        igraph_2.3.3        tidyselect_1.2.1   
     [40] abind_1.4-8         yaml_2.3.12         viridis_0.6.5      
     [43] codetools_0.2-20    lattice_0.22-9      tibble_3.3.1       
     [46] withr_3.0.3         S7_0.2.2            evaluate_1.0.5     
     [49] desc_1.4.3          ggstats_0.13.0      pillar_1.11.1      
     [52] BiocManager_1.30.27 scales_1.4.0        RhpcBLASctl_0.23-42
-    [55] glue_1.8.1          metapod_1.20.0      tools_4.6.0        
+    [55] glue_1.8.1          metapod_1.20.0      tools_4.6.1        
     [58] BiocNeighbors_2.6.0 data.table_1.18.4   ScaledMatrix_1.20.0
-    [61] locfit_1.5-9.12     fs_2.1.0            grid_4.6.0         
+    [61] locfit_1.5-9.12     fs_2.1.0            grid_4.6.1         
     [64] tidyr_1.3.2         edgeR_4.10.1        beeswarm_0.4.0     
     [67] BiocSingular_1.28.0 vipor_0.4.7         cli_3.6.6          
     [70] rsvd_1.0.5          textshaping_1.0.5   S4Arrays_1.12.0    

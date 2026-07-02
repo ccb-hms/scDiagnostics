@@ -508,7 +508,7 @@ pathways in various cell states or types.
 
 ## R Session Info
 
-    R version 4.6.0 (2026-04-24)
+    R version 4.6.1 (2026-06-24)
     Platform: x86_64-pc-linux-gnu
     Running under: Ubuntu 24.04.4 LTS
 
@@ -536,15 +536,15 @@ pathways in various cell states or types.
      [3] xfun_0.59                   bslib_0.11.0               
      [5] htmlwidgets_1.6.4           Biobase_2.72.0             
      [7] GGally_2.4.0                lattice_0.22-9             
-     [9] vctrs_0.7.3                 tools_4.6.0                
-    [11] generics_0.1.4              parallel_4.6.0             
-    [13] stats4_4.6.0                tibble_3.3.1               
+     [9] vctrs_0.7.3                 tools_4.6.1                
+    [11] generics_0.1.4              parallel_4.6.1             
+    [13] stats4_4.6.1                tibble_3.3.1               
     [15] cluster_2.1.8.2             BiocNeighbors_2.6.0        
     [17] pkgconfig_2.0.3             Matrix_1.7-5               
     [19] RColorBrewer_1.1-3          S7_0.2.2                   
     [21] desc_1.4.3                  S4Vectors_0.50.1           
     [23] ggridges_0.5.7              lifecycle_1.0.5            
-    [25] compiler_4.6.0              farver_2.1.2               
+    [25] compiler_4.6.1              farver_2.1.2               
     [27] textshaping_1.0.5           bluster_1.22.0             
     [29] codetools_0.2-20            Seqinfo_1.2.0              
     [31] htmltools_0.5.9             sass_0.4.10                
@@ -557,12 +557,12 @@ pathways in various cell states or types.
     [45] digest_0.6.39               purrr_1.2.2                
     [47] dplyr_1.2.1                 bookdown_0.47              
     [49] labeling_0.4.3              fastmap_1.2.0              
-    [51] grid_4.6.0                  cli_3.6.6                  
+    [51] grid_4.6.1                  cli_3.6.6                  
     [53] SparseArray_1.12.2          magrittr_2.0.5             
     [55] S4Arrays_1.12.0             withr_3.0.3                
     [57] scales_1.4.0                rmarkdown_2.31             
     [59] XVector_0.52.0              matrixStats_1.5.0          
-    [61] igraph_2.3.2                otel_0.2.0                 
+    [61] igraph_2.3.3                otel_0.2.0                 
     [63] ranger_0.18.0               ragg_1.5.2                 
     [65] evaluate_1.0.5              knitr_1.51                 
     [67] GenomicRanges_1.64.0        IRanges_2.46.0             
