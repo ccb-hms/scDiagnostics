@@ -529,7 +529,7 @@ pathways in various cell states or types.
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-    [1] ggplot2_4.0.3       scDiagnostics_1.7.1 BiocStyle_2.40.0   
+    [1] ggplot2_4.0.3       scDiagnostics_1.7.2 BiocStyle_2.40.0   
 
     loaded via a namespace (and not attached):
      [1] SummarizedExperiment_1.42.0 gtable_0.3.6               
@@ -566,7 +566,7 @@ pathways in various cell states or types.
     [63] ranger_0.18.0               ragg_1.5.2                 
     [65] evaluate_1.0.5              knitr_1.51                 
     [67] GenomicRanges_1.64.0        IRanges_2.46.0             
-    [69] rlang_1.2.0                 Rcpp_1.1.1-1.1             
+    [69] rlang_1.3.0                 Rcpp_1.1.2                 
     [71] glue_1.8.1                  BiocManager_1.30.27        
     [73] BiocGenerics_0.58.1         jsonlite_2.0.0             
     [75] R6_2.6.1                    MatrixGenerics_1.24.0      

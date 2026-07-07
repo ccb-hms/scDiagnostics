@@ -935,14 +935,14 @@ markers.
     [8] base     
 
     other attached packages:
-     [1] scater_1.40.1               ggplot2_4.0.3              
+     [1] scater_1.40.2               ggplot2_4.0.3              
      [3] scran_1.40.0                scuttle_1.22.0             
      [5] SingleCellExperiment_1.34.0 SummarizedExperiment_1.42.0
      [7] Biobase_2.72.0              GenomicRanges_1.64.0       
      [9] Seqinfo_1.2.0               IRanges_2.46.0             
     [11] S4Vectors_0.50.1            BiocGenerics_0.58.1        
     [13] generics_0.1.4              MatrixGenerics_1.24.0      
-    [15] matrixStats_1.5.0           scDiagnostics_1.7.1        
+    [15] matrixStats_1.5.0           scDiagnostics_1.7.2        
     [17] BiocStyle_2.40.0           
 
     loaded via a namespace (and not attached):
@@ -951,7 +951,7 @@ markers.
      [7] S7_0.2.2            fastmap_1.2.0       bluster_1.22.0     
     [10] transport_0.15-4    digest_0.6.39       rsvd_1.0.5         
     [13] lifecycle_1.0.5     cluster_2.1.8.2     statmod_1.5.2      
-    [16] magrittr_2.0.5      compiler_4.6.1      rlang_1.2.0        
+    [16] magrittr_2.0.5      compiler_4.6.1      rlang_1.3.0        
     [19] sass_0.4.10         tools_4.6.1         igraph_2.3.3       
     [22] yaml_2.3.12         data.table_1.18.4   knitr_1.51         
     [25] labeling_0.4.3      S4Arrays_1.12.0     dqrng_0.4.1        
@@ -972,6 +972,6 @@ markers.
     [70] gtable_0.3.6        ScaledMatrix_1.20.0 tibble_3.3.1       
     [73] pillar_1.11.1       htmltools_0.5.9     R6_2.6.1           
     [76] textshaping_1.0.5   evaluate_1.0.5      lattice_0.22-9     
-    [79] bslib_0.11.0        Rcpp_1.1.1-1.1      gridExtra_2.3.1    
+    [79] bslib_0.11.0        Rcpp_1.1.2          gridExtra_2.3.1    
     [82] SparseArray_1.12.2  ranger_0.18.0       xfun_0.59          
     [85] fs_2.1.0            pkgconfig_2.0.3    
