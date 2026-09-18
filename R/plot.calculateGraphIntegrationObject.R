@@ -94,25 +94,27 @@ plot.calculateGraphIntegrationObject <- function(
                                                                       hjust = 0.5))
             } else {
                 # Calculate community centroids in PCA space
-                community_centroids <- data.frame(
-                    community = integer(0),
-                    x = numeric(0),
-                    y = numeric(0),
-                    stringsAsFactors = FALSE
-                )
-
-                for (comm in community_composition[["community"]]) {
+                centroid_rows <- lapply(community_composition[["community"]], function(comm) {
                     comm_cells <- x[["cell_info"]][["community"]] == comm
                     if (sum(comm_cells) > 0) {
-                        centroid_x <- mean(x[["graph_info"]][["layout"]][comm_cells, 1])
-                        centroid_y <- mean(x[["graph_info"]][["layout"]][comm_cells, 2])
-                        community_centroids <- rbind(community_centroids, data.frame(
+                        data.frame(
                             community = comm,
-                            x = centroid_x,
-                            y = centroid_y,
+                            x = mean(x[["graph_info"]][["layout"]][comm_cells, 1]),
+                            y = mean(x[["graph_info"]][["layout"]][comm_cells, 2]),
                             stringsAsFactors = FALSE
-                        ))
+                        )
+                    } else {
+                        NULL
                     }
+                })
+                community_centroids <- do.call(rbind, centroid_rows)
+                if (is.null(community_centroids)) {
+                    community_centroids <- data.frame(
+                        community = integer(0),
+                        x = numeric(0),
+                        y = numeric(0),
+                        stringsAsFactors = FALSE
+                    )
                 }
 
                 # Calculate adaptive threshold based on overall graph connectivity
@@ -127,27 +129,15 @@ plot.calculateGraphIntegrationObject <- function(
                 # Adaptive threshold: 2x the base rate, with bounds
                 adaptive_threshold <- max(0.005, min(0.05, 2 * base_connectivity))
 
-                # Create edge lookup for fast checking
-                edge_lookup <- paste(original_edges[, 1],
-                                     original_edges[, 2],
-                                     sep = "_")
-                edge_lookup <-
-                    c(edge_lookup, paste(original_edges[, 2],
-                                         original_edges[, 1],
-                                         sep = "_"))
-                edge_set <-
-                    as.environment(as.list(setNames(rep(TRUE,
-                                                        length(edge_lookup)),
-                                                    edge_lookup)))
-
-                edge_data <- data.frame(x = numeric(0), y = numeric(0),
-                                        xend = numeric(0), yend = numeric(0),
-                                        connection_strength = numeric(0))
+                # Create edge lookup for fast checking (both directions)
+                edge_keys <- c(paste(original_edges[, 1], original_edges[, 2], sep = "_"),
+                              paste(original_edges[, 2], original_edges[, 1], sep = "_"))
 
                 communities <- community_composition[["community"]]
                 n_communities <- length(communities)
 
                 # Check all pairs of communities
+                edge_rows <- list()
                 if (n_communities > 1) {
                     for (i in seq_len(n_communities - 1)) {
                         for (j in seq(i + 1, n_communities)) {
@@ -165,14 +155,9 @@ plot.calculateGraphIntegrationObject <- function(
                                 sampled_comm1 <- sample(cells_comm1, n_samples, replace = TRUE)
                                 sampled_comm2 <- sample(cells_comm2, n_samples, replace = TRUE)
 
-                                # Count connections
-                                connections <- 0
-                                for (k in seq_len(n_samples)) {
-                                    pair_key <- paste(sampled_comm1[k], sampled_comm2[k], sep = "_")
-                                    if (exists(pair_key, envir = edge_set)) {
-                                        connections <- connections + 1
-                                    }
-                                }
+                                # Count connections (vectorized membership test)
+                                pair_keys <- paste(sampled_comm1, sampled_comm2, sep = "_")
+                                connections <- sum(pair_keys %in% edge_keys)
 
                                 connection_rate <- connections / n_samples
 
@@ -182,18 +167,25 @@ plot.calculateGraphIntegrationObject <- function(
                                     comm2_idx <- which(community_centroids$community == comm2)
 
                                     if (length(comm1_idx) > 0 && length(comm2_idx) > 0) {
-                                        edge_data <- rbind(edge_data, data.frame(
+                                        edge_rows[[length(edge_rows) + 1]] <- data.frame(
                                             x = community_centroids$x[comm1_idx],
                                             y = community_centroids$y[comm1_idx],
                                             xend = community_centroids$x[comm2_idx],
                                             yend = community_centroids$y[comm2_idx],
                                             connection_strength = connection_rate
-                                        ))
+                                        )
                                     }
                                 }
                             }
                         }
                     }
+                }
+                edge_data <- if (length(edge_rows) > 0) {
+                    do.call(rbind, edge_rows)
+                } else {
+                    data.frame(x = numeric(0), y = numeric(0),
+                              xend = numeric(0), yend = numeric(0),
+                              connection_strength = numeric(0))
                 }
 
                 # Prepare node data
