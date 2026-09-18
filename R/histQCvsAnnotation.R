@@ -1,32 +1,31 @@
 #' @title Histograms: QC Stats and Annotation Scores Visualization
 #'
-#' @description
-#' This function generates histograms for visualizing the distribution of quality control (QC) statistics and
-#' annotation scores associated with cell types in single-cell genomic data.
+#' @description This function generates histograms for visualizing the
+#' distribution of quality control (QC) statistics and annotation scores
+#' associated with cell types in single-cell genomic data.
 #'
-#' @details The particularly useful in the analysis of data from single-cell experiments,
-#' where understanding the distribution of these metrics is crucial for quality assessment and
-#' interpretation of cell type annotations.
+#' @details The particularly useful in the analysis of data from single-cell
+#' experiments, where understanding the distribution of these metrics is crucial
+#' for quality assessment and interpretation of cell type annotations.
 #'
-#' @param sce_object  A \linkS4class{SingleCellExperiment} containing the single-cell
-#' expression data and metadata.
-#' @param cell_type_col The column name in the \code{colData} of \code{sce_object}
-#' that contains the cell type labels.
-#' @param cell_types A vector of cell types to plot (e.g., c("T-cell", "B-cell")).
-#' Defaults to \code{NULL}, which will include all the cells.
+#' @param sce_object A \linkS4class{SingleCellExperiment} containing the
+#' single-cell expression data and metadata.
+#' @param cell_type_col The column name in the \code{colData} of
+#' \code{sce_object} that contains the cell type labels.
+#' @param cell_types A vector of cell types to plot (e.g., c("T-cell",
+#' "B-cell")). Defaults to \code{NULL}, which will include all the cells.
 #' @param qc_col A column name in the \code{colData} of \code{sce_object} that
 #' contains the QC stats of interest.
-#' @param score_col The column name in the \code{colData} of \code{sce_object} that
-#' contains the cell type scores.
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is NULL.
+#' @param score_col The column name in the \code{colData} of \code{sce_object}
+#' that contains the cell type scores.
+#' @param max_cells Maximum number of cells to retain. If the object has fewer
+#' cells, it is returned unchanged. Default is NULL.
 #'
-#' @return A object containing two histograms displayed side by side.
-#' The first histogram represents the distribution of QC stats,
-#' and the second histogram represents the distribution of annotation scores.
+#' @return A object containing two histograms displayed side by side. The first
+#' histogram represents the distribution of QC stats, and the second histogram
+#' represents the distribution of annotation scores.
 #'
 #' @examples
-# Load data
 #' data("query_data")
 #'
 #' # Generate histograms
@@ -46,6 +45,7 @@
 #'     score_col = "annotation_scores"
 #' )
 #'
+# Load data
 #' @export
 #'
 # Function to plot histogram of QC scores and annotation scores

@@ -1,26 +1,30 @@
 #' @title Plot Wasserstein Distance Distributions for Multiple Cell Types
 #'
-#' @description
-#' This function generates ridge plots comparing reference-reference
-#' and reference-query Wasserstein distance distributions for each cell type.
+#' @description This function generates ridge plots comparing
+#' reference-reference and reference-query Wasserstein distance distributions
+#' for each cell type.
 #'
-#' @details
-#' The function creates faceted ridge plots showing two clearly separated density curves for each
-#' cell type: one for the reference-reference distribution (null) and one for the
-#' reference-query distribution.
+#' @details The function creates faceted ridge plots showing two clearly
+#' separated density curves for each cell type: one for the reference-reference
+#' distribution (null) and one for the reference-query distribution.
 #'
-#' @param x A list object containing the Wasserstein distance results from the \code{calculateWassersteinDistance} function.
-#' @param cell_types A character vector specifying which cell types to plot. If NULL, all cell types are plotted.
-#' @param bandwidth A numeric value specifying the bandwidth for density estimation. If NULL (default), automatic bandwidth selection is used.
+#' @param x A list object containing the Wasserstein distance results from the
+#' \code{calculateWassersteinDistance} function.
+#' @param cell_types A character vector specifying which cell types to plot. If
+#' NULL, all cell types are plotted.
+#' @param bandwidth A numeric value specifying the bandwidth for density
+#' estimation. If NULL (default), automatic bandwidth selection is used.
 #' @param ... Additional arguments for future extensions.
 #'
 #' @keywords internal
 #'
-#' @return A ggplot2 object representing the comparison of Wasserstein distance distributions.
+#' @return A ggplot2 object representing the comparison of Wasserstein distance
+#' distributions.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{calculateWassersteinDistance}}
 #'
@@ -71,7 +75,8 @@ plot.calculateWassersteinDistanceObject <- function(x,
         plot_data <- rbind(plot_data, ref_ref_data, ref_query_data)
     }
 
-    # Set factor levels to control order (Reference-Reference at bottom, Reference-Query at top)
+    # Set factor levels to control order (Reference-Reference at bottom,
+    # Reference-Query at top)
     plot_data[["distribution"]] <- factor(plot_data[["distribution"]],
         levels = c(
             "Reference-Query",
@@ -79,7 +84,8 @@ plot.calculateWassersteinDistanceObject <- function(x,
         )
     )
 
-    # Set factor levels for cell_type to preserve the order specified in cell_types parameter
+    # Set factor levels for cell_type to preserve the order specified in
+    # cell_types parameter
     plot_data[["cell_type"]] <- factor(plot_data[["cell_type"]], levels = cell_types)
 
     # Setting up color data

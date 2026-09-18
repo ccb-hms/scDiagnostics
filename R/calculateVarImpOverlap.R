@@ -1,41 +1,55 @@
 #' @title Compare Gene Importance Across Datasets Using Random Forest
 #'
-#' @description
-#' This function identifies and compares the most important genes for differentiating cell types between a query dataset
-#' and a reference dataset using Random Forest.
+#' @description This function identifies and compares the most important genes
+#' for differentiating cell types between a query dataset and a reference
+#' dataset using Random Forest.
 #'
-#' @details This function uses the Random Forest algorithm to calculate the importance of genes in differentiating between cell types
-#' within both a reference dataset and a query dataset. The function then compares the top genes identified in both datasets to determine
-#' the overlap in their importance scores.
+#' @details This function uses the Random Forest algorithm to calculate the
+#' importance of genes in differentiating between cell types within both a
+#' reference dataset and a query dataset. The function then compares the top
+#' genes identified in both datasets to determine the overlap in their
+#' importance scores.
 #'
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' If NULL, then the variable importance scores are only computed for the reference data. Default is NULL.
-#' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
-#' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
-#' @param n_tree An integer specifying the number of trees to grow in the Random Forest. Default is 500.
-#' @param n_top An integer specifying the number of top genes to consider when comparing variable importance scores. Default is 50.
-#' @param assay_name Name of the assay on which to perform computations. Defaults to \code{"logcounts"}.
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is 5000.
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is 5000.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells. If NULL, then the variable
+#' importance scores are only computed for the reference data. Default is NULL.
+#' @param ref_cell_type_col A character string specifying the column name in the
+#' reference dataset containing cell type annotations.
+#' @param query_cell_type_col A character string specifying the column name in
+#' the query dataset containing cell type annotations.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the plot. If NULL, all cell types are included.
+#' @param n_tree An integer specifying the number of trees to grow in the Random
+#' Forest. Default is 500.
+#' @param n_top An integer specifying the number of top genes to consider when
+#' comparing variable importance scores. Default is 50.
+#' @param assay_name Name of the assay on which to perform computations.
+#' Defaults to \code{"logcounts"}.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is 5000.
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is 5000.
 #'
 #' @return A list containing three elements:
-#' \item{var_imp_ref}{A list of data frames containing variable importance scores for each combination of cell types in the reference
-#' dataset.}
-#' \item{var_imp_query}{A list of data frames containing variable importance scores for each combination of cell types in the query
-#' dataset.}
-#' \item{var_imp_comparison}{A named vector indicating the proportion of top genes that overlap between the reference and query
-#' datasets for each combination of cell types.}
+#' \item{var_imp_ref}{A list of data frames containing variable importance
+#' scores for each combination of cell types in the reference dataset.}
+#' \item{var_imp_query}{A list of data frames containing variable importance
+#' scores for each combination of cell types in the query dataset.}
+#' \item{var_imp_comparison}{A named vector indicating the proportion of top
+#' genes that overlap between the reference and query datasets for each
+#' combination of cell types.}
 #'
 #' @export
 #'
-#' @references
-#' Breiman, L. (2001). "Random forests". *Machine Learning*, 45(1), 5-32. doi:10.1023/A:1010933404324.
+#' @references Breiman, L. (2001). "Random forests". *Machine Learning*, 45(1),
+#' 5-32. doi:10.1023/A:1010933404324.
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
 #' # Load data
@@ -55,7 +69,8 @@
 #' # Comparison table
 #' rf_output$var_imp_comparison
 #'
-# RF function to compare (between datasets) which genes are best at differentiating cell types from each
+# RF function to compare (between datasets) which genes are best at
+# differentiating cell types from each
 calculateVarImpOverlap <- function(reference_data,
                                    query_data = NULL,
                                    ref_cell_type_col,
@@ -258,7 +273,8 @@ calculateVarImpOverlap <- function(reference_data,
                 n_top
         }
 
-        # Return variable importance scores for each combination of cell types in each dataset and the comparison
+        # Return variable importance scores for each combination of cell types
+        # in each dataset and the comparison
         return(list(
             var_imp_ref = var_imp_ref,
             var_imp_query = var_imp_query,

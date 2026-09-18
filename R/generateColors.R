@@ -1,22 +1,26 @@
 #' @title Generate Paired Colors for Cell Types
 #'
-#' @description
-#' This function assigns paired colors (light and dark) to a list of cell type names. The colors are selected from various color
-#' palettes in the `pals` package.
+#' @description This function assigns paired colors (light and dark) to a list
+#' of cell type names. The colors are selected from various color palettes in
+#' the `pals` package.
 #'
-#' @details
-#' The function uses color palettes from the `pals` package to generate colors or pairs of colors (light and dark) for each cell
-#' type name provided. It cycles through different color families (blues, greens, reds, oranges, purples, purd and greys) to create
-#' the colors
+#' @details The function uses color palettes from the `pals` package to generate
+#' colors or pairs of colors (light and dark) for each cell type name provided.
+#' It cycles through different color families (blues, greens, reds, oranges,
+#' purples, purd and greys) to create the colors
 #'
-#' @param cell_type_names A character vector of cell type names that need to be assigned colors.
-#' @param paired If TRUE, the colored returned should be paired. Default is FALSE.
+#' @param cell_type_names A character vector of cell type names that need to be
+#' assigned colors.
+#' @param paired If TRUE, the colored returned should be paired. Default is
+#' FALSE.
 #'
 #' @keywords internal
 #'
-#' @return A named character vector where the names are the original cell type names, and the values are the assigned colors.
+#' @return A named character vector where the names are the original cell type
+#' names, and the values are the assigned colors.
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 # Function to generate paired colors
 generateColors <- function(cell_type_names, paired = FALSE) {

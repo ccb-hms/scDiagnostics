@@ -1,52 +1,75 @@
-#' @title Calculate PCA Reconstruction Errors for Out-of-Distribution Anomaly Detection
+#' @title Calculate PCA Reconstruction Errors for Out-of-Distribution Anomaly
+#' Detection
 #'
-#' @description
-#' This function detects "out-of-distribution" anomalies by calculating the PCA reconstruction error
-#' (Sum of Squared Errors) for each cell. It projects cells into a reference PCA space, attempts to
-#' reconstruct their original gene expression profile based solely on reference PCA rules, and measures
-#' the residual difference.
+#' @description This function detects "out-of-distribution" anomalies by
+#' calculating the PCA reconstruction error (Sum of Squared Errors) for each
+#' cell. It projects cells into a reference PCA space, attempts to reconstruct
+#' their original gene expression profile based solely on reference PCA rules,
+#' and measures the residual difference.
 #'
-#' @details
-#' PCA creates a low-dimensional summary of biological variation. By computing a local PCA space
-#' specifically for each reference cell type, the algorithm learns the strict biological rules governing
-#' that specific cell state.
+#' @details PCA creates a low-dimensional summary of biological variation. By
+#' computing a local PCA space specifically for each reference cell type, the
+#' algorithm learns the strict biological rules governing that specific cell
+#' state.
 #'
-#' If a query cell contains a novel biological state (e.g., a viral infection, unique drug response,
-#' or it is actually an unrepresented cell subtype hiding in the cluster), it will express genes that
-#' the local reference PCA ignores. When the query cell is projected into the reference PCA space and
+#' If a query cell contains a novel biological state (e.g., a viral infection,
+#' unique drug response, or it is actually an unrepresented cell subtype hiding
+#' in the cluster), it will express genes that the local reference PCA ignores.
+#' When the query cell is projected into the reference PCA space and
 #' mathematically reconstructed, those novel gene expressions are lost.
 #'
-#' By subtracting the reconstructed matrix from the original matrix, this function isolates the
-#' "Residuals" (biology that the reference cannot explain). The Sum of Squared Errors (SSE) of
-#' these residuals serves as a highly sensitive anomaly score for novel biological states.
+#' By subtracting the reconstructed matrix from the original matrix, this
+#' function isolates the "Residuals" (biology that the reference cannot
+#' explain). The Sum of Squared Errors (SSE) of these residuals serves as a
+#' highly sensitive anomaly score for novel biological states.
 #'
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' @param query_data An optional \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' If NULL, the reconstruction errors are computed for the reference data alone. Default is NULL.
-#' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
-#' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
-#' @param cell_types A character vector specifying the cell types to analyze. If NULL, all cell types are included.
-#' @param pc_subset A numeric vector specifying which principal components to use in the reconstruction. Default is 1:5.
-#' @param n_hvgs An integer specifying the number of highly variable genes to calculate for each cell type's local PCA space. Default is 100.
-#' @param mad_multiplier A numeric value specifying the number of Median Absolute Deviations (MADs)
-#' above the reference median to use as the anomaly cutoff. Default is 2.
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is 5000.
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is 5000.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_data An optional \linkS4class{SingleCellExperiment} object
+#' containing numeric expression matrix for the query cells. If NULL, the
+#' reconstruction errors are computed for the reference data alone. Default is
+#' NULL.
+#' @param ref_cell_type_col A character string specifying the column name in the
+#' reference dataset containing cell type annotations.
+#' @param query_cell_type_col A character string specifying the column name in
+#' the query dataset containing cell type annotations.
+#' @param cell_types A character vector specifying the cell types to analyze. If
+#' NULL, all cell types are included.
+#' @param pc_subset A numeric vector specifying which principal components to
+#' use in the reconstruction. Default is 1:5.
+#' @param n_hvgs An integer specifying the number of highly variable genes to
+#' calculate for each cell type's local PCA space. Default is 100.
+#' @param mad_multiplier A numeric value specifying the number of Median
+#' Absolute Deviations (MADs) above the reference median to use as the anomaly
+#' cutoff. Default is 2.
+#' @param assay_name Name of the assay on which to perform computations. Default
+#' is "logcounts".
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is 5000.
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is 5000.
 #'
-#' @return A list containing the following components for each cell type and the combined data:
-#' \item{reference_reconstruction_errors}{Reconstruction error (SSE) for each cell in the reference data.}
-#' \item{reference_anomaly}{Logical vector indicating whether each reference cell is classified as an anomaly.}
-#' \item{query_reconstruction_errors}{Reconstruction error (SSE) for each cell in the query data (if provided).}
-#' \item{query_anomaly}{Logical vector indicating whether each query cell is classified as an anomaly.}
-#' \item{applied_threshold}{The numeric threshold applied to determine anomalies for that cell type.}
-#' \item{var_explained}{Proportion of variance explained by the retained principal components for that cell type's local PCA.}
+#' @return A list containing the following components for each cell type and the
+#' combined data:
+#' \item{reference_reconstruction_errors}{Reconstruction error (SSE) for each
+#' cell in the reference data.}
+#' \item{reference_anomaly}{Logical vector indicating whether each reference
+#' cell is classified as an anomaly.}
+#' \item{query_reconstruction_errors}{Reconstruction error (SSE) for each cell
+#' in the query data (if provided).}
+#' \item{query_anomaly}{Logical vector indicating whether each query cell is
+#' classified as an anomaly.}
+#' \item{applied_threshold}{The numeric threshold applied to determine anomalies
+#' for that cell type.}
+#' \item{var_explained}{Proportion of variance explained by the retained
+#' principal components for that cell type's local PCA.}
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{plot.calculateReconstructionErrorObject}}
 #'
@@ -166,8 +189,8 @@ calculateReconstructionError <- function(reference_data,
         query_cell_types <- query_data[[query_cell_type_col]]
     }
 
-    # ________________________________________________________________
-    # CORE MATH: Local PCA Computation & Reconstruction per Cell Type
+    # ________________________________________________________________ CORE
+    # MATH: Local PCA Computation & Reconstruction per Cell Type
     # ________________________________________________________________
 
     output <- list()
@@ -209,7 +232,8 @@ calculateReconstructionError <- function(reference_data,
         # 4. Compute Local PCA (Using highly optimized base prcomp)
         pca_res <- stats::prcomp(ref_centered, center = FALSE, scale. = FALSE)
 
-        # Adjust pc_subset if the cell type has fewer available PCs than requested
+        # Adjust pc_subset if the cell type has fewer available PCs than
+        # requested
         max_pc_avail <- ncol(pca_res$rotation)
         current_pc_subset <- pc_subset[pc_subset <= max_pc_avail]
 

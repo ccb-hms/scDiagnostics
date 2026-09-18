@@ -1,36 +1,40 @@
 #' @title Plot Projected Data on Unified Discriminant Space
 #'
-#' @description
-#' The S3 plot method visualizes the projected reference and query data on the unified discriminant space.
+#' @description The S3 plot method visualizes the projected reference and query
+#' data on the unified discriminant space.
 #'
-#' @details
-#' The S3 plot method generates a pairs plot visualization of discriminant vectors, similar to PCA plot visualization.
-#' Each panel shows the relationship between two discriminant vectors with customizable display options for lower,
-#' diagonal, and upper panels. The visualization allows for comprehensive examination of the discriminant space
-#' structure and cell type separability.
+#' @details The S3 plot method generates a pairs plot visualization of
+#' discriminant vectors, similar to PCA plot visualization. Each panel shows the
+#' relationship between two discriminant vectors with customizable display
+#' options for lower, diagonal, and upper panels. The visualization allows for
+#' comprehensive examination of the discriminant space structure and cell type
+#' separability.
 #'
-#' @param x An object of class \code{calculateDiscriminantSpaceObject} containing the projected data on the discriminant space.
-#' @param cell_types A character vector specifying the cell types to plot. If NULL (default), all cell types will be plotted.
-#' @param dv_subset A numeric vector specifying which discriminant vectors to include in the plot.
-#'                 Default is the number of cell types minus 1.
-#' @param lower_facet Type of plot to use for the lower panels. Either "scatter" (default),
-#'                   "contour", "ellipse", or "blank".
-#' @param diagonal_facet Type of plot to use for the diagonal panels. Either "ridge" (default),
-#'                      "density", "boxplot" or "blank".
-#' @param upper_facet Type of plot to use for the upper panels. Either "blank" (default),
-#'                   "scatter", "contour", or "ellipse".
-#' @param max_cells_ref Maximum number of reference cells to include in the plot. If NULL,
-#' all available reference cells are plotted. Default is NULL.
-#' @param max_cells_query Maximum number of query cells to include in the plot. If NULL,
-#' all available query cells are plotted. Default is NULL.
+#' @param x An object of class \code{calculateDiscriminantSpaceObject}
+#' containing the projected data on the discriminant space.
+#' @param cell_types A character vector specifying the cell types to plot. If
+#' NULL (default), all cell types will be plotted.
+#' @param dv_subset A numeric vector specifying which discriminant vectors to
+#' include in the plot. Default is the number of cell types minus 1.
+#' @param lower_facet Type of plot to use for the lower panels. Either "scatter"
+#' (default), "contour", "ellipse", or "blank".
+#' @param diagonal_facet Type of plot to use for the diagonal panels. Either
+#' "ridge" (default), "density", "boxplot" or "blank".
+#' @param upper_facet Type of plot to use for the upper panels. Either "blank"
+#' (default), "scatter", "contour", or "ellipse".
+#' @param max_cells_ref Maximum number of reference cells to include in the
+#' plot. If NULL, all available reference cells are plotted. Default is NULL.
+#' @param max_cells_query Maximum number of query cells to include in the plot.
+#' If NULL, all available query cells are plotted. Default is NULL.
 #' @param ... Additional arguments to be passed to the plotting functions.
 #'
-#' @return The S3 plot method returns a \code{GGally::ggpairs} object representing
-#'         the visualization of the projected discriminant space.
+#' @return The S3 plot method returns a \code{GGally::ggpairs} object
+#' representing the visualization of the projected discriminant space.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{calculateDiscriminantSpace}}
 #'
@@ -288,8 +292,7 @@ plot.calculateDiscriminantSpaceObject <- function(x,
             )
     }
 
-    # [Continue with all other helper functions...]
-    # Ellipse facet function
+    # [Continue with all other helper functions...] Ellipse facet function
     .robustEllipseFunc <- function(data, mapping, ...) {
         # Function to calculate robust ellipses through bootstrapping
         createEllipse <- function(d) {

@@ -1,33 +1,50 @@
-#' @title Calculate Sliced Inverse Regression (SIR) Space for Different Cell Types
+#' @title Calculate Sliced Inverse Regression (SIR) Space for Different Cell
+#' Types
 #'
-#' @description
-#' This function calculates the SIR space projections for different cell types in the query and reference datasets.
+#' @description This function calculates the SIR space projections for different
+#' cell types in the query and reference datasets.
 #'
-#' @details
-#' The function projects the query dataset onto the SIR space of the reference dataset based on shared cell types.
-#' It computes conditional means for the reference dataset, extracts the SVD components, and performs the projection
-#' of both the query and reference data. It uses the `projectSIR` function to perform the actual projection and
-#' allows the user to specify particular cell types for analysis.
+#' @details The function projects the query dataset onto the SIR space of the
+#' reference dataset based on shared cell types. It computes conditional means
+#' for the reference dataset, extracts the SVD components, and performs the
+#' projection of both the query and reference data. It uses the `projectSIR`
+#' function to perform the actual projection and allows the user to specify
+#' particular cell types for analysis.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing the numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing the numeric expression matrix for the reference cells.
-#' @param query_cell_type_col A character string specifying the column name in the \code{colData} of \code{query_data} that identifies the cell types.
-#' @param ref_cell_type_col A character string specifying the column name in the \code{colData} of \code{reference_data} that identifies the cell types.
-#' @param cell_types A character vector specifying the cell types to include in the analysis. If NULL, all common cell types between the query and reference data will be used.
-#' @param multiple_cond_means Logical. Whether to compute conditional means for multiple conditions in the reference dataset. Default is TRUE.
-#' @param cumulative_variance_threshold A numeric value specifying the cumulative variance threshold for selecting principal components. Default is 0.7.
-#' @param n_neighbor A numeric value specifying the number of neighbors for computing the SIR space. Default is 1.
-#' @param assay_name A character string specifying the name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is 5000.
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is 5000.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing the
+#' numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' the numeric expression matrix for the reference cells.
+#' @param query_cell_type_col A character string specifying the column name in
+#' the \code{colData} of \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col A character string specifying the column name in the
+#' \code{colData} of \code{reference_data} that identifies the cell types.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the analysis. If NULL, all common cell types between the query and reference
+#' data will be used.
+#' @param multiple_cond_means Logical. Whether to compute conditional means for
+#' multiple conditions in the reference dataset. Default is TRUE.
+#' @param cumulative_variance_threshold A numeric value specifying the
+#' cumulative variance threshold for selecting principal components. Default is
+#' 0.7.
+#' @param n_neighbor A numeric value specifying the number of neighbors for
+#' computing the SIR space. Default is 1.
+#' @param assay_name A character string specifying the name of the assay on
+#' which to perform computations. Default is "logcounts".
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is 5000.
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is 5000.
 #'
-#' @return A list containing the SIR projections, rotation matrix, and percentage of variance explained for the given cell types.
+#' @return A list containing the SIR projections, rotation matrix, and
+#' percentage of variance explained for the given cell types.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{plot.calculateSIRSpaceObject}}
 #'

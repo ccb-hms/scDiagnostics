@@ -14,20 +14,32 @@ The HeOrganAtlas dataset, available through the scRNAseq package.
 reference_data
 }
 \description{
-This dataset contains the processed reference dataset from the HeOrganAtlas dataset for Marrow tissue.
-It has been preprocessed to include log-normalized counts, specific metadata columns, and PCA, t-SNE, and UMAP results.
+This dataset contains the processed reference dataset from the
+HeOrganAtlas dataset for Marrow tissue. It has been preprocessed to include
+log-normalized counts, specific metadata columns, and PCA, t-SNE, and UMAP
+results.
 }
 \details{
 This dataset underwent the following steps:
 \itemize{
-  \item Loads the HeOrganAtlas dataset specifically for Marrow tissue from the \code{scRNAseq} package.
-  \item Divides the loaded dataset into a reference dataset used for downstream analysis.
-  \item Performs log normalization on the reference dataset using the function \code{logNormCounts} from the \code{scuttle} package.
-  \item Selects the column \code{expert_annotation}) from the cell metadata for downstream analysis.
-  \item Selects highly variable genes (HVGs) using the function \code{getTopHVGs} from the \code{scran} package on the reference dataset.
-  \item Performs Principal Component Analysis (PCA) on the reference dataset using the function \code{runPCA} from the \code{scater} package.
-  \item Performs t-Distributed Stochastic Neighbor Embedding (t-SNE) on the reference dataset using the function \code{runTSNE} from the \code{scater} package.
-  \item Performs Uniform Manifold Approximation and Projection (UMAP) on the reference dataset using the function \code{runUMAP} from the \code{scater} package.
+ \item Loads the HeOrganAtlas dataset specifically for Marrow tissue from the
+ \code{scRNAseq} package.
+ \item Divides the loaded dataset into a reference dataset used for
+ downstream analysis.
+ \item Performs log normalization on the reference dataset using the function
+ \code{logNormCounts} from the \code{scuttle} package.
+ \item Selects the column \code{expert_annotation}) from the cell metadata
+ for downstream analysis.
+ \item Selects highly variable genes (HVGs) using the function
+ \code{getTopHVGs} from the \code{scran} package on the reference dataset.
+ \item Performs Principal Component Analysis (PCA) on the reference dataset
+ using the function \code{runPCA} from the \code{scater} package.
+ \item Performs t-Distributed Stochastic Neighbor Embedding (t-SNE) on the
+ reference dataset using the function \code{runTSNE} from the \code{scater}
+ package.
+ \item Performs Uniform Manifold Approximation and Projection (UMAP) on the
+ reference dataset using the function \code{runUMAP} from the \code{scater}
+ package.
 }
 }
 \examples{
@@ -36,9 +48,11 @@ data("reference_data")
 
 }
 \references{
-He, et al. (2020). HeOrganAtlas: a comprehensive human organ atlas based on single-cell RNA sequencing.
+He, et al. (2020). HeOrganAtlas: a comprehensive human organ
+atlas based on single-cell RNA sequencing.
 }
 \seealso{
-Use \code{data("reference_data")} to load and access the resulting reference dataset.
+Use \code{data("reference_data")} to load and access the resulting
+reference dataset.
 }
 \keyword{internal}

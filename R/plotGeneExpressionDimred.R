@@ -1,24 +1,32 @@
 #' @title Visualize gene expression on a dimensional reduction plot
 #'
-#' @description
-#' This function plots gene expression on a dimensional reduction plot using methods like t-SNE, UMAP, or PCA. Each single cell is color-coded based on the expression of a specific gene or feature.
+#' @description This function plots gene expression on a dimensional reduction
+#' plot using methods like t-SNE, UMAP, or PCA. Each single cell is color-coded
+#' based on the expression of a specific gene or feature.
 #'
-#' @param sce_object An object of class \linkS4class{SingleCellExperiment} containing log-transformed expression matrix and other metadata.
-#'        It can be either a reference or query dataset.
-#' @param method The reduction method to use for visualization. It should be one of the supported methods: "TSNE", "UMAP", or "PCA".
-#' @param pc_subset An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA".
-#'        Default is 1:5.
-#' @param feature A character string representing the name of the gene or feature to be visualized.
-#' @param cell_type_col The column name in the \code{colData} of \code{sce_object} that identifies the cell types.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2000.
+#' @param sce_object An object of class \linkS4class{SingleCellExperiment}
+#' containing log-transformed expression matrix and other metadata. It can be
+#' either a reference or query dataset.
+#' @param method The reduction method to use for visualization. It should be one
+#' of the supported methods: "TSNE", "UMAP", or "PCA".
+#' @param pc_subset An optional vector specifying the principal components (PCs)
+#' to include in the plot if method = "PCA". Default is 1:5.
+#' @param feature A character string representing the name of the gene or
+#' feature to be visualized.
+#' @param cell_type_col The column name in the \code{colData} of
+#' \code{sce_object} that identifies the cell types.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the plot. If NULL, all cell types are included.
+#' @param assay_name Name of the assay on which to perform computations. Default
+#' is "logcounts".
+#' @param max_cells Maximum number of cells to retain. If the object has fewer
+#' cells, it is returned unchanged. Default is 2000.
 #'
 #' @importFrom SummarizedExperiment assay
 #' @import SingleCellExperiment
 #'
-#' @return A ggplot object representing the dimensional reduction plot with gene expression.
+#' @return A ggplot object representing the dimensional reduction plot with gene
+#' expression.
 #'
 #' @export
 #'
@@ -133,7 +141,8 @@ plotGeneExpressionDimred <- function(sce_object,
     expression <- assay(sce_object, assay_name)[feature, ]
 
     if (method %in% c("TSNE", "UMAP")) {
-        # Extract dimension reduction coordinates from SingleCellExperiment object
+        # Extract dimension reduction coordinates from SingleCellExperiment
+        # object
         reduction <- reducedDim(sce_object, method)
 
         # Prepare data for plotting
@@ -202,7 +211,8 @@ plotGeneExpressionDimred <- function(sce_object,
         # PCA data
         plot_mat <- reducedDim(sce_object, "PCA")[, pc_subset]
 
-        # Create PC column names with variance explained (always show percentages if available)
+        # Create PC column names with variance explained (always show
+        # percentages if available)
         if (!is.null(pca_percent_var) && length(pca_percent_var) >= max(pc_subset)) {
             plot_names <- paste0(
                 "PC", pc_subset, " (",

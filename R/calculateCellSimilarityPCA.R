@@ -1,26 +1,34 @@
 #' @title Calculate Cell Similarity Using PCA Loadings
 #'
-#' @description
-#' This function calculates the cosine similarity between cells based on the principal components (PCs)
-#' obtained from PCA (Principal Component Analysis) loadings.
+#' @description This function calculates the cosine similarity between cells
+#' based on the principal components (PCs) obtained from PCA (Principal
+#' Component Analysis) loadings.
 #'
-#' @details
-#' This function calculates the cosine similarity between cells based on the loadings of the selected
-#' principal components obtained from PCA. It extracts the rotation matrix from the PCA results of the
-#' \linkS4class{SingleCellExperiment} object and identifies the high-loading variables for each selected PC.
-#' Then, it computes the cosine similarity between cells using the high-loading variables for each PC.
+#' @details This function calculates the cosine similarity between cells based
+#' on the loadings of the selected principal components obtained from PCA. It
+#' extracts the rotation matrix from the PCA results of the
+#' \linkS4class{SingleCellExperiment} object and identifies the high-loading
+#' variables for each selected PC. Then, it computes the cosine similarity
+#' between cells using the high-loading variables for each PC.
 #'
-#' @param sce_object A \linkS4class{SingleCellExperiment} object containing expression data.
-#' @param cell_names A character vector specifying the cell names for which to compute the similarity.
-#' @param pc_subset A numeric vector specifying the subset of principal components to consider. Default is 1:5..
-#' @param n_top_vars An integer indicating the number of top loading variables to consider for each PC. Default is 50.
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
+#' @param sce_object A \linkS4class{SingleCellExperiment} object containing
+#' expression data.
+#' @param cell_names A character vector specifying the cell names for which to
+#' compute the similarity.
+#' @param pc_subset A numeric vector specifying the subset of principal
+#' components to consider. Default is 1:5..
+#' @param n_top_vars An integer indicating the number of top loading variables
+#' to consider for each PC. Default is 50.
+#' @param assay_name Name of the assay on which to perform computations. Default
+#' is "logcounts".
 #'
-#' @return A data frame containing cosine similarity values between cells for each selected principal component.
+#' @return A data frame containing cosine similarity values between cells for
+#' each selected principal component.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{plot.calculateCellSimilarityPCAObject}}
 #'
@@ -110,7 +118,8 @@ calculateCellSimilarityPCA <- function(sce_object,
             sqrt(sum(vector2^2)))
     }
 
-    # Function to compute cosine similarity for each PC using high-loading variables
+    # Function to compute cosine similarity for each PC using high-loading
+    # variables
     .computeCosineSimilarity <- function(cell_names,
                                          rotation_mat,
                                          high_loading_vars) {

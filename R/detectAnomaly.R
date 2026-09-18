@@ -1,56 +1,81 @@
 #' @title PCA Anomaly Scores via Isolation Forests with Visualization
 #'
-#' @description
-#' This function detects anomalies in single-cell data by projecting the data onto a PCA space and using an isolation forest
-#' algorithm to identify anomalies.
+#' @description This function detects anomalies in single-cell data by
+#' projecting the data onto a PCA space and using an isolation forest algorithm
+#' to identify anomalies.
 #'
-#' @details
-#' This function projects the query data onto the PCA space of the reference data. An isolation forest is then built on the
-#' reference data to identify anomalies in the query data based on their PCA projections. If no query dataset is provided by the user,
-#' the anomaly scores are computed on the reference data itself. Anomaly scores for the data with all combined cell types are also
-#' provided as part of the output.
+#' @details This function projects the query data onto the PCA space of the
+#' reference data. An isolation forest is then built on the reference data to
+#' identify anomalies in the query data based on their PCA projections. If no
+#' query dataset is provided by the user, the anomaly scores are computed on the
+#' reference data itself. Anomaly scores for the data with all combined cell
+#' types are also provided as part of the output.
 #'
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' @param query_data An optional \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' If NULL, then the isolation forest anomaly scores are computed for the reference data. Default is NULL.
-#' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
-#' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
-#' @param pc_subset A numeric vector specifying which principal components to use in the analysis. Default is NULL.
-#' If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.
-#' @param n_hvgs An integer specifying the number of highly variable genes to retain when `pc_subset` is NULL.
-#' If a query dataset is provided, the top `n_hvgs` are computed for both reference and query, and their union is used. Default is 100.
-#' @param n_tree An integer specifying the number of trees for the isolation forest. Default is 500
-#' @param threshold_method A character string specifying the method to determine anomaly cutoffs.
-#' Options are \code{"MAD"} (Median Absolute Deviation) or \code{"absolute"}. Default is \code{"MAD"}.
-#' @param mad_multiplier A numeric value specifying the number of MADs above the reference median to use as the cutoff
-#' when \code{threshold_method = "MAD"}. Default is 2.
-#' @param anomaly_threshold A numeric value specifying the absolute threshold for identifying anomalies
-#' when \code{threshold_method = "absolute"}. Default is 0.5.
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is 5000.
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is 5000.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_data An optional \linkS4class{SingleCellExperiment} object
+#' containing numeric expression matrix for the query cells. If NULL, then the
+#' isolation forest anomaly scores are computed for the reference data. Default
+#' is NULL.
+#' @param ref_cell_type_col A character string specifying the column name in the
+#' reference dataset containing cell type annotations.
+#' @param query_cell_type_col A character string specifying the column name in
+#' the query dataset containing cell type annotations.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the plot. If NULL, all cell types are included.
+#' @param pc_subset A numeric vector specifying which principal components to
+#' use in the analysis. Default is NULL. If set to \code{NULL} then no
+#' dimensionality reduction is performed and the assay data is used directly for
+#' computations.
+#' @param n_hvgs An integer specifying the number of highly variable genes to
+#' retain when `pc_subset` is NULL. If a query dataset is provided, the top
+#' `n_hvgs` are computed for both reference and query, and their union is used.
+#' Default is 100.
+#' @param n_tree An integer specifying the number of trees for the isolation
+#' forest. Default is 500
+#' @param threshold_method A character string specifying the method to determine
+#' anomaly cutoffs. Options are \code{"MAD"} (Median Absolute Deviation) or
+#' \code{"absolute"}. Default is \code{"MAD"}.
+#' @param mad_multiplier A numeric value specifying the number of MADs above the
+#' reference median to use as the cutoff when \code{threshold_method = "MAD"}.
+#' Default is 2.
+#' @param anomaly_threshold A numeric value specifying the absolute threshold
+#' for identifying anomalies when \code{threshold_method = "absolute"}. Default
+#' is 0.5.
+#' @param assay_name Name of the assay on which to perform computations. Default
+#' is "logcounts".
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is 5000.
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is 5000.
 #' @param ... Additional arguments passed to the `isolation.forest` function.
 #'
-#' @return A list containing the following components for each cell type and the combined data:
+#' @return A list containing the following components for each cell type and the
+#' combined data:
 #' \item{anomaly_scores}{Anomaly scores for each cell in the query data.}
-#' \item{anomaly}{Logical vector indicating whether each cell is classified as an anomaly.}
+#' \item{anomaly}{Logical vector indicating whether each cell is classified as
+#' an anomaly.}
 #' \item{reference_mat_subset}{PCA projections of the reference data.}
 #' \item{query_mat_subset}{PCA projections of the query data (if provided).}
-#' \item{var_explained}{Proportion of variance explained by the retained principal components.}
+#' \item{var_explained}{Proportion of variance explained by the retained
+#' principal components.}
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{plot.detectAnomalyObject}}
 #'
 #' @references
 #' \itemize{
-#'   \item Liu, F. T., Ting, K. M., & Zhou, Z. H. (2008). Isolation forest. In 2008 Eighth IEEE International Conference on Data Mining (pp. 413-422). IEEE.
-#'   \item \href{https://cran.r-project.org/web/packages/isotree/isotree.pdf}{isotree: Isolation-Based Outlier Detection}
+#'  \item Liu, F. T., Ting, K. M., & Zhou, Z. H. (2008). Isolation forest. In
+#'  2008 Eighth IEEE International Conference on Data Mining (pp. 413-422).
+#'  IEEE.
+#'  \item \href{https://cran.r-project.org/web/packages/isotree/isotree.pdf}{isotree:
+#'  Isolation-Based Outlier Detection}
 #' }
 #'
 #' @examples
@@ -81,7 +106,8 @@
 #' @importFrom stats na.omit predict qnorm median mad
 #' @importFrom utils tail
 #'
-# Function to perform diagnostics using isolation forest with PCA and visualization
+# Function to perform diagnostics using isolation forest with PCA and
+# visualization
 detectAnomaly <- function(reference_data,
                           query_data = NULL,
                           ref_cell_type_col,
@@ -195,7 +221,8 @@ detectAnomaly <- function(reference_data,
             reference_cell_types <- reference_data[[ref_cell_type_col]]
         }
     } else {
-        # PCA is NULL: Use HVGs to avoid the Curse of Dimensionality in Isolation Forests
+        # PCA is NULL: Use HVGs to avoid the Curse of Dimensionality in
+        # Isolation Forests
 
         reference_data <- downsampleSCE(
             sce_object = reference_data,
@@ -260,7 +287,8 @@ detectAnomaly <- function(reference_data,
             ntree = n_tree,
         )
 
-        # Calculate anomaly scores for query data (scaled by reference path length)
+        # Calculate anomaly scores for query data (scaled by reference path
+        # length)
         reference_anomaly_scores <- predict(isolation_forest,
             newdata = reference_mat_subset,
             type = "score"
@@ -302,7 +330,8 @@ detectAnomaly <- function(reference_data,
             output[[list_name]][["var_explained"]] <- attributes(reducedDim(reference_data, "PCA"))[["percentVar"]][pc_subset]
         }
 
-        # Optionally, store the threshold used so the user (or plotting function) knows what was applied
+        # Optionally, store the threshold used so the user (or plotting
+        # function) knows what was applied
         output[[list_name]][["applied_threshold"]] <- cutoff
     }
 

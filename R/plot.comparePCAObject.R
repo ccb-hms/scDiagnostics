@@ -1,26 +1,32 @@
 #' @title Plot Heatmap of Similarities Between Principal Components
 #'
-#' @description
-#' The S3 plot method generates a heatmap to visualize the similarities between
-#' principal components from the output of the \code{comparePCA} function.
+#' @description The S3 plot method generates a heatmap to visualize the
+#' similarities between principal components from the output of the
+#' \code{comparePCA} function.
 #'
-#' @details
-#' The S3 plot method creates an enhanced heatmap visualization with options to display
-#' statistical significance and similarity values. The heatmap uses a blue-white-red
-#' color gradient for similarity values, and optionally overlays significance indicators.
+#' @details The S3 plot method creates an enhanced heatmap visualization with
+#' options to display statistical significance and similarity values. The
+#' heatmap uses a blue-white-red color gradient for similarity values, and
+#' optionally overlays significance indicators.
 #'
-#' @param x A \code{comparePCAObject} output from the \code{comparePCA} function.
-#' @param show_values Logical, whether to display similarity values on the heatmap. Default is TRUE.
-#' @param show_significance Logical, whether to display significance indicators (requires permutation test). Default is TRUE.
-#' @param significance_threshold Numeric, p-value threshold for significance. Default is 0.05.
-#' @param color_limits Numeric vector of length 2 specifying color scale limits. If NULL, uses data range.
+#' @param x A \code{comparePCAObject} output from the \code{comparePCA}
+#' function.
+#' @param show_values Logical, whether to display similarity values on the
+#' heatmap. Default is TRUE.
+#' @param show_significance Logical, whether to display significance indicators
+#' (requires permutation test). Default is TRUE.
+#' @param significance_threshold Numeric, p-value threshold for significance.
+#' Default is 0.05.
+#' @param color_limits Numeric vector of length 2 specifying color scale limits.
+#' If NULL, uses data range.
 #' @param ... Additional arguments passed to the plotting function.
 #'
 #' @return A \code{ggplot} object representing the heatmap of similarities.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{comparePCA}}
 #'

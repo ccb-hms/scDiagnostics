@@ -18,46 +18,60 @@ calculateVarImpOverlap(
 )
 }
 \arguments{
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-If NULL, then the variable importance scores are only computed for the reference data. Default is NULL.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells. If NULL, then the variable
+importance scores are only computed for the reference data. Default is NULL.}
 
-\item{ref_cell_type_col}{A character string specifying the column name in the reference dataset containing cell type annotations.}
+\item{ref_cell_type_col}{A character string specifying the column name in the
+reference dataset containing cell type annotations.}
 
-\item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
+\item{query_cell_type_col}{A character string specifying the column name in
+the query dataset containing cell type annotations.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+\item{cell_types}{A character vector specifying the cell types to include in
+the plot. If NULL, all cell types are included.}
 
-\item{n_tree}{An integer specifying the number of trees to grow in the Random Forest. Default is 500.}
+\item{n_tree}{An integer specifying the number of trees to grow in the Random
+Forest. Default is 500.}
 
-\item{n_top}{An integer specifying the number of top genes to consider when comparing variable importance scores. Default is 50.}
+\item{n_top}{An integer specifying the number of top genes to consider when
+comparing variable importance scores. Default is 50.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Defaults to \code{"logcounts"}.}
+\item{assay_name}{Name of the assay on which to perform computations.
+Defaults to \code{"logcounts"}.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is 5000.}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is 5000.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is 5000.}
 }
 \value{
 A list containing three elements:
-\item{var_imp_ref}{A list of data frames containing variable importance scores for each combination of cell types in the reference
-dataset.}
-\item{var_imp_query}{A list of data frames containing variable importance scores for each combination of cell types in the query
-dataset.}
-\item{var_imp_comparison}{A named vector indicating the proportion of top genes that overlap between the reference and query
-datasets for each combination of cell types.}
+\item{var_imp_ref}{A list of data frames containing variable importance
+scores for each combination of cell types in the reference dataset.}
+\item{var_imp_query}{A list of data frames containing variable importance
+scores for each combination of cell types in the query dataset.}
+\item{var_imp_comparison}{A named vector indicating the proportion of top
+genes that overlap between the reference and query datasets for each
+combination of cell types.}
 }
 \description{
-This function identifies and compares the most important genes for differentiating cell types between a query dataset
-and a reference dataset using Random Forest.
+This function identifies and compares the most important genes
+for differentiating cell types between a query dataset and a reference
+dataset using Random Forest.
 }
 \details{
-This function uses the Random Forest algorithm to calculate the importance of genes in differentiating between cell types
-within both a reference dataset and a query dataset. The function then compares the top genes identified in both datasets to determine
-the overlap in their importance scores.
+This function uses the Random Forest algorithm to calculate the
+importance of genes in differentiating between cell types within both a
+reference dataset and a query dataset. The function then compares the top
+genes identified in both datasets to determine the overlap in their
+importance scores.
 }
 \examples{
 # Load data
@@ -79,8 +93,10 @@ rf_output$var_imp_comparison
 
 }
 \references{
-Breiman, L. (2001). "Random forests". *Machine Learning*, 45(1), 5-32. doi:10.1023/A:1010933404324.
+Breiman, L. (2001). "Random forests". *Machine Learning*, 45(1),
+5-32. doi:10.1023/A:1010933404324.
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

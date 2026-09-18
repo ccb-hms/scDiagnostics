@@ -2,7 +2,8 @@
 % Please edit documentation in R/calculateCellDistancesSimilarity.R
 \name{calculateCellDistancesSimilarity}
 \alias{calculateCellDistancesSimilarity}
-\title{Function to Calculate Bhattacharyya Coefficients and Hellinger Distances}
+\title{Function to Calculate Bhattacharyya Coefficients and Hellinger
+Distances}
 \usage{
 calculateCellDistancesSimilarity(
   query_data,
@@ -17,51 +18,66 @@ calculateCellDistancesSimilarity(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data}
-that identifies the cell types.}
+\item{query_cell_type_col}{The column name in the \code{colData} of
+\code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data}
-that identifies the cell types.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are
-included.}
+\item{cell_types}{A character vector specifying the cell types to include in
+the plot. If NULL, all cell types are included.}
 
-\item{cell_names_query}{A character vector specifying the names of the query cells for which to compute distance measures.}
+\item{cell_names_query}{A character vector specifying the names of the query
+cells for which to compute distance measures.}
 
-\item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is 1:5.}
+\item{pc_subset}{A numeric vector specifying which principal components to
+include in the plot. Default is 1:5.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is 5000.}
 }
 \value{
-A list containing distance data for each cell type. Each entry in the list contains:
+A list containing distance data for each cell type. Each entry in the
+list contains:
 \describe{
-  \item{ref_distances}{A vector of all pairwise distances within the reference subset for the cell type.}
-  \item{query_to_ref_distances}{A matrix of distances from each query cell to all reference cells for the cell type.}
+  \item{ref_distances}{A vector of all pairwise distances within the
+  reference subset for the cell type.}
+  \item{query_to_ref_distances}{A matrix of distances from each query cell to
+  all reference cells for the cell type.}
 }
 }
 \description{
-This function computes Bhattacharyya coefficients and Hellinger distances to quantify the similarity of density
-distributions between query cells and reference data for each cell type.
+This function computes Bhattacharyya coefficients and Hellinger
+distances to quantify the similarity of density distributions between query
+cells and reference data for each cell type.
 }
 \details{
-This function first computes distance data using the \code{calculateCellDistances} function, which calculates
-pairwise distances between cells within the reference data and between query cells and reference cells in the PCA space.
-Bhattacharyya coefficients and Hellinger distances are calculated to quantify the similarity of density distributions between query
-cells and reference data for each cell type. Bhattacharyya coefficient measures the similarity of two probability distributions,
-while Hellinger distance measures the distance between two probability distributions.
+This function first computes distance data using the
+\code{calculateCellDistances} function, which calculates pairwise distances
+between cells within the reference data and between query cells and reference
+cells in the PCA space. Bhattacharyya coefficients and Hellinger distances
+are calculated to quantify the similarity of density distributions between
+query cells and reference data for each cell type. Bhattacharyya coefficient
+measures the similarity of two probability distributions, while Hellinger
+distance measures the distance between two probability distributions.
 
-Bhattacharyya coefficients range between 0 and 1. A value closer to 1 indicates higher similarity between distributions, while a value
-closer to 0 indicates lower similarity
+Bhattacharyya coefficients range between 0 and 1. A value closer to 1
+indicates higher similarity between distributions, while a value closer to 0
+indicates lower similarity
 
-Hellinger distances range between 0 and 1. A value closer to 0 indicates higher similarity between distributions, while a value
-closer to 1 indicates lower similarity.
+Hellinger distances range between 0 and 1. A value closer to 0 indicates
+higher similarity between distributions, while a value closer to 1 indicates
+lower similarity.
 }
 \examples{
 # Load data
@@ -102,5 +118,6 @@ overlap_measures
 
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

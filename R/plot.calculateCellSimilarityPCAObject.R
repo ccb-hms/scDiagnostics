@@ -1,25 +1,28 @@
 #' @title Plot Cosine Similarities Between Cells and PCs
 #'
-#' @description
-#' The S3 plot method  creates a heatmap plot to visualize the cosine similarities between cells and principal components (PCs).
+#' @description The S3 plot method creates a heatmap plot to visualize the
+#' cosine similarities between cells and principal components (PCs).
 #'
-#' @details
-#' The S3 plot method reshapes the input data frame to create a long format suitable for plotting as a heatmap. It then
-#' creates a heatmap plot using ggplot2, where the x-axis represents the PCs, the y-axis represents the cells, and the
-#' color intensity represents the cosine similarity values.
+#' @details The S3 plot method reshapes the input data frame to create a long
+#' format suitable for plotting as a heatmap. It then creates a heatmap plot
+#' using ggplot2, where the x-axis represents the PCs, the y-axis represents the
+#' cells, and the color intensity represents the cosine similarity values.
 #'
-#' @param x An object of class `calculateCellSimilarityPCA` containing a dataframe of cosine similarity values
-#' between cells and PCs.
-#' @param pc_subset A numeric vector specifying the subset of principal components to include in the plot. Default is 1:5.
+#' @param x An object of class `calculateCellSimilarityPCA` containing a
+#' dataframe of cosine similarity values between cells and PCs.
+#' @param pc_subset A numeric vector specifying the subset of principal
+#' components to include in the plot. Default is 1:5.
 #' @param ... Additional arguments passed to the plotting function.
 #'
 #' @keywords internal
 #'
-#' @return The S3 plot method returns a \code{ggplot} object representing the cosine similarity heatmap.
+#' @return The S3 plot method returns a \code{ggplot} object representing the
+#' cosine similarity heatmap.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{calculateCellSimilarityPCA}}
 #'

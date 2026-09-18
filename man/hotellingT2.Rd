@@ -7,15 +7,17 @@
 hotellingT2(sample1, sample2)
 }
 \arguments{
-\item{sample1}{A numeric matrix or data frame of multivariate observations for sample 1, where rows are observations and columns
-are variables.}
+\item{sample1}{A numeric matrix or data frame of multivariate observations
+for sample 1, where rows are observations and columns are variables.}
 
-\item{sample2}{A numeric matrix or data frame of multivariate observations for sample 2, with the same structure as sample 1.}
+\item{sample2}{A numeric matrix or data frame of multivariate observations
+for sample 2, with the same structure as sample 1.}
 }
 \value{
 The Hotelling's T^2 statistic.
 }
 \description{
-Calculates the Hotelling's T^2 statistic for comparing means of multivariate data.
+Calculates the Hotelling's T^2 statistic for comparing means of
+multivariate data.
 }
 \keyword{internal}

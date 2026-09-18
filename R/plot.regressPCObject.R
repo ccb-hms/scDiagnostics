@@ -1,24 +1,28 @@
 #' @title Plot Regression Results on Principal Components
 #'
-#' @description
-#' The S3 plot method generates plots to visualize the results of regression analyses
-#' performed on principal components (PCs) against cell types, datasets, or their interactions.
+#' @description The S3 plot method generates plots to visualize the results of
+#' regression analyses performed on principal components (PCs) against cell
+#' types, datasets, or their interactions.
 #'
-#' @param x An object of class \code{regressPCObject} containing the output of the \code{regressPC} function.
-#' @param plot_type Type of plot to generate. Available options:
-#'   "r_squared", "variance_contribution", "coefficient_heatmap".
+#' @param x An object of class \code{regressPCObject} containing the output of
+#' the \code{regressPC} function.
+#' @param plot_type Type of plot to generate. Available options: "r_squared",
+#' "variance_contribution", "coefficient_heatmap".
 #' @param alpha Significance threshold for p-values. Default is 0.05.
-#' @param coefficients_include Character vector specifying which coefficient types to include
-#'   in the coefficient heatmap. Options are \code{c("cell_type", "batch", "interaction")}.
-#'   Default is \code{NULL}, which includes all available coefficient types. Only applies
-#'   to \code{plot_type = "coefficient_heatmap"}.
+#' @param coefficients_include Character vector specifying which coefficient
+#' types to include in the coefficient heatmap. Options are \code{c("cell_type",
+#' "batch", "interaction")}. Default is \code{NULL}, which includes all
+#' available coefficient types. Only applies to \code{plot_type =
+#' "coefficient_heatmap"}.
 #' @param ... Additional arguments to be passed to the plotting functions.
 #'
-#' @return The S3 plot method returns a \code{ggplot} object representing the specified plot type.
+#' @return The S3 plot method returns a \code{ggplot} object representing the
+#' specified plot type.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{regressPC}}
 #'
@@ -76,18 +80,18 @@ plot.regressPCObject <- function(x,
 
 #' @title Determine Available Coefficient Types
 #'
-#' @description
-#' Helper function to determine which coefficient types are available in a regressPCObject
-#' based on the model type and data structure.
+#' @description Helper function to determine which coefficient types are
+#' available in a regressPCObject based on the model type and data structure.
 #'
-#' @param x An object of class \code{regressPCObject} containing regression results
-#'   from \code{regressPC} function.
+#' @param x An object of class \code{regressPCObject} containing regression
+#' results from \code{regressPC} function.
 #'
 #' @keywords internal
 #'
 #' @return A character vector of available coefficient types.
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 .getAvailableCoefficients <- function(x) {
     available <- c("cell_type") # cell_type is always available
@@ -108,39 +112,41 @@ plot.regressPCObject <- function(x,
 # [plotRSquared and plotVarianceContribution functions remain unchanged]
 #' @title Generate R-squared Bar Plot with Component Breakdown
 #'
-#' @description
-#' Creates a bar plot visualization of R-squared values for each principal component,
-#' with optional stacked bars showing the contribution of individual model components
-#' (cell type, batch/dataset, and interaction effects) when component decomposition
-#' is available.
+#' @description Creates a bar plot visualization of R-squared values for each
+#' principal component, with optional stacked bars showing the contribution of
+#' individual model components (cell type, batch/dataset, and interaction
+#' effects) when component decomposition is available.
 #'
-#' @details
-#' This function generates either a simple bar plot or a stacked bar plot depending
-#' on the availability of component-wise R-squared decomposition in the input object.
-#' When component breakdown is available, the bars are stacked to show:
+#' @details This function generates either a simple bar plot or a stacked bar
+#' plot depending on the availability of component-wise R-squared decomposition
+#' in the input object. When component breakdown is available, the bars are
+#' stacked to show:
 #' \itemize{
-#'   \item Cell type main effect (blue)
-#'   \item Batch or dataset main effect (orange)
-#'   \item Interaction effect (green)
+#'  \item Cell type main effect (blue)
+#'  \item Batch or dataset main effect (orange)
+#'  \item Interaction effect (green)
 #' }
 #'
-#' Principal component labels include the percentage of total variance explained by
-#' each PC. The total R-squared value is displayed above each bar. For query-only
-#' analyses, the function uses query PCA variance; for query+reference analyses,
-#' it uses reference PCA variance.
+#' Principal component labels include the percentage of total variance explained
+#' by each PC. The total R-squared value is displayed above each bar. For
+#' query-only analyses, the function uses query PCA variance; for
+#' query+reference analyses, it uses reference PCA variance.
 #'
-#' @param x An object of class \code{regressPCObject} containing regression results
-#'   from \code{regressPC} function.
-#' @param ... Additional arguments passed to the plotting function (currently unused).
+#' @param x An object of class \code{regressPCObject} containing regression
+#' results from \code{regressPC} function.
+#' @param ... Additional arguments passed to the plotting function (currently
+#' unused).
 #'
 #' @keywords internal
 #'
-#' @return A \code{ggplot2} object representing the R-squared bar plot with optional
-#'   component breakdown.
+#' @return A \code{ggplot2} object representing the R-squared bar plot with
+#' optional component breakdown.
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
-#' @importFrom ggplot2 ggplot aes geom_col geom_text scale_fill_manual labs theme_minimal theme element_text element_blank element_line margin ylim
+#' @importFrom ggplot2 ggplot aes geom_col geom_text scale_fill_manual labs
+#' theme_minimal theme element_text element_blank element_line margin ylim
 #' @importFrom tools toTitleCase
 #'
 # Helper function: R-squared barplot with component breakdown
@@ -294,42 +300,45 @@ plotRSquared <- function(x, ...) {
 
 #' @title Generate Variance Contribution Bar Plot with Component Breakdown
 #'
-#' @description
-#' Creates a bar plot visualization of variance contributions for each principal component,
-#' showing how much total dataset variance is explained by the regression model.
-#' When available, displays stacked bars showing individual component contributions
-#' (cell type, batch/dataset, and interaction effects).
+#' @description Creates a bar plot visualization of variance contributions for
+#' each principal component, showing how much total dataset variance is
+#' explained by the regression model. When available, displays stacked bars
+#' showing individual component contributions (cell type, batch/dataset, and
+#' interaction effects).
 #'
-#' @details
-#' This function visualizes the variance contribution of each principal component,
-#' calculated as the product of PC variance and R-squared values. The variance
-#' contribution represents the percentage of total dataset variance explained by
-#' the regression model for each PC.
+#' @details This function visualizes the variance contribution of each principal
+#' component, calculated as the product of PC variance and R-squared values. The
+#' variance contribution represents the percentage of total dataset variance
+#' explained by the regression model for each PC.
 #'
-#' When component decomposition is available, the function creates stacked bars with:
+#' When component decomposition is available, the function creates stacked bars
+#' with:
 #' \itemize{
-#'   \item Cell type main effect contribution (blue)
-#'   \item Batch or dataset main effect contribution (orange)
-#'   \item Interaction effect contribution (green)
+#'  \item Cell type main effect contribution (blue)
+#'  \item Batch or dataset main effect contribution (orange)
+#'  \item Interaction effect contribution (green)
 #' }
 #'
 #' The plot subtitle includes the total variance explained across all principal
-#' components. PC labels show the individual variance percentage for each component.
-#' The function automatically selects appropriate PCA variance values based on
-#' analysis type (query-only vs. query+reference).
+#' components. PC labels show the individual variance percentage for each
+#' component. The function automatically selects appropriate PCA variance values
+#' based on analysis type (query-only vs. query+reference).
 #'
-#' @param x An object of class \code{regressPCObject} containing regression results
-#'   from \code{regressPC} function.
-#' @param ... Additional arguments passed to the plotting function (currently unused).
+#' @param x An object of class \code{regressPCObject} containing regression
+#' results from \code{regressPC} function.
+#' @param ... Additional arguments passed to the plotting function (currently
+#' unused).
 #'
 #' @keywords internal
 #'
-#' @return A \code{ggplot2} object representing the variance contribution bar plot
-#'   with optional component breakdown.
+#' @return A \code{ggplot2} object representing the variance contribution bar
+#' plot with optional component breakdown.
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
-#' @importFrom ggplot2 ggplot aes geom_col geom_text scale_fill_manual labs theme_minimal theme element_text element_blank element_line margin ylim
+#' @importFrom ggplot2 ggplot aes geom_col geom_text scale_fill_manual labs
+#' theme_minimal theme element_text element_blank element_line margin ylim
 #' @importFrom tools toTitleCase
 #'
 # Helper function: Variance contribution barplot with component breakdown
@@ -493,50 +502,56 @@ plotVarianceContribution <- function(x, ...) {
 
 #' @title Generate Regression Coefficients Heatmap
 #'
-#' @description
-#' Creates a heatmap visualization of regression coefficients from principal component
-#' regression analysis, organized by coefficient type (cell type, batch, interaction)
-#' and annotated with significance indicators.
+#' @description Creates a heatmap visualization of regression coefficients from
+#' principal component regression analysis, organized by coefficient type (cell
+#' type, batch, interaction) and annotated with significance indicators.
 #'
-#' @details
-#' This function generates a comprehensive heatmap showing regression coefficients
-#' for each principal component and model term. The visualization includes:
+#' @details This function generates a comprehensive heatmap showing regression
+#' coefficients for each principal component and model term. The visualization
+#' includes:
 #' \itemize{
-#'   \item Color-coded coefficient values (blue = negative, red = positive)
-#'   \item Significance indicators (asterisks) for adjusted p-values below threshold
-#'   \item Faceted organization by coefficient category (Cell Type, Batch, Interaction)
-#'   \item Clean term labels with proper formatting and reference category information
+#'  \item Color-coded coefficient values (blue = negative, red = positive)
+#'  \item Significance indicators (asterisks) for adjusted p-values below
+#'  threshold
+#'  \item Faceted organization by coefficient category (Cell Type, Batch,
+#'  Interaction)
+#'  \item Clean term labels with proper formatting and reference category
+#'  information
 #' }
 #'
 #' The function handles different model types automatically:
 #' \itemize{
-#'   \item Simple cell type models: \code{PC ~ cell_type}
-#'   \item Batch interaction models: \code{PC ~ cell_type * batch}
-#'   \item Dataset interaction models: \code{PC ~ cell_type * dataset}
+#'  \item Simple cell type models: \code{PC ~ cell_type}
+#'  \item Batch interaction models: \code{PC ~ cell_type * batch}
+#'  \item Dataset interaction models: \code{PC ~ cell_type * dataset}
 #' }
 #'
-#' Term labels are cleaned and formatted for better readability, with batch/dataset
-#' terms converted to consistent "Query Batch" terminology. The plot includes
-#' comprehensive subtitle information showing model specification, significance
-#' threshold, and reference categories.
+#' Term labels are cleaned and formatted for better readability, with
+#' batch/dataset terms converted to consistent "Query Batch" terminology. The
+#' plot includes comprehensive subtitle information showing model specification,
+#' significance threshold, and reference categories.
 #'
-#' @param x An object of class \code{regressPCObject} containing regression results
-#'   from \code{regressPC} function.
+#' @param x An object of class \code{regressPCObject} containing regression
+#' results from \code{regressPC} function.
 #' @param alpha Numeric value specifying the significance threshold for p-value
-#'   adjustment. Default is 0.05.
-#' @param coefficients_include Character vector specifying which coefficient types to include.
-#'   Options are \code{c("cell_type", "batch", "interaction")}. Default is \code{NULL},
-#'   which includes all available coefficient types.
-#' @param ... Additional arguments passed to the plotting function (currently unused).
+#' adjustment. Default is 0.05.
+#' @param coefficients_include Character vector specifying which coefficient
+#' types to include. Options are \code{c("cell_type", "batch", "interaction")}.
+#' Default is \code{NULL}, which includes all available coefficient types.
+#' @param ... Additional arguments passed to the plotting function (currently
+#' unused).
 #'
 #' @keywords internal
 #'
-#' @return A \code{ggplot2} object representing the regression coefficients heatmap
-#'   with faceted organization and significance annotations.
+#' @return A \code{ggplot2} object representing the regression coefficients
+#' heatmap with faceted organization and significance annotations.
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
-#' @importFrom ggplot2 ggplot aes geom_tile geom_point scale_fill_gradient2 facet_grid labs theme_minimal theme element_text element_blank element_rect unit scale_y_discrete
+#' @importFrom ggplot2 ggplot aes geom_tile geom_point scale_fill_gradient2
+#' facet_grid labs theme_minimal theme element_text element_blank element_rect
+#' unit scale_y_discrete
 #'
 # Helper function: Coefficient heatmap
 plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL, ...) {
@@ -582,7 +597,8 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
 
     # Handle different model types
     if (x[["indep_var"]] == "cell_type_batch_interaction") {
-        # Identify main effect cell types (no "batch" and no ":" and no "dataset")
+        # Identify main effect cell types (no "batch" and no ":" and no
+        # "dataset")
         celltype_main <- !grepl("batch", plot_data[["Term"]]) &
             !grepl(":", plot_data[["Term"]]) &
             !grepl("dataset", plot_data[["Term"]])
@@ -606,7 +622,8 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
             # Remove any remaining "batch" or "sample" prefixes
             batch_names <- gsub("^batch", "", batch_names, ignore.case = TRUE)
             batch_names <- gsub("^sample", "", batch_names, ignore.case = TRUE)
-            # Remove Query_ prefix if present (fixes the main effect double Query issue)
+            # Remove Query_ prefix if present (fixes the main effect double
+            # Query issue)
             batch_names <- gsub("^Query_", "", batch_names)
             # Remove leading non-alphanumeric characters
             batch_names <- gsub("^[^A-Za-z0-9]+", "", batch_names)
@@ -631,7 +648,8 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
                     batch_part <- gsub("^sample", "", batch_part, ignore.case = TRUE)
                     batch_part <- gsub("^[^A-Za-z0-9]+", "", batch_part)
 
-                    # Remove Query_ prefix if present (fixes the double Query issue)
+                    # Remove Query_ prefix if present (fixes the double Query
+                    # issue)
                     batch_part <- gsub("^Query_", "", batch_part)
                     batch_part <- trimws(batch_part)
 
@@ -727,7 +745,8 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
         }
     }
 
-    # Create proper factor ordering for facets (only include categories present in data)
+    # Create proper factor ordering for facets (only include categories present
+    # in data)
     available_categories <- unique(plot_data[["Category"]])
     all_category_levels <- c("Cell Type", "Batch", "Cell Type : Batch")
     category_levels <- all_category_levels[all_category_levels %in% available_categories]
@@ -833,7 +852,8 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
         if (!is.null(x[["reference_batch"]])) {
             reference_text_parts <- c(reference_text_parts, paste("Batch: Query Batch", x[["reference_batch"]]))
         } else if (!is.null(x[["reference_pca_var"]])) {
-            # Query+reference with multiple batches (Reference is reference category)
+            # Query+reference with multiple batches (Reference is reference
+            # category)
             reference_text_parts <- c(reference_text_parts, "Batch: Reference")
         }
     } else if (x[["indep_var"]] == "cell_type_dataset_interaction") {

@@ -18,55 +18,76 @@ comparePCASubspace(
 \method{plot}{comparePCASubspaceObject}(x, ...)
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+\item{query_cell_type_col}{The column name in the \code{colData} of
+\code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types.}
 
-\item{pc_subset}{A numeric vector specifying the subset of principal components (PCs) to compare. Default is the first five PCs.}
+\item{pc_subset}{A numeric vector specifying the subset of principal
+components (PCs) to compare. Default is the first five PCs.}
 
-\item{n_top_vars}{An integer indicating the number of top loading variables to consider for each PC. Default is 50.}
+\item{n_top_vars}{An integer indicating the number of top loading variables
+to consider for each PC. Default is 50.}
 
-\item{x}{A numeric matrix output from the \code{comparePCASubspace} function, representing
-cosine similarities between query and reference principal components.}
+\item{x}{A numeric matrix output from the \code{comparePCASubspace} function,
+representing cosine similarities between query and reference principal
+components.}
 
 \item{...}{Additional arguments passed to the plotting function.}
 }
 \value{
 A list containing the following components:
-  \item{cosine_similarity}{A numeric vector of cosine values of principal angles.}
-  \item{cosine_id}{A matrix showing which reference and query PCs were matched.}
-  \item{var_explained_ref}{A numeric vector of variance explained by reference PCs.}
-  \item{var_explained_query}{A numeric vector of variance explained by query PCs.}
-  \item{var_explained_avg}{A numeric vector of average variance explained by each PC pair.}
-  \item{weighted_cosine_similarity}{A numeric value representing the weighted cosine similarity.}
+  \item{cosine_similarity}{A numeric vector of cosine values of principal
+  angles.}
+  \item{cosine_id}{A matrix showing which reference and query PCs were
+  matched.}
+  \item{var_explained_ref}{A numeric vector of variance explained by
+  reference PCs.}
+  \item{var_explained_query}{A numeric vector of variance explained by query
+  PCs.}
+  \item{var_explained_avg}{A numeric vector of average variance explained by
+  each PC pair.}
+  \item{weighted_cosine_similarity}{A numeric value representing the weighted
+  cosine similarity.}
 
-The S3 plot method returns a \code{ggplot} object representing the cosine similarities with variance information.
+The S3 plot method returns a \code{ggplot} object representing the
+cosine similarities with variance information.
 }
 \description{
-This function compares the subspace spanned by the top principal components (PCs) in a reference dataset to that
-in a query dataset. It computes the cosine similarity between the loadings of the top variables for each PC in
-both datasets and provides a weighted cosine similarity score.
+This function compares the subspace spanned by the top principal
+components (PCs) in a reference dataset to that in a query dataset. It
+computes the cosine similarity between the loadings of the top variables for
+each PC in both datasets and provides a weighted cosine similarity score.
 
-The S3 plot method generates a visualization of the output from the \code{comparePCASubspace} function.
-The plot shows the cosine of principal angles between reference and query principal components,
-with point sizes representing the variance explained and colors showing the difference in variance between datasets.
+The S3 plot method generates a visualization of the output from
+the \code{comparePCASubspace} function. The plot shows the cosine of
+principal angles between reference and query principal components, with point
+sizes representing the variance explained and colors showing the difference
+in variance between datasets.
 }
 \details{
-This function compares the subspace spanned by the top principal components (PCs) in a reference dataset
-to that in a query dataset. It first computes the cosine similarity between the loadings of the top variables
-for each PC in both datasets. The top cosine similarity scores are then selected, and their corresponding PC
-indices are stored. Additionally, the function calculates the average percentage of variance explained by the
-selected top PCs. Finally, it computes a weighted cosine similarity score based on the top cosine similarities
-and the average percentage of variance explained.
+This function compares the subspace spanned by the top principal
+components (PCs) in a reference dataset to that in a query dataset. It first
+computes the cosine similarity between the loadings of the top variables for
+each PC in both datasets. The top cosine similarity scores are then selected,
+and their corresponding PC indices are stored. Additionally, the function
+calculates the average percentage of variance explained by the selected top
+PCs. Finally, it computes a weighted cosine similarity score based on the top
+cosine similarities and the average percentage of variance explained.
 
-The S3 plot method converts the input list into a data frame suitable for plotting with \code{ggplot2}.
-Each point in the scatter plot represents the cosine of a principal angle, with the size of the point
-indicating the average variance explained by the corresponding principal components. The color represents
-the difference in variance explained between reference and query datasets.
+The S3 plot method converts the input list into a data frame
+suitable for plotting with \code{ggplot2}. Each point in the scatter plot
+represents the cosine of a principal angle, with the size of the point
+indicating the average variance explained by the corresponding principal
+components. The color represents the difference in variance explained between
+reference and query datasets.
 }
 \examples{
 # Load libraries
@@ -114,6 +135,7 @@ plot(subspace_comparison)
 \code{\link{comparePCASubspace}}
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }
 \keyword{internal}

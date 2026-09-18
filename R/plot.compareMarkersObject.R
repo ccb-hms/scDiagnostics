@@ -1,26 +1,30 @@
 #' @title Plot Visualization of Output from `compareMarkers` Function
 #'
-#' @description
-#' The S3 plot method generates a comprehensive visualization of the output from the `compareMarkers` function.
-#' The plot shows marker gene overlap and expression consistency between query and reference cell types,
+#' @description The S3 plot method generates a comprehensive visualization of
+#' the output from the `compareMarkers` function. The plot shows marker gene
+#' overlap and expression consistency between query and reference cell types,
 #' with quality assessment and detailed annotations.
 #'
-#' @details
-#' The S3 plot method creates a scatter plot showing the relationship between marker overlap (x-axis)
-#' and expression consistency (y-axis) for each cell type. Points are colored by quality score and
-#' sized by the minimum number of cells. Quality zones provide visual guidance for interpretation.
+#' @details The S3 plot method creates a scatter plot showing the relationship
+#' between marker overlap (x-axis) and expression consistency (y-axis) for each
+#' cell type. Points are colored by quality score and sized by the minimum
+#' number of cells. Quality zones provide visual guidance for interpretation.
 #'
-#' @param x A list containing the output from the \code{compareMarkers} function.
-#' @param cell_types Character vector specifying which cell types to plot. If NULL, all cell types are plotted.
+#' @param x A list containing the output from the \code{compareMarkers}
+#' function.
+#' @param cell_types Character vector specifying which cell types to plot. If
+#' NULL, all cell types are plotted.
 #' @param ... Additional arguments passed to the plotting function.
 #'
 #' @keywords internal
 #'
-#' @return The S3 plot method returns a \code{ggplot} object representing the marker gene comparison results.
+#' @return The S3 plot method returns a \code{ggplot} object representing the
+#' marker gene comparison results.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{compareMarkers}}
 #'

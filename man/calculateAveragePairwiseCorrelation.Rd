@@ -22,57 +22,72 @@ calculateAveragePairwiseCorrelation(
 \method{plot}{calculateAveragePairwiseCorrelationObject}(x, ...)
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+\item{query_cell_type_col}{The column name in the \code{colData} of
+\code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+\item{cell_types}{A character vector specifying the cell types to include in
+the plot. If NULL, all cell types are included.}
 
-\item{pc_subset}{A numeric vector specifying which principal components to use in the analysis. Default is 1:10.
-If set to \code{NULL} then no dimensionality reduction is performed and the assay data is used directly for computations.}
+\item{pc_subset}{A numeric vector specifying which principal components to
+use in the analysis. Default is 1:10. If set to \code{NULL} then no
+dimensionality reduction is performed and the assay data is used directly for
+computations.}
 
-\item{correlation_method}{The correlation method to use for calculating pairwise correlations.}
+\item{correlation_method}{The correlation method to use for calculating
+pairwise correlations.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is 5000}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is 5000}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is 5000}
 
 \item{x}{Output matrix from `calculateAveragePairwiseCorrelation` function.}
 
 \item{...}{Additional arguments to be passed to the plotting function.}
 }
 \value{
-A matrix containing the average pairwise correlation values.
-        Rows and columns are labeled with the cell types. Each element
-        in the matrix represents the average correlation between a pair
-        of cell types.
+A matrix containing the average pairwise correlation values. Rows and
+columns are labeled with the cell types. Each element in the matrix
+represents the average correlation between a pair of cell types.
 
-The S3 plot method returns a \code{ggplot} object representing the heatmap plot.
+The S3 plot method returns a \code{ggplot} object representing the
+heatmap plot.
 }
 \description{
-Computes the average pairwise correlations between specified cell types
-in single-cell gene expression data.
+Computes the average pairwise correlations between specified
+cell types in single-cell gene expression data.
 
-The S3 plot method takes the output of the `calculateAveragePairwiseCorrelation` function,
-which should be a matrix of pairwise correlations, and plots it as a heatmap.
+The S3 plot method takes the output of the
+`calculateAveragePairwiseCorrelation` function, which should be a matrix of
+pairwise correlations, and plots it as a heatmap.
 }
 \details{
-This function operates on \linkS4class{SingleCellExperiment} objects,
-ideal for single-cell analysis workflows. It calculates pairwise correlations between query and
-reference cells using a specified correlation method, then averages these correlations for each
-cell type pair. This function aids in assessing the similarity between cells in reference and query datasets,
-providing insights into the reliability of cell type annotations in single-cell gene expression data.
+This function operates on \linkS4class{SingleCellExperiment}
+objects, ideal for single-cell analysis workflows. It calculates pairwise
+correlations between query and reference cells using a specified correlation
+method, then averages these correlations for each cell type pair. This
+function aids in assessing the similarity between cells in reference and
+query datasets, providing insights into the reliability of cell type
+annotations in single-cell gene expression data.
 
-The S3 plot method converts the correlation matrix into a dataframe, creates a heatmap using ggplot2,
-and customizes the appearance of the heatmap with updated colors and improved aesthetics.
+The S3 plot method converts the correlation matrix into a dataframe,
+creates a heatmap using ggplot2, and customizes the appearance of the heatmap
+with updated colors and improved aesthetics.
 }
 \examples{
 # Load data
@@ -100,6 +115,7 @@ plot(cor_matrix_avg)
 \code{\link{calculateAveragePairwiseCorrelation}}
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }
 \keyword{internal}

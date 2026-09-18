@@ -1,43 +1,55 @@
 #' @title Plot PCA Reconstruction Errors
 #'
-#' @description
-#' This S3 plot method generates visualizations for PCA reconstruction errors (out-of-distribution anomalies).
-#' It displays the distribution of errors for the query and/or reference datasets, highlights the
-#' calculated anomaly threshold, and explicitly identifies anomalous cells. It can also generate
-#' heatmaps of the highly variable genes driving the local PCA space.
+#' @description This S3 plot method generates visualizations for PCA
+#' reconstruction errors (out-of-distribution anomalies). It displays the
+#' distribution of errors for the query and/or reference datasets, highlights
+#' the calculated anomaly threshold, and explicitly identifies anomalous cells.
+#' It can also generate heatmaps of the highly variable genes driving the local
+#' PCA space.
 #'
-#' @details
-#' The function extracts the reconstruction errors from the given object and generates a visualization.
+#' @details The function extracts the reconstruction errors from the given
+#' object and generates a visualization.
 #'
 #' Four \code{plot_type} options are available:
 #' \itemize{
-#'   \item \code{"violin"} (Default): Shows a violin plot of the error distribution overlaid with individual cell
-#'         points (jittered) colored by anomaly status. The violin is trimmed to the data range to maintain
-#'         statistical validity (preventing density estimation below zero).
-#'   \item \code{"boxplot"}: Shows a standard boxplot overlaid with jittered points.
-#'   \item \code{"ridge"}: Shows ridgeline plots separating the datasets vertically. A vertical red dashed line
-#'         marks the threshold. Best for visualizing the density of the non-anomalous cells versus the long tail of anomalies.
-#'   \item \code{"heatmap"}: Generates a \code{ComplexHeatmap} showing the Z-score scaled expression of the
-#'         highly variable genes used to construct the local PCA space. Cells are grouped by Dataset and Anomaly Status.
+#'  \item \code{"violin"} (Default): Shows a violin plot of the error
+#'  distribution overlaid with individual cell points (jittered) colored by
+#'  anomaly status. The violin is trimmed to the data range to maintain
+#'  statistical validity (preventing density estimation below zero).
+#'  \item \code{"boxplot"}: Shows a standard boxplot overlaid with jittered
+#'  points.
+#'  \item \code{"ridge"}: Shows ridgeline plots separating the datasets
+#'  vertically. A vertical red dashed line marks the threshold. Best for
+#'  visualizing the density of the non-anomalous cells versus the long tail of
+#'  anomalies.
+#'  \item \code{"heatmap"}: Generates a \code{ComplexHeatmap} showing the
+#'  Z-score scaled expression of the highly variable genes used to construct the
+#'  local PCA space. Cells are grouped by Dataset and Anomaly Status.
 #' }
 #'
-#' @param x A list object of class \code{calculateReconstructionErrorObject} containing the results
-#' from the \code{calculateReconstructionError} function.
-#' @param cell_type A character string specifying the cell type for which the plots should be generated.
-#' If NULL, defaults to "Combined" if available, otherwise plots the first available cell type. Default is NULL.
-#' @param data_type A character string specifying whether to plot the "query" data, "reference" data,
-#' or "both". Default is "both".
-#' @param plot_type A character string specifying the type of visualization. Options are
-#' \code{"violin"}, \code{"boxplot"}, \code{"ridge"}, or \code{"heatmap"}. Default is \code{"violin"}.
-#' @param draw_plot Logical indicating whether to draw the plot immediately (TRUE) or return
-#' the undrawn plot object (FALSE). For heatmaps, FALSE returns a ComplexHeatmap object. Default is FALSE.
-#' @param ... Additional arguments passed to \code{ComplexHeatmap::Heatmap} when \code{plot_type = "heatmap"}.
+#' @param x A list object of class \code{calculateReconstructionErrorObject}
+#' containing the results from the \code{calculateReconstructionError} function.
+#' @param cell_type A character string specifying the cell type for which the
+#' plots should be generated. If NULL, defaults to "Combined" if available,
+#' otherwise plots the first available cell type. Default is NULL.
+#' @param data_type A character string specifying whether to plot the "query"
+#' data, "reference" data, or "both". Default is "both".
+#' @param plot_type A character string specifying the type of visualization.
+#' Options are \code{"violin"}, \code{"boxplot"}, \code{"ridge"}, or
+#' \code{"heatmap"}. Default is \code{"violin"}.
+#' @param draw_plot Logical indicating whether to draw the plot immediately
+#' (TRUE) or return the undrawn plot object (FALSE). For heatmaps, FALSE returns
+#' a ComplexHeatmap object. Default is FALSE.
+#' @param ... Additional arguments passed to \code{ComplexHeatmap::Heatmap} when
+#' \code{plot_type = "heatmap"}.
 #'
-#' @return A \code{ggplot2} object for distribution plots, or a \code{ComplexHeatmap} object for heatmaps.
+#' @return A \code{ggplot2} object for distribution plots, or a
+#' \code{ComplexHeatmap} object for heatmaps.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{calculateReconstructionError}}
 #'
@@ -68,9 +80,7 @@ plot.calculateReconstructionErrorObject <- function(x,
         }
     }
 
-    # ______________________
-    # PATH A: HEATMAP LOGIC
-    # ______________________
+    # ______________________ PATH A: HEATMAP LOGIC ______________________
 
     if (plot_type == "heatmap") {
         if (!requireNamespace("ComplexHeatmap", quietly = TRUE) || !requireNamespace("circlize", quietly = TRUE)) {
@@ -174,8 +184,8 @@ plot.calculateReconstructionErrorObject <- function(x,
         }
     }
 
-    # __________________________________________________________
-    # PATH B: DISTRIBUTION PLOTS LOGIC (Violin, Boxplot, Ridge)
+    # __________________________________________________________ PATH B:
+    # DISTRIBUTION PLOTS LOGIC (Violin, Boxplot, Ridge)
     # __________________________________________________________
 
     # Extract threshold and variance info

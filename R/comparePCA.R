@@ -1,37 +1,51 @@
 #' @title Compare Principal Components Analysis (PCA) Results
 #'
-#' @description This function compares the principal components (PCs) obtained from separate PCA on reference and query
-#' datasets for a single cell type using either cosine similarity or correlation.
+#' @description This function compares the principal components (PCs) obtained
+#' from separate PCA on reference and query datasets for a single cell type
+#' using either cosine similarity or correlation.
 #'
-#' @details
-#' This function compares the PCA results between the reference and query datasets by computing cosine
-#' similarities or correlations between the loadings of top variables for each pair of principal components. It first
-#' extracts the PCA rotation matrices from both datasets and identifies the top variables with highest loadings for
-#' each PC. Then, it computes the cosine similarities or correlations between the loadings of top variables for each
-#' pair of PCs using vectorized operations for improved performance. The resulting matrix contains the similarity values,
-#' where rows represent reference PCs and columns represent query PCs.
+#' @details This function compares the PCA results between the reference and
+#' query datasets by computing cosine similarities or correlations between the
+#' loadings of top variables for each pair of principal components. It first
+#' extracts the PCA rotation matrices from both datasets and identifies the top
+#' variables with highest loadings for each PC. Then, it computes the cosine
+#' similarities or correlations between the loadings of top variables for each
+#' pair of PCs using vectorized operations for improved performance. The
+#' resulting matrix contains the similarity values, where rows represent
+#' reference PCs and columns represent query PCs.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
-#' @param pc_subset A numeric vector specifying the subset of principal components (PCs) to compare. Default is the first five PCs.
-#' @param n_top_vars An integer indicating the number of top loading variables to consider for each PC. Default is 50.
-#' @param metric The similarity metric to use. It can be either "cosine" or "correlation". Default is "cosine".
-#' @param correlation_method The correlation method to use if metric is "correlation". It can be "spearman"
-#' or "pearson". Default is "spearman".
-#' @param n_permutations Number of permutations for statistical significance testing. If 0, no permutation test is performed. Default is 0.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_cell_type_col The column name in the \code{colData} of
+#' \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col The column name in the \code{colData} of
+#' \code{reference_data} that identifies the cell types.
+#' @param pc_subset A numeric vector specifying the subset of principal
+#' components (PCs) to compare. Default is the first five PCs.
+#' @param n_top_vars An integer indicating the number of top loading variables
+#' to consider for each PC. Default is 50.
+#' @param metric The similarity metric to use. It can be either "cosine" or
+#' "correlation". Default is "cosine".
+#' @param correlation_method The correlation method to use if metric is
+#' "correlation". It can be "spearman" or "pearson". Default is "spearman".
+#' @param n_permutations Number of permutations for statistical significance
+#' testing. If 0, no permutation test is performed. Default is 0.
 #'
 #' @return A list containing:
-#'   \item{similarity_matrix}{A matrix comparing the principal components of the reference and query datasets.}
-#'   \item{top_variables}{A list containing the top loading variables for each PC pair comparison.}
+#'   \item{similarity_matrix}{A matrix comparing the principal components of the
+#'   reference and query datasets.}
+#'   \item{top_variables}{A list containing the top loading variables for each
+#'   PC pair comparison.}
 #'   \item{p_values}{A matrix of permutation p-values (if n_permutations > 0).}
 #'   \item{metric}{The similarity metric used.}
 #'   \item{n_top_vars}{Number of top variables used.}
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{plot.comparePCAObject}}
 #'

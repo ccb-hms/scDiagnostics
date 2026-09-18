@@ -1,45 +1,62 @@
-#' @title Compute Wasserstein Distance Distributions Between Query and Reference Datasets
+#' @title Compute Wasserstein Distance Distributions Between Query and Reference
+#' Datasets
 #'
-#' @description
-#' This function calculates distributions of Wasserstein distances between reference-reference
-#' pairs and reference-query pairs for each specified cell type, after projecting them into
-#' a shared PCA space. It then computes the probability of superiority to assess whether
-#' reference-query distances tend to be larger than reference-reference distances.
+#' @description This function calculates distributions of Wasserstein distances
+#' between reference-reference pairs and reference-query pairs for each
+#' specified cell type, after projecting them into a shared PCA space. It then
+#' computes the probability of superiority to assess whether reference-query
+#' distances tend to be larger than reference-reference distances.
 #'
-#' @details
-#' The function projects the query dataset onto the PCA space defined by the reference dataset.
-#' For each cell type, it computes two distributions: (1) Wasserstein distances between randomly
-#' sampled pairs within the reference dataset (null distribution), and (2) Wasserstein distances
-#' between reference and query dataset samples. It then calculates the probability of superiority,
-#' which represents the probability that a randomly selected ref-query distance is larger than
-#' a randomly selected ref-ref distance.
+#' @details The function projects the query dataset onto the PCA space defined
+#' by the reference dataset. For each cell type, it computes two distributions:
+#' (1) Wasserstein distances between randomly sampled pairs within the reference
+#' dataset (null distribution), and (2) Wasserstein distances between reference
+#' and query dataset samples. It then calculates the probability of superiority,
+#' which represents the probability that a randomly selected ref-query distance
+#' is larger than a randomly selected ref-ref distance.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing a numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object with a numeric expression matrix for the reference cells.
-#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies cell types.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies cell types.
-#' @param cell_types A character vector specifying the cell types to include in the analysis. If NULL, all common cell types are included.
-#' @param pc_subset A numeric vector specifying which principal components to use. Default is \code{1:5}.
-#' @param n_resamples An integer specifying the number of resamples to generate each distribution. Default is \code{300}.
-#' @param assay_name The name of the assay to use for computations. Default is \code{"logcounts"}.
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is 5000.
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is 5000.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing a
+#' numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object with a
+#' numeric expression matrix for the reference cells.
+#' @param query_cell_type_col The column name in the \code{colData} of
+#' \code{query_data} that identifies cell types.
+#' @param ref_cell_type_col The column name in the \code{colData} of
+#' \code{reference_data} that identifies cell types.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the analysis. If NULL, all common cell types are included.
+#' @param pc_subset A numeric vector specifying which principal components to
+#' use. Default is \code{1:5}.
+#' @param n_resamples An integer specifying the number of resamples to generate
+#' each distribution. Default is \code{300}.
+#' @param assay_name The name of the assay to use for computations. Default is
+#' \code{"logcounts"}.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is 5000.
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is 5000.
 #'
 #' @return A list with the following components:
-#' \item{ref_ref_dist}{A named list of numeric vectors containing Wasserstein distances computed from resampled pairs within the reference dataset for each cell type.}
-#' \item{ref_query_dist}{A named list of numeric vectors containing Wasserstein distances between reference and query datasets for each cell type.}
-#' \item{probability_superiority}{A named numeric vector showing the probability that ref-query distances are larger than ref-ref distances for each cell type.}
+#' \item{ref_ref_dist}{A named list of numeric vectors containing Wasserstein
+#' distances computed from resampled pairs within the reference dataset for each
+#' cell type.}
+#' \item{ref_query_dist}{A named list of numeric vectors containing Wasserstein
+#' distances between reference and query datasets for each cell type.}
+#' \item{probability_superiority}{A named numeric vector showing the probability
+#' that ref-query distances are larger than ref-ref distances for each cell
+#' type.}
 #' \item{cell_types}{A character vector containing the cell types analyzed.}
 #'
-#' @references
-#' Schuhmacher, D., Bernhard, S., & Book, M. (2019). "A Review of Approximate Transport in Machine Learning".
-#' In \emph{Journal of Machine Learning Research} (Vol. 20, No. 117, pp. 1-61).
+#' @references Schuhmacher, D., Bernhard, S., & Book, M. (2019). "A Review of
+#' Approximate Transport in Machine Learning". In \emph{Journal of Machine
+#' Learning Research} (Vol. 20, No. 117, pp. 1-61).
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{plot.calculateWassersteinDistanceObject}}
 #'
@@ -237,8 +254,8 @@ calculateWassersteinDistance <- function(query_data,
         ref_ref_dist[[cell_type]] <- ref_ref_distances
         ref_query_dist[[cell_type]] <- ref_query_distances
 
-        # Calculate probability of superiority
-        # P(ref_query > ref_ref) when sampling one value from each distribution
+        # Calculate probability of superiority P(ref_query > ref_ref) when
+        # sampling one value from each distribution
         n_comparisons <- 0
         n_superiority <- 0
 

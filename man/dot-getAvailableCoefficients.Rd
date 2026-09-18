@@ -7,17 +7,18 @@
 .getAvailableCoefficients(x)
 }
 \arguments{
-\item{x}{An object of class \code{regressPCObject} containing regression results
-from \code{regressPC} function.}
+\item{x}{An object of class \code{regressPCObject} containing regression
+results from \code{regressPC} function.}
 }
 \value{
 A character vector of available coefficient types.
 }
 \description{
-Helper function to determine which coefficient types are available in a regressPCObject
-based on the model type and data structure.
+Helper function to determine which coefficient types are
+available in a regressPCObject based on the model type and data structure.
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }
 \keyword{internal}

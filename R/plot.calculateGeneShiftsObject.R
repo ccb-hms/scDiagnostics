@@ -1,67 +1,76 @@
 #' @title Plot Top Loading Gene Expression Shifts
 #'
-#' @description
-#' This function creates visualizations showing expression distributions for top loading genes
-#' that exhibit distributional differences between query and reference datasets. Can display
-#' results as elegant complex heatmaps, information-rich summary boxplots, or pseudo-bulk fold
-#' change barplots. Optionally displays anomaly status when available.
+#' @description This function creates visualizations showing expression
+#' distributions for top loading genes that exhibit distributional differences
+#' between query and reference datasets. Can display results as elegant complex
+#' heatmaps, information-rich summary boxplots, or pseudo-bulk fold change
+#' barplots. Optionally displays anomaly status when available.
 #'
-#' @details
-#' This function visualizes the results from \code{calculateGeneShifts}.
-#' The "heatmap" option displays a hierarchically clustered set of genes.
-#' The "boxplot" option creates a two-panel plot using `ggplot2`: the left panel shows
-#' horizontal expression boxplots for up to 5 PCs, while the right panel displays their
-#' corresponding PC loadings and adjusted p-values.
-#' The "barplot" option creates horizontal barplots showing log2 fold changes between
-#' pseudo-bulk expression profiles (query vs reference), with genes ordered identically
-#' to the heatmap clustering. Bars show comparisons for query non-anomaly (green),
-#' optionally all query cells (yellow), and query anomaly cells (red) versus reference.
-#' When anomaly detection results are available and \code{show_anomalies} is TRUE,
-#' additional annotation bars or visual cues highlight anomalous cells.
+#' @details This function visualizes the results from
+#' \code{calculateGeneShifts}. The "heatmap" option displays a hierarchically
+#' clustered set of genes. The "boxplot" option creates a two-panel plot using
+#' `ggplot2`: the left panel shows horizontal expression boxplots for up to 5
+#' PCs, while the right panel displays their corresponding PC loadings and
+#' adjusted p-values. The "barplot" option creates horizontal barplots showing
+#' log2 fold changes between pseudo-bulk expression profiles (query vs
+#' reference), with genes ordered identically to the heatmap clustering. Bars
+#' show comparisons for query non-anomaly (green), optionally all query cells
+#' (yellow), and query anomaly cells (red) versus reference. When anomaly
+#' detection results are available and \code{show_anomalies} is TRUE, additional
+#' annotation bars or visual cues highlight anomalous cells.
 #'
 #' @param x An object of class \code{calculateGeneShiftsObject}.
-#' @param cell_type A character string specifying the cell type to plot (must be exactly one).
-#' @param pc_subset A numeric vector specifying which principal components to plot. Default is 1:3.
-#' @param plot_type A character string specifying visualization type. Either "heatmap", "barplot", or "boxplot".
-#'                  Default is "heatmap".
-#' @param plot_by A character string specifying gene selection method when `n_genes` is not NULL.
-#'                Either "top_loading" or "p_adjusted". Default is "p_adjusted".
-#' @param n_genes Number of top genes to show per PC. Can be NULL if `significance_threshold` is set.
-#'                Default is 10.
-#' @param significance_threshold If not NULL, a numeric value between 0 and 1. Used for gene
-#'   selection or annotation. Default is 0.05.
-#' @param show_anomalies Logical indicating whether to display anomaly status annotations.
-#'                      Default is FALSE. Requires anomaly results to be present in the object.
-#' @param show_all_query Logical indicating whether to show the yellow bar representing all
-#'                       query cells vs reference in barplot visualization. Only applies when
-#'                       \code{plot_type = "barplot"} and anomaly data is available. Default is TRUE.
-#' @param pseudo_bulk Logical indicating whether to create pseudo-bulk profiles instead of
-#'                    showing individual cells. When TRUE, expression values are averaged within groups
-#'                    (dataset and optionally anomaly status). Not compatible with boxplot visualization.
-#'                    Required for barplot visualization. Default is FALSE.
-#' @param cluster_cols Logical indicating whether to cluster columns in the heatmap when
-#'                    `pseudo_bulk = TRUE`. When TRUE, columns (pseudo-bulk profiles) will be
-#'                    hierarchically clustered. When FALSE, columns maintain their original ordering
-#'                    (Query groups followed by Reference groups). Only applicable when
-#'                    `pseudo_bulk = TRUE` and `plot_type = "heatmap"`. Default is FALSE.
-#' @param draw_plot Logical indicating whether to draw the plot immediately (TRUE) or return
-#'                  the undrawn plot object (FALSE). For heatmaps, FALSE returns a ComplexHeatmap
-#'                  object that can be further customized before drawing. Default is TRUE.
-#' @param show_all_query Logical indicating whether to show the yellow bar for all query vs reference
-#'                       comparison. Default is TRUE. When FALSE, only green and red bars are shown.
-#' @param max_cells_ref Maximum number of reference cells to include in the plot. If NULL,
-#' all available reference cells are plotted. Default is NULL.
-#' @param max_cells_query Maximum number of query cells to include in the plot. If NULL,
-#' all available query cells are plotted. Default is NULL.
-#' @param ... Additional arguments passed to \code{\link[ComplexHeatmap]{draw}} or not used for other plot types.
+#' @param cell_type A character string specifying the cell type to plot (must be
+#' exactly one).
+#' @param pc_subset A numeric vector specifying which principal components to
+#' plot. Default is 1:3.
+#' @param plot_type A character string specifying visualization type. Either
+#' "heatmap", "barplot", or "boxplot". Default is "heatmap".
+#' @param plot_by A character string specifying gene selection method when
+#' `n_genes` is not NULL. Either "top_loading" or "p_adjusted". Default is
+#' "p_adjusted".
+#' @param n_genes Number of top genes to show per PC. Can be NULL if
+#' `significance_threshold` is set. Default is 10.
+#' @param significance_threshold If not NULL, a numeric value between 0 and 1.
+#' Used for gene selection or annotation. Default is 0.05.
+#' @param show_anomalies Logical indicating whether to display anomaly status
+#' annotations. Default is FALSE. Requires anomaly results to be present in the
+#' object.
+#' @param show_all_query Logical indicating whether to show the yellow bar
+#' representing all query cells vs reference in barplot visualization. Only
+#' applies when \code{plot_type = "barplot"} and anomaly data is available.
+#' Default is TRUE.
+#' @param pseudo_bulk Logical indicating whether to create pseudo-bulk profiles
+#' instead of showing individual cells. When TRUE, expression values are
+#' averaged within groups (dataset and optionally anomaly status). Not
+#' compatible with boxplot visualization. Required for barplot visualization.
+#' Default is FALSE.
+#' @param cluster_cols Logical indicating whether to cluster columns in the
+#' heatmap when `pseudo_bulk = TRUE`. When TRUE, columns (pseudo-bulk profiles)
+#' will be hierarchically clustered. When FALSE, columns maintain their original
+#' ordering (Query groups followed by Reference groups). Only applicable when
+#' `pseudo_bulk = TRUE` and `plot_type = "heatmap"`. Default is FALSE.
+#' @param draw_plot Logical indicating whether to draw the plot immediately
+#' (TRUE) or return the undrawn plot object (FALSE). For heatmaps, FALSE returns
+#' a ComplexHeatmap object that can be further customized before drawing.
+#' Default is TRUE.
+#' @param show_all_query Logical indicating whether to show the yellow bar for
+#' all query vs reference comparison. Default is TRUE. When FALSE, only green
+#' and red bars are shown.
+#' @param max_cells_ref Maximum number of reference cells to include in the
+#' plot. If NULL, all available reference cells are plotted. Default is NULL.
+#' @param max_cells_query Maximum number of query cells to include in the plot.
+#' If NULL, all available query cells are plotted. Default is NULL.
+#' @param ... Additional arguments passed to \code{\link[ComplexHeatmap]{draw}}
+#' or not used for other plot types.
 #'
-#' @return A plot object. For heatmaps when \code{draw_plot = FALSE}, returns a ComplexHeatmap object.
-#' For boxplots and barplots, returns a ggplot2 object.
+#' @return A plot object. For heatmaps when \code{draw_plot = FALSE}, returns a
+#' ComplexHeatmap object. For boxplots and barplots, returns a ggplot2 object.
 #'
 #' @export
 #'
-#' @author
-#' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{calculateGeneShifts}}
 #'
@@ -287,50 +296,54 @@ plot.calculateGeneShiftsObject <- function(x,
 
 #' @title Plot Heatmaps for Top Loading Gene Shifts (Simplified Single Heatmap)
 #'
-#' @description
-#' This internal helper function creates a single, hierarchically clustered heatmap
-#' displaying expression data for top loading genes from principal component analysis.
-#' The function handles gene selection, data preprocessing, and visualization formatting.
-#' Optionally includes anomaly status annotations with proper cell ordering.
+#' @description This internal helper function creates a single, hierarchically
+#' clustered heatmap displaying expression data for top loading genes from
+#' principal component analysis. The function handles gene selection, data
+#' preprocessing, and visualization formatting. Optionally includes anomaly
+#' status annotations with proper cell ordering.
 #'
-#' @details
-#' This function generates a ComplexHeatmap visualization showing scaled gene expression
-#' data across cells. Genes are selected based on either their loading values or
-#' statistical significance. The function automatically handles data filtering,
-#' scaling, and visual formatting including color schemes and annotations.
+#' @details This function generates a ComplexHeatmap visualization showing
+#' scaled gene expression data across cells. Genes are selected based on either
+#' their loading values or statistical significance. The function automatically
+#' handles data filtering, scaling, and visual formatting including color
+#' schemes and annotations.
 #'
-#' Cell ordering (left to right):
-#' 1. Query Anomalous cells (leftmost)
-#' 2. Query Normal cells
-#' 3. Reference Anomalous cells
-#' 4. Reference Normal cells (rightmost)
+#' Cell ordering (left to right): 1. Query Anomalous cells (leftmost) 2. Query
+#' Normal cells 3. Reference Anomalous cells 4. Reference Normal cells
+#' (rightmost)
 #'
 #' This ensures clear dataset separation while grouping anomalous cells together
 #' within each dataset for easy visual identification.
 #'
 #' @param x An object of class \code{calculateGeneShiftsObject} containing
-#'          expression data and analysis results.
+#' expression data and analysis results.
 #' @param cell_type A character string specifying the cell type to visualize.
-#' @param available_pcs A character vector of principal components to include in analysis.
-#' @param plot_by A character string indicating gene selection criterion ("top_loading" or "p_adjusted").
-#' @param n_genes An integer specifying the number of top genes to display per PC. Can be NULL.
-#' @param significance_threshold A numeric value between 0 and 1 for significance filtering. Can be NULL.
+#' @param available_pcs A character vector of principal components to include in
+#' analysis.
+#' @param plot_by A character string indicating gene selection criterion
+#' ("top_loading" or "p_adjusted").
+#' @param n_genes An integer specifying the number of top genes to display per
+#' PC. Can be NULL.
+#' @param significance_threshold A numeric value between 0 and 1 for
+#' significance filtering. Can be NULL.
 #' @param show_anomalies Logical indicating whether to show anomaly annotations.
-#' @param pseudo_bulk Logical indicating whether to create pseudo-bulk profiles instead of
-#'                    showing individual cells. When TRUE, expression values are averaged within groups
-#'                    (dataset and optionally anomaly status). Not compatible with boxplot visualization.
-#'                    Default is FALSE.
-#' @param cluster_cols Logical indicating whether to cluster columns in the heatmap when
-#'                    `pseudo_bulk = TRUE`. When TRUE, columns (pseudo-bulk profiles) will be
-#'                    hierarchically clustered. When FALSE, columns maintain their original ordering
-#'                    (Query groups followed by Reference groups). Only applicable when
-#'                    `pseudo_bulk = TRUE` and `plot_type = "heatmap"`. Default is FALSE.
+#' @param pseudo_bulk Logical indicating whether to create pseudo-bulk profiles
+#' instead of showing individual cells. When TRUE, expression values are
+#' averaged within groups (dataset and optionally anomaly status). Not
+#' compatible with boxplot visualization. Default is FALSE.
+#' @param cluster_cols Logical indicating whether to cluster columns in the
+#' heatmap when `pseudo_bulk = TRUE`. When TRUE, columns (pseudo-bulk profiles)
+#' will be hierarchically clustered. When FALSE, columns maintain their original
+#' ordering (Query groups followed by Reference groups). Only applicable when
+#' `pseudo_bulk = TRUE` and `plot_type = "heatmap"`. Default is FALSE.
 #'
 #' @keywords internal
 #'
-#' @return A ComplexHeatmap object ready for plotting, or NULL if no genes meet selection criteria.
+#' @return A ComplexHeatmap object ready for plotting, or NULL if no genes meet
+#' selection criteria.
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 # Helper heatmap function
 plotHeatmap <- function(x, cell_type,
@@ -414,7 +427,8 @@ plotHeatmap <- function(x, cell_type,
             cell_subset_modified <- cell_subset
             cell_subset_modified[["anomaly_status"]][cell_subset_modified[["dataset"]] == "Reference"] <- "Normal"
 
-            # 3 categories: Reference_Normal, Query_Normal, Query_Anomaly (no Reference_Anomaly)
+            # 3 categories: Reference_Normal, Query_Normal, Query_Anomaly (no
+            # Reference_Anomaly)
             cell_subset_modified[["group"]] <- paste(cell_subset_modified[["dataset"]],
                 cell_subset_modified[["anomaly_status"]],
                 sep = "_"
@@ -466,7 +480,8 @@ plotHeatmap <- function(x, cell_type,
             cell_subset_pseudo[["dataset"]] <- gsub("_.*", "", cell_subset_pseudo[["group"]])
             cell_subset_pseudo[["anomaly_status"]] <- gsub(".*_", "", cell_subset_pseudo[["group"]])
 
-            # Ensure reference cells are marked as Normal (redundant safety check)
+            # Ensure reference cells are marked as Normal (redundant safety
+            # check)
             cell_subset_pseudo[["anomaly_status"]][cell_subset_pseudo[["dataset"]] == "Reference"] <- "Normal"
         } else {
             cell_subset_pseudo[["dataset"]] <- cell_subset_pseudo[["group"]]
@@ -547,7 +562,8 @@ plotHeatmap <- function(x, cell_type,
     legend_params <- list()
 
     if (show_anomalies && "anomaly_status" %in% names(cell_subset)) {
-        # Map anomaly status to new labels (reference cells are already set to "Normal")
+        # Map anomaly status to new labels (reference cells are already set to
+        # "Normal")
         anomaly_labels <- ifelse(cell_subset[["anomaly_status"]] == "Anomaly",
             "Anomalous", "Non-Anomalous"
         )
@@ -632,41 +648,49 @@ plotHeatmap <- function(x, cell_type,
 
 #' @title Plot Barplots for Top Loading Gene Fold Changes (Pseudo-Bulk)
 #'
-#' @description
-#' This internal helper function creates a barplot visualization showing pseudo-bulk fold changes
-#' between different cell groups for top loading genes.
+#' @description This internal helper function creates a barplot visualization
+#' showing pseudo-bulk fold changes between different cell groups for top
+#' loading genes.
 #'
-#' @details
-#' This function generates a ggplot2 barplot where genes are arranged vertically
-#' in hierarchically clustered order (identical to heatmap gene ordering), and horizontal bars show log2 fold changes
-#' for different pseudo-bulk comparisons vs reference. The function creates an internal heatmap
-#' object with the same parameters to extract the exact gene clustering order, ensuring
-#' consistency between plot types.
+#' @details This function generates a ggplot2 barplot where genes are arranged
+#' vertically in hierarchically clustered order (identical to heatmap gene
+#' ordering), and horizontal bars show log2 fold changes for different
+#' pseudo-bulk comparisons vs reference. The function creates an internal
+#' heatmap object with the same parameters to extract the exact gene clustering
+#' order, ensuring consistency between plot types.
 #'
 #' Bar colors:
 #' \itemize{
-#'   \item Green: Query non-anomaly (pseudo-bulk) vs Reference (pseudo-bulk)
-#'   \item Yellow: All Query (pseudo-bulk) vs Reference (pseudo-bulk) (shown when show_all_query = TRUE and anomaly data available)
-#'   \item Red: Query anomaly (pseudo-bulk) vs Reference (pseudo-bulk)
+#'  \item Green: Query non-anomaly (pseudo-bulk) vs Reference (pseudo-bulk)
+#'  \item Yellow: All Query (pseudo-bulk) vs Reference (pseudo-bulk) (shown when
+#'  show_all_query = TRUE and anomaly data available)
+#'  \item Red: Query anomaly (pseudo-bulk) vs Reference (pseudo-bulk)
 #' }
 #'
 #' @param x An object of class \code{calculateGeneShiftsObject} containing
-#'          expression data and analysis results.
+#' expression data and analysis results.
 #' @param cell_type A character string specifying the cell type to visualize.
-#' @param available_pcs A character vector of principal components to include in analysis.
-#' @param plot_by A character string indicating gene selection criterion ("top_loading" or "p_adjusted").
-#' @param n_genes An integer specifying the number of top genes to display per PC.
-#' @param significance_threshold A numeric value between 0 and 1 for significance annotation.
-#' @param show_anomalies Logical indicating whether to show anomaly-related bars.
-#' @param show_all_query Logical indicating whether to show the yellow bar for all query vs reference
-#'                       comparison. Default is TRUE. When FALSE, only green and red bars are shown.
+#' @param available_pcs A character vector of principal components to include in
+#' analysis.
+#' @param plot_by A character string indicating gene selection criterion
+#' ("top_loading" or "p_adjusted").
+#' @param n_genes An integer specifying the number of top genes to display per
+#' PC.
+#' @param significance_threshold A numeric value between 0 and 1 for
+#' significance annotation.
+#' @param show_anomalies Logical indicating whether to show anomaly-related
+#' bars.
+#' @param show_all_query Logical indicating whether to show the yellow bar for
+#' all query vs reference comparison. Default is TRUE. When FALSE, only green
+#' and red bars are shown.
 #'
 #' @keywords internal
 #'
-#' @return A ggplot2 object ready for display, or NULL if no genes meet selection criteria.
+#' @return A ggplot2 object ready for display, or NULL if no genes meet
+#' selection criteria.
 #'
-#' @author
-#' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 plotBarplot <- function(x, cell_type, available_pcs, plot_by,
                         n_genes, significance_threshold, show_anomalies,
@@ -681,8 +705,8 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
         stop("show_all_query must be a logical value.")
     }
 
-    # Create internal heatmap object to extract gene order
-    # Use the same parameters as would be used for heatmap plotting
+    # Create internal heatmap object to extract gene order Use the same
+    # parameters as would be used for heatmap plotting
     internal_heatmap <- tryCatch(
         {
             plotHeatmap(x, cell_type, available_pcs, plot_by, n_genes,
@@ -761,7 +785,8 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
         query_normal_expr <- pseudo_bulk_matrix[gene, query_normal_column]
         query_normal_fc <- query_normal_expr - ref_expr # Log2 fold change
 
-        # All Query vs Reference (calculated when anomaly data available AND show_all_query is TRUE)
+        # All Query vs Reference (calculated when anomaly data available AND
+        # show_all_query is TRUE)
         if (has_anomaly_data && show_all_query) {
             # Calculate overall query mean from both normal and anomaly
             query_normal_cells <- cell_subset[cell_subset[["group"]] == "Query_Normal", "cell_id"]
@@ -830,7 +855,8 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
     )
     plot_data_list[[length(plot_data_list) + 1]] <- normal_data
 
-    # All Query vs Reference (shown when anomaly data available AND show_all_query is TRUE)
+    # All Query vs Reference (shown when anomaly data available AND
+    # show_all_query is TRUE)
     if (has_anomaly_data && show_all_query && !all(is.na(fc_df[["query_all_fc"]]))) {
         all_data <- data.frame(
             gene = fc_df[["gene"]],
@@ -945,58 +971,64 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
     return(p)
 }
 
-#' @title Plot Boxplots for Top Loading Gene Shifts (Two-Panel Summary using ggplot2)
+#' @title Plot Boxplots for Top Loading Gene Shifts (Two-Panel Summary using
+#' ggplot2)
 #'
-#' @description
-#' This internal helper function creates a comprehensive two-panel summary plot
-#' displaying gene expression distributions and principal component loadings.
-#' The visualization uses ggplot2 faceting to create side-by-side panels.
-#' Optionally includes anomaly status information using visual cues.
+#' @description This internal helper function creates a comprehensive two-panel
+#' summary plot displaying gene expression distributions and principal component
+#' loadings. The visualization uses ggplot2 faceting to create side-by-side
+#' panels. Optionally includes anomaly status information using visual cues.
 #'
-#' @details
-#' This function generates a dual-panel ggplot2 visualization where the left panel
-#' shows horizontal boxplots of gene expression distributions comparing Reference
-#' and Query datasets, while the right panel displays PC loading values as points
-#' with adjusted p-values. Gene selection is based on the union of top genes
-#' across specified principal components.
+#' @details This function generates a dual-panel ggplot2 visualization where the
+#' left panel shows horizontal boxplots of gene expression distributions
+#' comparing Reference and Query datasets, while the right panel displays PC
+#' loading values as points with adjusted p-values. Gene selection is based on
+#' the union of top genes across specified principal components.
 #'
 #' When anomaly information is available and requested, anomalous cells are
 #' distinguished using dashed boxplot borders (normal cells have solid borders).
-#' This approach avoids color conflicts between dataset identification (fill colors)
-#' and PC identification (point colors/shapes).
+#' This approach avoids color conflicts between dataset identification (fill
+#' colors) and PC identification (point colors/shapes).
 #'
 #' Visual encoding:
 #' \itemize{
-#'   \item Dataset: Fill colors (Reference = blue, Query = red)
-#'   \item Anomaly status: Line types (Normal = solid, Anomaly = dashed borders)
-#'   \item PC identity: Point colors and shapes in loading panel
+#'  \item Dataset: Fill colors (Reference = blue, Query = red)
+#'  \item Anomaly status: Line types (Normal = solid, Anomaly = dashed borders)
+#'  \item PC identity: Point colors and shapes in loading panel
 #' }
 #'
 #' @param x An object of class \code{calculateGeneShiftsObject} containing
-#'   expression data and analysis results.
+#' expression data and analysis results.
 #' @param cell_type A character string specifying the cell type to visualize.
-#' @param available_pcs A character vector of principal components to include in analysis.
-#' @param plot_by A character string indicating gene selection criterion ("top_loading" or "p_adjusted").
-#' @param n_genes An integer specifying the number of top genes to display per PC.
-#' @param significance_threshold A numeric value between 0 and 1 for significance annotation.
-#' @param show_anomalies Logical indicating whether to show anomaly annotations using
-#'   line type differences in boxplot borders.
+#' @param available_pcs A character vector of principal components to include in
+#' analysis.
+#' @param plot_by A character string indicating gene selection criterion
+#' ("top_loading" or "p_adjusted").
+#' @param n_genes An integer specifying the number of top genes to display per
+#' PC.
+#' @param significance_threshold A numeric value between 0 and 1 for
+#' significance annotation.
+#' @param show_anomalies Logical indicating whether to show anomaly annotations
+#' using line type differences in boxplot borders.
 #'
 #' @keywords internal
 #'
-#' @return A ggplot2 object ready for display, or NULL if no genes meet selection criteria.
-#'   The returned plot contains:
+#' @return A ggplot2 object ready for display, or NULL if no genes meet
+#' selection criteria. The returned plot contains:
 #'   \itemize{
-#'     \item Left panel: Expression boxplots with dataset-specific fill colors
-#'     \item Right panel: PC loading scatter points with PC-specific colors/shapes
-#'     \item Gene labels on y-axis with significance indicators (*)
-#'     \item P-value annotations on secondary y-axis
-#'     \item Legend showing dataset, PC information, and anomaly status (if applicable)
+#'  \item Left panel: Expression boxplots with dataset-specific fill colors
+#'  \item Right panel: PC loading scatter points with PC-specific colors/shapes
+#'  \item Gene labels on y-axis with significance indicators (*)
+#'  \item P-value annotations on secondary y-axis
+#'  \item Legend showing dataset, PC information, and anomaly status (if
+#'  applicable)
 #'   }
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
-#' @seealso \code{\link{plotHeatmap}}, \code{\link{plot.calculateGeneShiftsObject}}
+#' @seealso \code{\link{plotHeatmap}},
+#' \code{\link{plot.calculateGeneShiftsObject}}
 #'
 # Helper boxplot function
 plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
@@ -1300,23 +1332,24 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
 
 #' @title Extract Gene Order from ComplexHeatmap Object
 #'
-#' @description
-#' Extracts the hierarchically clustered gene order from a ComplexHeatmap Heatmap object.
+#' @description Extracts the hierarchically clustered gene order from a
+#' ComplexHeatmap Heatmap object.
 #'
-#' @details
-#' This function initializes a ComplexHeatmap object (without displaying it) to perform
-#' hierarchical clustering, then extracts the resulting gene order. This allows matching
-#' gene ordering between heatmap and other plot types. The function uses a null graphics
-#' device to initialize the heatmap clustering without actually drawing the plot.
+#' @details This function initializes a ComplexHeatmap object (without
+#' displaying it) to perform hierarchical clustering, then extracts the
+#' resulting gene order. This allows matching gene ordering between heatmap and
+#' other plot types. The function uses a null graphics device to initialize the
+#' heatmap clustering without actually drawing the plot.
 #'
 #' @param heatmap_object A ComplexHeatmap Heatmap object (undrawn or drawn).
 #'
 #' @keywords internal
 #'
-#' @return A character vector of gene names in the clustered order (top to bottom as they appear in heatmap).
+#' @return A character vector of gene names in the clustered order (top to
+#' bottom as they appear in heatmap).
 #'
-#' @author
-#' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @importFrom grDevices dev.off pdf
 #'

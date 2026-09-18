@@ -16,44 +16,55 @@ plotCellTypeMDS(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} containing the single-cell
-expression data and metadata.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} containing the
+single-cell expression data and metadata.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing the single-cell
-expression data and metadata.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+the single-cell expression data and metadata.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+\item{query_cell_type_col}{The column name in the \code{colData} of
+\code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+\item{cell_types}{A character vector specifying the cell types to include in
+the plot. If NULL, all cell types are included.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is 5000.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is 5000.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is 5000.}
 }
 \value{
-A ggplot object representing the MDS scatter plot with cell type coloring.
+A ggplot object representing the MDS scatter plot with cell type
+coloring.
 }
 \description{
-This function facilitates the assessment of similarity between reference and query datasets
-through Multidimensional Scaling (MDS) scatter plots. It allows the visualization of cell types,
-color-coded with user-defined custom colors, based on a dissimilarity matrix computed from a
-user-selected gene set. If MDS coordinates are precomputed in reducedDims, they will be used;
-otherwise, MDS will be computed from scratch.
+This function facilitates the assessment of similarity between
+reference and query datasets through Multidimensional Scaling (MDS) scatter
+plots. It allows the visualization of cell types, color-coded with
+user-defined custom colors, based on a dissimilarity matrix computed from a
+user-selected gene set. If MDS coordinates are precomputed in reducedDims,
+they will be used; otherwise, MDS will be computed from scratch.
 }
 \details{
-The function first checks if MDS coordinates are available in the reducedDims of both datasets.
-If precomputed MDS is found, it uses those coordinates directly for visualization.
+The function first checks if MDS coordinates are available in the
+reducedDims of both datasets. If precomputed MDS is found, it uses those
+coordinates directly for visualization.
 
-If MDS is not precomputed, the function selects specific subsets of cells from
-both reference and query datasets. It then calculates Spearman correlations between gene expression profiles,
-deriving a dissimilarity matrix. This matrix undergoes Classical Multidimensional Scaling (MDS) for
-visualization, presenting cell types in a scatter plot, distinguished by colors defined by the user.
+If MDS is not precomputed, the function selects specific subsets of cells
+from both reference and query datasets. It then calculates Spearman
+correlations between gene expression profiles, deriving a dissimilarity
+matrix. This matrix undergoes Classical Multidimensional Scaling (MDS) for
+visualization, presenting cell types in a scatter plot, distinguished by
+colors defined by the user.
 }
 \examples{
 # Load data
@@ -73,10 +84,15 @@ mds_plot
 }
 \references{
 \itemize{
-\item Kruskal, J. B. (1964). "Multidimensional scaling by optimizing goodness of fit to a nonmetric hypothesis". *Psychometrika*, 29(1), 1-27. doi:10.1007/BF02289565.
-\item Borg, I., & Groenen, P. J. F. (2005). *Modern multidimensional scaling: Theory and applications* (2nd ed.). Springer Science & Business Media. doi:10.1007/978-0-387-25975-1.
+ \item Kruskal, J. B. (1964). "Multidimensional scaling by optimizing
+ goodness of fit to a nonmetric hypothesis". *Psychometrika*, 29(1), 1-27.
+ doi:10.1007/BF02289565.
+ \item Borg, I., & Groenen, P. J. F. (2005). *Modern multidimensional
+ scaling: Theory and applications* (2nd ed.). Springer Science & Business
+ Media. doi:10.1007/978-0-387-25975-1.
 }
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

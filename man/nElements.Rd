@@ -13,11 +13,12 @@ nElements(X)
 An integer representing the number of elements in \code{X}.
 }
 \description{
-This function returns the number of elements in a matrix or vector.
+This function returns the number of elements in a matrix or
+vector.
 }
 \details{
-If \code{X} is a matrix, the function returns the product of its dimensions. If \code{X} is a vector, the function returns
-its length.
+If \code{X} is a matrix, the function returns the product of its
+dimensions. If \code{X} is a vector, the function returns its length.
 }
 \author{
 Andrew Ghazi, \email{andrew_ghazi@hms.harvard.edu}

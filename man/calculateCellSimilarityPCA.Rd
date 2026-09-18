@@ -17,41 +17,53 @@ calculateCellSimilarityPCA(
 \method{plot}{calculateCellSimilarityPCAObject}(x, pc_subset = 1:5, ...)
 }
 \arguments{
-\item{sce_object}{A \linkS4class{SingleCellExperiment} object containing expression data.}
+\item{sce_object}{A \linkS4class{SingleCellExperiment} object containing
+expression data.}
 
-\item{cell_names}{A character vector specifying the cell names for which to compute the similarity.}
+\item{cell_names}{A character vector specifying the cell names for which to
+compute the similarity.}
 
-\item{pc_subset}{A numeric vector specifying the subset of principal components to include in the plot. Default is 1:5.}
+\item{pc_subset}{A numeric vector specifying the subset of principal
+components to include in the plot. Default is 1:5.}
 
-\item{n_top_vars}{An integer indicating the number of top loading variables to consider for each PC. Default is 50.}
+\item{n_top_vars}{An integer indicating the number of top loading variables
+to consider for each PC. Default is 50.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{x}{An object of class `calculateCellSimilarityPCA` containing a dataframe of cosine similarity values
-between cells and PCs.}
+\item{x}{An object of class `calculateCellSimilarityPCA` containing a
+dataframe of cosine similarity values between cells and PCs.}
 
 \item{...}{Additional arguments passed to the plotting function.}
 }
 \value{
-A data frame containing cosine similarity values between cells for each selected principal component.
+A data frame containing cosine similarity values between cells for
+each selected principal component.
 
-The S3 plot method returns a \code{ggplot} object representing the cosine similarity heatmap.
+The S3 plot method returns a \code{ggplot} object representing the
+cosine similarity heatmap.
 }
 \description{
-This function calculates the cosine similarity between cells based on the principal components (PCs)
-obtained from PCA (Principal Component Analysis) loadings.
+This function calculates the cosine similarity between cells
+based on the principal components (PCs) obtained from PCA (Principal
+Component Analysis) loadings.
 
-The S3 plot method  creates a heatmap plot to visualize the cosine similarities between cells and principal components (PCs).
+The S3 plot method creates a heatmap plot to visualize the
+cosine similarities between cells and principal components (PCs).
 }
 \details{
-This function calculates the cosine similarity between cells based on the loadings of the selected
-principal components obtained from PCA. It extracts the rotation matrix from the PCA results of the
-\linkS4class{SingleCellExperiment} object and identifies the high-loading variables for each selected PC.
-Then, it computes the cosine similarity between cells using the high-loading variables for each PC.
+This function calculates the cosine similarity between cells based
+on the loadings of the selected principal components obtained from PCA. It
+extracts the rotation matrix from the PCA results of the
+\linkS4class{SingleCellExperiment} object and identifies the high-loading
+variables for each selected PC. Then, it computes the cosine similarity
+between cells using the high-loading variables for each PC.
 
-The S3 plot method reshapes the input data frame to create a long format suitable for plotting as a heatmap. It then
-creates a heatmap plot using ggplot2, where the x-axis represents the PCs, the y-axis represents the cells, and the
-color intensity represents the cosine similarity values.
+The S3 plot method reshapes the input data frame to create a long
+format suitable for plotting as a heatmap. It then creates a heatmap plot
+using ggplot2, where the x-axis represents the PCs, the y-axis represents the
+cells, and the color intensity represents the cosine similarity values.
 }
 \examples{
 # Load data
@@ -90,6 +102,7 @@ plot(cosine_similarities, pc_subset = 15:25)
 \code{\link{calculateCellSimilarityPCA}}
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }
 \keyword{internal}

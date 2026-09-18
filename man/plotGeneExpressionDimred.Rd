@@ -16,30 +16,39 @@ plotGeneExpressionDimred(
 )
 }
 \arguments{
-\item{sce_object}{An object of class \linkS4class{SingleCellExperiment} containing log-transformed expression matrix and other metadata.
-It can be either a reference or query dataset.}
+\item{sce_object}{An object of class \linkS4class{SingleCellExperiment}
+containing log-transformed expression matrix and other metadata. It can be
+either a reference or query dataset.}
 
-\item{method}{The reduction method to use for visualization. It should be one of the supported methods: "TSNE", "UMAP", or "PCA".}
+\item{method}{The reduction method to use for visualization. It should be one
+of the supported methods: "TSNE", "UMAP", or "PCA".}
 
-\item{pc_subset}{An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA".
-Default is 1:5.}
+\item{pc_subset}{An optional vector specifying the principal components (PCs)
+to include in the plot if method = "PCA". Default is 1:5.}
 
-\item{feature}{A character string representing the name of the gene or feature to be visualized.}
+\item{feature}{A character string representing the name of the gene or
+feature to be visualized.}
 
-\item{cell_type_col}{The column name in the \code{colData} of \code{sce_object} that identifies the cell types.}
+\item{cell_type_col}{The column name in the \code{colData} of
+\code{sce_object} that identifies the cell types.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+\item{cell_types}{A character vector specifying the cell types to include in
+the plot. If NULL, all cell types are included.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2000.}
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer
+cells, it is returned unchanged. Default is 2000.}
 }
 \value{
-A ggplot object representing the dimensional reduction plot with gene expression.
+A ggplot object representing the dimensional reduction plot with gene
+expression.
 }
 \description{
-This function plots gene expression on a dimensional reduction plot using methods like t-SNE, UMAP, or PCA. Each single cell is color-coded based on the expression of a specific gene or feature.
+This function plots gene expression on a dimensional reduction
+plot using methods like t-SNE, UMAP, or PCA. Each single cell is color-coded
+based on the expression of a specific gene or feature.
 }
 \examples{
 # Load data

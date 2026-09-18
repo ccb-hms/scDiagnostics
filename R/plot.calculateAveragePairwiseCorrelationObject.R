@@ -1,19 +1,20 @@
 #' @title Plot the output of the `calculateAveragePairwiseCorrelation` function
 #'
-#' @description
-#' The S3 plot method takes the output of the `calculateAveragePairwiseCorrelation` function,
-#' which should be a matrix of pairwise correlations, and plots it as a heatmap.
+#' @description The S3 plot method takes the output of the
+#' `calculateAveragePairwiseCorrelation` function, which should be a matrix of
+#' pairwise correlations, and plots it as a heatmap.
 #'
-#' @details
-#' The S3 plot method converts the correlation matrix into a dataframe, creates a heatmap using ggplot2,
-#' and customizes the appearance of the heatmap with updated colors and improved aesthetics.
+#' @details The S3 plot method converts the correlation matrix into a dataframe,
+#' creates a heatmap using ggplot2, and customizes the appearance of the heatmap
+#' with updated colors and improved aesthetics.
 #'
 #' @param x Output matrix from `calculateAveragePairwiseCorrelation` function.
 #' @param ... Additional arguments to be passed to the plotting function.
 #'
 #' @keywords internal
 #'
-#' @return The S3 plot method returns a \code{ggplot} object representing the heatmap plot.
+#' @return The S3 plot method returns a \code{ggplot} object representing the
+#' heatmap plot.
 #'
 #' @export
 #'
@@ -21,7 +22,8 @@
 #'
 #' @rdname calculateAveragePairwiseCorrelation
 #'
-# Function to plot the output of the calculateAveragePairwiseCorrelation function
+# Function to plot the output of the calculateAveragePairwiseCorrelation
+# function
 plot.calculateAveragePairwiseCorrelationObject <- function(x, ...) {
     # Convert matrix to dataframe
     cor_df <- as.data.frame(as.table(x))

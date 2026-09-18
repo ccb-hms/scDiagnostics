@@ -1,33 +1,43 @@
-#' @title Calculate Cramer Test P-Values for Two-Sample Comparison of Multivariate ECDFs
+#' @title Calculate Cramer Test P-Values for Two-Sample Comparison of
+#' Multivariate ECDFs
 #'
-#' @description
-#' This function performs the Cramer test for comparing multivariate empirical cumulative distribution functions (ECDFs)
-#' between two samples.
+#' @description This function performs the Cramer test for comparing
+#' multivariate empirical cumulative distribution functions (ECDFs) between two
+#' samples.
 #'
-#' @details
-#' The function performs the following steps:
+#' @details The function performs the following steps:
 #' \enumerate{
-#'   \item Projects the data into the PCA space.
-#'   \item Subsets the data to the specified cell types and principal components.
-#'   \item Performs the Cramer test for each cell type using the \code{cramer.test} function in the \code{cramer} package.
+#'  \item Projects the data into the PCA space.
+#'  \item Subsets the data to the specified cell types and principal components.
+#'  \item Performs the Cramer test for each cell type using the
+#'  \code{cramer.test} function in the \code{cramer} package.
 #' }
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
-#' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is 5000.
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is 5000.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_cell_type_col The column name in the \code{colData} of
+#' \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col The column name in the \code{colData} of
+#' \code{reference_data} that identifies the cell types.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the plot. If NULL, all cell types are included.
+#' @param pc_subset A numeric vector specifying which principal components to
+#' include in the plot. Default is PC1 to PC5.
+#' @param assay_name Name of the assay on which to perform computations. Default
+#' is "logcounts".
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is 5000.
 #'
 #' @return A named vector of p-values from the Cramer test for each cell type.
 #'
-#' @references Baringhaus, L., & Franz, C. (2004). "On a new multivariate two-sample test".
-#' Journal of Multivariate Analysis, 88(1), 190-206.
+#' @references Baringhaus, L., & Franz, C. (2004). "On a new multivariate
+#' two-sample test". Journal of Multivariate Analysis, 88(1), 190-206.
 #'
 #' @export
 #'
@@ -47,7 +57,8 @@
 #' )
 #' cramer_test
 #'
-# Function to perform Cramer test for two-sample comparison of multivariate ECDFs
+# Function to perform Cramer test for two-sample comparison of multivariate
+# ECDFs
 calculateCramerPValue <- function(query_data,
                                   reference_data,
                                   query_cell_type_col,

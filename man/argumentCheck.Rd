@@ -22,61 +22,82 @@ argumentCheck(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-If `NULL`, no check is performed.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells. If `NULL`, no check is
+performed.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-If `NULL`, no check is performed.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells. If `NULL`, no check is
+performed.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data}
-that identifies the cell types. If `NULL`, no check is performed.}
+\item{query_cell_type_col}{The column name in the \code{colData} of
+\code{query_data} that identifies the cell types. If `NULL`, no check is
+performed.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data}
-that identifies the cell types. If `NULL`, no check is performed.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types. If `NULL`, no check is
+performed.}
 
-\item{unique_cell_type}{If `TRUE`, there should only be one cell type in the provided \linkS4class{SingleCellExperiment} objects.
-Default is `FALSE`.}
+\item{unique_cell_type}{If `TRUE`, there should only be one cell type in the
+provided \linkS4class{SingleCellExperiment} objects. Default is `FALSE`.}
 
-\item{plot_function}{A logical value indicating whether the function is being called to generate a plot. Default is `FALSE`.}
+\item{plot_function}{A logical value indicating whether the function is being
+called to generate a plot. Default is `FALSE`.}
 
-\item{cell_names_query}{A character vector of cell names in query data to be analyzed. If `NULL`, no check is performed.}
+\item{cell_names_query}{A character vector of cell names in query data to be
+analyzed. If `NULL`, no check is performed.}
 
-\item{cell_names_ref}{A character vector of cell names in reference data to be analyzed. If `NULL`, no check is performed.}
+\item{cell_names_ref}{A character vector of cell names in reference data to
+be analyzed. If `NULL`, no check is performed.}
 
-\item{pc_subset_query}{A numeric vector specifying the principal components to be used for the query data. If `NULL`, no check is performed.}
+\item{pc_subset_query}{A numeric vector specifying the principal components
+to be used for the query data. If `NULL`, no check is performed.}
 
-\item{pc_subset_ref}{A numeric vector specifying the principal components to be used for the reference data. If `NULL`, no check is performed.}
+\item{pc_subset_ref}{A numeric vector specifying the principal components to
+be used for the reference data. If `NULL`, no check is performed.}
 
-\item{common_rotation_genes}{If TRUE, check the rotation matrices of the reference and query data and ensure they have the same genes.
-Default is FALSE.}
+\item{common_rotation_genes}{If TRUE, check the rotation matrices of the
+reference and query data and ensure they have the same genes. Default is
+FALSE.}
 
-\item{assay_name}{Name of the assay on which to perform computations. If `NULL`, no check is performed.}
+\item{assay_name}{Name of the assay on which to perform computations. If
+`NULL`, no check is performed.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain. If `NULL`, no check is performed.}
+\item{max_cells_ref}{Maximum number of reference cells to retain. If `NULL`,
+no check is performed.}
 
-\item{max_cells_query}{Maximum number of query cells to retain. If `NULL`, no check is performed.}
+\item{max_cells_query}{Maximum number of query cells to retain. If `NULL`, no
+check is performed.}
 }
 \value{
 None.
 }
 \description{
-This function validates the input arguments for functions that analyze \linkS4class{SingleCellExperiment}
-objects. It checks that the inputs are of the correct types and formats, and that required columns and cell types
-are present in the data.
+This function validates the input arguments for functions that
+analyze \linkS4class{SingleCellExperiment} objects. It checks that the inputs
+are of the correct types and formats, and that required columns and cell
+types are present in the data.
 }
 \details{
 The function performs a series of checks to ensure that:
 \itemize{
- \item `query_data` and `reference_data` are \linkS4class{SingleCellExperiment} objects.
- \item `query_cell_type_col` and `ref_cell_type_col` exist in the column data of their respective \linkS4class{SingleCellExperiment} objects.
- \item If `unique_cell_type` is `TRUE`, there should only be one cell type in the \linkS4class{SingleCellExperiment} objects.
+ \item `query_data` and `reference_data` are
+ \linkS4class{SingleCellExperiment} objects.
+ \item `query_cell_type_col` and `ref_cell_type_col` exist in the column data
+ of their respective \linkS4class{SingleCellExperiment} objects.
+ \item If `unique_cell_type` is `TRUE`, there should only be one cell type in
+ the \linkS4class{SingleCellExperiment} objects.
  \item `cell_names_query` are valid cell names in the provided query dataset.
- \item `cell_names_ref` are valid cell names in the provided reference dataset.
- \item The PCA subsets specified by `pc_subset_query` and `pc_subset_ref` are valid.
- \item `max_cells_ref` and `max_cells_query` are positive integers when not NULL.
+ \item `cell_names_ref` are valid cell names in the provided reference
+ dataset.
+ \item The PCA subsets specified by `pc_subset_query` and `pc_subset_ref` are
+ valid.
+ \item `max_cells_ref` and `max_cells_query` are positive integers when not
+ NULL.
 }
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }
 \keyword{internal}

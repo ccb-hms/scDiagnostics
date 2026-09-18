@@ -2,7 +2,8 @@
 % Please edit documentation in R/calculateHotellingPValue.R
 \name{calculateHotellingPValue}
 \alias{calculateHotellingPValue}
-\title{Perform Hotelling's T-squared Test on PCA Scores for Single-cell RNA-seq Data}
+\title{Perform Hotelling's T-squared Test on PCA Scores for Single-cell
+RNA-seq Data}
 \usage{
 calculateHotellingPValue(
   query_data,
@@ -18,41 +19,52 @@ calculateHotellingPValue(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data}
-that identifies the cell types.}
+\item{query_cell_type_col}{character. The column name in the \code{colData}
+of \code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data}
-that identifies the cell types.}
+\item{ref_cell_type_col}{character. The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+\item{cell_types}{A character vector specifying the cell types to include in
+the plot. If NULL, all cell types are included.}
 
-\item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.}
+\item{pc_subset}{A numeric vector specifying which principal components to
+include in the plot. Default is PC1 to PC5.}
 
-\item{n_permutation}{Number of permutations to perform for p-value calculation. Default is 500.}
+\item{n_permutation}{Number of permutations to perform for p-value
+calculation. Default is 500.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is 5000.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is 5000.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is 5000.}
 }
 \value{
-A named numeric vector of p-values from Hotelling's T-squared test for each cell type.
+A named numeric vector of p-values from Hotelling's T-squared test
+for each cell type.
 }
 \description{
-Computes Hotelling's T-squared test statistic and p-values for each specified cell type
-based on PCA-projected data from query and reference datasets.
+Computes Hotelling's T-squared test statistic and p-values for
+each specified cell type based on PCA-projected data from query and reference
+datasets.
 }
 \details{
-This function calculates Hotelling's T-squared statistic for comparing multivariate means
-between reference and query datasets, projected onto a subset of principal components (PCs).
-It performs a permutation test to obtain p-values for each cell type specified.
+This function calculates Hotelling's T-squared statistic for
+comparing multivariate means between reference and query datasets, projected
+onto a subset of principal components (PCs). It performs a permutation test
+to obtain p-values for each cell type specified.
 }
 \examples{
 # Load data
@@ -71,9 +83,11 @@ round(p_values, 5)
 
 }
 \references{
-Hotelling, H. (1931). "The generalization of Student's ratio". *Annals of Mathematical Statistics*. 2 (3): 360–378.
+Hotelling, H. (1931). "The generalization of Student's ratio".
+*Annals of Mathematical Statistics*. 2 (3): 360–378.
 doi:10.1214/aoms/1177732979.
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

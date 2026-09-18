@@ -1,29 +1,30 @@
 #' Scatter plot: QC stats vs Cell Type Annotation Scores
 #'
-#' Creates a scatter plot to visualize the relationship between QC stats (e.g., library size)
-#' and cell type annotation scores for one or more cell types.
+#' Creates a scatter plot to visualize the relationship between QC stats (e.g.,
+#' library size) and cell type annotation scores for one or more cell types.
 #'
-#' @details This function generates a scatter plot to explore the relationship between various quality
-#' control (QC) statistics, such as library size and mitochondrial percentage, and cell type
-#' annotation scores. By examining these relationships, users can assess whether specific QC
-#' metrics, systematically influence the confidence in cell type annotations,
-#' which is essential for ensuring reliable cell type annotation.
+#' @details This function generates a scatter plot to explore the relationship
+#' between various quality control (QC) statistics, such as library size and
+#' mitochondrial percentage, and cell type annotation scores. By examining these
+#' relationships, users can assess whether specific QC metrics, systematically
+#' influence the confidence in cell type annotations, which is essential for
+#' ensuring reliable cell type annotation.
 #'
-#' @param sce_object A \linkS4class{SingleCellExperiment} containing the single-cell
-#' expression data and metadata.
-#' @param cell_type_col The column name in the \code{colData} of \code{sce_object}
-#' that contains the cell type labels.
-#' @param cell_types A vector of cell type labels to plot (e.g., c("T-cell", "B-cell")).
-#' Defaults to \code{NULL}, which will include all the cells.
+#' @param sce_object A \linkS4class{SingleCellExperiment} containing the
+#' single-cell expression data and metadata.
+#' @param cell_type_col The column name in the \code{colData} of
+#' \code{sce_object} that contains the cell type labels.
+#' @param cell_types A vector of cell type labels to plot (e.g., c("T-cell",
+#' "B-cell")). Defaults to \code{NULL}, which will include all the cells.
 #' @param qc_col A column name in the \code{colData} of \code{sce_object} that
 #' contains the QC stats of interest.
-#' @param score_col The column name in the \code{colData} of \code{sce_object} that
-#' contains the cell type annotation scores.
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 5000.
+#' @param score_col The column name in the \code{colData} of \code{sce_object}
+#' that contains the cell type annotation scores.
+#' @param max_cells Maximum number of cells to retain. If the object has fewer
+#' cells, it is returned unchanged. Default is 5000.
 #'
-#' @return A ggplot object displaying a scatter plot of QC stats vs annotation scores,
-#'         where each point represents a cell, color-coded by its cell type.
+#' @return A ggplot object displaying a scatter plot of QC stats vs annotation
+#' scores, where each point represents a cell, color-coded by its cell type.
 #'
 #' @examples
 #' # Load data
@@ -36,7 +37,6 @@
 #'         "Neurons", "Platelets"
 #'     ))]
 #'
-# Create a scatter plot between library size and annotation scores
 #' p1 <- plotQCvsAnnotation(
 #'     sce_object = qc_data_subset,
 #'     cell_type_col = "SingleR_annotation",
@@ -46,6 +46,7 @@
 #' )
 #' p1 + ggplot2::xlab("Library Size")
 #'
+# Create a scatter plot between library size and annotation scores
 #' @export
 #'
 # Function to plot QC score against annotation
@@ -114,7 +115,8 @@ plotQCvsAnnotation <- function(sce_object,
         paired = FALSE
     )
 
-    # Create a scatter plot with color-coded points based on cell types or labels
+    # Create a scatter plot with color-coded points based on cell types or
+    # labels
     qc_plot <- ggplot2::ggplot(
         data,
         ggplot2::aes(

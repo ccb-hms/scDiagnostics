@@ -1,49 +1,57 @@
 #' @title Principal Component Regression
 #'
-#' @description
-#' This function performs linear regression of a covariate of interest onto one
-#' or more principal components, based on the data in a \linkS4class{SingleCellExperiment}
-#' object.
+#' @description This function performs linear regression of a covariate of
+#' interest onto one or more principal components, based on the data in a
+#' \linkS4class{SingleCellExperiment} object.
 #'
-#' @details
-#' Principal component regression, derived from PCA, can be used to quantify the
-#' variance explained by a covariate of interest. Applications for single-cell
-#' analysis include quantification of batch effects, assessing clustering
-#' homogeneity, and evaluating alignment of query and reference datasets in cell
-#' type annotation settings.
+#' @details Principal component regression, derived from PCA, can be used to
+#' quantify the variance explained by a covariate of interest. Applications for
+#' single-cell analysis include quantification of batch effects, assessing
+#' clustering homogeneity, and evaluating alignment of query and reference
+#' datasets in cell type annotation settings.
 #'
 #' The function supports multiple regression scenarios:
 #' \itemize{
-#'   \item Query only, no batch: PC  cell_type
-#'   \item Query only, with batch: PC  cell_type * batch
-#'   \item Query + Reference, no batch: PC  cell_type * dataset
-#'   \item Query + Reference, with batch: PC  cell_type * batch (where batch includes Reference)
+#'  \item Query only, no batch: PC cell_type
+#'  \item Query only, with batch: PC cell_type * batch
+#'  \item Query + Reference, no batch: PC cell_type * dataset
+#'  \item Query + Reference, with batch: PC cell_type * batch (where batch
+#'  includes Reference)
 #' }
 #'
-#' When batch information is provided with reference data, batches are labeled as
-#' "Reference" for reference data and "Query_BatchName" for query batches, with
-#' Reference set as the first factor level for interpretation.
+#' When batch information is provided with reference data, batches are labeled
+#' as "Reference" for reference data and "Query_BatchName" for query batches,
+#' with Reference set as the first factor level for interpretation.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' If NULL, the PC scores are regressed against the cell types of the query data.
-#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
-#' @param query_batch_col The column name in the \code{colData} of \code{query_data} that identifies the batch or sample.
-#' If provided, performs interaction analysis with cell types. Default is NULL.
-#' @param cell_types A character vector specifying the cell types to include in the analysis. If NULL, all cell types are included.
-#' @param pc_subset A numeric vector specifying which principal components to include in the analysis. Default is PC1 to PC10.
-#' @param adjust_method A character string specifying the method to adjust the p-values.
-#'   Options include "BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr", or "none".
-#'   Default is "BH" (Benjamini-Hochberg).
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is 5000.
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is 5000.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells. If NULL, the PC scores are
+#' regressed against the cell types of the query data.
+#' @param query_cell_type_col The column name in the \code{colData} of
+#' \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col The column name in the \code{colData} of
+#' \code{reference_data} that identifies the cell types.
+#' @param query_batch_col The column name in the \code{colData} of
+#' \code{query_data} that identifies the batch or sample. If provided, performs
+#' interaction analysis with cell types. Default is NULL.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the analysis. If NULL, all cell types are included.
+#' @param pc_subset A numeric vector specifying which principal components to
+#' include in the analysis. Default is PC1 to PC10.
+#' @param adjust_method A character string specifying the method to adjust the
+#' p-values. Options include "BH", "holm", "hochberg", "hommel", "bonferroni",
+#' "BY", "fdr", or "none". Default is "BH" (Benjamini-Hochberg).
+#' @param assay_name Name of the assay on which to perform computations. Default
+#' is "logcounts".
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is 5000.
 #'
-#' @return
-#' A \code{list} containing \itemize{ \item summaries of the linear
+#' @return A \code{list} containing \itemize{ \item summaries of the linear
 #' regression models for each specified principal component, \item the
 #' corresponding R-squared (R2) values, \item the variance contributions for
 #' each principal component, and \item the total variance explained.}
@@ -53,8 +61,8 @@
 #'
 #' @export
 #'
-#' @author
-#' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{plot.regressPCObject}}
 #'
@@ -385,9 +393,11 @@ regressPC <- function(query_data,
                 indep_var = "cell_type_dataset_interaction"
             )
 
-            # Case 2b: With batch - PC ~ cell_type * batch (where batch includes Reference)
+            # Case 2b: With batch - PC ~ cell_type * batch (where batch includes
+            # Reference)
         } else {
-            # Create batch labels: "Reference" for reference, "Query_BatchName" for query
+            # Create batch labels: "Reference" for reference, "Query_BatchName"
+            # for query
             batch_labels <- rep(NA, nrow(pca_output))
             ref_indices <- pca_output[["dataset"]] == "Reference"
             query_indices <- pca_output[["dataset"]] == "Query"
@@ -546,40 +556,44 @@ regressPC <- function(query_data,
 
 #' @title Fast Custom Linear Regression for Principal Components
 #'
-#' @description
-#' Performs efficient linear regression of principal component scores against categorical
-#' predictors (cell types, batches, datasets, or their interactions) using QR decomposition
-#' for numerical stability and computational efficiency.
+#' @description Performs efficient linear regression of principal component
+#' scores against categorical predictors (cell types, batches, datasets, or
+#' their interactions) using QR decomposition for numerical stability and
+#' computational efficiency.
 #'
-#' @details
-#' This function implements a custom linear regression optimized for categorical predictors
-#' commonly used in single-cell RNA sequencing analysis. It uses QR decomposition instead
-#' of normal equations for improved numerical stability and handles rank-deficient design
-#' matrices gracefully. The function supports various model specifications including:
+#' @details This function implements a custom linear regression optimized for
+#' categorical predictors commonly used in single-cell RNA sequencing analysis.
+#' It uses QR decomposition instead of normal equations for improved numerical
+#' stability and handles rank-deficient design matrices gracefully. The function
+#' supports various model specifications including:
 #' \itemize{
-#'   \item Simple cell type effects: \code{PC ~ cell_type}
-#'   \item Cell type and batch interactions: \code{PC ~ cell_type * batch}
-#'   \item Cell type and dataset interactions: \code{PC ~ cell_type * dataset}
+#'  \item Simple cell type effects: \code{PC ~ cell_type}
+#'  \item Cell type and batch interactions: \code{PC ~ cell_type * batch}
+#'  \item Cell type and dataset interactions: \code{PC ~ cell_type * dataset}
 #' }
 #'
-#' The output format is compatible with \code{speedglm} results to maintain consistency
-#' with existing plotting and analysis workflows.
+#' The output format is compatible with \code{speedglm} results to maintain
+#' consistency with existing plotting and analysis workflows.
 #'
-#' @param pc A character string specifying the principal component column name in the data frame.
-#' @param indep_var A character string specifying the independent variable specification.
-#'   Options include "cell_type", "cell_type * batch", "cell_type * dataset", or other
-#'   interaction specifications.
-#' @param df A data frame containing the principal component scores and categorical predictors.
-#'   Must include columns for the specified PC and predictor variables.
+#' @param pc A character string specifying the principal component column name
+#' in the data frame.
+#' @param indep_var A character string specifying the independent variable
+#' specification. Options include "cell_type", "cell_type * batch", "cell_type *
+#' dataset", or other interaction specifications.
+#' @param df A data frame containing the principal component scores and
+#' categorical predictors. Must include columns for the specified PC and
+#' predictor variables.
 #'
 #' @keywords internal
 #'
 #' @return A list containing:
-#'   \item{coefficients}{A data frame with columns \code{coef}, \code{se}, \code{t}, and \code{p.value}
-#'     containing regression coefficients, standard errors, t-statistics, and p-values.}
+#'   \item{coefficients}{A data frame with columns \code{coef}, \code{se},
+#'   \code{t}, and \code{p.value} containing regression coefficients, standard
+#'   errors, t-statistics, and p-values.}
 #'   \item{r_squared}{A numeric value representing the R-squared of the model.}
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @importFrom stats model.matrix pt
 #'
@@ -642,8 +656,8 @@ regressFastCustom <- function(pc, indep_var, df) {
     # Residual standard error
     mse <- ss_residual / df_residual
 
-    # Variance-covariance matrix of coefficients
-    # Var(beta) = sigma^2 * (X'X)^(-1)
+    # Variance-covariance matrix of coefficients Var(beta) = sigma^2 *
+    # (X'X)^(-1)
     XtX_inv <- chol2inv(qr.R(qr_decomp))
     var_coef <- mse * XtX_inv
     se_coef <- sqrt(diag(var_coef))
@@ -675,42 +689,48 @@ regressFastCustom <- function(pc, indep_var, df) {
 
 #' @title Decompose R-squared by Model Components
 #'
-#' @description
-#' Decomposes the total R-squared from a linear model into individual components
-#' representing the variance explained by main effects (cell type, batch/dataset)
-#' and their interaction using sequential sum of squares.
+#' @description Decomposes the total R-squared from a linear model into
+#' individual components representing the variance explained by main effects
+#' (cell type, batch/dataset) and their interaction using sequential sum of
+#' squares.
 #'
-#' @details
-#' This function performs R-squared decomposition using a sequential sum of squares approach,
-#' which partitions the total explained variance into additive components. The decomposition
-#' follows the hierarchical structure:
+#' @details This function performs R-squared decomposition using a sequential
+#' sum of squares approach, which partitions the total explained variance into
+#' additive components. The decomposition follows the hierarchical structure:
 #' \enumerate{
-#'   \item Cell type main effect
-#'   \item Batch/dataset main effect (after accounting for cell type)
-#'   \item Cell type × batch/dataset interaction (after accounting for main effects)
+#'  \item Cell type main effect
+#'  \item Batch/dataset main effect (after accounting for cell type)
+#'  \item Cell type × batch/dataset interaction (after accounting for main
+#'  effects)
 #' }
 #'
-#' For simple cell type models, only the cell type component is returned. For interaction
-#' models, all three components are computed. The method uses group means and residual
-#' analysis to avoid computationally expensive matrix operations while maintaining
-#' mathematical accuracy equivalent to ANOVA decomposition.
+#' For simple cell type models, only the cell type component is returned. For
+#' interaction models, all three components are computed. The method uses group
+#' means and residual analysis to avoid computationally expensive matrix
+#' operations while maintaining mathematical accuracy equivalent to ANOVA
+#' decomposition.
 #'
-#' @param pc A character string specifying the principal component column name in the data frame.
-#' @param indep_var A character string specifying the independent variable specification.
-#'   Options are "cell_type", "cell_type * batch", or "cell_type * dataset".
-#' @param df A data frame containing the principal component scores and categorical predictors.
-#'   Must include columns for the specified PC and predictor variables.
+#' @param pc A character string specifying the principal component column name
+#' in the data frame.
+#' @param indep_var A character string specifying the independent variable
+#' specification. Options are "cell_type", "cell_type * batch", or "cell_type *
+#' dataset".
+#' @param df A data frame containing the principal component scores and
+#' categorical predictors. Must include columns for the specified PC and
+#' predictor variables.
 #'
 #' @keywords internal
 #'
 #' @return A named list containing R-squared components:
-#'   \item{cell_type}{Numeric value representing the R-squared explained by cell type main effect.}
-#'   \item{batch/dataset}{Numeric value representing the R-squared explained by batch or dataset
-#'     main effect (only for interaction models).}
-#'   \item{interaction}{Numeric value representing the R-squared explained by the interaction term
-#'     (only for interaction models).}
+#'   \item{cell_type}{Numeric value representing the R-squared explained by cell
+#'   type main effect.}
+#'   \item{batch/dataset}{Numeric value representing the R-squared explained by
+#'   batch or dataset main effect (only for interaction models).}
+#'   \item{interaction}{Numeric value representing the R-squared explained by
+#'   the interaction term (only for interaction models).}
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 # Function to decompose R-squared using sequential group means
 decomposeR2 <- function(pc, indep_var, df) {
@@ -728,14 +748,13 @@ decomposeR2 <- function(pc, indep_var, df) {
     } else if (indep_var %in% c("cell_type * batch", "cell_type * dataset")) {
         second_var <- if (indep_var == "cell_type * batch") "batch" else "dataset"
 
-        # Sequential sum of squares approach
-        # 1. Cell type only
+        # Sequential sum of squares approach 1. Cell type only
         ct_means <- tapply(y, df$cell_type, mean)
         y_pred_ct <- ct_means[df$cell_type]
         ss_cell_type <- sum((y_pred_ct - y_mean)^2)
 
-        # 2. Add second variable
-        # Fit additive model by computing residuals and group means
+        # 2. Add second variable Fit additive model by computing residuals and
+        # group means
         residuals_1 <- y - y_pred_ct
         sv_residual_means <- tapply(residuals_1, df[[second_var]], mean)
         y_pred_sv_adj <- sv_residual_means[df[[second_var]]]
@@ -768,30 +787,32 @@ decomposeR2 <- function(pc, indep_var, df) {
 
 #' @title Adjust P-Values in Regression Results
 #'
-#' @description
-#' Adjusts the p-values in the regression results using a specified adjustment method.
-#' The adjustment is performed for different regression types including cell type,
-#' dataset, and cell type-batch interaction analyses.
+#' @description Adjusts the p-values in the regression results using a specified
+#' adjustment method. The adjustment is performed for different regression types
+#' including cell type, dataset, and cell type-batch interaction analyses.
 #'
-#' @details
-#' This function adjusts p-values from regression results stored in a list. The adjustment
-#' can be applied across different regression structures depending on the analysis type.
-#' The method for adjusting p-values can be selected from various options such as
-#' Benjamini-Hochberg (BH), Holm, and others, which are supported by the `p.adjust` function in R.
+#' @details This function adjusts p-values from regression results stored in a
+#' list. The adjustment can be applied across different regression structures
+#' depending on the analysis type. The method for adjusting p-values can be
+#' selected from various options such as Benjamini-Hochberg (BH), Holm, and
+#' others, which are supported by the `p.adjust` function in R.
 #'
-#' @param regress_res A list containing regression results. The structure varies by analysis type.
-#' @param adjust_method A character string specifying the method to adjust the p-values.
-#'   Options include "BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr", or "none".
-#'   Default is "BH" (Benjamini-Hochberg).
-#' @param indep_var A character string specifying the independent variable for the adjustment.
-#'   Options are "cell_type", "cell_type_dataset_interaction", or "cell_type_batch_interaction".
+#' @param regress_res A list containing regression results. The structure varies
+#' by analysis type.
+#' @param adjust_method A character string specifying the method to adjust the
+#' p-values. Options include "BH", "holm", "hochberg", "hommel", "bonferroni",
+#' "BY", "fdr", or "none". Default is "BH" (Benjamini-Hochberg).
+#' @param indep_var A character string specifying the independent variable for
+#' the adjustment. Options are "cell_type", "cell_type_dataset_interaction", or
+#' "cell_type_batch_interaction".
 #'
 #' @keywords internal
 #'
-#' @return A list similar to \code{regress_res}, but with an added column for adjusted p-values
-#'   in the coefficients tables.
+#' @return A list similar to \code{regress_res}, but with an added column for
+#' adjusted p-values in the coefficients tables.
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @importFrom stats p.adjust
 #'

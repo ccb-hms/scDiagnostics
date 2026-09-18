@@ -1,41 +1,62 @@
 #' @title Calculate Graph Community Integration Diagnostics
 #'
-#' @description
-#' This function performs graph-based community detection to identify annotation inconsistencies
-#' by detecting query-only communities, true cross-cell-type mixing patterns, and local
-#' annotation inconsistencies based on immediate neighborhood analysis.
+#' @description This function performs graph-based community detection to
+#' identify annotation inconsistencies by detecting query-only communities, true
+#' cross-cell-type mixing patterns, and local annotation inconsistencies based
+#' on immediate neighborhood analysis.
 #'
-#' @details
-#' The function performs three types of analysis: (1) Communities containing only query cells,
-#' (2) Communities where query cells are mixed with reference cells of different cell types
-#' WITHOUT any reference cells of the same type, and (3) Local analysis of each query cell's
-#' immediate neighbors to detect annotation inconsistencies even within mixed communities.
+#' @details The function performs three types of analysis: (1) Communities
+#' containing only query cells, (2) Communities where query cells are mixed with
+#' reference cells of different cell types WITHOUT any reference cells of the
+#' same type, and (3) Local analysis of each query cell's immediate neighbors to
+#' detect annotation inconsistencies even within mixed communities.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.
-#' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
-#' @param cell_types A character vector specifying the cell types to include in the analysis. If NULL, all cell types are included.
-#' @param pc_subset A vector specifying the subset of principal components to use in the analysis. Default is 1:10.
-#' @param k_neighbors An integer specifying the number of nearest neighbors for graph construction. Default is 30.
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param resolution Resolution parameter for Leiden clustering. Default is 0.15 for fewer, larger communities.
-#' @param min_cells_per_community Minimum number of cells required for a community to be analyzed. Default is 10.
-#' @param min_cells_per_celltype Minimum number of cells required per cell type for inclusion. Default is 20.
-#' @param high_query_prop_threshold Minimum proportion of query cells to consider a community "query-only". Default is 0.9.
-#' @param cross_type_threshold Minimum proportion needed to flag cross-cell-type mixing. Default is 0.1.
-#' @param local_consistency_threshold Minimum proportion of reference neighbors that should support a query cell's annotation. Default is 0.6.
-#' @param local_confidence_threshold Minimum confidence difference needed to suggest re-annotation. Default is 0.2.
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is 5000.
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is 5000.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_cell_type_col A character string specifying the column name in
+#' the query dataset containing cell type annotations.
+#' @param ref_cell_type_col A character string specifying the column name in the
+#' reference dataset containing cell type annotations.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the analysis. If NULL, all cell types are included.
+#' @param pc_subset A vector specifying the subset of principal components to
+#' use in the analysis. Default is 1:10.
+#' @param k_neighbors An integer specifying the number of nearest neighbors for
+#' graph construction. Default is 30.
+#' @param assay_name Name of the assay on which to perform computations. Default
+#' is "logcounts".
+#' @param resolution Resolution parameter for Leiden clustering. Default is 0.15
+#' for fewer, larger communities.
+#' @param min_cells_per_community Minimum number of cells required for a
+#' community to be analyzed. Default is 10.
+#' @param min_cells_per_celltype Minimum number of cells required per cell type
+#' for inclusion. Default is 20.
+#' @param high_query_prop_threshold Minimum proportion of query cells to
+#' consider a community "query-only". Default is 0.9.
+#' @param cross_type_threshold Minimum proportion needed to flag cross-cell-type
+#' mixing. Default is 0.1.
+#' @param local_consistency_threshold Minimum proportion of reference neighbors
+#' that should support a query cell's annotation. Default is 0.6.
+#' @param local_confidence_threshold Minimum confidence difference needed to
+#' suggest re-annotation. Default is 0.2.
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is 5000.
 #'
 #' @return A list containing:
-#' \item{high_query_prop_analysis}{Analysis of communities with only query cells}
-#' \item{cross_type_mixing}{Analysis of communities with true query-reference cross-cell-type mixing}
-#' \item{local_annotation_inconsistencies}{Local neighborhood-based annotation inconsistencies}
-#' \item{local_inconsistency_summary}{Summary of local inconsistencies by cell type}
+#' \item{high_query_prop_analysis}{Analysis of communities with only query
+#' cells}
+#' \item{cross_type_mixing}{Analysis of communities with true query-reference
+#' cross-cell-type mixing}
+#' \item{local_annotation_inconsistencies}{Local neighborhood-based annotation
+#' inconsistencies}
+#' \item{local_inconsistency_summary}{Summary of local inconsistencies by cell
+#' type}
 #' \item{community_composition}{Detailed composition of each community}
 #' \item{annotation_consistency}{Summary of annotation consistency issues}
 #' \item{overall_metrics}{Overall diagnostic metrics}
@@ -45,7 +66,8 @@
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
 #' # Load data
@@ -318,14 +340,17 @@ calculateGraphIntegration <- function(query_data,
                 ref_types <- names(ref_celltypes)
                 query_types <- names(query_celltypes)
 
-                # Only flag TRUE mismatches: query cells with NO matching reference type
+                # Only flag TRUE mismatches: query cells with NO matching
+                # reference type
                 cross_mixing_detected <- FALSE
                 cross_details <- list()
 
                 for (qt in query_types) {
-                    # Check if this query type has NO corresponding reference cells
+                    # Check if this query type has NO corresponding reference
+                    # cells
                     if (!(qt %in% ref_types)) {
-                        # This query type is ONLY mixing with different reference types
+                        # This query type is ONLY mixing with different
+                        # reference types
                         query_count <- as.numeric(query_celltypes[[qt]])
                         query_prop_in_community <- query_count / n_query
 
@@ -333,7 +358,8 @@ calculateGraphIntegration <- function(query_data,
                         if (query_prop_in_community >= cross_threshold) {
                             cross_mixing_detected <- TRUE
 
-                            # Find which reference types this query type is mixing with
+                            # Find which reference types this query type is
+                            # mixing with
                             ref_mixing_with <- ref_types
                             ref_counts_mixing <- ref_celltypes[ref_mixing_with]
 
@@ -384,7 +410,8 @@ calculateGraphIntegration <- function(query_data,
     # NEW: Local annotation consistency analysis
     .analyzeLocalAnnotationConsistency <- function(membership, cell_info, knn_edges,
                                                    local_threshold, confidence_threshold) {
-        # For each query cell, check if its immediate neighbors support its annotation
+        # For each query cell, check if its immediate neighbors support its
+        # annotation
         query_cells <- which(cell_info[["dataset"]] == "Query")
         local_inconsistencies <- list()
 
@@ -407,7 +434,8 @@ calculateGraphIntegration <- function(query_data,
 
             if (nrow(ref_neighbors) == 0) next
 
-            # Calculate support for query cell's annotation among reference neighbors
+            # Calculate support for query cell's annotation among reference
+            # neighbors
             ref_neighbor_types <- table(ref_neighbors[["cell_type"]])
             total_ref_neighbors <- nrow(ref_neighbors)
 

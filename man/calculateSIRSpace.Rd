@@ -4,7 +4,8 @@
 \name{calculateSIRSpace}
 \alias{calculateSIRSpace}
 \alias{plot.calculateSIRSpaceObject}
-\title{Calculate Sliced Inverse Regression (SIR) Space for Different Cell Types}
+\title{Calculate Sliced Inverse Regression (SIR) Space for Different Cell
+Types}
 \usage{
 calculateSIRSpace(
   query_data,
@@ -35,65 +36,99 @@ calculateSIRSpace(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing the numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing the
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing the numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+the numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{A character string specifying the column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+\item{query_cell_type_col}{A character string specifying the column name in
+the \code{colData} of \code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{A character string specifying the column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+\item{ref_cell_type_col}{A character string specifying the column name in the
+\code{colData} of \code{reference_data} that identifies the cell types.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included. Only used when plot_type = "scores".}
+\item{cell_types}{A character vector specifying the cell types to include in
+the plot. If NULL, all cell types are included. Only used when plot_type =
+"scores".}
 
-\item{multiple_cond_means}{Logical. Whether to compute conditional means for multiple conditions in the reference dataset. Default is TRUE.}
+\item{multiple_cond_means}{Logical. Whether to compute conditional means for
+multiple conditions in the reference dataset. Default is TRUE.}
 
-\item{cumulative_variance_threshold}{A numeric value specifying the cumulative variance threshold for selecting principal components. Default is 0.7.}
+\item{cumulative_variance_threshold}{A numeric value specifying the
+cumulative variance threshold for selecting principal components. Default is
+0.7.}
 
-\item{n_neighbor}{A numeric value specifying the number of neighbors for computing the SIR space. Default is 1.}
+\item{n_neighbor}{A numeric value specifying the number of neighbors for
+computing the SIR space. Default is 1.}
 
-\item{assay_name}{A character string specifying the name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{A character string specifying the name of the assay on
+which to perform computations. Default is "logcounts".}
 
-\item{max_cells_query}{Maximum number of query cells to include in the plot. If NULL,
-all available query cells are plotted. Default is NULL. Only used when plot_type = "scores".}
+\item{max_cells_query}{Maximum number of query cells to include in the plot.
+If NULL, all available query cells are plotted. Default is NULL. Only used
+when plot_type = "scores".}
 
-\item{max_cells_ref}{Maximum number of reference cells to include in the plot. If NULL,
-all available reference cells are plotted. Default is NULL. Only used when plot_type = "scores".}
+\item{max_cells_ref}{Maximum number of reference cells to include in the
+plot. If NULL, all available reference cells are plotted. Default is NULL.
+Only used when plot_type = "scores".}
 
-\item{x}{An object of class \code{calculateSIRSpaceObject} containing SIR projections.}
+\item{x}{An object of class \code{calculateSIRSpaceObject} containing SIR
+projections.}
 
-\item{plot_type}{A character string specifying the type of plot. Either "scores" (default) for SIR projections or "loadings" for variable loadings.}
+\item{plot_type}{A character string specifying the type of plot. Either
+"scores" (default) for SIR projections or "loadings" for variable loadings.}
 
-\item{sir_subset}{A numeric vector specifying which SIR components to include in the plot. Default is 1:5.}
+\item{sir_subset}{A numeric vector specifying which SIR components to include
+in the plot. Default is 1:5.}
 
-\item{lower_facet}{Type of plot to use for the lower panels. Either "scatter" (default), "contour", "ellipse", or "blank". Only used when plot_type = "scores".}
+\item{lower_facet}{Type of plot to use for the lower panels. Either "scatter"
+(default), "contour", "ellipse", or "blank". Only used when plot_type =
+"scores".}
 
-\item{diagonal_facet}{Type of plot to use for the diagonal panels. Either "ridge" (default), "density", "boxplot" or "blank". Only used when plot_type = "scores".}
+\item{diagonal_facet}{Type of plot to use for the diagonal panels. Either
+"ridge" (default), "density", "boxplot" or "blank". Only used when plot_type
+= "scores".}
 
-\item{upper_facet}{Type of plot to use for the upper panels. Either "blank" (default), "scatter", "contour", or "ellipse". Only used when plot_type = "scores".}
+\item{upper_facet}{Type of plot to use for the upper panels. Either "blank"
+(default), "scatter", "contour", or "ellipse". Only used when plot_type =
+"scores".}
 
-\item{n_top}{A numeric value specifying the number of n_top variables (by absolute loading value) to display. Default is 10 Only used when plot_type = "loadings".}
+\item{n_top}{A numeric value specifying the number of n_top variables (by
+absolute loading value) to display. Default is 10 Only used when plot_type =
+"loadings".}
 
 \item{...}{Additional arguments passed to the plotting function.}
 }
 \value{
-A list containing the SIR projections, rotation matrix, and percentage of variance explained for the given cell types.
+A list containing the SIR projections, rotation matrix, and
+percentage of variance explained for the given cell types.
 
-A ggmatrix object representing a pairs plot of specified SIR components for the given cell types and datasets when plot_type = "scores", or a ggplot object showing loadings when plot_type = "loadings".
+A ggmatrix object representing a pairs plot of specified SIR
+components for the given cell types and datasets when plot_type = "scores",
+or a ggplot object showing loadings when plot_type = "loadings".
 }
 \description{
-This function calculates the SIR space projections for different cell types in the query and reference datasets.
+This function calculates the SIR space projections for different
+cell types in the query and reference datasets.
 
-This function plots the Sliced Inverse Regression (SIR) components for different cell types in query and reference datasets.
+This function plots the Sliced Inverse Regression (SIR)
+components for different cell types in query and reference datasets.
 }
 \details{
-The function projects the query dataset onto the SIR space of the reference dataset based on shared cell types.
-It computes conditional means for the reference dataset, extracts the SVD components, and performs the projection
-of both the query and reference data. It uses the `projectSIR` function to perform the actual projection and
-allows the user to specify particular cell types for analysis.
+The function projects the query dataset onto the SIR space of the
+reference dataset based on shared cell types. It computes conditional means
+for the reference dataset, extracts the SVD components, and performs the
+projection of both the query and reference data. It uses the `projectSIR`
+function to perform the actual projection and allows the user to specify
+particular cell types for analysis.
 
-This function visualizes the SIR projections for specified cell types, providing a pairs plot of the SIR components.
-It offers various visualization options for different facets of the plot including scatter plots, contours, ellipses, and density plots.
-When plot_type is "loadings", it creates horizontal bar plots showing the n_top contributing variables for each SIR component.
+This function visualizes the SIR projections for specified cell
+types, providing a pairs plot of the SIR components. It offers various
+visualization options for different facets of the plot including scatter
+plots, contours, ellipses, and density plots. When plot_type is "loadings",
+it creates horizontal bar plots showing the n_top contributing variables for
+each SIR component.
 }
 \examples{
 # Load data
@@ -134,5 +169,6 @@ plot(sir_output,
 \code{\link{calculateSIRSpace}}
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

@@ -1,31 +1,31 @@
 #' @title Calculate Categorization Entropy
 #'
-#' @description
-#' This function takes a matrix of category scores (cell type by
+#' @description This function takes a matrix of category scores (cell type by
 #' cells) and calculates the entropy of the category probabilities for each
-#' cell. This gives a sense of how confident the cell type assignments are.
-#' High entropy = lots of plausible category assignments = low confidence. Low
+#' cell. This gives a sense of how confident the cell type assignments are. High
+#' entropy = lots of plausible category assignments = low confidence. Low
 #' entropy = only one or two plausible categories = high confidence. This is
 #' confidence in the vernacular sense, not in the "confidence interval"
-#' statistical sense. Also note that the entropy tells you nothing about
-#' whether or not the assignments are correct -- see the other functionality
-#' in the package for that. This functionality can be used for assessing how
+#' statistical sense. Also note that the entropy tells you nothing about whether
+#' or not the assignments are correct -- see the other functionality in the
+#' package for that. This functionality can be used for assessing how
 #' comparatively confident different sets of assignments are (given that the
 #' number of categories is the same).
 #'
-#' @details
-#' The function checks if X is already on the probability scale.
+#' @details The function checks if X is already on the probability scale.
 #' Otherwise, it applies softmax columnwise.
 #'
-#' You can think about entropies on a scale from 0 to a maximum that depends
-#' on the number of categories. This is the function for entropy (minus input
+#' You can think about entropies on a scale from 0 to a maximum that depends on
+#' the number of categories. This is the function for entropy (minus input
 #' checking): \code{entropy(p) = -sum(p*log(p))} . If that input vector p is a
 #' uniform distribution over the \code{length(p)} categories, the entropy will
 #' be a high as possible.
 #
 #' @param X A matrix of category scores.
-#' @param inverseNormalTransformationform If TRUE, apply inverse normal transformation to X. Default is FALSE.
-#' @param verbose If TRUE, display messages about the calculations. Default is TRUE.
+#' @param inverseNormalTransformationform If TRUE, apply inverse normal
+#' transformation to X. Default is FALSE.
+#' @param verbose If TRUE, display messages about the calculations. Default is
+#' TRUE.
 #' @param plot If TRUE, plot a histogram of the entropies. Default is TRUE.
 #'
 #' @returns A vector of entropy values for each column in X.
@@ -111,17 +111,19 @@ calculateCategorizationEntropy <- function(X,
 
 #' @title Calculate Entropy
 #'
-#' @description
-#' This function calculates the entropy of a probability distribution.
+#' @description This function calculates the entropy of a probability
+#' distribution.
 #'
-#' @details
-#' The entropy is calculated using the formula \eqn{-\sum p \log(p)}, where the sum is over all non-zero elements of \code{p}.
+#' @details The entropy is calculated using the formula \eqn{-\sum p \log(p)},
+#' where the sum is over all non-zero elements of \code{p}.
 #'
-#' @param p A numeric vector representing a probability distribution. The elements should sum to 1.
+#' @param p A numeric vector representing a probability distribution. The
+#' elements should sum to 1.
 #'
 #' @keywords internal
 #'
-#' @return A numeric value representing the entropy of the probability distribution.
+#' @return A numeric value representing the entropy of the probability
+#' distribution.
 #'
 # Function to calculate entropy
 calculateEntropy <- function(p) {
@@ -132,11 +134,11 @@ calculateEntropy <- function(p) {
 
 #' @title Number of Elements
 #'
-#' @description
-#' This function returns the number of elements in a matrix or vector.
+#' @description This function returns the number of elements in a matrix or
+#' vector.
 #'
-#' @details If \code{X} is a matrix, the function returns the product of its dimensions. If \code{X} is a vector, the function returns
-#' its length.
+#' @details If \code{X} is a matrix, the function returns the product of its
+#' dimensions. If \code{X} is a vector, the function returns its length.
 #'
 #' @param X A matrix or vector.
 #'
@@ -153,20 +155,23 @@ nElements <- function(X) {
 
 #' @title Inverse Normal Transformation
 #'
-#' @description
-#' This function performs an inverse normal transformation on a matrix or vector.
+#' @description This function performs an inverse normal transformation on a
+#' matrix or vector.
 #'
-#' @details
-#' The function ranks the elements of \code{X} and then applies the inverse normal transformation using the formula \eqn{qnorm((rank - constant) / (n - 2 * constant + 1))}.
+#' @details The function ranks the elements of \code{X} and then applies the
+#' inverse normal transformation using the formula \eqn{qnorm((rank - constant)
+#' / (n - 2 * constant + 1))}.
 #'
 #' @param X A numeric matrix or vector.
-#' @param constant A numeric value used in the transformation. Default is \code{3 / 8}.
+#' @param constant A numeric value used in the transformation. Default is
+#' \code{3 / 8}.
 #'
 #' @keywords internal
 #'
 #' @author Andrew Ghazi, \email{andrew_ghazi@hms.harvard.edu}
 #'
-#' @return A matrix or vector with the same dimensions as \code{X}, with values transformed using the inverse normal transformation.
+#' @return A matrix or vector with the same dimensions as \code{X}, with values
+#' transformed using the inverse normal transformation.
 #'
 # Function to compute the inverse normal rank transformation
 inverseNormalTransformation <- function(X,

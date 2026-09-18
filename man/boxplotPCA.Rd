@@ -18,46 +18,57 @@ boxplotPCA(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the
-query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for
-the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+\item{query_cell_type_col}{The column name in the \code{colData} of
+\code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are
-included.}
+\item{cell_types}{A character vector specifying the cell types to include in
+the plot. If NULL, all cell types are included.}
 
-\item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.}
+\item{pc_subset}{A numeric vector specifying which principal components to
+include in the plot. Default is PC1 to PC5.}
 
-\item{shape}{Character string indicating the plot type: "box" for boxplots or "violin" for violin plots.
-Default is "box".}
+\item{shape}{Character string indicating the plot type: "box" for boxplots or
+"violin" for violin plots. Default is "box".}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is NULL.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is NULL.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is NULL.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is NULL.}
 }
 \value{
-A ggplot object representing the boxplots or violin plots of specified principal components for the given
-        cell types and datasets.
+A ggplot object representing the boxplots or violin plots of
+specified principal components for the given cell types and datasets.
 }
 \description{
-This function generates a \code{ggplot2} visualization of principal components (PCs) for different
-cell types across two datasets (query and reference), using either boxplots or violin plots.
+This function generates a \code{ggplot2} visualization of
+principal components (PCs) for different cell types across two datasets
+(query and reference), using either boxplots or violin plots.
 }
 \details{
-The function \code{boxplotPCA} is designed to provide a visualization of principal component analysis (PCA) results. It projects
-the query dataset onto the principal components obtained from the reference dataset. The results are then visualized
-as boxplots or violin plots, grouped by cell types and datasets (query and reference). This allows for a comparative analysis of the
-distributions of the principal components across different cell types and datasets. The function internally calls \code{projectPCA}
-to perform the PCA projection. It then reshapes the output data into a long format suitable for ggplot2 plotting.
+The function \code{boxplotPCA} is designed to provide a
+visualization of principal component analysis (PCA) results. It projects the
+query dataset onto the principal components obtained from the reference
+dataset. The results are then visualized as boxplots or violin plots, grouped
+by cell types and datasets (query and reference). This allows for a
+comparative analysis of the distributions of the principal components across
+different cell types and datasets. The function internally calls
+\code{projectPCA} to perform the PCA projection. It then reshapes the output
+data into a long format suitable for ggplot2 plotting.
 }
 \examples{
 # Load data
@@ -89,5 +100,6 @@ pc_violin
 
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

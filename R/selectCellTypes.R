@@ -1,44 +1,57 @@
 #' @title Cell Type Selection and Validation for SingleCellExperiment Analysis
 #'
-#' @description
-#' This function selects and validates cell types for functions that analyze \linkS4class{SingleCellExperiment}
-#' objects. It determines which cell types to include based on availability in datasets, applies filtering
+#' @description This function selects and validates cell types for functions
+#' that analyze \linkS4class{SingleCellExperiment} objects. It determines which
+#' cell types to include based on availability in datasets, applies filtering
 #' criteria, and optionally selects the top cell types by cell count.
 #'
-#' @details
-#' The function performs the following selection and validation steps:
+#' @details The function performs the following selection and validation steps:
 #' \itemize{
-#'  \item Validates that at least one of \code{query_data} or \code{reference_data} is provided.
+#'  \item Validates that at least one of \code{query_data} or
+#'  \code{reference_data} is provided.
 #'  \item When \code{dual_only} is TRUE, ensures both datasets are provided.
-#'  \item Determines available cell types based on dataset availability and \code{dual_only} setting.
-#'  \item If \code{cell_types} is NULL and both datasets are available, includes cell types based on \code{dual_only}.
-#'  \item If \code{cell_types} is NULL and only one dataset is available, includes all cell types from that dataset.
+#'  \item Determines available cell types based on dataset availability and
+#'  \code{dual_only} setting.
+#'  \item If \code{cell_types} is NULL and both datasets are available, includes
+#'  cell types based on \code{dual_only}.
+#'  \item If \code{cell_types} is NULL and only one dataset is available,
+#'  includes all cell types from that dataset.
 #'  \item If \code{cell_types} is provided, filters to include only valid types.
-#'  \item If \code{n_cell_types} is specified, selects the top cell types by total cell count.
+#'  \item If \code{n_cell_types} is specified, selects the top cell types by
+#'  total cell count.
 #'  \item Returns the selected and validated cell types as character strings.
 #' }
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' Can be \code{NULL} if only reference data is available.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' Can be \code{NULL} if only query data is available.
-#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data}
-#' that identifies the cell types. Should be \code{NULL} if \code{query_data} is \code{NULL}.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data}
-#' that identifies the cell types. Should be \code{NULL} if \code{reference_data} is \code{NULL}.
-#' @param cell_types A character vector specifying the cell types to validate. If \code{NULL},
-#' cell types will be automatically selected based on dataset availability and \code{dual_only} setting.
-#' @param dual_only A logical value indicating whether cell types must be present in both datasets.
-#' If \code{TRUE}, both \code{query_data} and \code{reference_data} must be provided, and only
-#' cell types present in both datasets will be considered. Default is \code{FALSE}.
-#' @param n_cell_types An integer specifying the maximum number of cell types to select based on
-#' highest cell count. If \code{NULL}, all valid cell types are returned. Default is \code{NULL}.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells. Can be \code{NULL} if only
+#' reference data is available.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells. Can be \code{NULL} if only
+#' query data is available.
+#' @param query_cell_type_col The column name in the \code{colData} of
+#' \code{query_data} that identifies the cell types. Should be \code{NULL} if
+#' \code{query_data} is \code{NULL}.
+#' @param ref_cell_type_col The column name in the \code{colData} of
+#' \code{reference_data} that identifies the cell types. Should be \code{NULL}
+#' if \code{reference_data} is \code{NULL}.
+#' @param cell_types A character vector specifying the cell types to validate.
+#' If \code{NULL}, cell types will be automatically selected based on dataset
+#' availability and \code{dual_only} setting.
+#' @param dual_only A logical value indicating whether cell types must be
+#' present in both datasets. If \code{TRUE}, both \code{query_data} and
+#' \code{reference_data} must be provided, and only cell types present in both
+#' datasets will be considered. Default is \code{FALSE}.
+#' @param n_cell_types An integer specifying the maximum number of cell types to
+#' select based on highest cell count. If \code{NULL}, all valid cell types are
+#' returned. Default is \code{NULL}.
 #'
 #' @keywords internal
 #'
-#' @return A character vector of selected cell types that meet the specified criteria.
+#' @return A character vector of selected cell types that meet the specified
+#' criteria.
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 # Function to select and validate cell types
 selectCellTypes <- function(query_data = NULL,
@@ -99,7 +112,8 @@ selectCellTypes <- function(query_data = NULL,
             all_available_types <- unique(c(available_query_types, available_ref_types))
         }
     } else {
-        # User provided cell types - convert to character and validate against availability
+        # User provided cell types - convert to character and validate against
+        # availability
         cell_types <- as.character(cell_types)
 
         # Determine which types are valid based on dual_only setting
@@ -175,7 +189,8 @@ selectCellTypes <- function(query_data = NULL,
                 count <- count + sum(as.character(query_data[[query_cell_type_col]]) == ct, na.rm = TRUE)
             }
 
-            # Count cells in reference data if available and cell type is present
+            # Count cells in reference data if available and cell type is
+            # present
             if (!is.null(available_ref_types) && ct %in% available_ref_types) {
                 count <- count + sum(as.character(reference_data[[ref_cell_type_col]]) == ct, na.rm = TRUE)
             }

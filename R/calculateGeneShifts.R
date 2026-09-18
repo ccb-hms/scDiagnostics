@@ -1,74 +1,102 @@
 #' @title Calculate Top Loading Gene Expression Shifts
 #'
-#' @description
-#' This function identifies genes with the highest loadings for specified principal components
-#' and performs statistical tests to detect distributional differences between query and reference data.
-#' It also calculates the proportion of variance explained by each principal component within
-#' specific cell types. Optionally, it can detect anomalous cells using isolation forests.
+#' @description This function identifies genes with the highest loadings for
+#' specified principal components and performs statistical tests to detect
+#' distributional differences between query and reference data. It also
+#' calculates the proportion of variance explained by each principal component
+#' within specific cell types. Optionally, it can detect anomalous cells using
+#' isolation forests.
 #'
-#' @details
-#' This function extracts the top loading genes for each specified principal component from the reference
-#' PCA space and performs distributional comparisons between query and reference data. For each gene,
-#' it performs statistical tests to identify genes that may be causing PC-specific alignment issues
-#' between datasets. A key feature is the calculation of cell-type-specific variance explained by
-#' global PCs, providing a more nuanced view of how major biological axes affect individual populations.
-#' When anomaly detection is enabled, isolation forests are used to identify anomalous cells based on
-#' their PCA projections.
+#' @details This function extracts the top loading genes for each specified
+#' principal component from the reference PCA space and performs distributional
+#' comparisons between query and reference data. For each gene, it performs
+#' statistical tests to identify genes that may be causing PC-specific alignment
+#' issues between datasets. A key feature is the calculation of
+#' cell-type-specific variance explained by global PCs, providing a more nuanced
+#' view of how major biological axes affect individual populations. When anomaly
+#' detection is enabled, isolation forests are used to identify anomalous cells
+#' based on their PCA projections.
 #'
-#' When \code{anomaly_comparison = TRUE}, the statistical analysis focuses specifically on
-#' comparing non-anomalous reference cells against anomalous query cells. This can help
-#' identify genes that are differentially expressed between "normal" reference cells and
-#' potentially problematic query cells, providing insights into what makes certain query
-#' cells anomalous.
+#' When \code{anomaly_comparison = TRUE}, the statistical analysis focuses
+#' specifically on comparing non-anomalous reference cells against anomalous
+#' query cells. This can help identify genes that are differentially expressed
+#' between "normal" reference cells and potentially problematic query cells,
+#' providing insights into what makes certain query cells anomalous.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
-#' @param cell_types A character vector specifying the cell types to analyze. If NULL, all common cell types are used.
-#' @param pc_subset A numeric vector specifying which principal components to analyze. Default is 1:5. Cannot be NULL.
-#' @param n_top_loadings Number of top loading genes to analyze per PC. Default is 50.
-#' @param genes_to_analyze A character vector specifying genes to analyze. If NULL (default),
-#'                         genes are selected based on top loadings from specified principal components (see \code{n_top_loadings}). Default is NULL.
-#' @param p_value_threshold P-value threshold for statistical significance. Default is 0.05.
-#' @param adjust_method Method for multiple testing correction. Default is "fdr".
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param detect_anomalies Logical indicating whether to perform anomaly detection using isolation forests.
-#'                         Default is FALSE.
-#' @param anomaly_comparison Logical indicating whether to perform statistical comparisons
-#'                           between non-anomalous reference cells and anomalous query cells instead of all-vs-all
-#'                           comparisons. When TRUE, only non-anomalous reference cells are compared against only
-#'                           anomalous query cells for each cell type. Requires detect_anomalies = TRUE. Default is FALSE.
-#' @param threshold_method A character string specifying the method to determine anomaly cutoffs.
-#'                         Options are \code{"MAD"} (Median Absolute Deviation) or \code{"absolute"}. Default is \code{"MAD"}.
-#' @param mad_multiplier A numeric value specifying the number of MADs above the reference median to use as the cutoff
-#'                       when \code{threshold_method = "MAD"}. Default is 2.
-#' @param anomaly_threshold A numeric value specifying the absolute threshold for identifying anomalies when
-#'                          \code{threshold_method = "absolute"}. Default is 0.5.
-#' @param n_tree An integer specifying the number of trees for the isolation forest when
-#'               \code{detect_anomalies} is TRUE. Default is 500.
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is 5000.
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is 5000.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_cell_type_col The column name in the \code{colData} of
+#' \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col The column name in the \code{colData} of
+#' \code{reference_data} that identifies the cell types.
+#' @param cell_types A character vector specifying the cell types to analyze. If
+#' NULL, all common cell types are used.
+#' @param pc_subset A numeric vector specifying which principal components to
+#' analyze. Default is 1:5. Cannot be NULL.
+#' @param n_top_loadings Number of top loading genes to analyze per PC. Default
+#' is 50.
+#' @param genes_to_analyze A character vector specifying genes to analyze. If
+#' NULL (default), genes are selected based on top loadings from specified
+#' principal components (see \code{n_top_loadings}). Default is NULL.
+#' @param p_value_threshold P-value threshold for statistical significance.
+#' Default is 0.05.
+#' @param adjust_method Method for multiple testing correction. Default is
+#' "fdr".
+#' @param assay_name Name of the assay on which to perform computations. Default
+#' is "logcounts".
+#' @param detect_anomalies Logical indicating whether to perform anomaly
+#' detection using isolation forests. Default is FALSE.
+#' @param anomaly_comparison Logical indicating whether to perform statistical
+#' comparisons between non-anomalous reference cells and anomalous query cells
+#' instead of all-vs-all comparisons. When TRUE, only non-anomalous reference
+#' cells are compared against only anomalous query cells for each cell type.
+#' Requires detect_anomalies = TRUE. Default is FALSE.
+#' @param threshold_method A character string specifying the method to determine
+#' anomaly cutoffs. Options are \code{"MAD"} (Median Absolute Deviation) or
+#' \code{"absolute"}. Default is \code{"MAD"}.
+#' @param mad_multiplier A numeric value specifying the number of MADs above the
+#' reference median to use as the cutoff when \code{threshold_method = "MAD"}.
+#' Default is 2.
+#' @param anomaly_threshold A numeric value specifying the absolute threshold
+#' for identifying anomalies when \code{threshold_method = "absolute"}. Default
+#' is 0.5.
+#' @param n_tree An integer specifying the number of trees for the isolation
+#' forest when \code{detect_anomalies} is TRUE. Default is 500.
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is 5000.
 #'
 #' @return A list containing:
 #' \itemize{
-#'   \item PC results: Named elements for each PC (e.g., "PC1", "PC2") containing data frames with gene-level analysis results.
-#'   \item expression_data: Matrix of expression values for all analyzed genes (genes × cells).
-#'   \item cell_metadata: Data frame with columns: cell_id, dataset, cell_type, original_index, and optionally anomaly_status.
-#'   \item gene_metadata: Data frame with columns: gene, pc, loading for all analyzed genes.
-#'   \item percent_var: Named numeric vector of global percent variance explained for each analyzed PC.
-#'   \item cell_type_variance: A data frame detailing the percent of variance a global PC explains within specific cell types for both query and reference datasets.
-#'   \item anomaly_results: If \code{detect_anomalies} is TRUE, contains the full output from \code{detectAnomaly}.
+#'  \item PC results: Named elements for each PC (e.g., "PC1", "PC2") containing
+#'  data frames with gene-level analysis results.
+#'  \item expression_data: Matrix of expression values for all analyzed genes
+#'  (genes × cells).
+#'  \item cell_metadata: Data frame with columns: cell_id, dataset, cell_type,
+#'  original_index, and optionally anomaly_status.
+#'  \item gene_metadata: Data frame with columns: gene, pc, loading for all
+#'  analyzed genes.
+#'  \item percent_var: Named numeric vector of global percent variance explained
+#'  for each analyzed PC.
+#'  \item cell_type_variance: A data frame detailing the percent of variance a
+#'  global PC explains within specific cell types for both query and reference
+#'  datasets.
+#'  \item anomaly_results: If \code{detect_anomalies} is TRUE, contains the full
+#'  output from \code{detectAnomaly}.
 #' }
 #'
 #' @export
 #'
-#' @author
-#' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
-#' @seealso \code{\link{plot.calculateGeneShiftsObject}}, \code{\link{detectAnomaly}}
+#' @seealso \code{\link{plot.calculateGeneShiftsObject}},
+#' \code{\link{detectAnomaly}}
 #'
 #' @importFrom stats wilcox.test var p.adjust na.omit setNames median mad
 #'

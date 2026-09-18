@@ -29,50 +29,63 @@ regressPC(
 )
 }
 \arguments{
-\item{x}{An object of class \code{regressPCObject} containing the output of the \code{regressPC} function.}
+\item{x}{An object of class \code{regressPCObject} containing the output of
+the \code{regressPC} function.}
 
-\item{plot_type}{Type of plot to generate. Available options:
-"r_squared", "variance_contribution", "coefficient_heatmap".}
+\item{plot_type}{Type of plot to generate. Available options: "r_squared",
+"variance_contribution", "coefficient_heatmap".}
 
 \item{alpha}{Significance threshold for p-values. Default is 0.05.}
 
-\item{coefficients_include}{Character vector specifying which coefficient types to include
-in the coefficient heatmap. Options are \code{c("cell_type", "batch", "interaction")}.
-Default is \code{NULL}, which includes all available coefficient types. Only applies
-to \code{plot_type = "coefficient_heatmap"}.}
+\item{coefficients_include}{Character vector specifying which coefficient
+types to include in the coefficient heatmap. Options are \code{c("cell_type",
+"batch", "interaction")}. Default is \code{NULL}, which includes all
+available coefficient types. Only applies to \code{plot_type =
+"coefficient_heatmap"}.}
 
 \item{...}{Additional arguments to be passed to the plotting functions.}
 
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-If NULL, the PC scores are regressed against the cell types of the query data.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells. If NULL, the PC scores are
+regressed against the cell types of the query data.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+\item{query_cell_type_col}{The column name in the \code{colData} of
+\code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types.}
 
-\item{query_batch_col}{The column name in the \code{colData} of \code{query_data} that identifies the batch or sample.
-If provided, performs interaction analysis with cell types. Default is NULL.}
+\item{query_batch_col}{The column name in the \code{colData} of
+\code{query_data} that identifies the batch or sample. If provided, performs
+interaction analysis with cell types. Default is NULL.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the analysis. If NULL, all cell types are included.}
+\item{cell_types}{A character vector specifying the cell types to include in
+the analysis. If NULL, all cell types are included.}
 
-\item{pc_subset}{A numeric vector specifying which principal components to include in the analysis. Default is PC1 to PC10.}
+\item{pc_subset}{A numeric vector specifying which principal components to
+include in the analysis. Default is PC1 to PC10.}
 
-\item{adjust_method}{A character string specifying the method to adjust the p-values.
-Options include "BH", "holm", "hochberg", "hommel", "bonferroni", "BY", "fdr", or "none".
-Default is "BH" (Benjamini-Hochberg).}
+\item{adjust_method}{A character string specifying the method to adjust the
+p-values. Options include "BH", "holm", "hochberg", "hommel", "bonferroni",
+"BY", "fdr", or "none". Default is "BH" (Benjamini-Hochberg).}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is 5000.}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is 5000.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is 5000.}
 }
 \value{
-The S3 plot method returns a \code{ggplot} object representing the specified plot type.
+The S3 plot method returns a \code{ggplot} object representing the
+specified plot type.
 
 A \code{list} containing \itemize{ \item summaries of the linear
 regression models for each specified principal component, \item the
@@ -80,31 +93,33 @@ corresponding R-squared (R2) values, \item the variance contributions for
 each principal component, and \item the total variance explained.}
 }
 \description{
-The S3 plot method generates plots to visualize the results of regression analyses
-performed on principal components (PCs) against cell types, datasets, or their interactions.
+The S3 plot method generates plots to visualize the results of
+regression analyses performed on principal components (PCs) against cell
+types, datasets, or their interactions.
 
-This function performs linear regression of a covariate of interest onto one
-or more principal components, based on the data in a \linkS4class{SingleCellExperiment}
-object.
+This function performs linear regression of a covariate of
+interest onto one or more principal components, based on the data in a
+\linkS4class{SingleCellExperiment} object.
 }
 \details{
-Principal component regression, derived from PCA, can be used to quantify the
-variance explained by a covariate of interest. Applications for single-cell
-analysis include quantification of batch effects, assessing clustering
-homogeneity, and evaluating alignment of query and reference datasets in cell
-type annotation settings.
+Principal component regression, derived from PCA, can be used to
+quantify the variance explained by a covariate of interest. Applications for
+single-cell analysis include quantification of batch effects, assessing
+clustering homogeneity, and evaluating alignment of query and reference
+datasets in cell type annotation settings.
 
 The function supports multiple regression scenarios:
 \itemize{
-  \item Query only, no batch: PC  cell_type
-  \item Query only, with batch: PC  cell_type * batch
-  \item Query + Reference, no batch: PC  cell_type * dataset
-  \item Query + Reference, with batch: PC  cell_type * batch (where batch includes Reference)
+ \item Query only, no batch: PC cell_type
+ \item Query only, with batch: PC cell_type * batch
+ \item Query + Reference, no batch: PC cell_type * dataset
+ \item Query + Reference, with batch: PC cell_type * batch (where batch
+ includes Reference)
 }
 
-When batch information is provided with reference data, batches are labeled as
-"Reference" for reference data and "Query_BatchName" for query batches, with
-Reference set as the first factor level for interpretation.
+When batch information is provided with reference data, batches are labeled
+as "Reference" for reference data and "Query_BatchName" for query batches,
+with Reference set as the first factor level for interpretation.
 }
 \examples{
 # Load data
@@ -148,5 +163,6 @@ single-cell genomics. Nature Methods, 19:41-50, 2022.
 \code{\link{plot.regressPCObject}}
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

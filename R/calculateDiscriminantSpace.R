@@ -1,60 +1,94 @@
 #' @title Project Query Data onto a Unified Discriminant Space of Reference Data
 #'
-#' @description
-#' This function projects query single-cell RNA-seq data onto a unified discriminant space defined by reference data. The reference data
-#' is used to identify important variables across all cell types and compute discriminant vectors, which are then used to project both reference and query
-#' data. Similarity between the query and reference projections can be assessed using cosine similarity and Mahalanobis distance.
+#' @description This function projects query single-cell RNA-seq data onto a
+#' unified discriminant space defined by reference data. The reference data is
+#' used to identify important variables across all cell types and compute
+#' discriminant vectors, which are then used to project both reference and query
+#' data. Similarity between the query and reference projections can be assessed
+#' using cosine similarity and Mahalanobis distance.
 #'
-#' @details
-#' The function performs the following steps:
+#' @details The function performs the following steps:
 #' \itemize{
-#'   \item Identifies the top important variables to distinguish cell types from the reference data by taking the union of important variables from pairwise comparisons.
-#'   \item Computes the Ledoit-Wolf shrinkage estimate of the covariance matrix for each cell type using these important genes.
-#'   \item Constructs within-class and between-class scatter matrices.
-#'   \item Solves the generalized eigenvalue problem to obtain discriminant vectors.
-#'   \item Projects both reference and query data onto the unified discriminant space.
-#'   \item Assesses similarity of the query data projection to the reference data using cosine similarity and Mahalanobis distance.
+#'  \item Identifies the top important variables to distinguish cell types from
+#'  the reference data by taking the union of important variables from pairwise
+#'  comparisons.
+#'  \item Computes the Ledoit-Wolf shrinkage estimate of the covariance matrix
+#'  for each cell type using these important genes.
+#'  \item Constructs within-class and between-class scatter matrices.
+#'  \item Solves the generalized eigenvalue problem to obtain discriminant
+#'  vectors.
+#'  \item Projects both reference and query data onto the unified discriminant
+#'  space.
+#'  \item Assesses similarity of the query data projection to the reference data
+#'  using cosine similarity and Mahalanobis distance.
 #' }
 #'
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' If NULL, only the projected reference data is returned. Default is NULL.
-#' @param ref_cell_type_col The column name in \code{reference_data} indicating cell type labels.
-#' @param query_cell_type_col The column name in \code{query_data} indicating cell type labels.
-#' @param cell_types A character vector specifying the cell types to include in the analysis. If NULL, all cell types are included.
-#' @param n_tree An integer specifying the number of trees for the random forest used in variable importance calculation.
-#' @param n_top An integer specifying the number of top variables to select based on importance scores from each pairwise comparison.
-#' @param eigen_threshold A numeric value specifying the threshold for retaining eigenvalues in discriminant analysis.
-#' @param calculate_metrics Parameter to determine if cosine similarity and Mahalanobis distance metrics should be computed. Default is FALSE.
-#' @param alpha A numeric value specifying the significance level for Mahalanobis distance cutoff.
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is NULL.
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is NULL.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells. If NULL, only the projected
+#' reference data is returned. Default is NULL.
+#' @param ref_cell_type_col The column name in \code{reference_data} indicating
+#' cell type labels.
+#' @param query_cell_type_col The column name in \code{query_data} indicating
+#' cell type labels.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the analysis. If NULL, all cell types are included.
+#' @param n_tree An integer specifying the number of trees for the random forest
+#' used in variable importance calculation.
+#' @param n_top An integer specifying the number of top variables to select
+#' based on importance scores from each pairwise comparison.
+#' @param eigen_threshold A numeric value specifying the threshold for retaining
+#' eigenvalues in discriminant analysis.
+#' @param calculate_metrics Parameter to determine if cosine similarity and
+#' Mahalanobis distance metrics should be computed. Default is FALSE.
+#' @param alpha A numeric value specifying the significance level for
+#' Mahalanobis distance cutoff.
+#' @param assay_name Name of the assay on which to perform computations. Default
+#' is "logcounts".
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is NULL.
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is NULL.
 #'
 #' @return A list with the following components:
 #' \item{discriminant_eigenvalues}{Eigenvalues from the discriminant analysis.}
-#' \item{discriminant_eigenvectors}{Eigenvectors from the discriminant analysis.}
+#' \item{discriminant_eigenvectors}{Eigenvectors from the discriminant
+#' analysis.}
 #' \item{ref_proj}{Reference data projected onto the discriminant space.}
-#' \item{query_proj}{Query data projected onto the discriminant space (if query_data is provided).}
-#' \item{query_mahalanobis_dist}{Mahalanobis distances of query projections (if calculate_metrics is TRUE).}
-#' \item{mahalanobis_crit}{Cutoff value for Mahalanobis distance significance (if calculate_metrics is TRUE).}
-#' \item{query_cosine_similarity}{Cosine similarity scores of query projections (if calculate_metrics is TRUE).}
+#' \item{query_proj}{Query data projected onto the discriminant space (if
+#' query_data is provided).}
+#' \item{query_mahalanobis_dist}{Mahalanobis distances of query projections (if
+#' calculate_metrics is TRUE).}
+#' \item{mahalanobis_crit}{Cutoff value for Mahalanobis distance significance
+#' (if calculate_metrics is TRUE).}
+#' \item{query_cosine_similarity}{Cosine similarity scores of query projections
+#' (if calculate_metrics is TRUE).}
 #'
 #' @references
 #' \itemize{
-#' \item Fisher, R. A. (1936). "The Use of Multiple Measurements in Taxonomic Problems". *Annals of Eugenics*. 7 (2): 179–188. doi:10.1111/j.1469-1809.1936.tb02137.x.
-#' \item Hastie, T., Tibshirani, R., & Friedman, J. (2009). *The Elements of Statistical Learning: Data Mining, Inference, and Prediction*. Springer. Chapter 4: Linear Methods for Classification.
-#' \item Ledoit, O., & Wolf, M. (2004). "A well-conditioned estimator for large-dimensional covariance matrices". *Journal of Multivariate Analysis*. 88 (2): 365–411. doi:10.1016/S0047-259X(03)00096-4.
-#' \item De Maesschalck, R., Jouan-Rimbaud, D., & Massart, D. L. (2000). "The Mahalanobis distance". *Chemometrics and Intelligent Laboratory Systems*. 50 (1): 1–18. doi:10.1016/S0169-7439(99)00047-7.
-#' \item Breiman, L. (2001). "Random Forests". *Machine Learning*. 45 (1): 5–32. doi:10.1023/A:1010933404324.
+#'  \item Fisher, R. A. (1936). "The Use of Multiple Measurements in Taxonomic
+#'  Problems". *Annals of Eugenics*. 7 (2): 179–188.
+#'  doi:10.1111/j.1469-1809.1936.tb02137.x.
+#'  \item Hastie, T., Tibshirani, R., & Friedman, J. (2009). *The Elements of
+#'  Statistical Learning: Data Mining, Inference, and Prediction*. Springer.
+#'  Chapter 4: Linear Methods for Classification.
+#'  \item Ledoit, O., & Wolf, M. (2004). "A well-conditioned estimator for
+#'  large-dimensional covariance matrices". *Journal of Multivariate Analysis*.
+#'  88 (2): 365–411. doi:10.1016/S0047-259X(03)00096-4.
+#'  \item De Maesschalck, R., Jouan-Rimbaud, D., & Massart, D. L. (2000). "The
+#'  Mahalanobis distance". *Chemometrics and Intelligent Laboratory Systems*. 50
+#'  (1): 1–18. doi:10.1016/S0169-7439(99)00047-7.
+#'  \item Breiman, L. (2001). "Random Forests". *Machine Learning*. 45 (1):
+#'  5–32. doi:10.1023/A:1010933404324.
 #' }
 #'
 #' @export
 #'
-#' @author
-#' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{plot.calculateDiscriminantSpaceObject}}
 #'
@@ -88,8 +122,9 @@
 #'
 #' @importFrom stats cov qchisq mahalanobis
 #'
-# Function to get the discriminant spaces and the projected reference/query data on the discriminant space.
-# Similarity measures (cosine similarity/Mahalanobis distance) for the projected query data are also available.
+# Function to get the discriminant spaces and the projected reference/query data
+# on the discriminant space. Similarity measures (cosine similarity/Mahalanobis
+# distance) for the projected query data are also available.
 calculateDiscriminantSpace <- function(reference_data,
                                        query_data = NULL,
                                        ref_cell_type_col,
@@ -188,8 +223,8 @@ calculateDiscriminantSpace <- function(reference_data,
         })
     ))
 
-    # Create a single discriminant model using all_top_genes
-    # Extract reference matrix using top genes
+    # Create a single discriminant model using all_top_genes Extract reference
+    # matrix using top genes
     ref_mat <- t(as.matrix(assay(reference_data, assay_name)))[, all_top_genes]
 
     # Compute within-class and between-class scatter matrix
@@ -271,8 +306,9 @@ calculateDiscriminantSpace <- function(reference_data,
 
         if (calculate_metrics) {
             # Cosine similarity between mean vector of reference projection
-            # Mahalanobis distance between each query cell projected on reference discriminant space
-            # and reference data projected on reference discriminant space
+            # Mahalanobis distance between each query cell projected on
+            # reference discriminant space and reference data projected on
+            # reference discriminant space
             cosine_similarity <- mahalanobis_dist <- numeric(nrow(query_proj))
             mahalanobis_crit <- numeric(length(cell_types))
             for (type_idx in seq_along(cell_types)) {
@@ -300,7 +336,8 @@ calculateDiscriminantSpace <- function(reference_data,
                 # Calculate mean of reference projection for this cell type
                 ref_mean <- colMeans(ref_cells_of_type)
 
-                # Calculate covariance of reference projection for this cell type
+                # Calculate covariance of reference projection for this cell
+                # type
                 ref_cov <- cov(ref_cells_of_type)
 
                 # Check if covariance matrix is invertible
@@ -332,7 +369,8 @@ calculateDiscriminantSpace <- function(reference_data,
         }
     }
 
-    # Return data projected onto (reference) discriminant space for single combined model
+    # Return data projected onto (reference) discriminant space for single
+    # combined model
     class(discriminant_output) <- c(
         class(discriminant_output),
         "calculateDiscriminantSpaceObject"
@@ -342,35 +380,38 @@ calculateDiscriminantSpace <- function(reference_data,
 
 #' @title Ledoit-Wolf Covariance Matrix Estimation
 #'
-#' @description
-#' Estimate the covariance matrix using the Ledoit-Wolf shrinkage method.
+#' @description Estimate the covariance matrix using the Ledoit-Wolf shrinkage
+#' method.
 #'
-#' @details
-#' This function computes the Ledoit-Wolf shrinkage covariance matrix estimator,
-#' which improves the accuracy of the sample covariance matrix by shrinking it
-#' towards a structured estimator, typically the diagonal matrix with the mean
-#' of variances as its diagonal elements.
+#' @details This function computes the Ledoit-Wolf shrinkage covariance matrix
+#' estimator, which improves the accuracy of the sample covariance matrix by
+#' shrinking it towards a structured estimator, typically the diagonal matrix
+#' with the mean of variances as its diagonal elements.
 #'
-#' @param class_data A numeric matrix or data frame containing the data for covariance estimation,
-#' where rows represent observations and columns represent variables.
+#' @param class_data A numeric matrix or data frame containing the data for
+#' covariance estimation, where rows represent observations and columns
+#' represent variables.
 #'
 #' @keywords internal
 #'
-#' @return A numeric matrix representing the Ledoit-Wolf estimated covariance matrix.
+#' @return A numeric matrix representing the Ledoit-Wolf estimated covariance
+#' matrix.
 #'
-#' @author
-#' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 # Function to compute Ledoit-Wolf covariance matrix
 ledoitWolf <- function(class_data) {
     # Sample covariance matrix
     sample_cov <- cov(class_data)
 
-    # Check for zero column means and replace them with a small constant if necessary
+    # Check for zero column means and replace them with a small constant if
+    # necessary
     col_means <- colMeans(class_data)
     col_means[col_means == 0] <- 1e-10
 
-    # Calculate the shrinkage target (identity matrix scaled by the average variance)
+    # Calculate the shrinkage target (identity matrix scaled by the average
+    # variance)
     mean_variance <- mean(diag(sample_cov))
     shrinkage_target <- diag(
         mean_variance, ncol(class_data),

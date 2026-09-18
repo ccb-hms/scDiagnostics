@@ -17,48 +17,56 @@ projectPCA(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix
-for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix
-for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data}
-that identifies the cell types.}
+\item{query_cell_type_col}{character. The column name in the \code{colData}
+of \code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{character. The column name in the \code{colData} of \code{reference_data}
-that identifies the cell types.}
+\item{ref_cell_type_col}{character. The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types.}
 
-\item{cell_types}{A character vector specifying which cell types to retain in the output. If NULL,
-no cell type filtering is performed. Default is NULL.}
+\item{cell_types}{A character vector specifying which cell types to retain in
+the output. If NULL, no cell type filtering is performed. Default is NULL.}
 
-\item{pc_subset}{A numeric vector specifying the subset of principal components (PCs) to compare. Default is 1:10.}
+\item{pc_subset}{A numeric vector specifying the subset of principal
+components (PCs) to compare. Default is 1:10.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Defaults to \code{"logcounts"}.}
+\item{assay_name}{Name of the assay on which to perform computations.
+Defaults to \code{"logcounts"}.}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is NULL.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is NULL.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is NULL.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is NULL.}
 }
 \value{
-A \code{data.frame} containing the projected data in rows (reference and query data combined),
-optionally filtered by cell types and downsampled. Rownames preserve the original cell names from
-the SCE objects.
+A \code{data.frame} containing the projected data in rows (reference
+and query data combined), optionally filtered by cell types and downsampled.
+Rownames preserve the original cell names from the SCE objects.
 }
 \description{
-This function projects a query singleCellExperiment object onto the PCA space of a reference
-singleCellExperiment object. The PCA analysis on the reference data is assumed to be pre-computed
-and stored within the object. Optionally filters by cell types and downsamples the results.
+This function projects a query singleCellExperiment object onto
+the PCA space of a reference singleCellExperiment object. The PCA analysis on
+the reference data is assumed to be pre-computed and stored within the
+object. Optionally filters by cell types and downsamples the results.
 }
 \details{
-This function assumes that the "PCA" element exists within the \code{reducedDims} of the reference data
-(obtained using \code{reducedDim(reference_data)}) and that the genes used for PCA are present in both
-the reference and query data. It performs centering and scaling of the query data based on the reference
-data before projection using the FULL datasets to maintain proper mean centering. Cell type filtering
-and downsampling are performed AFTER projection to preserve the statistical properties of the PCA space.
-Cell names from the original SCE objects are preserved as rownames in the output.
+This function assumes that the "PCA" element exists within the
+\code{reducedDims} of the reference data (obtained using
+\code{reducedDim(reference_data)}) and that the genes used for PCA are
+present in both the reference and query data. It performs centering and
+scaling of the query data based on the reference data before projection using
+the FULL datasets to maintain proper mean centering. Cell type filtering and
+downsampling are performed AFTER projection to preserve the statistical
+properties of the PCA space. Cell names from the original SCE objects are
+preserved as rownames in the output.
 }
 \examples{
 # Load data
@@ -88,5 +96,6 @@ pca_output_filtered <- projectPCA(
 
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

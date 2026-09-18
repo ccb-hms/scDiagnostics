@@ -7,22 +7,26 @@
 ledoitWolf(class_data)
 }
 \arguments{
-\item{class_data}{A numeric matrix or data frame containing the data for covariance estimation,
-where rows represent observations and columns represent variables.}
+\item{class_data}{A numeric matrix or data frame containing the data for
+covariance estimation, where rows represent observations and columns
+represent variables.}
 }
 \value{
-A numeric matrix representing the Ledoit-Wolf estimated covariance matrix.
+A numeric matrix representing the Ledoit-Wolf estimated covariance
+matrix.
 }
 \description{
-Estimate the covariance matrix using the Ledoit-Wolf shrinkage method.
+Estimate the covariance matrix using the Ledoit-Wolf shrinkage
+method.
 }
 \details{
-This function computes the Ledoit-Wolf shrinkage covariance matrix estimator,
-which improves the accuracy of the sample covariance matrix by shrinking it
-towards a structured estimator, typically the diagonal matrix with the mean
-of variances as its diagonal elements.
+This function computes the Ledoit-Wolf shrinkage covariance matrix
+estimator, which improves the accuracy of the sample covariance matrix by
+shrinking it towards a structured estimator, typically the diagonal matrix
+with the mean of variances as its diagonal elements.
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }
 \keyword{internal}

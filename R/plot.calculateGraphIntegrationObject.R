@@ -1,29 +1,34 @@
 #' @title Plot Graph-Based Integration Diagnostics
 #'
-#' @description
-#' The S3 plot method generates visualizations of annotation consistency diagnostics,
-#' including query-only communities, cross-cell-type mixing, and local annotation inconsistencies.
+#' @description The S3 plot method generates visualizations of annotation
+#' consistency diagnostics, including query-only communities, cross-cell-type
+#' mixing, and local annotation inconsistencies.
 #'
-#' @details
-#' The S3 plot method creates optimized visualizations showing different types of annotation
-#' issues including community-level and local neighborhood-level inconsistencies.
+#' @details The S3 plot method creates optimized visualizations showing
+#' different types of annotation issues including community-level and local
+#' neighborhood-level inconsistencies.
 #'
-#' @param x An object of class \code{calculateGraphIntegrationObject} containing the diagnostic results.
-#' @param plot_type Character string specifying visualization type. Options: "community_network" (default),
-#'                  "cell_network", "community_data", "summary", "local_issues", or "annotation_issues".
-#' @param color_by Character string specifying the variable to use for coloring points/elements if `plot_type` is
-#'                 "community_network" or "cell_network". Default is "cell_type".
-#' @param max_nodes Maximum number of nodes to display for performance. Default is 2000.
+#' @param x An object of class \code{calculateGraphIntegrationObject} containing
+#' the diagnostic results.
+#' @param plot_type Character string specifying visualization type. Options:
+#' "community_network" (default), "cell_network", "community_data", "summary",
+#' "local_issues", or "annotation_issues".
+#' @param color_by Character string specifying the variable to use for coloring
+#' points/elements if `plot_type` is "community_network" or "cell_network".
+#' Default is "cell_type".
+#' @param max_nodes Maximum number of nodes to display for performance. Default
+#' is 2000.
 #' @param point_size Point size for graph nodes. Default is 0.8.
-#' @param exclude_reference_only Logical indicating whether to exclude reference-only communities/cells from visualization.
-#'                               Default is FALSE.
+#' @param exclude_reference_only Logical indicating whether to exclude
+#' reference-only communities/cells from visualization. Default is FALSE.
 #' @param ... Additional arguments passed to ggplot2 functions.
 #'
 #' @return A \code{ggplot} object showing integration diagnostics.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{calculateGraphIntegration}}
 #'
@@ -128,7 +133,8 @@ plot.calculateGraphIntegrationObject <- function(x,
                     )
                 }
 
-                # Calculate adaptive threshold based on overall graph connectivity
+                # Calculate adaptive threshold based on overall graph
+                # connectivity
                 original_edges <- x[["graph_info"]][["edges"]]
                 cell_communities <- x[["cell_info"]][["community"]]
                 total_cells <- length(cell_communities)
@@ -222,7 +228,8 @@ plot.calculateGraphIntegrationObject <- function(x,
                     }
                     paired_colors <- generateColors(cell_types_cases, paired = TRUE)
 
-                    # Determine dominant cell type and whether community is mixed for each community
+                    # Determine dominant cell type and whether community is
+                    # mixed for each community
                     node_data[["dominant_cell_type"]] <- sapply(node_data[["community"]], function(comm) {
                         comm_cells <- x[["cell_info"]][x[["cell_info"]][["community"]] == comm, ]
                         cell_type_counts <- table(comm_cells[["cell_type"]])
@@ -235,7 +242,8 @@ plot.calculateGraphIntegrationObject <- function(x,
                             ifelse(node_data[["is_mixed"]], "(Mixed)", "(Pure)")
                         )
 
-                    # Assign colors based on dominant cell type and mixing status
+                    # Assign colors based on dominant cell type and mixing
+                    # status
                     node_data[["color"]] <- paired_colors[node_data[["cell_type_case"]]]
 
                     # Classify communities for shapes
@@ -250,7 +258,8 @@ plot.calculateGraphIntegrationObject <- function(x,
                         node_data[["shape_type"]] == "Well Integrated"] <-
                         "High Reference Proportion"
 
-                    # Create color legend - only show colors that are actually used
+                    # Create color legend - only show colors that are actually
+                    # used
                     used_types <- unique(node_data[["dominant_cell_type"]])
                     used_mixed <- any(node_data[["is_mixed"]])
                     used_pure <- any(!node_data[["is_mixed"]])
@@ -408,7 +417,8 @@ plot.calculateGraphIntegrationObject <- function(x,
             }
         }
     } else if (plot_type == "cell_network") {
-        # Identify reference-only communities (communities with very low query proportion)
+        # Identify reference-only communities (communities with very low query
+        # proportion)
         reference_only_comms <- x[["community_composition"]][["community"]][
             x[["community_composition"]][["query_proportion"]] < 0.1
         ]
@@ -441,7 +451,8 @@ plot.calculateGraphIntegrationObject <- function(x,
 
         if (n_nodes > max_nodes) {
             local_inconsistent_cells <- x[["local_annotation_inconsistencies"]][["query_cell_idx"]]
-            # Filter local inconsistent cells to only those remaining after reference_only filtering
+            # Filter local inconsistent cells to only those remaining after
+            # reference_only filtering
             if (exclude_reference_only) {
                 local_inconsistent_cells <- local_inconsistent_cells[
                     local_inconsistent_cells %in% which(keep_cells)
@@ -806,7 +817,8 @@ plot.calculateGraphIntegrationObject <- function(x,
 
             # Filter out reference-only communities if requested
             if (exclude_reference_only) {
-                # Identify reference-only communities (communities with very low query proportion)
+                # Identify reference-only communities (communities with very low
+                # query proportion)
                 reference_only_mask <- community_composition[["query_proportion"]] < 0.1
                 community_composition <- community_composition[!reference_only_mask, ]
             }
@@ -832,7 +844,8 @@ plot.calculateGraphIntegrationObject <- function(x,
                     x[["high_query_prop_analysis"]][["community"]]] <-
                     "High Query Proportion"
 
-                # Add Reference Only communities (communities with very low query proportion)
+                # Add Reference Only communities (communities with very low
+                # query proportion)
                 community_composition[["issue_type"]][community_composition[["query_proportion"]] < 0.1 &
                     community_composition[["issue_type"]] == "Well Integrated"] <-
                     "High Reference Proportion"

@@ -20,46 +20,59 @@ calculateMMDPValue(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+\item{query_cell_type_col}{The column name in the \code{colData} of
+\code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+\item{cell_types}{A character vector specifying the cell types to include in
+the plot. If NULL, all cell types are included.}
 
-\item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.}
+\item{pc_subset}{A numeric vector specifying which principal components to
+include in the plot. Default is PC1 to PC5.}
 
-\item{n_permutation}{Number of permutations for p-value calculation. Default is 100.}
+\item{n_permutation}{Number of permutations for p-value calculation. Default
+is 100.}
 
-\item{kernel_type}{Type of kernel to use. Options are "gaussian" (default) or "linear".}
+\item{kernel_type}{Type of kernel to use. Options are "gaussian" (default) or
+"linear".}
 
-\item{sigma}{Bandwidth parameter for Gaussian kernel. If NULL, uses median heuristic.}
+\item{sigma}{Bandwidth parameter for Gaussian kernel. If NULL, uses median
+heuristic.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is 5000.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is 5000.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is 5000.}
 }
 \value{
 A named vector of p-values from the MMD test for each cell type.
 }
 \description{
-This function performs the Maximum Mean Discrepancy (MMD) test for comparing
-distributions between two samples in PCA space using a custom implementation
-with permutation testing for better sensitivity.
+This function performs the Maximum Mean Discrepancy (MMD) test
+for comparing distributions between two samples in PCA space using a custom
+implementation with permutation testing for better sensitivity.
 }
 \details{
 The function performs the following steps:
 \enumerate{
-  \item Projects the data into the PCA space.
-  \item Subsets the data to the specified cell types and principal components.
-  \item Performs a custom MMD test with permutation-based p-values for each cell type.
+ \item Projects the data into the PCA space.
+ \item Subsets the data to the specified cell types and principal components.
+ \item Performs a custom MMD test with permutation-based p-values for each
+ cell type.
 }
 }
 \examples{
@@ -81,9 +94,11 @@ mmd_test
 
 }
 \references{
-Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., & Smola, A. (2012).
-"A kernel two-sample test". Journal of Machine Learning Research, 13(1), 723-773.
+Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., &
+Smola, A. (2012). "A kernel two-sample test". Journal of Machine Learning
+Research, 13(1), 723-773.
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

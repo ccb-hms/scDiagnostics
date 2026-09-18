@@ -1,59 +1,77 @@
 #' @title Compare Marker Gene Expression between Query and Reference Data
 #'
-#' @description
-#' This function identifies marker genes for each cell type in both query and reference datasets
-#' using the standard Bioconductor approach (Wilcoxon rank-sum test), and compares their expression
-#' patterns to assess annotation quality. It can optionally filter query cells based on anomaly detection
-#' results and restrict analysis to specific cell types.
+#' @description This function identifies marker genes for each cell type in both
+#' query and reference datasets using the standard Bioconductor approach
+#' (Wilcoxon rank-sum test), and compares their expression patterns to assess
+#' annotation quality. It can optionally filter query cells based on anomaly
+#' detection results and restrict analysis to specific cell types.
 #'
-#' @details
-#' The function performs the following steps:
-#' 1. Optionally performs anomaly detection and filters query cells based on results.
-#' 2. Identifies marker genes for each cell type in both datasets using \code{findMarkers} approach.
-#' 3. Reference markers are always computed using all reference cells for each cell type.
-#' 4. Query markers are computed using filtered cells (anomalous/non-anomalous) if specified.
-#' 5. Compares the overlap of top marker genes between corresponding cell types.
-#' 6. Evaluates the expression consistency of reference markers in query data.
-#' 7. Provides quality scores based on marker gene concordance.
+#' @details The function performs the following steps: 1. Optionally performs
+#' anomaly detection and filters query cells based on results. 2. Identifies
+#' marker genes for each cell type in both datasets using \code{findMarkers}
+#' approach. 3. Reference markers are always computed using all reference cells
+#' for each cell type. 4. Query markers are computed using filtered cells
+#' (anomalous/non-anomalous) if specified. 5. Compares the overlap of top marker
+#' genes between corresponding cell types. 6. Evaluates the expression
+#' consistency of reference markers in query data. 7. Provides quality scores
+#' based on marker gene concordance.
 #'
-#' Marker genes are identified using Wilcoxon rank-sum tests comparing each cell type against all others.
-#' High overlap and consistent expression of markers indicate good annotation quality.
+#' Marker genes are identified using Wilcoxon rank-sum tests comparing each cell
+#' type against all others. High overlap and consistent expression of markers
+#' indicate good annotation quality.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing reference cells.
-#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are
-#'                   included.
-#' @param n_markers Number of top marker genes to consider for each cell type. Default is 50.
-#' @param min_cells Minimum number of cells required per cell type for marker identification. Default is 10.
-#' @param anomaly_filter Character string specifying how to filter query cells based on anomaly detection.
-#'                       Options: "none" (default), "anomalous_only", "non_anomalous_only".
-#' @param assay_name Name of the assay to use for computations. Default is "logcounts".
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is 5000.
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is 5000.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' reference cells.
+#' @param query_cell_type_col The column name in the \code{colData} of
+#' \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col The column name in the \code{colData} of
+#' \code{reference_data} that identifies the cell types.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the plot. If NULL, all cell types are included.
+#' @param n_markers Number of top marker genes to consider for each cell type.
+#' Default is 50.
+#' @param min_cells Minimum number of cells required per cell type for marker
+#' identification. Default is 10.
+#' @param anomaly_filter Character string specifying how to filter query cells
+#' based on anomaly detection. Options: "none" (default), "anomalous_only",
+#' "non_anomalous_only".
+#' @param assay_name Name of the assay to use for computations. Default is
+#' "logcounts".
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is 5000.
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is 5000.
 #' @param ... Additional arguments passed to the \code{detectAnomaly} function.
 #'
 #' @return A list containing the following elements:
 #' \describe{
-#'   \item{marker_overlap}{Matrix showing overlap of top markers between query and reference for each cell type.}
-#'   \item{expression_consistency}{Matrix showing expression consistency of reference markers in query data.}
-#'   \item{quality_scores}{Named vector of quality assessments for each cell type.}
-#'   \item{markers_query}{List of marker gene results for each cell type in query data.}
-#'   \item{markers_ref}{List of marker gene results for each cell type in reference data.}
+#'   \item{marker_overlap}{Matrix showing overlap of top markers between query
+#'   and reference for each cell type.}
+#'   \item{expression_consistency}{Matrix showing expression consistency of
+#'   reference markers in query data.}
+#'   \item{quality_scores}{Named vector of quality assessments for each cell
+#'   type.}
+#'   \item{markers_query}{List of marker gene results for each cell type in
+#'   query data.}
+#'   \item{markers_ref}{List of marker gene results for each cell type in
+#'   reference data.}
 #'   \item{common_cell_types}{Vector of cell types present in both datasets.}
 #'   \item{n_cells_query}{Named vector of cell counts per type in query data.}
 #'   \item{n_cells_ref}{Named vector of cell counts per type in reference data.}
-#'   \item{anomaly_filter_used}{Character string indicating the anomaly filter applied.}
+#'   \item{anomaly_filter_used}{Character string indicating the anomaly filter
+#'   applied.}
 #'   \item{selected_cell_types}{Character vector of cell types analyzed.}
 #'   \item{anomaly_output}{Output from anomaly detection if performed.}
 #' }
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{plot.compareMarkersObject}}, \code{\link{detectAnomaly}}
 #'
@@ -199,7 +217,8 @@ compareMarkers <- function(query_data,
     query_cell_types <- query_cell_types_orig
 
     if (anomaly_filter != "none" && !is.null(anomaly_output)) {
-        # Function to filter ONLY query cells based on anomaly results using cell names
+        # Function to filter ONLY query cells based on anomaly results using
+        # cell names
         .filterQueryCellsByAnomalyNames <- function(data, anomaly_data, filter_type) {
             current_cell_names <- colnames(data)
             cells_to_keep <- rep(TRUE, ncol(data))
@@ -207,7 +226,8 @@ compareMarkers <- function(query_data,
 
             for (cell_type in unique(current_cell_types)) {
                 if (cell_type %in% names(anomaly_data)) {
-                    # Get indices of cells of this type in current (downsampled) data
+                    # Get indices of cells of this type in current (downsampled)
+                    # data
                     cell_indices <- which(current_cell_types == cell_type)
                     cell_names_this_type <- current_cell_names[cell_indices]
 
@@ -233,8 +253,8 @@ compareMarkers <- function(query_data,
                                         cells_to_keep[cell_idx] <- !is_anomalous
                                     }
                                 } else {
-                                    # Cell not found in anomaly results (shouldn't happen)
-                                    # Keep it by default
+                                    # Cell not found in anomaly results
+                                    # (shouldn't happen) Keep it by default
                                     if (filter_type == "anomalous_only") {
                                         cells_to_keep[cell_idx] <- FALSE
                                     }
@@ -272,7 +292,8 @@ compareMarkers <- function(query_data,
         stop("No common cell types with sufficient cells found between query and reference data")
     }
 
-    # Function to find markers using Wilcoxon test (standard Bioconductor approach)
+    # Function to find markers using Wilcoxon test (standard Bioconductor
+    # approach)
     .findMarkers <- function(expr_matrix, cell_types, target_type) {
         target_cells <- cell_types == target_type
         other_cells <- cell_types != target_type
@@ -339,7 +360,8 @@ compareMarkers <- function(query_data,
     markers_ref <- list()
 
     for (cell_type in common_cell_types) {
-        # Query markers: use filtered cells (anomalous/non-anomalous if specified)
+        # Query markers: use filtered cells (anomalous/non-anomalous if
+        # specified)
         markers_query[[cell_type]] <- .findMarkers(query_matrix, query_cell_types, cell_type)
 
         # Reference markers: ALWAYS use all reference cells

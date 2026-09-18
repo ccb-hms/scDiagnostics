@@ -1,32 +1,52 @@
 #' @title Plot SIR Components for Different Cell Types
 #'
-#' @description
-#' This function plots the Sliced Inverse Regression (SIR) components for different cell types in query and reference datasets.
+#' @description This function plots the Sliced Inverse Regression (SIR)
+#' components for different cell types in query and reference datasets.
 #'
-#' @details
-#' This function visualizes the SIR projections for specified cell types, providing a pairs plot of the SIR components.
-#' It offers various visualization options for different facets of the plot including scatter plots, contours, ellipses, and density plots.
-#' When plot_type is "loadings", it creates horizontal bar plots showing the n_top contributing variables for each SIR component.
+#' @details This function visualizes the SIR projections for specified cell
+#' types, providing a pairs plot of the SIR components. It offers various
+#' visualization options for different facets of the plot including scatter
+#' plots, contours, ellipses, and density plots. When plot_type is "loadings",
+#' it creates horizontal bar plots showing the n_top contributing variables for
+#' each SIR component.
 #'
-#' @param x An object of class \code{calculateSIRSpaceObject} containing SIR projections.
-#' @param plot_type A character string specifying the type of plot. Either "scores" (default) for SIR projections or "loadings" for variable loadings.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included. Only used when plot_type = "scores".
-#' @param sir_subset A numeric vector specifying which SIR components to include in the plot. Default is 1:5.
-#' @param lower_facet Type of plot to use for the lower panels. Either "scatter" (default), "contour", "ellipse", or "blank". Only used when plot_type = "scores".
-#' @param diagonal_facet Type of plot to use for the diagonal panels. Either "ridge" (default), "density", "boxplot" or "blank". Only used when plot_type = "scores".
-#' @param upper_facet Type of plot to use for the upper panels. Either "blank" (default), "scatter", "contour", or "ellipse". Only used when plot_type = "scores".
-#' @param n_top A numeric value specifying the number of n_top variables (by absolute loading value) to display. Default is 10 Only used when plot_type = "loadings".
-#' @param max_cells_ref Maximum number of reference cells to include in the plot. If NULL,
-#' all available reference cells are plotted. Default is NULL. Only used when plot_type = "scores".
-#' @param max_cells_query Maximum number of query cells to include in the plot. If NULL,
-#' all available query cells are plotted. Default is NULL. Only used when plot_type = "scores".
+#' @param x An object of class \code{calculateSIRSpaceObject} containing SIR
+#' projections.
+#' @param plot_type A character string specifying the type of plot. Either
+#' "scores" (default) for SIR projections or "loadings" for variable loadings.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the plot. If NULL, all cell types are included. Only used when plot_type =
+#' "scores".
+#' @param sir_subset A numeric vector specifying which SIR components to include
+#' in the plot. Default is 1:5.
+#' @param lower_facet Type of plot to use for the lower panels. Either "scatter"
+#' (default), "contour", "ellipse", or "blank". Only used when plot_type =
+#' "scores".
+#' @param diagonal_facet Type of plot to use for the diagonal panels. Either
+#' "ridge" (default), "density", "boxplot" or "blank". Only used when plot_type
+#' = "scores".
+#' @param upper_facet Type of plot to use for the upper panels. Either "blank"
+#' (default), "scatter", "contour", or "ellipse". Only used when plot_type =
+#' "scores".
+#' @param n_top A numeric value specifying the number of n_top variables (by
+#' absolute loading value) to display. Default is 10 Only used when plot_type =
+#' "loadings".
+#' @param max_cells_ref Maximum number of reference cells to include in the
+#' plot. If NULL, all available reference cells are plotted. Default is NULL.
+#' Only used when plot_type = "scores".
+#' @param max_cells_query Maximum number of query cells to include in the plot.
+#' If NULL, all available query cells are plotted. Default is NULL. Only used
+#' when plot_type = "scores".
 #' @param ... Additional arguments passed to the plotting function.
 #'
-#' @return A ggmatrix object representing a pairs plot of specified SIR components for the given cell types and datasets when plot_type = "scores", or a ggplot object showing loadings when plot_type = "loadings".
+#' @return A ggmatrix object representing a pairs plot of specified SIR
+#' components for the given cell types and datasets when plot_type = "scores",
+#' or a ggplot object showing loadings when plot_type = "loadings".
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{calculateSIRSpace}}
 #'
@@ -75,7 +95,8 @@ plot.calculateSIRSpaceObject <- function(x,
         }
     }
 
-    # Helper function to plot scores (original functionality with added downsampling)
+    # Helper function to plot scores (original functionality with added
+    # downsampling)
     .plotScores <- function(x, cell_types,
                             sir_subset,
                             lower_facet,
@@ -611,7 +632,8 @@ plot.calculateSIRSpaceObject <- function(x,
                 nrow(loading_df)
             )), ]
 
-            # Order variables for plotting (highest absolute loading at n_top of each facet)
+            # Order variables for plotting (highest absolute loading at n_top of
+            # each facet)
             loading_df <- loading_df[order(loading_df[["abs_loading"]]), ]
             loading_df[["variable_facet"]] <- factor(loading_df[["variable"]],
                 levels = loading_df[["variable"]]

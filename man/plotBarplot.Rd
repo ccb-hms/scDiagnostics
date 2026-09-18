@@ -21,41 +21,52 @@ expression data and analysis results.}
 
 \item{cell_type}{A character string specifying the cell type to visualize.}
 
-\item{available_pcs}{A character vector of principal components to include in analysis.}
+\item{available_pcs}{A character vector of principal components to include in
+analysis.}
 
-\item{plot_by}{A character string indicating gene selection criterion ("top_loading" or "p_adjusted").}
+\item{plot_by}{A character string indicating gene selection criterion
+("top_loading" or "p_adjusted").}
 
-\item{n_genes}{An integer specifying the number of top genes to display per PC.}
+\item{n_genes}{An integer specifying the number of top genes to display per
+PC.}
 
-\item{significance_threshold}{A numeric value between 0 and 1 for significance annotation.}
+\item{significance_threshold}{A numeric value between 0 and 1 for
+significance annotation.}
 
-\item{show_anomalies}{Logical indicating whether to show anomaly-related bars.}
+\item{show_anomalies}{Logical indicating whether to show anomaly-related
+bars.}
 
-\item{show_all_query}{Logical indicating whether to show the yellow bar for all query vs reference
-comparison. Default is TRUE. When FALSE, only green and red bars are shown.}
+\item{show_all_query}{Logical indicating whether to show the yellow bar for
+all query vs reference comparison. Default is TRUE. When FALSE, only green
+and red bars are shown.}
 }
 \value{
-A ggplot2 object ready for display, or NULL if no genes meet selection criteria.
+A ggplot2 object ready for display, or NULL if no genes meet
+selection criteria.
 }
 \description{
-This internal helper function creates a barplot visualization showing pseudo-bulk fold changes
-between different cell groups for top loading genes.
+This internal helper function creates a barplot visualization
+showing pseudo-bulk fold changes between different cell groups for top
+loading genes.
 }
 \details{
-This function generates a ggplot2 barplot where genes are arranged vertically
-in hierarchically clustered order (identical to heatmap gene ordering), and horizontal bars show log2 fold changes
-for different pseudo-bulk comparisons vs reference. The function creates an internal heatmap
-object with the same parameters to extract the exact gene clustering order, ensuring
-consistency between plot types.
+This function generates a ggplot2 barplot where genes are arranged
+vertically in hierarchically clustered order (identical to heatmap gene
+ordering), and horizontal bars show log2 fold changes for different
+pseudo-bulk comparisons vs reference. The function creates an internal
+heatmap object with the same parameters to extract the exact gene clustering
+order, ensuring consistency between plot types.
 
 Bar colors:
 \itemize{
-  \item Green: Query non-anomaly (pseudo-bulk) vs Reference (pseudo-bulk)
-  \item Yellow: All Query (pseudo-bulk) vs Reference (pseudo-bulk) (shown when show_all_query = TRUE and anomaly data available)
-  \item Red: Query anomaly (pseudo-bulk) vs Reference (pseudo-bulk)
+ \item Green: Query non-anomaly (pseudo-bulk) vs Reference (pseudo-bulk)
+ \item Yellow: All Query (pseudo-bulk) vs Reference (pseudo-bulk) (shown when
+ show_all_query = TRUE and anomaly data available)
+ \item Red: Query anomaly (pseudo-bulk) vs Reference (pseudo-bulk)
 }
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }
 \keyword{internal}

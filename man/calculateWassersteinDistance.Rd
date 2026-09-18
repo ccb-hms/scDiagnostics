@@ -4,7 +4,8 @@
 \name{calculateWassersteinDistance}
 \alias{calculateWassersteinDistance}
 \alias{plot.calculateWassersteinDistanceObject}
-\title{Compute Wasserstein Distance Distributions Between Query and Reference Datasets}
+\title{Compute Wasserstein Distance Distributions Between Query and Reference
+Datasets}
 \usage{
 calculateWassersteinDistance(
   query_data,
@@ -22,63 +23,84 @@ calculateWassersteinDistance(
 \method{plot}{calculateWassersteinDistanceObject}(x, cell_types = NULL, bandwidth = NULL, ...)
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing a numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing a
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object with a numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object with a
+numeric expression matrix for the reference cells.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies cell types.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of
+\code{reference_data} that identifies cell types.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies cell types.}
+\item{query_cell_type_col}{The column name in the \code{colData} of
+\code{query_data} that identifies cell types.}
 
-\item{cell_types}{A character vector specifying which cell types to plot. If NULL, all cell types are plotted.}
+\item{cell_types}{A character vector specifying which cell types to plot. If
+NULL, all cell types are plotted.}
 
-\item{pc_subset}{A numeric vector specifying which principal components to use. Default is \code{1:5}.}
+\item{pc_subset}{A numeric vector specifying which principal components to
+use. Default is \code{1:5}.}
 
-\item{n_resamples}{An integer specifying the number of resamples to generate each distribution. Default is \code{300}.}
+\item{n_resamples}{An integer specifying the number of resamples to generate
+each distribution. Default is \code{300}.}
 
-\item{assay_name}{The name of the assay to use for computations. Default is \code{"logcounts"}.}
+\item{assay_name}{The name of the assay to use for computations. Default is
+\code{"logcounts"}.}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is 5000.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is 5000.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is 5000.}
 
-\item{x}{A list object containing the Wasserstein distance results from the \code{calculateWassersteinDistance} function.}
+\item{x}{A list object containing the Wasserstein distance results from the
+\code{calculateWassersteinDistance} function.}
 
-\item{bandwidth}{A numeric value specifying the bandwidth for density estimation. If NULL (default), automatic bandwidth selection is used.}
+\item{bandwidth}{A numeric value specifying the bandwidth for density
+estimation. If NULL (default), automatic bandwidth selection is used.}
 
 \item{...}{Additional arguments for future extensions.}
 }
 \value{
 A list with the following components:
-\item{ref_ref_dist}{A named list of numeric vectors containing Wasserstein distances computed from resampled pairs within the reference dataset for each cell type.}
-\item{ref_query_dist}{A named list of numeric vectors containing Wasserstein distances between reference and query datasets for each cell type.}
-\item{probability_superiority}{A named numeric vector showing the probability that ref-query distances are larger than ref-ref distances for each cell type.}
+\item{ref_ref_dist}{A named list of numeric vectors containing Wasserstein
+distances computed from resampled pairs within the reference dataset for each
+cell type.}
+\item{ref_query_dist}{A named list of numeric vectors containing Wasserstein
+distances between reference and query datasets for each cell type.}
+\item{probability_superiority}{A named numeric vector showing the probability
+that ref-query distances are larger than ref-ref distances for each cell
+type.}
 \item{cell_types}{A character vector containing the cell types analyzed.}
 
-A ggplot2 object representing the comparison of Wasserstein distance distributions.
+A ggplot2 object representing the comparison of Wasserstein distance
+distributions.
 }
 \description{
-This function calculates distributions of Wasserstein distances between reference-reference
-pairs and reference-query pairs for each specified cell type, after projecting them into
-a shared PCA space. It then computes the probability of superiority to assess whether
-reference-query distances tend to be larger than reference-reference distances.
+This function calculates distributions of Wasserstein distances
+between reference-reference pairs and reference-query pairs for each
+specified cell type, after projecting them into a shared PCA space. It then
+computes the probability of superiority to assess whether reference-query
+distances tend to be larger than reference-reference distances.
 
-This function generates ridge plots comparing reference-reference
-and reference-query Wasserstein distance distributions for each cell type.
+This function generates ridge plots comparing
+reference-reference and reference-query Wasserstein distance distributions
+for each cell type.
 }
 \details{
-The function projects the query dataset onto the PCA space defined by the reference dataset.
-For each cell type, it computes two distributions: (1) Wasserstein distances between randomly
-sampled pairs within the reference dataset (null distribution), and (2) Wasserstein distances
-between reference and query dataset samples. It then calculates the probability of superiority,
-which represents the probability that a randomly selected ref-query distance is larger than
-a randomly selected ref-ref distance.
+The function projects the query dataset onto the PCA space defined
+by the reference dataset. For each cell type, it computes two distributions:
+(1) Wasserstein distances between randomly sampled pairs within the reference
+dataset (null distribution), and (2) Wasserstein distances between reference
+and query dataset samples. It then calculates the probability of superiority,
+which represents the probability that a randomly selected ref-query distance
+is larger than a randomly selected ref-ref distance.
 
-The function creates faceted ridge plots showing two clearly separated density curves for each
-cell type: one for the reference-reference distribution (null) and one for the
-reference-query distribution.
+The function creates faceted ridge plots showing two clearly
+separated density curves for each cell type: one for the reference-reference
+distribution (null) and one for the reference-query distribution.
 }
 \examples{
 # Load data
@@ -98,8 +120,9 @@ plot(wasserstein_data)
 
 }
 \references{
-Schuhmacher, D., Bernhard, S., & Book, M. (2019). "A Review of Approximate Transport in Machine Learning".
-In \emph{Journal of Machine Learning Research} (Vol. 20, No. 117, pp. 1-61).
+Schuhmacher, D., Bernhard, S., & Book, M. (2019). "A Review of
+Approximate Transport in Machine Learning". In \emph{Journal of Machine
+Learning Research} (Vol. 20, No. 117, pp. 1-61).
 }
 \seealso{
 \code{\link{plot.calculateWassersteinDistanceObject}}
@@ -107,6 +130,7 @@ In \emph{Journal of Machine Learning Research} (Vol. 20, No. 117, pp. 1-61).
 \code{\link{calculateWassersteinDistance}}
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }
 \keyword{internal}

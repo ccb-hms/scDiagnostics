@@ -14,11 +14,13 @@ calculateCategorizationEntropy(
 \arguments{
 \item{X}{A matrix of category scores.}
 
-\item{inverseNormalTransformationform}{If TRUE, apply inverse normal transformation to X. Default is FALSE.}
+\item{inverseNormalTransformationform}{If TRUE, apply inverse normal
+transformation to X. Default is FALSE.}
 
 \item{plot}{If TRUE, plot a histogram of the entropies. Default is TRUE.}
 
-\item{verbose}{If TRUE, display messages about the calculations. Default is TRUE.}
+\item{verbose}{If TRUE, display messages about the calculations. Default is
+TRUE.}
 }
 \value{
 A vector of entropy values for each column in X.
@@ -26,13 +28,13 @@ A vector of entropy values for each column in X.
 \description{
 This function takes a matrix of category scores (cell type by
 cells) and calculates the entropy of the category probabilities for each
-cell. This gives a sense of how confident the cell type assignments are.
-High entropy = lots of plausible category assignments = low confidence. Low
+cell. This gives a sense of how confident the cell type assignments are. High
+entropy = lots of plausible category assignments = low confidence. Low
 entropy = only one or two plausible categories = high confidence. This is
 confidence in the vernacular sense, not in the "confidence interval"
-statistical sense. Also note that the entropy tells you nothing about
-whether or not the assignments are correct -- see the other functionality
-in the package for that. This functionality can be used for assessing how
+statistical sense. Also note that the entropy tells you nothing about whether
+or not the assignments are correct -- see the other functionality in the
+package for that. This functionality can be used for assessing how
 comparatively confident different sets of assignments are (given that the
 number of categories is the same).
 }
@@ -40,8 +42,8 @@ number of categories is the same).
 The function checks if X is already on the probability scale.
 Otherwise, it applies softmax columnwise.
 
-You can think about entropies on a scale from 0 to a maximum that depends
-on the number of categories. This is the function for entropy (minus input
+You can think about entropies on a scale from 0 to a maximum that depends on
+the number of categories. This is the function for entropy (minus input
 checking): \code{entropy(p) = -sum(p*log(p))} . If that input vector p is a
 uniform distribution over the \code{length(p)} categories, the entropy will
 be a high as possible.

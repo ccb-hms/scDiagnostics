@@ -21,63 +21,87 @@ calculateCellDistances(
 \method{plot}{calculateCellDistancesObject}(x, ref_cell_type, cell_names, ...)
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data}
-that identifies the cell types.}
+\item{query_cell_type_col}{The column name in the \code{colData} of
+\code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data}
-that identifies the cell types.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+\item{cell_types}{A character vector specifying the cell types to include in
+the plot. If NULL, all cell types are included.}
 
-\item{pc_subset}{A numeric vector specifying which principal components to include in the plot. Default 1:5.}
+\item{pc_subset}{A numeric vector specifying which principal components to
+include in the plot. Default 1:5.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is 5000.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is 5000.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is 5000.}
 
-\item{x}{A list containing the distance data computed by \code{calculatecellDistances}.}
+\item{x}{A list containing the distance data computed by
+\code{calculatecellDistances}.}
 
 \item{ref_cell_type}{A string specifying the reference cell type.}
 
-\item{cell_names}{A string specifying the query cell name for which to plot the distances.}
+\item{cell_names}{A string specifying the query cell name for which to plot
+the distances.}
 
 \item{...}{Additional arguments passed to the plotting function.}
 }
 \value{
-A list containing distance data for each cell type. Each entry in the list contains:
+A list containing distance data for each cell type. Each entry in the
+list contains:
 \describe{
-  \item{ref_distances}{A vector of all pairwise distances within the reference subset for the cell type.}
-  \item{query_to_ref_distances}{A matrix of distances from each query cell to all reference cells for the cell type.}
+  \item{ref_distances}{A vector of all pairwise distances within the
+  reference subset for the cell type.}
+  \item{query_to_ref_distances}{A matrix of distances from each query cell to
+  all reference cells for the cell type.}
 }
 
-The S3 plot method returns a \code{ggplot} density plot comparing the reference distances and the distances from the specified cell to the reference cells.
+The S3 plot method returns a \code{ggplot} density plot comparing the
+reference distances and the distances from the specified cell to the
+reference cells.
 }
 \description{
-This function computes the distances within the reference dataset and the distances from each query cell to all
-reference cells for each cell type. It uses PCA for dimensionality reduction and Euclidean distance for distance calculation.
+This function computes the distances within the reference
+dataset and the distances from each query cell to all reference cells for
+each cell type. It uses PCA for dimensionality reduction and Euclidean
+distance for distance calculation.
 
-The S3 plot method plots the density functions for the reference data and the distances from a specified query cells
-to all reference cell within a specified cell type.
+The S3 plot method plots the density functions for the reference
+data and the distances from a specified query cells to all reference cell
+within a specified cell type.
 }
 \details{
-The function first performs PCA on the reference dataset and projects the query dataset onto the same PCA space.
-It then computes pairwise Euclidean distances within the reference dataset for each cell type, as well as distances from each
-query cell to all reference cells of a particular cell type. The results are stored in a list, with one entry per cell type.
+The function first performs PCA on the reference dataset and
+projects the query dataset onto the same PCA space. It then computes pairwise
+Euclidean distances within the reference dataset for each cell type, as well
+as distances from each query cell to all reference cells of a particular cell
+type. The results are stored in a list, with one entry per cell type.
 
-The S3 plot method first checks if the specified cell type and cell names are present in the object. If the
-specified cell type or cell name is not found, an error is thrown. It then extracts the distances within the reference dataset
-and the distances from the specified query cell to the reference cells The function creates a density plot using \code{ggplot2}
-to compare the distance distributions. The density plot will show two distributions: one for the pairwise distances within the
-reference dataset and one for the distances from the specified query cell to each reference cell. These distributions are
-plotted in different colors to visually assess how similar the query cell is to the reference cells of the specified cell type.
+The S3 plot method first checks if the specified cell type and cell
+names are present in the object. If the specified cell type or cell name is
+not found, an error is thrown. It then extracts the distances within the
+reference dataset and the distances from the specified query cell to the
+reference cells The function creates a density plot using \code{ggplot2} to
+compare the distance distributions. The density plot will show two
+distributions: one for the pairwise distances within the reference dataset
+and one for the distances from the specified query cell to each reference
+cell. These distributions are plotted in different colors to visually assess
+how similar the query cell is to the reference cells of the specified cell
+type.
 }
 \examples{
 # Load data
@@ -116,6 +140,7 @@ plot(distance_data, ref_cell_type = "CD8", cell_names = cd4_top6_anomalies)
 \code{\link{calculateCellDistances}}
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }
 \keyword{internal}

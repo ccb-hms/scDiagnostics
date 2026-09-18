@@ -14,53 +14,65 @@ processPCA(
 \arguments{
 \item{sce_object}{A \linkS4class{SingleCellExperiment} object to process.}
 
-\item{assay_name}{Name of the assay to use for HVG selection and PCA computation.
-Should contain log-normalized expression values. Default is "logcounts".}
+\item{assay_name}{Name of the assay to use for HVG selection and PCA
+computation. Should contain log-normalized expression values. Default is
+"logcounts".}
 
-\item{n_hvgs}{Number of highly variable genes to select for PCA computation. Default is 2000.}
+\item{n_hvgs}{Number of highly variable genes to select for PCA computation.
+Default is 2000.}
 
-\item{max_cells}{Maximum number of cells to retain if downsampling is needed for PCA computation.
-If NULL, no downsampling is performed. Default is NULL.}
+\item{max_cells}{Maximum number of cells to retain if downsampling is needed
+for PCA computation. If NULL, no downsampling is performed. Default is NULL.}
 }
 \value{
-A \linkS4class{SingleCellExperiment} object with valid PCA in the reducedDims slot,
-including rotation matrix and percentVar attributes. Will have original cell count if PCA was valid,
-or at most max_cells if PCA was computed.
+A \linkS4class{SingleCellExperiment} object with valid PCA in the
+reducedDims slot, including rotation matrix and percentVar attributes. Will
+have original cell count if PCA was valid, or at most max_cells if PCA was
+computed.
 }
 \description{
-This function ensures that a \linkS4class{SingleCellExperiment} object has valid PCA computed using
-highly variable genes when needed. It only performs downsampling when PCA computation
-is required, preserving existing valid PCA computations without modification.
+This function ensures that a \linkS4class{SingleCellExperiment}
+object has valid PCA computed using highly variable genes when needed. It
+only performs downsampling when PCA computation is required, preserving
+existing valid PCA computations without modification.
 }
 \details{
 The function performs the following operations:
 \itemize{
-  \item Checks if PCA exists and is valid in the provided \linkS4class{SingleCellExperiment} object
-  \item Validates PCA integrity including rotation matrix, percentVar, gene consistency, and dimensions
-  \item If PCA is valid, returns the object unchanged (no downsampling)
-  \item If PCA is missing or invalid and dataset is large, downsamples before computing PCA
-  \item Computes PCA using highly variable genes when PCA is missing or invalid
-  \item Utilizes scran for HVG selection and scater for PCA computation (soft dependencies)
+ \item Checks if PCA exists and is valid in the provided
+ \linkS4class{SingleCellExperiment} object
+ \item Validates PCA integrity including rotation matrix, percentVar, gene
+ consistency, and dimensions
+ \item If PCA is valid, returns the object unchanged (no downsampling)
+ \item If PCA is missing or invalid and dataset is large, downsamples before
+ computing PCA
+ \item Computes PCA using highly variable genes when PCA is missing or
+ invalid
+ \item Utilizes scran for HVG selection and scater for PCA computation (soft
+ dependencies)
 }
 
-The downsampling strategy uses random sampling without replacement and only occurs
-when PCA computation is necessary. This preserves expensive pre-computed PCA results
-while ensuring computational efficiency for new PCA computations.
+The downsampling strategy uses random sampling without replacement and only
+occurs when PCA computation is necessary. This preserves expensive
+pre-computed PCA results while ensuring computational efficiency for new PCA
+computations.
 
 PCA validation includes checking for:
 \itemize{
-  \item Presence of PCA in reducedDims
-  \item Existence of rotation matrix and percentVar attributes
-  \item Gene consistency between rotation matrix and current assay
-  \item Dimension consistency between PCA coordinates and cell count
+ \item Presence of PCA in reducedDims
+ \item Existence of rotation matrix and percentVar attributes
+ \item Gene consistency between rotation matrix and current assay
+ \item Dimension consistency between PCA coordinates and cell count
 }
 }
 \note{
-This function requires the scran and scater packages for HVG selection and PCA computation.
-These packages should be installed via BiocManager::install(c("scran", "scater")).
+This function requires the scran and scater packages for HVG selection
+and PCA computation. These packages should be installed via
+BiocManager::install(c("scran", "scater")).
 
-Objects with existing valid PCA are returned unchanged to preserve expensive pre-computations.
-Only datasets requiring PCA computation are subject to downsampling.
+Objects with existing valid PCA are returned unchanged to preserve expensive
+pre-computations. Only datasets requiring PCA computation are subject to
+downsampling.
 }
 \examples{
 library(SingleCellExperiment)
@@ -102,5 +114,6 @@ ncol(processed_large_existing) # Should be 1500 (preserved, no downsampling)
 
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

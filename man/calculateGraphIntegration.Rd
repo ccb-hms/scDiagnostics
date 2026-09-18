@@ -38,65 +38,90 @@ calculateGraphIntegration(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
+\item{query_cell_type_col}{A character string specifying the column name in
+the query dataset containing cell type annotations.}
 
-\item{ref_cell_type_col}{A character string specifying the column name in the reference dataset containing cell type annotations.}
+\item{ref_cell_type_col}{A character string specifying the column name in the
+reference dataset containing cell type annotations.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the analysis. If NULL, all cell types are included.}
+\item{cell_types}{A character vector specifying the cell types to include in
+the analysis. If NULL, all cell types are included.}
 
-\item{pc_subset}{A vector specifying the subset of principal components to use in the analysis. Default is 1:10.}
+\item{pc_subset}{A vector specifying the subset of principal components to
+use in the analysis. Default is 1:10.}
 
-\item{k_neighbors}{An integer specifying the number of nearest neighbors for graph construction. Default is 30.}
+\item{k_neighbors}{An integer specifying the number of nearest neighbors for
+graph construction. Default is 30.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{resolution}{Resolution parameter for Leiden clustering. Default is 0.15 for fewer, larger communities.}
+\item{resolution}{Resolution parameter for Leiden clustering. Default is 0.15
+for fewer, larger communities.}
 
-\item{min_cells_per_community}{Minimum number of cells required for a community to be analyzed. Default is 10.}
+\item{min_cells_per_community}{Minimum number of cells required for a
+community to be analyzed. Default is 10.}
 
-\item{min_cells_per_celltype}{Minimum number of cells required per cell type for inclusion. Default is 20.}
+\item{min_cells_per_celltype}{Minimum number of cells required per cell type
+for inclusion. Default is 20.}
 
-\item{high_query_prop_threshold}{Minimum proportion of query cells to consider a community "query-only". Default is 0.9.}
+\item{high_query_prop_threshold}{Minimum proportion of query cells to
+consider a community "query-only". Default is 0.9.}
 
-\item{cross_type_threshold}{Minimum proportion needed to flag cross-cell-type mixing. Default is 0.1.}
+\item{cross_type_threshold}{Minimum proportion needed to flag cross-cell-type
+mixing. Default is 0.1.}
 
-\item{local_consistency_threshold}{Minimum proportion of reference neighbors that should support a query cell's annotation. Default is 0.6.}
+\item{local_consistency_threshold}{Minimum proportion of reference neighbors
+that should support a query cell's annotation. Default is 0.6.}
 
-\item{local_confidence_threshold}{Minimum confidence difference needed to suggest re-annotation. Default is 0.2.}
+\item{local_confidence_threshold}{Minimum confidence difference needed to
+suggest re-annotation. Default is 0.2.}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is 5000.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is 5000.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is 5000.}
 
-\item{x}{An object of class \code{calculateGraphIntegrationObject} containing the diagnostic results.}
+\item{x}{An object of class \code{calculateGraphIntegrationObject} containing
+the diagnostic results.}
 
-\item{plot_type}{Character string specifying visualization type. Options: "community_network" (default),
-"cell_network", "community_data", "summary", "local_issues", or "annotation_issues".}
+\item{plot_type}{Character string specifying visualization type. Options:
+"community_network" (default), "cell_network", "community_data", "summary",
+"local_issues", or "annotation_issues".}
 
-\item{color_by}{Character string specifying the variable to use for coloring points/elements if `plot_type` is
-"community_network" or "cell_network". Default is "cell_type".}
+\item{color_by}{Character string specifying the variable to use for coloring
+points/elements if `plot_type` is "community_network" or "cell_network".
+Default is "cell_type".}
 
-\item{max_nodes}{Maximum number of nodes to display for performance. Default is 2000.}
+\item{max_nodes}{Maximum number of nodes to display for performance. Default
+is 2000.}
 
 \item{point_size}{Point size for graph nodes. Default is 0.8.}
 
-\item{exclude_reference_only}{Logical indicating whether to exclude reference-only communities/cells from visualization.
-Default is FALSE.}
+\item{exclude_reference_only}{Logical indicating whether to exclude
+reference-only communities/cells from visualization. Default is FALSE.}
 
 \item{...}{Additional arguments passed to ggplot2 functions.}
 }
 \value{
 A list containing:
-\item{high_query_prop_analysis}{Analysis of communities with only query cells}
-\item{cross_type_mixing}{Analysis of communities with true query-reference cross-cell-type mixing}
-\item{local_annotation_inconsistencies}{Local neighborhood-based annotation inconsistencies}
-\item{local_inconsistency_summary}{Summary of local inconsistencies by cell type}
+\item{high_query_prop_analysis}{Analysis of communities with only query
+cells}
+\item{cross_type_mixing}{Analysis of communities with true query-reference
+cross-cell-type mixing}
+\item{local_annotation_inconsistencies}{Local neighborhood-based annotation
+inconsistencies}
+\item{local_inconsistency_summary}{Summary of local inconsistencies by cell
+type}
 \item{community_composition}{Detailed composition of each community}
 \item{annotation_consistency}{Summary of annotation consistency issues}
 \item{overall_metrics}{Overall diagnostic metrics}
@@ -107,21 +132,25 @@ The list is assigned the class \code{"calculateGraphIntegration"}.
 A \code{ggplot} object showing integration diagnostics.
 }
 \description{
-This function performs graph-based community detection to identify annotation inconsistencies
-by detecting query-only communities, true cross-cell-type mixing patterns, and local
-annotation inconsistencies based on immediate neighborhood analysis.
+This function performs graph-based community detection to
+identify annotation inconsistencies by detecting query-only communities, true
+cross-cell-type mixing patterns, and local annotation inconsistencies based
+on immediate neighborhood analysis.
 
-The S3 plot method generates visualizations of annotation consistency diagnostics,
-including query-only communities, cross-cell-type mixing, and local annotation inconsistencies.
+The S3 plot method generates visualizations of annotation
+consistency diagnostics, including query-only communities, cross-cell-type
+mixing, and local annotation inconsistencies.
 }
 \details{
-The function performs three types of analysis: (1) Communities containing only query cells,
-(2) Communities where query cells are mixed with reference cells of different cell types
-WITHOUT any reference cells of the same type, and (3) Local analysis of each query cell's
-immediate neighbors to detect annotation inconsistencies even within mixed communities.
+The function performs three types of analysis: (1) Communities
+containing only query cells, (2) Communities where query cells are mixed with
+reference cells of different cell types WITHOUT any reference cells of the
+same type, and (3) Local analysis of each query cell's immediate neighbors to
+detect annotation inconsistencies even within mixed communities.
 
-The S3 plot method creates optimized visualizations showing different types of annotation
-issues including community-level and local neighborhood-level inconsistencies.
+The S3 plot method creates optimized visualizations showing
+different types of annotation issues including community-level and local
+neighborhood-level inconsistencies.
 }
 \examples{
 # Load data
@@ -185,5 +214,6 @@ plot(graph_diagnostics, plot_type = "annotation_issues")
 \code{\link{calculateGraphIntegration}}
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

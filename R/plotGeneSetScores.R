@@ -1,31 +1,39 @@
-#' @title Visualization of gene sets or pathway scores on dimensional reduction plot
+#' @title Visualization of gene sets or pathway scores on dimensional reduction
+#' plot
 #'
-#' @description
-#' Plot gene sets or pathway scores on PCA, TSNE, or UMAP. Single cells are color-coded by scores of gene sets or pathways.
+#' @description Plot gene sets or pathway scores on PCA, TSNE, or UMAP. Single
+#' cells are color-coded by scores of gene sets or pathways.
 #'
-#' @details
-#' This function plots gene set scores on reduced dimensions such as PCA, t-SNE, or UMAP.
-#' It extracts the reduced dimensions from the provided \linkS4class{SingleCellExperiment} object.
-#' Gene set scores are visualized as a scatter plot with colors indicating the scores.
-#' For PCA, the function automatically includes the percentage of variance explained
-#' in the plot's legend.
+#' @details This function plots gene set scores on reduced dimensions such as
+#' PCA, t-SNE, or UMAP. It extracts the reduced dimensions from the provided
+#' \linkS4class{SingleCellExperiment} object. Gene set scores are visualized as
+#' a scatter plot with colors indicating the scores. For PCA, the function
+#' automatically includes the percentage of variance explained in the plot's
+#' legend.
 #'
-#' @param sce_object An object of class \linkS4class{SingleCellExperiment} containing numeric expression matrix and other metadata.
-#'        It can be either a reference or query dataset.
-#' @param cell_type_col The column name in the \code{colData} of \code{sce_object} that identifies the cell types.
-#' @param method A character string indicating the method for visualization ("PCA", "TSNE", or "UMAP").
-#' @param score_col A character string representing the name of the score_col (score) in the colData(sce_object) to plot.
-#' @param pc_subset An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA".
-#'        Default is 1:5.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
-#' @param max_cells Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-#'                  Default is 2000.
+#' @param sce_object An object of class \linkS4class{SingleCellExperiment}
+#' containing numeric expression matrix and other metadata. It can be either a
+#' reference or query dataset.
+#' @param cell_type_col The column name in the \code{colData} of
+#' \code{sce_object} that identifies the cell types.
+#' @param method A character string indicating the method for visualization
+#' ("PCA", "TSNE", or "UMAP").
+#' @param score_col A character string representing the name of the score_col
+#' (score) in the colData(sce_object) to plot.
+#' @param pc_subset An optional vector specifying the principal components (PCs)
+#' to include in the plot if method = "PCA". Default is 1:5.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the plot. If NULL, all cell types are included.
+#' @param max_cells Maximum number of cells to retain. If the object has fewer
+#' cells, it is returned unchanged. Default is 2000.
 #'
-#' @return A ggplot2 object representing the gene set scores plotted on the specified reduced dimensions.
+#' @return A ggplot2 object representing the gene set scores plotted on the
+#' specified reduced dimensions.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
 #' # Load data
@@ -149,7 +157,8 @@ plotGeneSetScores <- function(sce_object,
     scores <- colData(sce_object)[[score_col]]
 
     if (method %in% c("TSNE", "UMAP")) {
-        # Extract dimension reduction coordinates from SingleCellExperiment object
+        # Extract dimension reduction coordinates from SingleCellExperiment
+        # object
         reduction <- reducedDim(sce_object, method)
 
         # Prepare data for plotting
@@ -220,7 +229,8 @@ plotGeneSetScores <- function(sce_object,
         # PCA data
         plot_mat <- reducedDim(sce_object, "PCA")[, pc_subset]
 
-        # Create PC column names with variance explained (always show percentages if available)
+        # Create PC column names with variance explained (always show
+        # percentages if available)
         if (!is.null(pca_percent_var) && length(pca_percent_var) >= max(pc_subset)) {
             plot_names <- paste0(
                 "PC", pc_subset, " (",

@@ -20,48 +20,63 @@ plotPairwiseDistancesDensity(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} containing the single-cell
-expression data and metadata.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} containing the
+single-cell expression data and metadata.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing the single-cell
-expression data and metadata.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+the single-cell expression data and metadata.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+\item{query_cell_type_col}{The column name in the \code{colData} of
+\code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types.}
 
-\item{cell_type}{The cell type for which distances or correlations are calculated.}
+\item{cell_type}{The cell type for which distances or correlations are
+calculated.}
 
-\item{pc_subset}{A numeric vector specifying which principal components to use in the analysis. Default is 1:5.
-If set to \code{NULL}, the assay data is used directly for computations without dimensionality reduction.}
+\item{pc_subset}{A numeric vector specifying which principal components to
+use in the analysis. Default is 1:5. If set to \code{NULL}, the assay data is
+used directly for computations without dimensionality reduction.}
 
-\item{distance_metric}{The distance metric to use for calculating pairwise distances, such as euclidean, manhattan, etc.
-Set to "correlation" to calculate correlation coefficients.}
+\item{distance_metric}{The distance metric to use for calculating pairwise
+distances, such as euclidean, manhattan, etc. Set to "correlation" to
+calculate correlation coefficients.}
 
-\item{correlation_method}{The correlation method to use when \code{distance_metric} is "correlation".
-Possible values are "pearson" and "spearman".}
+\item{correlation_method}{The correlation method to use when
+\code{distance_metric} is "correlation". Possible values are "pearson" and
+"spearman".}
 
-\item{bandwidth}{Numeric value controlling the smoothness of the density estimate; smaller values create more detailed curves. Default is 0.25.}
+\item{bandwidth}{Numeric value controlling the smoothness of the density
+estimate; smaller values create more detailed curves. Default is 0.25.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is 5000.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is 5000.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is 5000.}
 }
 \value{
-A ggplot2 object showing ridgeline plots of calculated distances or correlations.
+A ggplot2 object showing ridgeline plots of calculated distances or
+correlations.
 }
 \description{
-This function calculates pairwise distances or correlations between query and reference cells of a specified cell type
-and visualizes the results using ridgeline plots, displaying the density distribution for each comparison.
+This function calculates pairwise distances or correlations
+between query and reference cells of a specified cell type and visualizes the
+results using ridgeline plots, displaying the density distribution for each
+comparison.
 }
 \details{
-Designed for \linkS4class{SingleCellExperiment} objects, this function subsets data for the specified cell type,
-computes pairwise distances or correlations, and visualizes these measurements through ridgeline plots.
-The plots help evaluate the consistency and differentiation of annotated cell types within single-cell datasets.
+Designed for \linkS4class{SingleCellExperiment} objects, this
+function subsets data for the specified cell type, computes pairwise
+distances or correlations, and visualizes these measurements through
+ridgeline plots. The plots help evaluate the consistency and differentiation
+of annotated cell types within single-cell datasets.
 }
 \examples{
 # Load data

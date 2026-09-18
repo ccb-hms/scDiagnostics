@@ -1,35 +1,46 @@
-#' @title Plot Distance Density Comparison for a Specific Cell Type and Selected Cells
+#' @title Plot Distance Density Comparison for a Specific Cell Type and Selected
+#' Cells
 #'
-#' @description
-#' The S3 plot method plots the density functions for the reference data and the distances from a specified query cells
-#' to all reference cell within a specified cell type.
+#' @description The S3 plot method plots the density functions for the reference
+#' data and the distances from a specified query cells to all reference cell
+#' within a specified cell type.
 #'
-#' @details
-#' The S3 plot method first checks if the specified cell type and cell names are present in the object. If the
-#' specified cell type or cell name is not found, an error is thrown. It then extracts the distances within the reference dataset
-#' and the distances from the specified query cell to the reference cells The function creates a density plot using \code{ggplot2}
-#' to compare the distance distributions. The density plot will show two distributions: one for the pairwise distances within the
-#' reference dataset and one for the distances from the specified query cell to each reference cell. These distributions are
-#' plotted in different colors to visually assess how similar the query cell is to the reference cells of the specified cell type.
+#' @details The S3 plot method first checks if the specified cell type and cell
+#' names are present in the object. If the specified cell type or cell name is
+#' not found, an error is thrown. It then extracts the distances within the
+#' reference dataset and the distances from the specified query cell to the
+#' reference cells The function creates a density plot using \code{ggplot2} to
+#' compare the distance distributions. The density plot will show two
+#' distributions: one for the pairwise distances within the reference dataset
+#' and one for the distances from the specified query cell to each reference
+#' cell. These distributions are plotted in different colors to visually assess
+#' how similar the query cell is to the reference cells of the specified cell
+#' type.
 #'
-#' @param x A list containing the distance data computed by \code{calculatecellDistances}.
+#' @param x A list containing the distance data computed by
+#' \code{calculatecellDistances}.
 #' @param ref_cell_type A string specifying the reference cell type.
-#' @param cell_names A string specifying the query cell name for which to plot the distances.
+#' @param cell_names A string specifying the query cell name for which to plot
+#' the distances.
 #' @param ... Additional arguments passed to the plotting function.
 #'
 #' @keywords internal
 #'
-#' @return The S3 plot method returns a \code{ggplot} density plot comparing the reference distances and the distances from the specified cell to the reference cells.
+#' @return The S3 plot method returns a \code{ggplot} density plot comparing the
+#' reference distances and the distances from the specified cell to the
+#' reference cells.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{calculateCellDistances}}
 #'
 #' @rdname calculateCellDistances
 #'
-# Function to plot density functions for the reference data and the specified cell
+# Function to plot density functions for the reference data and the specified
+# cell
 plot.calculateCellDistancesObject <- function(x, ref_cell_type, cell_names, ...) {
     # Check if cell type is available
     if (length(ref_cell_type) != 1 || !(ref_cell_type %in% names(x))) {

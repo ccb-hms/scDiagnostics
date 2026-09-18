@@ -1,37 +1,50 @@
 #' @title Compute Cell Distances Between Reference and Query Data
 #'
-#' @description
-#' This function computes the distances within the reference dataset and the distances from each query cell to all
-#' reference cells for each cell type. It uses PCA for dimensionality reduction and Euclidean distance for distance calculation.
+#' @description This function computes the distances within the reference
+#' dataset and the distances from each query cell to all reference cells for
+#' each cell type. It uses PCA for dimensionality reduction and Euclidean
+#' distance for distance calculation.
 #'
-#' @details
-#' The function first performs PCA on the reference dataset and projects the query dataset onto the same PCA space.
-#' It then computes pairwise Euclidean distances within the reference dataset for each cell type, as well as distances from each
-#' query cell to all reference cells of a particular cell type. The results are stored in a list, with one entry per cell type.
+#' @details The function first performs PCA on the reference dataset and
+#' projects the query dataset onto the same PCA space. It then computes pairwise
+#' Euclidean distances within the reference dataset for each cell type, as well
+#' as distances from each query cell to all reference cells of a particular cell
+#' type. The results are stored in a list, with one entry per cell type.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data}
-#' that identifies the cell types.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data}
-#' that identifies the cell types.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
-#' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default 1:5.
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is 5000.
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is 5000.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_cell_type_col The column name in the \code{colData} of
+#' \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col The column name in the \code{colData} of
+#' \code{reference_data} that identifies the cell types.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the plot. If NULL, all cell types are included.
+#' @param pc_subset A numeric vector specifying which principal components to
+#' include in the plot. Default 1:5.
+#' @param assay_name Name of the assay on which to perform computations. Default
+#' is "logcounts".
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is 5000.
 #'
-#' @return A list containing distance data for each cell type. Each entry in the list contains:
+#' @return A list containing distance data for each cell type. Each entry in the
+#' list contains:
 #' \describe{
-#'   \item{ref_distances}{A vector of all pairwise distances within the reference subset for the cell type.}
-#'   \item{query_to_ref_distances}{A matrix of distances from each query cell to all reference cells for the cell type.}
+#'   \item{ref_distances}{A vector of all pairwise distances within the
+#'   reference subset for the cell type.}
+#'   \item{query_to_ref_distances}{A matrix of distances from each query cell to
+#'   all reference cells for the cell type.}
 #' }
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{plot.calculateCellDistancesObject}}
 #'
@@ -65,7 +78,8 @@
 #' plot(distance_data, ref_cell_type = "CD4", cell_names = cd4_top6_anomalies)
 #' plot(distance_data, ref_cell_type = "CD8", cell_names = cd4_top6_anomalies)
 #'
-# Function to compute distances within reference data and between query data and reference cells
+# Function to compute distances within reference data and between query data and
+# reference cells
 calculateCellDistances <- function(query_data,
                                    reference_data,
                                    query_cell_type_col,
@@ -126,7 +140,8 @@ calculateCellDistances <- function(query_data,
     distance_data <- vector("list", length = length(cell_types))
     names(distance_data) <- cell_types
 
-    # Function to compute Euclidean distance between a vector and each row of a matrix
+    # Function to compute Euclidean distance between a vector and each row of a
+    # matrix
     .computeDistances <- function(matrix, vector) {
         # Apply the distance function to each row of the matrix
         distances <- apply(matrix, 1, function(row) {

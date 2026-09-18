@@ -1,42 +1,49 @@
 #' @title Project Query Data Onto PCA Space of Reference Data
 #'
-#' @description
-#' This function projects a query singleCellExperiment object onto the PCA space of a reference
-#' singleCellExperiment object. The PCA analysis on the reference data is assumed to be pre-computed
-#' and stored within the object. Optionally filters by cell types and downsamples the results.
+#' @description This function projects a query singleCellExperiment object onto
+#' the PCA space of a reference singleCellExperiment object. The PCA analysis on
+#' the reference data is assumed to be pre-computed and stored within the
+#' object. Optionally filters by cell types and downsamples the results.
 #'
-#' @details
-#' This function assumes that the "PCA" element exists within the \code{reducedDims} of the reference data
-#' (obtained using \code{reducedDim(reference_data)}) and that the genes used for PCA are present in both
-#' the reference and query data. It performs centering and scaling of the query data based on the reference
-#' data before projection using the FULL datasets to maintain proper mean centering. Cell type filtering
-#' and downsampling are performed AFTER projection to preserve the statistical properties of the PCA space.
-#' Cell names from the original SCE objects are preserved as rownames in the output.
+#' @details This function assumes that the "PCA" element exists within the
+#' \code{reducedDims} of the reference data (obtained using
+#' \code{reducedDim(reference_data)}) and that the genes used for PCA are
+#' present in both the reference and query data. It performs centering and
+#' scaling of the query data based on the reference data before projection using
+#' the FULL datasets to maintain proper mean centering. Cell type filtering and
+#' downsampling are performed AFTER projection to preserve the statistical
+#' properties of the PCA space. Cell names from the original SCE objects are
+#' preserved as rownames in the output.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix
-#' for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix
-#' for the reference cells.
-#' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data}
-#' that identifies the cell types.
-#' @param ref_cell_type_col character. The column name in the \code{colData} of \code{reference_data}
-#' that identifies the cell types.
-#' @param cell_types A character vector specifying which cell types to retain in the output. If NULL,
-#' no cell type filtering is performed. Default is NULL.
-#' @param pc_subset A numeric vector specifying the subset of principal components (PCs) to compare. Default is 1:10.
-#' @param assay_name Name of the assay on which to perform computations. Defaults to \code{"logcounts"}.
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is NULL.
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is NULL.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_cell_type_col character. The column name in the \code{colData}
+#' of \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col character. The column name in the \code{colData} of
+#' \code{reference_data} that identifies the cell types.
+#' @param cell_types A character vector specifying which cell types to retain in
+#' the output. If NULL, no cell type filtering is performed. Default is NULL.
+#' @param pc_subset A numeric vector specifying the subset of principal
+#' components (PCs) to compare. Default is 1:10.
+#' @param assay_name Name of the assay on which to perform computations.
+#' Defaults to \code{"logcounts"}.
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is NULL.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is NULL.
 #'
-#' @return A \code{data.frame} containing the projected data in rows (reference and query data combined),
-#' optionally filtered by cell types and downsampled. Rownames preserve the original cell names from
-#' the SCE objects.
+#' @return A \code{data.frame} containing the projected data in rows (reference
+#' and query data combined), optionally filtered by cell types and downsampled.
+#' Rownames preserve the original cell names from the SCE objects.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
 #' # Load data
@@ -167,7 +174,8 @@ projectPCA <- function(query_data,
         stop("Genes in reference PCA are not found in query data.")
     }
 
-    # Center query data using full reference dataset (maintains original PCA centering)
+    # Center query data using full reference dataset (maintains original PCA
+    # centering)
     ref_assay <- assay(reference_data, assay_name)
     centering_vec <- Matrix::rowMeans(ref_assay)[PCA_genes]
     query_assay_subset <- assay(query_data, assay_name)[PCA_genes, , drop = FALSE]

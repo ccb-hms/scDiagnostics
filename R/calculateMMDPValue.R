@@ -1,41 +1,54 @@
 #' @title Calculate Maximum Mean Discrepancy P-Values for Two-Sample Comparison
 #'
-#' @description
-#' This function performs the Maximum Mean Discrepancy (MMD) test for comparing
-#' distributions between two samples in PCA space using a custom implementation
-#' with permutation testing for better sensitivity.
+#' @description This function performs the Maximum Mean Discrepancy (MMD) test
+#' for comparing distributions between two samples in PCA space using a custom
+#' implementation with permutation testing for better sensitivity.
 #'
-#' @details
-#' The function performs the following steps:
+#' @details The function performs the following steps:
 #' \enumerate{
-#'   \item Projects the data into the PCA space.
-#'   \item Subsets the data to the specified cell types and principal components.
-#'   \item Performs a custom MMD test with permutation-based p-values for each cell type.
+#'  \item Projects the data into the PCA space.
+#'  \item Subsets the data to the specified cell types and principal components.
+#'  \item Performs a custom MMD test with permutation-based p-values for each
+#'  cell type.
 #' }
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
-#' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
-#' @param n_permutation Number of permutations for p-value calculation. Default is 100.
-#' @param kernel_type Type of kernel to use. Options are "gaussian" (default) or "linear".
-#' @param sigma Bandwidth parameter for Gaussian kernel. If NULL, uses median heuristic.
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is 5000.
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is 5000.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_cell_type_col The column name in the \code{colData} of
+#' \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col The column name in the \code{colData} of
+#' \code{reference_data} that identifies the cell types.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the plot. If NULL, all cell types are included.
+#' @param pc_subset A numeric vector specifying which principal components to
+#' include in the plot. Default is PC1 to PC5.
+#' @param n_permutation Number of permutations for p-value calculation. Default
+#' is 100.
+#' @param kernel_type Type of kernel to use. Options are "gaussian" (default) or
+#' "linear".
+#' @param sigma Bandwidth parameter for Gaussian kernel. If NULL, uses median
+#' heuristic.
+#' @param assay_name Name of the assay on which to perform computations. Default
+#' is "logcounts".
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is 5000.
 #'
 #' @return A named vector of p-values from the MMD test for each cell type.
 #'
-#' @references Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., & Smola, A. (2012).
-#' "A kernel two-sample test". Journal of Machine Learning Research, 13(1), 723-773.
+#' @references Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., &
+#' Smola, A. (2012). "A kernel two-sample test". Journal of Machine Learning
+#' Research, 13(1), 723-773.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
 #' # Load data
@@ -184,36 +197,37 @@ calculateMMDPValue <- function(query_data,
 
 #' @title Compute Maximum Mean Discrepancy Statistic
 #'
-#' @description
-#' Compute the Maximum Mean Discrepancy (MMD) statistic between two datasets
-#' using either Gaussian or linear kernels for distribution comparison.
+#' @description Compute the Maximum Mean Discrepancy (MMD) statistic between two
+#' datasets using either Gaussian or linear kernels for distribution comparison.
 #'
-#' @details
-#' This function calculates the MMD statistic, which measures the distance between
-#' two probability distributions by comparing their embeddings in a reproducing
-#' kernel Hilbert space (RKHS). For the Gaussian kernel, an optimized median
-#' heuristic is used to estimate the bandwidth parameter sigma when not provided.
-#' The linear kernel provides a computationally faster alternative.
+#' @details This function calculates the MMD statistic, which measures the
+#' distance between two probability distributions by comparing their embeddings
+#' in a reproducing kernel Hilbert space (RKHS). For the Gaussian kernel, an
+#' optimized median heuristic is used to estimate the bandwidth parameter sigma
+#' when not provided. The linear kernel provides a computationally faster
+#' alternative.
 #'
-#' The MMD statistic is computed as:
-#' MMD^2 = E[k(X,X')] + E[k(Y,Y')] - 2*E[k(X,Y)]
-#' where k is the chosen kernel function.
+#' The MMD statistic is computed as: MMD^2 = E[k(X,X')] + E[k(Y,Y')] -
+#' 2*E[k(X,Y)] where k is the chosen kernel function.
 #'
-#' @param X A numeric matrix representing the first dataset, where rows are observations
-#' and columns are features.
-#' @param Y A numeric matrix representing the second dataset, where rows are observations
-#' and columns are features.
+#' @param X A numeric matrix representing the first dataset, where rows are
+#' observations and columns are features.
+#' @param Y A numeric matrix representing the second dataset, where rows are
+#' observations and columns are features.
 #' @param kernel_type A character string specifying the kernel type. Options are
-#' "gaussian" for RBF kernel or "linear" for linear kernel. Default is "gaussian".
-#' @param sigma A numeric value specifying the bandwidth parameter for the Gaussian kernel.
-#' If NULL, it is estimated using the median heuristic. Default is NULL.
+#' "gaussian" for RBF kernel or "linear" for linear kernel. Default is
+#' "gaussian".
+#' @param sigma A numeric value specifying the bandwidth parameter for the
+#' Gaussian kernel. If NULL, it is estimated using the median heuristic. Default
+#' is NULL.
 #'
 #' @keywords internal
 #'
-#' @return A numeric value representing the MMD^2 statistic between the two datasets.
+#' @return A numeric value representing the MMD^2 statistic between the two
+#' datasets.
 #'
-#' @author
-#' Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 # Function to compute MMD statistic
 computeMMDStatistic <- function(X, Y,
@@ -286,7 +300,8 @@ computeMMDStatistic <- function(X, Y,
         YY <- tcrossprod(Y)
         XY <- tcrossprod(X, Y)
 
-        # Compute kernel sums excluding diagonal elements for within-dataset terms
+        # Compute kernel sums excluding diagonal elements for within-dataset
+        # terms
         K_XX_sum <- sum(XX) - sum(diag(XX))
         K_YY_sum <- sum(YY) - sum(diag(YY))
         K_XY_sum <- sum(XY)

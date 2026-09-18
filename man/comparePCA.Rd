@@ -27,41 +27,56 @@ comparePCA(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+\item{query_cell_type_col}{The column name in the \code{colData} of
+\code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types.}
 
-\item{pc_subset}{A numeric vector specifying the subset of principal components (PCs) to compare. Default is the first five PCs.}
+\item{pc_subset}{A numeric vector specifying the subset of principal
+components (PCs) to compare. Default is the first five PCs.}
 
-\item{n_top_vars}{An integer indicating the number of top loading variables to consider for each PC. Default is 50.}
+\item{n_top_vars}{An integer indicating the number of top loading variables
+to consider for each PC. Default is 50.}
 
-\item{metric}{The similarity metric to use. It can be either "cosine" or "correlation". Default is "cosine".}
+\item{metric}{The similarity metric to use. It can be either "cosine" or
+"correlation". Default is "cosine".}
 
-\item{correlation_method}{The correlation method to use if metric is "correlation". It can be "spearman"
-or "pearson". Default is "spearman".}
+\item{correlation_method}{The correlation method to use if metric is
+"correlation". It can be "spearman" or "pearson". Default is "spearman".}
 
-\item{n_permutations}{Number of permutations for statistical significance testing. If 0, no permutation test is performed. Default is 0.}
+\item{n_permutations}{Number of permutations for statistical significance
+testing. If 0, no permutation test is performed. Default is 0.}
 
-\item{x}{A \code{comparePCAObject} output from the \code{comparePCA} function.}
+\item{x}{A \code{comparePCAObject} output from the \code{comparePCA}
+function.}
 
-\item{show_values}{Logical, whether to display similarity values on the heatmap. Default is TRUE.}
+\item{show_values}{Logical, whether to display similarity values on the
+heatmap. Default is TRUE.}
 
-\item{show_significance}{Logical, whether to display significance indicators (requires permutation test). Default is TRUE.}
+\item{show_significance}{Logical, whether to display significance indicators
+(requires permutation test). Default is TRUE.}
 
-\item{significance_threshold}{Numeric, p-value threshold for significance. Default is 0.05.}
+\item{significance_threshold}{Numeric, p-value threshold for significance.
+Default is 0.05.}
 
-\item{color_limits}{Numeric vector of length 2 specifying color scale limits. If NULL, uses data range.}
+\item{color_limits}{Numeric vector of length 2 specifying color scale limits.
+If NULL, uses data range.}
 
 \item{...}{Additional arguments passed to the plotting function.}
 }
 \value{
 A list containing:
-  \item{similarity_matrix}{A matrix comparing the principal components of the reference and query datasets.}
-  \item{top_variables}{A list containing the top loading variables for each PC pair comparison.}
+  \item{similarity_matrix}{A matrix comparing the principal components of the
+  reference and query datasets.}
+  \item{top_variables}{A list containing the top loading variables for each
+  PC pair comparison.}
   \item{p_values}{A matrix of permutation p-values (if n_permutations > 0).}
   \item{metric}{The similarity metric used.}
   \item{n_top_vars}{Number of top variables used.}
@@ -69,23 +84,29 @@ A list containing:
 A \code{ggplot} object representing the heatmap of similarities.
 }
 \description{
-This function compares the principal components (PCs) obtained from separate PCA on reference and query
-datasets for a single cell type using either cosine similarity or correlation.
+This function compares the principal components (PCs) obtained
+from separate PCA on reference and query datasets for a single cell type
+using either cosine similarity or correlation.
 
-The S3 plot method generates a heatmap to visualize the similarities between
-principal components from the output of the \code{comparePCA} function.
+The S3 plot method generates a heatmap to visualize the
+similarities between principal components from the output of the
+\code{comparePCA} function.
 }
 \details{
-This function compares the PCA results between the reference and query datasets by computing cosine
-similarities or correlations between the loadings of top variables for each pair of principal components. It first
-extracts the PCA rotation matrices from both datasets and identifies the top variables with highest loadings for
-each PC. Then, it computes the cosine similarities or correlations between the loadings of top variables for each
-pair of PCs using vectorized operations for improved performance. The resulting matrix contains the similarity values,
-where rows represent reference PCs and columns represent query PCs.
+This function compares the PCA results between the reference and
+query datasets by computing cosine similarities or correlations between the
+loadings of top variables for each pair of principal components. It first
+extracts the PCA rotation matrices from both datasets and identifies the top
+variables with highest loadings for each PC. Then, it computes the cosine
+similarities or correlations between the loadings of top variables for each
+pair of PCs using vectorized operations for improved performance. The
+resulting matrix contains the similarity values, where rows represent
+reference PCs and columns represent query PCs.
 
-The S3 plot method creates an enhanced heatmap visualization with options to display
-statistical significance and similarity values. The heatmap uses a blue-white-red
-color gradient for similarity values, and optionally overlays significance indicators.
+The S3 plot method creates an enhanced heatmap visualization with
+options to display statistical significance and similarity values. The
+heatmap uses a blue-white-red color gradient for similarity values, and
+optionally overlays significance indicators.
 }
 \examples{
 # Load libraries
@@ -136,5 +157,6 @@ plot(similarity_mat, show_significance = TRUE)
 \code{\link{comparePCA}}
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

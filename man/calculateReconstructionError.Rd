@@ -4,7 +4,8 @@
 \name{calculateReconstructionError}
 \alias{calculateReconstructionError}
 \alias{plot.calculateReconstructionErrorObject}
-\title{Calculate PCA Reconstruction Errors for Out-of-Distribution Anomaly Detection}
+\title{Calculate PCA Reconstruction Errors for Out-of-Distribution Anomaly
+Detection}
 \usage{
 calculateReconstructionError(
   reference_data,
@@ -30,97 +31,133 @@ calculateReconstructionError(
 )
 }
 \arguments{
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{query_data}{An optional \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-If NULL, the reconstruction errors are computed for the reference data alone. Default is NULL.}
+\item{query_data}{An optional \linkS4class{SingleCellExperiment} object
+containing numeric expression matrix for the query cells. If NULL, the
+reconstruction errors are computed for the reference data alone. Default is
+NULL.}
 
-\item{ref_cell_type_col}{A character string specifying the column name in the reference dataset containing cell type annotations.}
+\item{ref_cell_type_col}{A character string specifying the column name in the
+reference dataset containing cell type annotations.}
 
-\item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
+\item{query_cell_type_col}{A character string specifying the column name in
+the query dataset containing cell type annotations.}
 
-\item{cell_types}{A character vector specifying the cell types to analyze. If NULL, all cell types are included.}
+\item{cell_types}{A character vector specifying the cell types to analyze. If
+NULL, all cell types are included.}
 
-\item{pc_subset}{A numeric vector specifying which principal components to use in the reconstruction. Default is 1:5.}
+\item{pc_subset}{A numeric vector specifying which principal components to
+use in the reconstruction. Default is 1:5.}
 
-\item{n_hvgs}{An integer specifying the number of highly variable genes to calculate for each cell type's local PCA space. Default is 100.}
+\item{n_hvgs}{An integer specifying the number of highly variable genes to
+calculate for each cell type's local PCA space. Default is 100.}
 
-\item{mad_multiplier}{A numeric value specifying the number of Median Absolute Deviations (MADs)
-above the reference median to use as the anomaly cutoff. Default is 2.}
+\item{mad_multiplier}{A numeric value specifying the number of Median
+Absolute Deviations (MADs) above the reference median to use as the anomaly
+cutoff. Default is 2.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is 5000.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is 5000.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is 5000.}
 
-\item{x}{A list object of class \code{calculateReconstructionErrorObject} containing the results
-from the \code{calculateReconstructionError} function.}
+\item{x}{A list object of class \code{calculateReconstructionErrorObject}
+containing the results from the \code{calculateReconstructionError} function.}
 
-\item{cell_type}{A character string specifying the cell type for which the plots should be generated.
-If NULL, defaults to "Combined" if available, otherwise plots the first available cell type. Default is NULL.}
+\item{cell_type}{A character string specifying the cell type for which the
+plots should be generated. If NULL, defaults to "Combined" if available,
+otherwise plots the first available cell type. Default is NULL.}
 
-\item{data_type}{A character string specifying whether to plot the "query" data, "reference" data,
-or "both". Default is "both".}
+\item{data_type}{A character string specifying whether to plot the "query"
+data, "reference" data, or "both". Default is "both".}
 
-\item{plot_type}{A character string specifying the type of visualization. Options are
-\code{"violin"}, \code{"boxplot"}, \code{"ridge"}, or \code{"heatmap"}. Default is \code{"violin"}.}
+\item{plot_type}{A character string specifying the type of visualization.
+Options are \code{"violin"}, \code{"boxplot"}, \code{"ridge"}, or
+\code{"heatmap"}. Default is \code{"violin"}.}
 
-\item{draw_plot}{Logical indicating whether to draw the plot immediately (TRUE) or return
-the undrawn plot object (FALSE). For heatmaps, FALSE returns a ComplexHeatmap object. Default is FALSE.}
+\item{draw_plot}{Logical indicating whether to draw the plot immediately
+(TRUE) or return the undrawn plot object (FALSE). For heatmaps, FALSE returns
+a ComplexHeatmap object. Default is FALSE.}
 
-\item{...}{Additional arguments passed to \code{ComplexHeatmap::Heatmap} when \code{plot_type = "heatmap"}.}
+\item{...}{Additional arguments passed to \code{ComplexHeatmap::Heatmap} when
+\code{plot_type = "heatmap"}.}
 }
 \value{
-A list containing the following components for each cell type and the combined data:
-\item{reference_reconstruction_errors}{Reconstruction error (SSE) for each cell in the reference data.}
-\item{reference_anomaly}{Logical vector indicating whether each reference cell is classified as an anomaly.}
-\item{query_reconstruction_errors}{Reconstruction error (SSE) for each cell in the query data (if provided).}
-\item{query_anomaly}{Logical vector indicating whether each query cell is classified as an anomaly.}
-\item{applied_threshold}{The numeric threshold applied to determine anomalies for that cell type.}
-\item{var_explained}{Proportion of variance explained by the retained principal components for that cell type's local PCA.}
+A list containing the following components for each cell type and the
+combined data:
+\item{reference_reconstruction_errors}{Reconstruction error (SSE) for each
+cell in the reference data.}
+\item{reference_anomaly}{Logical vector indicating whether each reference
+cell is classified as an anomaly.}
+\item{query_reconstruction_errors}{Reconstruction error (SSE) for each cell
+in the query data (if provided).}
+\item{query_anomaly}{Logical vector indicating whether each query cell is
+classified as an anomaly.}
+\item{applied_threshold}{The numeric threshold applied to determine anomalies
+for that cell type.}
+\item{var_explained}{Proportion of variance explained by the retained
+principal components for that cell type's local PCA.}
 
-A \code{ggplot2} object for distribution plots, or a \code{ComplexHeatmap} object for heatmaps.
+A \code{ggplot2} object for distribution plots, or a
+\code{ComplexHeatmap} object for heatmaps.
 }
 \description{
-This function detects "out-of-distribution" anomalies by calculating the PCA reconstruction error
-(Sum of Squared Errors) for each cell. It projects cells into a reference PCA space, attempts to
-reconstruct their original gene expression profile based solely on reference PCA rules, and measures
-the residual difference.
+This function detects "out-of-distribution" anomalies by
+calculating the PCA reconstruction error (Sum of Squared Errors) for each
+cell. It projects cells into a reference PCA space, attempts to reconstruct
+their original gene expression profile based solely on reference PCA rules,
+and measures the residual difference.
 
-This S3 plot method generates visualizations for PCA reconstruction errors (out-of-distribution anomalies).
-It displays the distribution of errors for the query and/or reference datasets, highlights the
-calculated anomaly threshold, and explicitly identifies anomalous cells. It can also generate
-heatmaps of the highly variable genes driving the local PCA space.
+This S3 plot method generates visualizations for PCA
+reconstruction errors (out-of-distribution anomalies). It displays the
+distribution of errors for the query and/or reference datasets, highlights
+the calculated anomaly threshold, and explicitly identifies anomalous cells.
+It can also generate heatmaps of the highly variable genes driving the local
+PCA space.
 }
 \details{
-PCA creates a low-dimensional summary of biological variation. By computing a local PCA space
-specifically for each reference cell type, the algorithm learns the strict biological rules governing
-that specific cell state.
+PCA creates a low-dimensional summary of biological variation. By
+computing a local PCA space specifically for each reference cell type, the
+algorithm learns the strict biological rules governing that specific cell
+state.
 
-If a query cell contains a novel biological state (e.g., a viral infection, unique drug response,
-or it is actually an unrepresented cell subtype hiding in the cluster), it will express genes that
-the local reference PCA ignores. When the query cell is projected into the reference PCA space and
+If a query cell contains a novel biological state (e.g., a viral infection,
+unique drug response, or it is actually an unrepresented cell subtype hiding
+in the cluster), it will express genes that the local reference PCA ignores.
+When the query cell is projected into the reference PCA space and
 mathematically reconstructed, those novel gene expressions are lost.
 
-By subtracting the reconstructed matrix from the original matrix, this function isolates the
-"Residuals" (biology that the reference cannot explain). The Sum of Squared Errors (SSE) of
-these residuals serves as a highly sensitive anomaly score for novel biological states.
+By subtracting the reconstructed matrix from the original matrix, this
+function isolates the "Residuals" (biology that the reference cannot
+explain). The Sum of Squared Errors (SSE) of these residuals serves as a
+highly sensitive anomaly score for novel biological states.
 
-The function extracts the reconstruction errors from the given object and generates a visualization.
+The function extracts the reconstruction errors from the given
+object and generates a visualization.
 
 Four \code{plot_type} options are available:
 \itemize{
-  \item \code{"violin"} (Default): Shows a violin plot of the error distribution overlaid with individual cell
-        points (jittered) colored by anomaly status. The violin is trimmed to the data range to maintain
-        statistical validity (preventing density estimation below zero).
-  \item \code{"boxplot"}: Shows a standard boxplot overlaid with jittered points.
-  \item \code{"ridge"}: Shows ridgeline plots separating the datasets vertically. A vertical red dashed line
-        marks the threshold. Best for visualizing the density of the non-anomalous cells versus the long tail of anomalies.
-  \item \code{"heatmap"}: Generates a \code{ComplexHeatmap} showing the Z-score scaled expression of the
-        highly variable genes used to construct the local PCA space. Cells are grouped by Dataset and Anomaly Status.
+ \item \code{"violin"} (Default): Shows a violin plot of the error
+ distribution overlaid with individual cell points (jittered) colored by
+ anomaly status. The violin is trimmed to the data range to maintain
+ statistical validity (preventing density estimation below zero).
+ \item \code{"boxplot"}: Shows a standard boxplot overlaid with jittered
+ points.
+ \item \code{"ridge"}: Shows ridgeline plots separating the datasets
+ vertically. A vertical red dashed line marks the threshold. Best for
+ visualizing the density of the non-anomalous cells versus the long tail of
+ anomalies.
+ \item \code{"heatmap"}: Generates a \code{ComplexHeatmap} showing the
+ Z-score scaled expression of the highly variable genes used to construct the
+ local PCA space. Cells are grouped by Dataset and Anomaly Status.
 }
 }
 \examples{
@@ -152,5 +189,6 @@ plot(recon_output,
 \code{\link{calculateReconstructionError}}
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

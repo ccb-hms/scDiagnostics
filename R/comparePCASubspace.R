@@ -1,36 +1,50 @@
 #' @title Compare Subspaces Spanned by Top Principal Components
 #'
-#' @description
-#' This function compares the subspace spanned by the top principal components (PCs) in a reference dataset to that
-#' in a query dataset. It computes the cosine similarity between the loadings of the top variables for each PC in
-#' both datasets and provides a weighted cosine similarity score.
+#' @description This function compares the subspace spanned by the top principal
+#' components (PCs) in a reference dataset to that in a query dataset. It
+#' computes the cosine similarity between the loadings of the top variables for
+#' each PC in both datasets and provides a weighted cosine similarity score.
 #'
-#' @details
-#' This function compares the subspace spanned by the top principal components (PCs) in a reference dataset
-#' to that in a query dataset. It first computes the cosine similarity between the loadings of the top variables
-#' for each PC in both datasets. The top cosine similarity scores are then selected, and their corresponding PC
-#' indices are stored. Additionally, the function calculates the average percentage of variance explained by the
-#' selected top PCs. Finally, it computes a weighted cosine similarity score based on the top cosine similarities
-#' and the average percentage of variance explained.
+#' @details This function compares the subspace spanned by the top principal
+#' components (PCs) in a reference dataset to that in a query dataset. It first
+#' computes the cosine similarity between the loadings of the top variables for
+#' each PC in both datasets. The top cosine similarity scores are then selected,
+#' and their corresponding PC indices are stored. Additionally, the function
+#' calculates the average percentage of variance explained by the selected top
+#' PCs. Finally, it computes a weighted cosine similarity score based on the top
+#' cosine similarities and the average percentage of variance explained.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
-#' @param pc_subset A numeric vector specifying the subset of principal components (PCs) to compare. Default is the first five PCs.
-#' @param n_top_vars An integer indicating the number of top loading variables to consider for each PC. Default is 50.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_cell_type_col The column name in the \code{colData} of
+#' \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col The column name in the \code{colData} of
+#' \code{reference_data} that identifies the cell types.
+#' @param pc_subset A numeric vector specifying the subset of principal
+#' components (PCs) to compare. Default is the first five PCs.
+#' @param n_top_vars An integer indicating the number of top loading variables
+#' to consider for each PC. Default is 50.
 #'
 #' @return A list containing the following components:
-#'   \item{cosine_similarity}{A numeric vector of cosine values of principal angles.}
-#'   \item{cosine_id}{A matrix showing which reference and query PCs were matched.}
-#'   \item{var_explained_ref}{A numeric vector of variance explained by reference PCs.}
-#'   \item{var_explained_query}{A numeric vector of variance explained by query PCs.}
-#'   \item{var_explained_avg}{A numeric vector of average variance explained by each PC pair.}
-#'   \item{weighted_cosine_similarity}{A numeric value representing the weighted cosine similarity.}
+#'   \item{cosine_similarity}{A numeric vector of cosine values of principal
+#'   angles.}
+#'   \item{cosine_id}{A matrix showing which reference and query PCs were
+#'   matched.}
+#'   \item{var_explained_ref}{A numeric vector of variance explained by
+#'   reference PCs.}
+#'   \item{var_explained_query}{A numeric vector of variance explained by query
+#'   PCs.}
+#'   \item{var_explained_avg}{A numeric vector of average variance explained by
+#'   each PC pair.}
+#'   \item{weighted_cosine_similarity}{A numeric value representing the weighted
+#'   cosine similarity.}
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @seealso \code{\link{plot.comparePCASubspaceObject}}
 #'
@@ -73,7 +87,8 @@
 #' # Plot output for PCA subspace comparison
 #' plot(subspace_comparison)
 #'
-# Function to compare subspace spanned by top PCs in reference and query datasets
+# Function to compare subspace spanned by top PCs in reference and query
+# datasets
 comparePCASubspace <- function(query_data,
                                reference_data,
                                query_cell_type_col,

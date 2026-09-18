@@ -1,38 +1,49 @@
 #' @title Plot Principal Components for Different Cell Types
 #'
-#' @description This function generates a \code{ggplot2} visualization of principal components (PCs) for different
-#' cell types across two datasets (query and reference), using either boxplots or violin plots.
+#' @description This function generates a \code{ggplot2} visualization of
+#' principal components (PCs) for different cell types across two datasets
+#' (query and reference), using either boxplots or violin plots.
 #'
-#' @details
-#' The function \code{boxplotPCA} is designed to provide a visualization of principal component analysis (PCA) results. It projects
-#' the query dataset onto the principal components obtained from the reference dataset. The results are then visualized
-#' as boxplots or violin plots, grouped by cell types and datasets (query and reference). This allows for a comparative analysis of the
-#' distributions of the principal components across different cell types and datasets. The function internally calls \code{projectPCA}
-#' to perform the PCA projection. It then reshapes the output data into a long format suitable for ggplot2 plotting.
+#' @details The function \code{boxplotPCA} is designed to provide a
+#' visualization of principal component analysis (PCA) results. It projects the
+#' query dataset onto the principal components obtained from the reference
+#' dataset. The results are then visualized as boxplots or violin plots, grouped
+#' by cell types and datasets (query and reference). This allows for a
+#' comparative analysis of the distributions of the principal components across
+#' different cell types and datasets. The function internally calls
+#' \code{projectPCA} to perform the PCA projection. It then reshapes the output
+#' data into a long format suitable for ggplot2 plotting.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the
-#'                   query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for
-#'                       the reference cells.
-#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are
-#'                   included.
-#' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
-#' @param shape Character string indicating the plot type: "box" for boxplots or "violin" for violin plots.
-#'              Default is "box".
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is NULL.
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is NULL.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_cell_type_col The column name in the \code{colData} of
+#' \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col The column name in the \code{colData} of
+#' \code{reference_data} that identifies the cell types.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the plot. If NULL, all cell types are included.
+#' @param pc_subset A numeric vector specifying which principal components to
+#' include in the plot. Default is PC1 to PC5.
+#' @param shape Character string indicating the plot type: "box" for boxplots or
+#' "violin" for violin plots. Default is "box".
+#' @param assay_name Name of the assay on which to perform computations. Default
+#' is "logcounts".
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is NULL.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is NULL.
 #'
-#' @return A ggplot object representing the boxplots or violin plots of specified principal components for the given
-#'         cell types and datasets.
+#' @return A ggplot object representing the boxplots or violin plots of
+#' specified principal components for the given cell types and datasets.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
 #' # Load data
@@ -153,7 +164,8 @@ boxplotPCA <- function(query_data,
     pc_order <- paste0("pc", pc_subset)
     pca_long[["PC"]] <- factor(pca_long[["PC"]], levels = pc_order)
 
-    # Create a new variable representing the combination of cell type and dataset
+    # Create a new variable representing the combination of cell type and
+    # dataset
     pca_long[["cell_type_dataset"]] <- paste(pca_long[["dataset"]],
         pca_long[["cell_type"]],
         sep = " "

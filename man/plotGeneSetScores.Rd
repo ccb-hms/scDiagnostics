@@ -2,7 +2,8 @@
 % Please edit documentation in R/plotGeneSetScores.R
 \name{plotGeneSetScores}
 \alias{plotGeneSetScores}
-\title{Visualization of gene sets or pathway scores on dimensional reduction plot}
+\title{Visualization of gene sets or pathway scores on dimensional reduction
+plot}
 \usage{
 plotGeneSetScores(
   sce_object,
@@ -15,35 +16,43 @@ plotGeneSetScores(
 )
 }
 \arguments{
-\item{sce_object}{An object of class \linkS4class{SingleCellExperiment} containing numeric expression matrix and other metadata.
-It can be either a reference or query dataset.}
+\item{sce_object}{An object of class \linkS4class{SingleCellExperiment}
+containing numeric expression matrix and other metadata. It can be either a
+reference or query dataset.}
 
-\item{cell_type_col}{The column name in the \code{colData} of \code{sce_object} that identifies the cell types.}
+\item{cell_type_col}{The column name in the \code{colData} of
+\code{sce_object} that identifies the cell types.}
 
-\item{method}{A character string indicating the method for visualization ("PCA", "TSNE", or "UMAP").}
+\item{method}{A character string indicating the method for visualization
+("PCA", "TSNE", or "UMAP").}
 
-\item{score_col}{A character string representing the name of the score_col (score) in the colData(sce_object) to plot.}
+\item{score_col}{A character string representing the name of the score_col
+(score) in the colData(sce_object) to plot.}
 
-\item{pc_subset}{An optional vector specifying the principal components (PCs) to include in the plot if method = "PCA".
-Default is 1:5.}
+\item{pc_subset}{An optional vector specifying the principal components (PCs)
+to include in the plot if method = "PCA". Default is 1:5.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+\item{cell_types}{A character vector specifying the cell types to include in
+the plot. If NULL, all cell types are included.}
 
-\item{max_cells}{Maximum number of cells to retain. If the object has fewer cells, it is returned unchanged.
-Default is 2000.}
+\item{max_cells}{Maximum number of cells to retain. If the object has fewer
+cells, it is returned unchanged. Default is 2000.}
 }
 \value{
-A ggplot2 object representing the gene set scores plotted on the specified reduced dimensions.
+A ggplot2 object representing the gene set scores plotted on the
+specified reduced dimensions.
 }
 \description{
-Plot gene sets or pathway scores on PCA, TSNE, or UMAP. Single cells are color-coded by scores of gene sets or pathways.
+Plot gene sets or pathway scores on PCA, TSNE, or UMAP. Single
+cells are color-coded by scores of gene sets or pathways.
 }
 \details{
-This function plots gene set scores on reduced dimensions such as PCA, t-SNE, or UMAP.
-It extracts the reduced dimensions from the provided \linkS4class{SingleCellExperiment} object.
-Gene set scores are visualized as a scatter plot with colors indicating the scores.
-For PCA, the function automatically includes the percentage of variance explained
-in the plot's legend.
+This function plots gene set scores on reduced dimensions such as
+PCA, t-SNE, or UMAP. It extracts the reduced dimensions from the provided
+\linkS4class{SingleCellExperiment} object. Gene set scores are visualized as
+a scatter plot with colors indicating the scores. For PCA, the function
+automatically includes the percentage of variance explained in the plot's
+legend.
 }
 \examples{
 # Load data
@@ -61,5 +70,6 @@ plotGeneSetScores(
 
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

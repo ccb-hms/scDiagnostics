@@ -15,42 +15,51 @@ conditionalMeans(
 )
 }
 \arguments{
-\item{reference_data}{A \code{SingleCellExperiment} object containing the reference data, where rows
-represent genes and columns represent cells.}
+\item{reference_data}{A \code{SingleCellExperiment} object containing the
+reference data, where rows represent genes and columns represent cells.}
 
-\item{ref_cell_type_col}{A character string specifying the column in \code{colData(reference_data)} that contains the cell type labels.}
+\item{ref_cell_type_col}{A character string specifying the column in
+\code{colData(reference_data)} that contains the cell type labels.}
 
-\item{cell_types}{A character vector of cell types for which to compute conditional means.}
+\item{cell_types}{A character vector of cell types for which to compute
+conditional means.}
 
-\item{multiple_cond_means}{A logical value indicating whether to compute multiple conditional means per cell type.
-Defaults to \code{FALSE}.}
+\item{multiple_cond_means}{A logical value indicating whether to compute
+multiple conditional means per cell type. Defaults to \code{FALSE}.}
 
-\item{assay_name}{A character string specifying the name of the assay to use for the computation. Defaults to \code{"logcounts"}.}
+\item{assay_name}{A character string specifying the name of the assay to use
+for the computation. Defaults to \code{"logcounts"}.}
 
-\item{cumulative_variance_threshold}{A numeric value between 0 and 1 specifying the variance threshold
-for PCA when computing multiple conditional means. Defaults to \code{0.7}.}
+\item{cumulative_variance_threshold}{A numeric value between 0 and 1
+specifying the variance threshold for PCA when computing multiple conditional
+means. Defaults to \code{0.7}.}
 
-\item{n_neighbor}{An integer specifying the number of nearest neighbors for clustering when computing multiple conditional means.
-Defaults to \code{1}.}
+\item{n_neighbor}{An integer specifying the number of nearest neighbors for
+clustering when computing multiple conditional means. Defaults to \code{1}.}
 }
 \value{
-A numeric matrix with the conditional means for each cell type. If \code{multiple_cond_means = TRUE}, the matrix
-will contain multiple rows for each cell type, representing the different conditional means computed via clustering.
+A numeric matrix with the conditional means for each cell type. If
+\code{multiple_cond_means = TRUE}, the matrix will contain multiple rows for
+each cell type, representing the different conditional means computed via
+clustering.
 }
 \description{
-This function computes conditional means for each cell type in the reference data. It can compute
-either a single conditional mean per cell type or multiple conditional means, depending on the
-specified settings. Principal component analysis (PCA) is used for dimensionality reduction before
-clustering when computing multiple conditional means.
+This function computes conditional means for each cell type in
+the reference data. It can compute either a single conditional mean per cell
+type or multiple conditional means, depending on the specified settings.
+Principal component analysis (PCA) is used for dimensionality reduction
+before clustering when computing multiple conditional means.
 }
 \details{
 The function offers two modes of operation:
 - **Single conditional mean per cell type**: For each cell type, it computes the mean expression
-  across all observations.
+across all observations.
 - **Multiple conditional means per cell type**: For each cell type, the function performs PCA to
-  reduce dimensionality, followed by clustering to compute multiple conditional means.
+reduce dimensionality, followed by clustering to compute multiple conditional
+means.
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }
 \keyword{internal}

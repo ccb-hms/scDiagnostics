@@ -1,48 +1,67 @@
 #' @title Argument Validation for SingleCellExperiment Analysis
 #'
-#' @description
-#' This function validates the input arguments for functions that analyze \linkS4class{SingleCellExperiment}
-#' objects. It checks that the inputs are of the correct types and formats, and that required columns and cell types
-#' are present in the data.
+#' @description This function validates the input arguments for functions that
+#' analyze \linkS4class{SingleCellExperiment} objects. It checks that the inputs
+#' are of the correct types and formats, and that required columns and cell
+#' types are present in the data.
 #'
-#' @details
-#' The function performs a series of checks to ensure that:
+#' @details The function performs a series of checks to ensure that:
 #' \itemize{
-#'  \item `query_data` and `reference_data` are \linkS4class{SingleCellExperiment} objects.
-#'  \item `query_cell_type_col` and `ref_cell_type_col` exist in the column data of their respective \linkS4class{SingleCellExperiment} objects.
-#'  \item If `unique_cell_type` is `TRUE`, there should only be one cell type in the \linkS4class{SingleCellExperiment} objects.
+#'  \item `query_data` and `reference_data` are
+#'  \linkS4class{SingleCellExperiment} objects.
+#'  \item `query_cell_type_col` and `ref_cell_type_col` exist in the column data
+#'  of their respective \linkS4class{SingleCellExperiment} objects.
+#'  \item If `unique_cell_type` is `TRUE`, there should only be one cell type in
+#'  the \linkS4class{SingleCellExperiment} objects.
 #'  \item `cell_names_query` are valid cell names in the provided query dataset.
-#'  \item `cell_names_ref` are valid cell names in the provided reference dataset.
-#'  \item The PCA subsets specified by `pc_subset_query` and `pc_subset_ref` are valid.
-#'  \item `max_cells_ref` and `max_cells_query` are positive integers when not NULL.
+#'  \item `cell_names_ref` are valid cell names in the provided reference
+#'  dataset.
+#'  \item The PCA subsets specified by `pc_subset_query` and `pc_subset_ref` are
+#'  valid.
+#'  \item `max_cells_ref` and `max_cells_query` are positive integers when not
+#'  NULL.
 #' }
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' If `NULL`, no check is performed.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' If `NULL`, no check is performed.
-#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data}
-#' that identifies the cell types. If `NULL`, no check is performed.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data}
-#' that identifies the cell types. If `NULL`, no check is performed.
-#' @param unique_cell_type If `TRUE`, there should only be one cell type in the provided \linkS4class{SingleCellExperiment} objects.
-#' Default is `FALSE`.
-#' @param plot_function A logical value indicating whether the function is being called to generate a plot. Default is `FALSE`.
-#' @param cell_names_query A character vector of cell names in query data to be analyzed. If `NULL`, no check is performed.
-#' @param cell_names_ref A character vector of cell names in reference data to be analyzed. If `NULL`, no check is performed.
-#' @param pc_subset_query A numeric vector specifying the principal components to be used for the query data. If `NULL`, no check is performed.
-#' @param pc_subset_ref A numeric vector specifying the principal components to be used for the reference data. If `NULL`, no check is performed.
-#' @param common_rotation_genes If TRUE, check the rotation matrices of the reference and query data and ensure they have the same genes.
-#' Default is FALSE.
-#' @param assay_name Name of the assay on which to perform computations. If `NULL`, no check is performed.
-#' @param max_cells_ref Maximum number of reference cells to retain. If `NULL`, no check is performed.
-#' @param max_cells_query Maximum number of query cells to retain. If `NULL`, no check is performed.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells. If `NULL`, no check is
+#' performed.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells. If `NULL`, no check is
+#' performed.
+#' @param query_cell_type_col The column name in the \code{colData} of
+#' \code{query_data} that identifies the cell types. If `NULL`, no check is
+#' performed.
+#' @param ref_cell_type_col The column name in the \code{colData} of
+#' \code{reference_data} that identifies the cell types. If `NULL`, no check is
+#' performed.
+#' @param unique_cell_type If `TRUE`, there should only be one cell type in the
+#' provided \linkS4class{SingleCellExperiment} objects. Default is `FALSE`.
+#' @param plot_function A logical value indicating whether the function is being
+#' called to generate a plot. Default is `FALSE`.
+#' @param cell_names_query A character vector of cell names in query data to be
+#' analyzed. If `NULL`, no check is performed.
+#' @param cell_names_ref A character vector of cell names in reference data to
+#' be analyzed. If `NULL`, no check is performed.
+#' @param pc_subset_query A numeric vector specifying the principal components
+#' to be used for the query data. If `NULL`, no check is performed.
+#' @param pc_subset_ref A numeric vector specifying the principal components to
+#' be used for the reference data. If `NULL`, no check is performed.
+#' @param common_rotation_genes If TRUE, check the rotation matrices of the
+#' reference and query data and ensure they have the same genes. Default is
+#' FALSE.
+#' @param assay_name Name of the assay on which to perform computations. If
+#' `NULL`, no check is performed.
+#' @param max_cells_ref Maximum number of reference cells to retain. If `NULL`,
+#' no check is performed.
+#' @param max_cells_query Maximum number of query cells to retain. If `NULL`, no
+#' check is performed.
 #'
 #' @keywords internal
 #'
 #' @return None.
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 # Function to check standard arguments for functions in the package
 argumentCheck <- function(query_data = NULL,
@@ -81,7 +100,8 @@ argumentCheck <- function(query_data = NULL,
         }
     }
 
-    # Check if query_cell_type_col is a character string of length 1 and exists in query_data
+    # Check if query_cell_type_col is a character string of length 1 and exists
+    # in query_data
     if (!is.null(query_cell_type_col)) {
         if (!is.null(query_data)) {
             if (!is.character(query_cell_type_col) ||
@@ -95,7 +115,8 @@ argumentCheck <- function(query_data = NULL,
         }
     }
 
-    # Check if ref_cell_type_col is a character string of length 1 and exists in reference_data
+    # Check if ref_cell_type_col is a character string of length 1 and exists in
+    # reference_data
     if (!is.null(ref_cell_type_col)) {
         if (!is.null(reference_data)) {
             if (!is.character(ref_cell_type_col) ||
@@ -217,7 +238,8 @@ argumentCheck <- function(query_data = NULL,
             stop("'max_cells_ref' must be a positive integer.")
         }
 
-        # Warning for plot functions when max_cells_ref > 50000 and reference_data exists
+        # Warning for plot functions when max_cells_ref > 50000 and
+        # reference_data exists
         if (plot_function && !is.null(reference_data) && max_cells_ref > 50000) {
             warning("'max_cells_ref' is set to ", max_cells_ref,
                 " which is greater than 50,000. For better plot performance, ",
@@ -234,7 +256,8 @@ argumentCheck <- function(query_data = NULL,
             stop("'max_cells_query' must be a positive integer.")
         }
 
-        # Warning for plot functions when max_cells_query > 50000 and query_data exists
+        # Warning for plot functions when max_cells_query > 50000 and query_data
+        # exists
         if (plot_function && !is.null(query_data) && max_cells_query > 50000) {
             warning("'max_cells_query' is set to ", max_cells_query,
                 " which is greater than 50,000. For better plot performance, ",

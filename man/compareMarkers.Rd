@@ -23,79 +23,103 @@ compareMarkers(
 \method{plot}{compareMarkersObject}(x, cell_types = NULL, ...)
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+reference cells.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+\item{query_cell_type_col}{The column name in the \code{colData} of
+\code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types.}
 
-\item{cell_types}{Character vector specifying which cell types to plot. If NULL, all cell types are plotted.}
+\item{cell_types}{Character vector specifying which cell types to plot. If
+NULL, all cell types are plotted.}
 
-\item{n_markers}{Number of top marker genes to consider for each cell type. Default is 50.}
+\item{n_markers}{Number of top marker genes to consider for each cell type.
+Default is 50.}
 
-\item{min_cells}{Minimum number of cells required per cell type for marker identification. Default is 10.}
+\item{min_cells}{Minimum number of cells required per cell type for marker
+identification. Default is 10.}
 
-\item{anomaly_filter}{Character string specifying how to filter query cells based on anomaly detection.
-Options: "none" (default), "anomalous_only", "non_anomalous_only".}
+\item{anomaly_filter}{Character string specifying how to filter query cells
+based on anomaly detection. Options: "none" (default), "anomalous_only",
+"non_anomalous_only".}
 
-\item{assay_name}{Name of the assay to use for computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay to use for computations. Default is
+"logcounts".}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is 5000.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is 5000.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is 5000.}
 
 \item{...}{Additional arguments passed to the plotting function.}
 
-\item{x}{A list containing the output from the \code{compareMarkers} function.}
+\item{x}{A list containing the output from the \code{compareMarkers}
+function.}
 }
 \value{
 A list containing the following elements:
 \describe{
-  \item{marker_overlap}{Matrix showing overlap of top markers between query and reference for each cell type.}
-  \item{expression_consistency}{Matrix showing expression consistency of reference markers in query data.}
-  \item{quality_scores}{Named vector of quality assessments for each cell type.}
-  \item{markers_query}{List of marker gene results for each cell type in query data.}
-  \item{markers_ref}{List of marker gene results for each cell type in reference data.}
+  \item{marker_overlap}{Matrix showing overlap of top markers between query
+  and reference for each cell type.}
+  \item{expression_consistency}{Matrix showing expression consistency of
+  reference markers in query data.}
+  \item{quality_scores}{Named vector of quality assessments for each cell
+  type.}
+  \item{markers_query}{List of marker gene results for each cell type in
+  query data.}
+  \item{markers_ref}{List of marker gene results for each cell type in
+  reference data.}
   \item{common_cell_types}{Vector of cell types present in both datasets.}
   \item{n_cells_query}{Named vector of cell counts per type in query data.}
   \item{n_cells_ref}{Named vector of cell counts per type in reference data.}
-  \item{anomaly_filter_used}{Character string indicating the anomaly filter applied.}
+  \item{anomaly_filter_used}{Character string indicating the anomaly filter
+  applied.}
   \item{selected_cell_types}{Character vector of cell types analyzed.}
   \item{anomaly_output}{Output from anomaly detection if performed.}
 }
 
-The S3 plot method returns a \code{ggplot} object representing the marker gene comparison results.
+The S3 plot method returns a \code{ggplot} object representing the
+marker gene comparison results.
 }
 \description{
-This function identifies marker genes for each cell type in both query and reference datasets
-using the standard Bioconductor approach (Wilcoxon rank-sum test), and compares their expression
-patterns to assess annotation quality. It can optionally filter query cells based on anomaly detection
-results and restrict analysis to specific cell types.
+This function identifies marker genes for each cell type in both
+query and reference datasets using the standard Bioconductor approach
+(Wilcoxon rank-sum test), and compares their expression patterns to assess
+annotation quality. It can optionally filter query cells based on anomaly
+detection results and restrict analysis to specific cell types.
 
-The S3 plot method generates a comprehensive visualization of the output from the `compareMarkers` function.
-The plot shows marker gene overlap and expression consistency between query and reference cell types,
+The S3 plot method generates a comprehensive visualization of
+the output from the `compareMarkers` function. The plot shows marker gene
+overlap and expression consistency between query and reference cell types,
 with quality assessment and detailed annotations.
 }
 \details{
-The function performs the following steps:
-1. Optionally performs anomaly detection and filters query cells based on results.
-2. Identifies marker genes for each cell type in both datasets using \code{findMarkers} approach.
-3. Reference markers are always computed using all reference cells for each cell type.
-4. Query markers are computed using filtered cells (anomalous/non-anomalous) if specified.
-5. Compares the overlap of top marker genes between corresponding cell types.
-6. Evaluates the expression consistency of reference markers in query data.
-7. Provides quality scores based on marker gene concordance.
+The function performs the following steps: 1. Optionally performs
+anomaly detection and filters query cells based on results. 2. Identifies
+marker genes for each cell type in both datasets using \code{findMarkers}
+approach. 3. Reference markers are always computed using all reference cells
+for each cell type. 4. Query markers are computed using filtered cells
+(anomalous/non-anomalous) if specified. 5. Compares the overlap of top marker
+genes between corresponding cell types. 6. Evaluates the expression
+consistency of reference markers in query data. 7. Provides quality scores
+based on marker gene concordance.
 
-Marker genes are identified using Wilcoxon rank-sum tests comparing each cell type against all others.
-High overlap and consistent expression of markers indicate good annotation quality.
+Marker genes are identified using Wilcoxon rank-sum tests comparing each cell
+type against all others. High overlap and consistent expression of markers
+indicate good annotation quality.
 
-The S3 plot method creates a scatter plot showing the relationship between marker overlap (x-axis)
-and expression consistency (y-axis) for each cell type. Points are colored by quality score and
-sized by the minimum number of cells. Quality zones provide visual guidance for interpretation.
+The S3 plot method creates a scatter plot showing the relationship
+between marker overlap (x-axis) and expression consistency (y-axis) for each
+cell type. Points are colored by quality score and sized by the minimum
+number of cells. Quality zones provide visual guidance for interpretation.
 }
 \examples{
 # Load data
@@ -129,6 +153,7 @@ plot(marker_comparison)
 \code{\link{compareMarkers}}
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }
 \keyword{internal}

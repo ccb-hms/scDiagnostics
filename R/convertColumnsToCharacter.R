@@ -1,35 +1,43 @@
 #' @title Convert Specified Columns to Character in SingleCellExperiment Objects
 #'
-#' @description
-#' This function converts specified columns in the \code{colData} of a \linkS4class{SingleCellExperiment}
-#' object to character type. It checks that the specified columns exist and only performs conversion
-#' when necessary (i.e., when columns are not already character type).
+#' @description This function converts specified columns in the \code{colData}
+#' of a \linkS4class{SingleCellExperiment} object to character type. It checks
+#' that the specified columns exist and only performs conversion when necessary
+#' (i.e., when columns are not already character type).
 #'
-#' @details
-#' The function performs the following operations:
+#' @details The function performs the following operations:
 #' \itemize{
-#'  \item Validates that the input is a \linkS4class{SingleCellExperiment} object.
-#'  \item Checks that all specified columns exist in the \code{colData} of the object.
-#'  \item Converts each specified column to character type if it is not already character.
+#'  \item Validates that the input is a \linkS4class{SingleCellExperiment}
+#'  object.
+#'  \item Checks that all specified columns exist in the \code{colData} of the
+#'  object.
+#'  \item Converts each specified column to character type if it is not already
+#'  character.
 #'  \item Returns the modified \linkS4class{SingleCellExperiment} object.
-#'  \item If all specified columns are already character type, returns the object unchanged.
+#'  \item If all specified columns are already character type, returns the
+#'  object unchanged.
 #' }
 #'
-#' This function is particularly useful for handling factor columns that need to be converted
-#' to character for downstream analysis functions that expect character input.
+#' This function is particularly useful for handling factor columns that need to
+#' be converted to character for downstream analysis functions that expect
+#' character input.
 #'
-#' @param sce_object A \linkS4class{SingleCellExperiment} object containing single-cell data.
-#' @param convert_cols A character vector specifying the column names in \code{colData} to convert
-#' to character type. All specified columns must exist in the \code{colData}.
+#' @param sce_object A \linkS4class{SingleCellExperiment} object containing
+#' single-cell data.
+#' @param convert_cols A character vector specifying the column names in
+#' \code{colData} to convert to character type. All specified columns must exist
+#' in the \code{colData}.
 #'
 #' @keywords internal
 #'
-#' @return A \linkS4class{SingleCellExperiment} object with the specified columns converted
-#' to character type in the \code{colData}.
+#' @return A \linkS4class{SingleCellExperiment} object with the specified
+#' columns converted to character type in the \code{colData}.
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
-# Function to convert specified columns to character in SingleCellExperiment objects
+# Function to convert specified columns to character in SingleCellExperiment
+# objects
 convertColumnsToCharacter <- function(sce_object, convert_cols) {
     # Validate input object
     if (!is(sce_object, "SingleCellExperiment")) {

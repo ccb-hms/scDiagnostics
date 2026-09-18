@@ -7,23 +7,29 @@
 generateColors(cell_type_names, paired = FALSE)
 }
 \arguments{
-\item{cell_type_names}{A character vector of cell type names that need to be assigned colors.}
+\item{cell_type_names}{A character vector of cell type names that need to be
+assigned colors.}
 
-\item{paired}{If TRUE, the colored returned should be paired. Default is FALSE.}
+\item{paired}{If TRUE, the colored returned should be paired. Default is
+FALSE.}
 }
 \value{
-A named character vector where the names are the original cell type names, and the values are the assigned colors.
+A named character vector where the names are the original cell type
+names, and the values are the assigned colors.
 }
 \description{
-This function assigns paired colors (light and dark) to a list of cell type names. The colors are selected from various color
-palettes in the `pals` package.
+This function assigns paired colors (light and dark) to a list
+of cell type names. The colors are selected from various color palettes in
+the `pals` package.
 }
 \details{
-The function uses color palettes from the `pals` package to generate colors or pairs of colors (light and dark) for each cell
-type name provided. It cycles through different color families (blues, greens, reds, oranges, purples, purd and greys) to create
-the colors
+The function uses color palettes from the `pals` package to generate
+colors or pairs of colors (light and dark) for each cell type name provided.
+It cycles through different color families (blues, greens, reds, oranges,
+purples, purd and greys) to create the colors
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }
 \keyword{internal}

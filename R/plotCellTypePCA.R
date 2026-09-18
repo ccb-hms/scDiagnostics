@@ -1,29 +1,43 @@
 #' @title Plot Principal Components for Different Cell Types
 #'
-#' @description
-#' This function plots the principal components for different cell types in the query and reference datasets.
+#' @description This function plots the principal components for different cell
+#' types in the query and reference datasets.
 #'
-#' @details
-#' This function projects the query dataset onto the principal component space of the reference dataset and then plots the
-#' specified principal components for the specified cell types.
-#' It uses the `projectPCA` function to perform the projection and \code{GGally} to create the pairs plot.
+#' @details This function projects the query dataset onto the principal
+#' component space of the reference dataset and then plots the specified
+#' principal components for the specified cell types. It uses the `projectPCA`
+#' function to perform the projection and \code{GGally} to create the pairs
+#' plot.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' @param query_cell_type_col The column name in the \code{colData} of \code{query_data} that identifies the cell types.
-#' @param ref_cell_type_col The column name in the \code{colData} of \code{reference_data} that identifies the cell types.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
-#' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is 1:5.
-#' @param lower_facet Type of plot to use for the lower panels. Either "scatter" (default), "contour", "ellipse", or "blank".
-#' @param diagonal_facet Type of plot to use for the diagonal panels. Either "ridge" (default), "density", or "boxplot".
-#' @param upper_facet Type of plot to use for the upper panels. Either "blank" (default), "scatter", "contour", or "ellipse".
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is 2000.
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is 2000.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_cell_type_col The column name in the \code{colData} of
+#' \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col The column name in the \code{colData} of
+#' \code{reference_data} that identifies the cell types.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the plot. If NULL, all cell types are included.
+#' @param pc_subset A numeric vector specifying which principal components to
+#' include in the plot. Default is 1:5.
+#' @param lower_facet Type of plot to use for the lower panels. Either "scatter"
+#' (default), "contour", "ellipse", or "blank".
+#' @param diagonal_facet Type of plot to use for the diagonal panels. Either
+#' "ridge" (default), "density", or "boxplot".
+#' @param upper_facet Type of plot to use for the upper panels. Either "blank"
+#' (default), "scatter", "contour", or "ellipse".
+#' @param assay_name Name of the assay on which to perform computations. Default
+#' is "logcounts".
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is 2000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is 2000.
 #'
-#' @return A ggmatrix object representing a pairs plot of specified principal components for the given cell types and datasets.
+#' @return A ggmatrix object representing a pairs plot of specified principal
+#' components for the given cell types and datasets.
 #'
 #' @export
 #'

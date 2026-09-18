@@ -2,7 +2,8 @@
 % Please edit documentation in R/plotMarkerExpression.R
 \name{plotMarkerExpression}
 \alias{plotMarkerExpression}
-\title{Plot gene expression distribution from overall and cell type-specific perspective}
+\title{Plot gene expression distribution from overall and cell type-specific
+perspective}
 \usage{
 plotMarkerExpression(
   query_data,
@@ -18,40 +19,52 @@ plotMarkerExpression(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
+\item{ref_cell_type_col}{The column name in the \code{colData} of
+\code{reference_data} that identifies the cell types.}
 
-\item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
+\item{query_cell_type_col}{The column name in the \code{colData} of
+\code{query_data} that identifies the cell types.}
 
 \item{cell_type}{A cell type to plot (e.g., c("T-cell", "B-cell")).}
 
-\item{gene_name}{The gene name for which the distribution is to be visualized.}
+\item{gene_name}{The gene name for which the distribution is to be
+visualized.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{normalization}{Method for normalizing expression values. Options: "z_score" (default), "min_max", "rank", "none".}
+\item{normalization}{Method for normalizing expression values. Options:
+"z_score" (default), "min_max", "rank", "none".}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is NULL.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is NULL.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is NULL.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is NULL.}
 }
 \value{
-A ggplot object containing density plots comparing reference and query distributions.
+A ggplot object containing density plots comparing reference and
+query distributions.
 }
 \description{
-This function generates density plots to visualize the distribution of gene expression values
-for a specific gene across the overall dataset and within a specified cell type.
+This function generates density plots to visualize the
+distribution of gene expression values for a specific gene across the overall
+dataset and within a specified cell type.
 }
 \details{
-This function generates density plots to compare the distribution of a specific marker
-gene between reference and query datasets. The aim is to inspect the alignment of gene expression
-levels as a surrogate for dataset similarity. Similar distributions suggest a good alignment,
-while differences may indicate discrepancies or incompatibilities between the datasets.
+This function generates density plots to compare the distribution of
+a specific marker gene between reference and query datasets. The aim is to
+inspect the alignment of gene expression levels as a surrogate for dataset
+similarity. Similar distributions suggest a good alignment, while differences
+may indicate discrepancies or incompatibilities between the datasets.
 
 Multiple normalization options are available:
 - "z_score": Standard z-score normalization within each dataset
@@ -77,5 +90,6 @@ plotMarkerExpression(
 
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

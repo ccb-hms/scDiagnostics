@@ -19,53 +19,68 @@ projectSIR(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{query_cell_type_col}{A character string specifying the column in the \code{colData} of \code{query_data}
-that identifies the cell types.}
+\item{query_cell_type_col}{A character string specifying the column in the
+\code{colData} of \code{query_data} that identifies the cell types.}
 
-\item{ref_cell_type_col}{A character string specifying the column in the \code{colData} of \code{reference_data}
-that identifies the cell types.}
+\item{ref_cell_type_col}{A character string specifying the column in the
+\code{colData} of \code{reference_data} that identifies the cell types.}
 
-\item{cell_types}{A character vector of cell types for which to compute conditional means in the reference data.}
+\item{cell_types}{A character vector of cell types for which to compute
+conditional means in the reference data.}
 
-\item{multiple_cond_means}{A logical value indicating whether to compute multiple conditional means per cell type
-(through PCA and clustering). Defaults to \code{TRUE}.}
+\item{multiple_cond_means}{A logical value indicating whether to compute
+multiple conditional means per cell type (through PCA and clustering).
+Defaults to \code{TRUE}.}
 
-\item{cumulative_variance_threshold}{A numeric value between 0 and 1 specifying the variance threshold for PCA
-when computing multiple conditional means. Defaults to \code{0.7}.}
+\item{cumulative_variance_threshold}{A numeric value between 0 and 1
+specifying the variance threshold for PCA when computing multiple conditional
+means. Defaults to \code{0.7}.}
 
-\item{n_neighbor}{An integer specifying the number of nearest neighbors for clustering when computing multiple
-conditional means. Defaults to \code{1}.}
+\item{n_neighbor}{An integer specifying the number of nearest neighbors for
+clustering when computing multiple conditional means. Defaults to \code{1}.}
 
-\item{assay_name}{A character string specifying the assay name on which to perform computations. Defaults to \code{"logcounts"}.}
+\item{assay_name}{A character string specifying the assay name on which to
+perform computations. Defaults to \code{"logcounts"}.}
 
-\item{max_cells_query}{Maximum number of query cells to retain after cell type filtering. If NULL,
-no downsampling of query cells is performed. Default is 5000.}
+\item{max_cells_query}{Maximum number of query cells to retain after cell
+type filtering. If NULL, no downsampling of query cells is performed. Default
+is 5000.}
 
-\item{max_cells_ref}{Maximum number of reference cells to retain after cell type filtering. If NULL,
-no downsampling of reference cells is performed. Default is 5000.}
+\item{max_cells_ref}{Maximum number of reference cells to retain after cell
+type filtering. If NULL, no downsampling of reference cells is performed.
+Default is 5000.}
 }
 \value{
 A list containing:
-\item{cond_means}{A matrix of the conditional means computed for the reference data.}
-\item{rotation_mat}{The rotation matrix obtained from the SVD of the conditional means.}
-\item{sir_projections}{A \code{data.frame} containing the SIR projections for both the reference and query datasets.}
-\item{percent_var}{The percentage of variance explained by each component of the SIR projection.}
+\item{cond_means}{A matrix of the conditional means computed for the
+reference data.}
+\item{rotation_mat}{The rotation matrix obtained from the SVD of the
+conditional means.}
+\item{sir_projections}{A \code{data.frame} containing the SIR projections for
+both the reference and query datasets.}
+\item{percent_var}{The percentage of variance explained by each component of
+the SIR projection.}
 }
 \description{
-This function projects a query \code{SingleCellExperiment} object onto the SIR (supervised independent
-component) space of a reference \code{SingleCellExperiment} object. The SVD of the reference data is
-computed on conditional means per cell type, and the query data is projected based on these reference
-components.
+This function projects a query \code{SingleCellExperiment}
+object onto the SIR (supervised independent component) space of a reference
+\code{SingleCellExperiment} object. The SVD of the reference data is computed
+on conditional means per cell type, and the query data is projected based on
+these reference components.
 }
 \details{
-The genes used for the projection (SVD) must be present in both the reference and query datasets.
-The function first computes conditional means for each cell type in the reference data, then performs
-SVD on these conditional means to obtain the rotation matrix used for projecting both the reference
-and query datasets. The query data is centered and scaled based on the reference data.
+The genes used for the projection (SVD) must be present in both the
+reference and query datasets. The function first computes conditional means
+for each cell type in the reference data, then performs SVD on these
+conditional means to obtain the rotation matrix used for projecting both the
+reference and query datasets. The query data is centered and scaled based on
+the reference data.
 }
 \examples{
 # Load data
@@ -82,5 +97,6 @@ sir_output <- projectSIR(
 
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

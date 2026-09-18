@@ -38,90 +38,124 @@ detectAnomaly(
 )
 }
 \arguments{
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+numeric expression matrix for the reference cells.}
 
-\item{query_data}{An optional \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-If NULL, then the isolation forest anomaly scores are computed for the reference data. Default is NULL.}
+\item{query_data}{An optional \linkS4class{SingleCellExperiment} object
+containing numeric expression matrix for the query cells. If NULL, then the
+isolation forest anomaly scores are computed for the reference data. Default
+is NULL.}
 
-\item{ref_cell_type_col}{A character string specifying the column name in the reference dataset containing cell type annotations.}
+\item{ref_cell_type_col}{A character string specifying the column name in the
+reference dataset containing cell type annotations.}
 
-\item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
+\item{query_cell_type_col}{A character string specifying the column name in
+the query dataset containing cell type annotations.}
 
-\item{cell_types}{A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.}
+\item{cell_types}{A character vector specifying the cell types to include in
+the plot. If NULL, all cell types are included.}
 
-\item{pc_subset}{A numeric vector specifying the indices of the PCs to be included in the plots.
-If NULL, all PCs in \code{reference_mat_subset} will be included. Ignored if HVGs were used.}
+\item{pc_subset}{A numeric vector specifying the indices of the PCs to be
+included in the plots. If NULL, all PCs in \code{reference_mat_subset} will
+be included. Ignored if HVGs were used.}
 
-\item{n_hvgs}{An integer specifying the number of highly variable genes to retain when `pc_subset` is NULL.
-If a query dataset is provided, the top `n_hvgs` are computed for both reference and query, and their union is used. Default is 100.}
+\item{n_hvgs}{An integer specifying the number of highly variable genes to
+retain when `pc_subset` is NULL. If a query dataset is provided, the top
+`n_hvgs` are computed for both reference and query, and their union is used.
+Default is 100.}
 
-\item{n_tree}{An integer specifying the number of trees for the isolation forest. Default is 500.}
+\item{n_tree}{An integer specifying the number of trees for the isolation
+forest. Default is 500.}
 
-\item{threshold_method}{A character string specifying the method to determine anomaly cutoffs.
-Options are \code{"MAD"} (Median Absolute Deviation) or \code{"absolute"}. Default is \code{"MAD"}.}
+\item{threshold_method}{A character string specifying the method to determine
+anomaly cutoffs. Options are \code{"MAD"} (Median Absolute Deviation) or
+\code{"absolute"}. Default is \code{"MAD"}.}
 
-\item{mad_multiplier}{A numeric value specifying the number of MADs above the reference median to use as the cutoff
-when \code{threshold_method = "MAD"}. Default is 2.}
+\item{mad_multiplier}{A numeric value specifying the number of MADs above the
+reference median to use as the cutoff when \code{threshold_method = "MAD"}.
+Default is 2.}
 
-\item{anomaly_threshold}{A numeric value specifying the absolute threshold for identifying anomalies
-when \code{threshold_method = "absolute"}. Default is 0.5.}
+\item{anomaly_threshold}{A numeric value specifying the absolute threshold
+for identifying anomalies when \code{threshold_method = "absolute"}. Default
+is 0.5.}
 
-\item{assay_name}{Name of the assay on which to perform computations. Default is "logcounts".}
+\item{assay_name}{Name of the assay on which to perform computations. Default
+is "logcounts".}
 
-\item{max_cells_query}{Maximum number of query cells to include in the plot. If NULL, all are plotted. Default is NULL.}
+\item{max_cells_query}{Maximum number of query cells to include in the plot.
+If NULL, all are plotted. Default is NULL.}
 
-\item{max_cells_ref}{Maximum number of reference cells to include in the plot. If NULL, all are plotted. Default is NULL.}
+\item{max_cells_ref}{Maximum number of reference cells to include in the
+plot. If NULL, all are plotted. Default is NULL.}
 
-\item{...}{Additional arguments passed to the `isolation.forest` function (PCA) or `ComplexHeatmap::Heatmap` function.}
+\item{...}{Additional arguments passed to the `isolation.forest` function
+(PCA) or `ComplexHeatmap::Heatmap` function.}
 
-\item{x}{A list object containing the anomaly detection results from the \code{detectAnomaly} function.}
+\item{x}{A list object containing the anomaly detection results from the
+\code{detectAnomaly} function.}
 
-\item{cell_type}{A character string specifying the cell type for which the plots should be generated.
-If NULL, the "Combined" cell type will be plotted. Default is NULL.}
+\item{cell_type}{A character string specifying the cell type for which the
+plots should be generated. If NULL, the "Combined" cell type will be plotted.
+Default is NULL.}
 
-\item{data_type}{A character string specifying whether to plot the "query" data, "reference" data,
-or "both". Note: "both" is only supported for HVG Heatmaps. Default is "query".}
+\item{data_type}{A character string specifying whether to plot the "query"
+data, "reference" data, or "both". Note: "both" is only supported for HVG
+Heatmaps. Default is "query".}
 
-\item{upper_facet}{Either "blank" (default), "contour", or "ellipse" for the upper facet plots (PCA only).}
+\item{upper_facet}{Either "blank" (default), "contour", or "ellipse" for the
+upper facet plots (PCA only).}
 
-\item{diagonal_facet}{Either "density" (default), "ridge", "boxplot" or "blank" for the diagonal plots (PCA only).}
+\item{diagonal_facet}{Either "density" (default), "ridge", "boxplot" or
+"blank" for the diagonal plots (PCA only).}
 
-\item{draw_plot}{Logical indicating whether to draw the plot immediately (TRUE) or return
-the undrawn plot object (FALSE). For heatmaps, FALSE returns a ComplexHeatmap object. Default is TRUE.}
+\item{draw_plot}{Logical indicating whether to draw the plot immediately
+(TRUE) or return the undrawn plot object (FALSE). For heatmaps, FALSE returns
+a ComplexHeatmap object. Default is TRUE.}
 }
 \value{
-A list containing the following components for each cell type and the combined data:
+A list containing the following components for each cell type and the
+combined data:
 \item{anomaly_scores}{Anomaly scores for each cell in the query data.}
-\item{anomaly}{Logical vector indicating whether each cell is classified as an anomaly.}
+\item{anomaly}{Logical vector indicating whether each cell is classified as
+an anomaly.}
 \item{reference_mat_subset}{PCA projections of the reference data.}
 \item{query_mat_subset}{PCA projections of the query data (if provided).}
-\item{var_explained}{Proportion of variance explained by the retained principal components.}
+\item{var_explained}{Proportion of variance explained by the retained
+principal components.}
 
-Returns a \code{GGally::ggpairs} object for PCA data, or a \code{ComplexHeatmap} object for HVG data.
+Returns a \code{GGally::ggpairs} object for PCA data, or a
+\code{ComplexHeatmap} object for HVG data.
 }
 \description{
-This function detects anomalies in single-cell data by projecting the data onto a PCA space and using an isolation forest
-algorithm to identify anomalies.
+This function detects anomalies in single-cell data by
+projecting the data onto a PCA space and using an isolation forest algorithm
+to identify anomalies.
 
-This S3 plot method generates visualizations for anomaly detection results.
-If PCA was used (\code{pc_subset} is numeric), it generates faceted scatter plots for the principal components.
-If highly variable genes (HVGs) were used (\code{pc_subset} is NULL), it generates a ComplexHeatmap of the HVGs.
+This S3 plot method generates visualizations for anomaly
+detection results. If PCA was used (\code{pc_subset} is numeric), it
+generates faceted scatter plots for the principal components. If highly
+variable genes (HVGs) were used (\code{pc_subset} is NULL), it generates a
+ComplexHeatmap of the HVGs.
 }
 \details{
-This function projects the query data onto the PCA space of the reference data. An isolation forest is then built on the
-reference data to identify anomalies in the query data based on their PCA projections. If no query dataset is provided by the user,
-the anomaly scores are computed on the reference data itself. Anomaly scores for the data with all combined cell types are also
-provided as part of the output.
+This function projects the query data onto the PCA space of the
+reference data. An isolation forest is then built on the reference data to
+identify anomalies in the query data based on their PCA projections. If no
+query dataset is provided by the user, the anomaly scores are computed on the
+reference data itself. Anomaly scores for the data with all combined cell
+types are also provided as part of the output.
 
 **PCA Scatter Plots:**
-Extracts the specified PCs and generates a `GGally` pairs plot. Lower facets show scatter plots
-with a background gradient representing anomaly scores. Diagonal facets show distributions, and
-upper facets show contours/ellipses separated by anomaly status.
+Extracts the specified PCs and generates a `GGally` pairs plot. Lower facets
+show scatter plots with a background gradient representing anomaly scores.
+Diagonal facets show distributions, and upper facets show contours/ellipses
+separated by anomaly status.
 
 **HVG Heatmaps:**
-Extracts the highly variable genes (HVGs) and generates a `ComplexHeatmap`. Cells are ordered by
-Dataset (Query vs Reference) and by Anomaly Status (Anomalous vs Non-Anomalous). Gene expression
-is Z-score scaled across cells for optimal visual contrast.
+Extracts the highly variable genes (HVGs) and generates a `ComplexHeatmap`.
+Cells are ordered by Dataset (Query vs Reference) and by Anomaly Status
+(Anomalous vs Non-Anomalous). Gene expression is Z-score scaled across cells
+for optimal visual contrast.
 }
 \examples{
 # Load data
@@ -150,8 +184,11 @@ plot(anomaly_output,
 }
 \references{
 \itemize{
-  \item Liu, F. T., Ting, K. M., & Zhou, Z. H. (2008). Isolation forest. In 2008 Eighth IEEE International Conference on Data Mining (pp. 413-422). IEEE.
-  \item \href{https://cran.r-project.org/web/packages/isotree/isotree.pdf}{isotree: Isolation-Based Outlier Detection}
+ \item Liu, F. T., Ting, K. M., & Zhou, Z. H. (2008). Isolation forest. In
+ 2008 Eighth IEEE International Conference on Data Mining (pp. 413-422).
+ IEEE.
+ \item \href{https://cran.r-project.org/web/packages/isotree/isotree.pdf}{isotree:
+ Isolation-Based Outlier Detection}
 }
 }
 \seealso{
@@ -160,5 +197,6 @@ plot(anomaly_output,
 \code{\link{detectAnomaly}}
 }
 \author{
-Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+Anthony Christidis,
+\email{anthony-alexander_christidis@hms.harvard.edu}
 }

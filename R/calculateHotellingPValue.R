@@ -1,38 +1,49 @@
-#' @title Perform Hotelling's T-squared Test on PCA Scores for Single-cell RNA-seq Data
+#' @title Perform Hotelling's T-squared Test on PCA Scores for Single-cell
+#' RNA-seq Data
 #'
-#' @description
-#' Computes Hotelling's T-squared test statistic and p-values for each specified cell type
-#' based on PCA-projected data from query and reference datasets.
+#' @description Computes Hotelling's T-squared test statistic and p-values for
+#' each specified cell type based on PCA-projected data from query and reference
+#' datasets.
 #'
-#' @details
-#' This function calculates Hotelling's T-squared statistic for comparing multivariate means
-#' between reference and query datasets, projected onto a subset of principal components (PCs).
-#' It performs a permutation test to obtain p-values for each cell type specified.
+#' @details This function calculates Hotelling's T-squared statistic for
+#' comparing multivariate means between reference and query datasets, projected
+#' onto a subset of principal components (PCs). It performs a permutation test
+#' to obtain p-values for each cell type specified.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
-#' @param query_cell_type_col character. The column name in the \code{colData} of \code{query_data}
-#' that identifies the cell types.
-#' @param ref_cell_type_col character. The column name in the \code{colData} of \code{reference_data}
-#' that identifies the cell types.
-#' @param cell_types A character vector specifying the cell types to include in the plot. If NULL, all cell types are included.
-#' @param pc_subset A numeric vector specifying which principal components to include in the plot. Default is PC1 to PC5.
-#' @param n_permutation Number of permutations to perform for p-value calculation. Default is 500.
-#' @param assay_name Name of the assay on which to perform computations. Default is "logcounts".
-#' @param max_cells_query Maximum number of query cells to retain after cell type filtering. If NULL,
-#' no downsampling of query cells is performed. Default is 5000.
-#' @param max_cells_ref Maximum number of reference cells to retain after cell type filtering. If NULL,
-#' no downsampling of reference cells is performed. Default is 5000.
+#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' numeric expression matrix for the reference cells.
+#' @param query_cell_type_col character. The column name in the \code{colData}
+#' of \code{query_data} that identifies the cell types.
+#' @param ref_cell_type_col character. The column name in the \code{colData} of
+#' \code{reference_data} that identifies the cell types.
+#' @param cell_types A character vector specifying the cell types to include in
+#' the plot. If NULL, all cell types are included.
+#' @param pc_subset A numeric vector specifying which principal components to
+#' include in the plot. Default is PC1 to PC5.
+#' @param n_permutation Number of permutations to perform for p-value
+#' calculation. Default is 500.
+#' @param assay_name Name of the assay on which to perform computations. Default
+#' is "logcounts".
+#' @param max_cells_query Maximum number of query cells to retain after cell
+#' type filtering. If NULL, no downsampling of query cells is performed. Default
+#' is 5000.
+#' @param max_cells_ref Maximum number of reference cells to retain after cell
+#' type filtering. If NULL, no downsampling of reference cells is performed.
+#' Default is 5000.
 #'
-#' @return A named numeric vector of p-values from Hotelling's T-squared test for each cell type.
+#' @return A named numeric vector of p-values from Hotelling's T-squared test
+#' for each cell type.
 #'
-#' @references
-#' Hotelling, H. (1931). "The generalization of Student's ratio". *Annals of Mathematical Statistics*. 2 (3): 360–378.
+#' @references Hotelling, H. (1931). "The generalization of Student's ratio".
+#' *Annals of Mathematical Statistics*. 2 (3): 360–378.
 #' doi:10.1214/aoms/1177732979.
 #'
 #' @export
 #'
-#' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
+#' @author Anthony Christidis,
+#' \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 #' @examples
 #' # Load data
@@ -49,8 +60,9 @@
 #' )
 #' round(p_values, 5)
 #'
-# Function to perform Hotelling T^2 test for each cell type
-# The test is performed on the PCA space of the reference data The query data projected onto PCA space of reference
+# Function to perform Hotelling T^2 test for each cell type The test is
+# performed on the PCA space of the reference data The query data projected onto
+# PCA space of reference
 calculateHotellingPValue <- function(query_data,
                                      reference_data,
                                      query_cell_type_col,
@@ -139,12 +151,13 @@ calculateHotellingPValue <- function(query_data,
 
 #' @title Calculate Hotelling's T^2 Statistic
 #'
-#' @description
-#' Calculates the Hotelling's T^2 statistic for comparing means of multivariate data.
+#' @description Calculates the Hotelling's T^2 statistic for comparing means of
+#' multivariate data.
 #'
-#' @param sample1 A numeric matrix or data frame of multivariate observations for sample 1, where rows are observations and columns
-#' are variables.
-#' @param sample2 A numeric matrix or data frame of multivariate observations for sample 2, with the same structure as sample 1.
+#' @param sample1 A numeric matrix or data frame of multivariate observations
+#' for sample 1, where rows are observations and columns are variables.
+#' @param sample2 A numeric matrix or data frame of multivariate observations
+#' for sample 2, with the same structure as sample 1.
 #'
 #' @keywords internal
 #'
@@ -170,8 +183,8 @@ hotellingT2 <- function(sample1, sample2) {
     # Pooled covariance matrix
     pooled_cov <- ((n1 - 1) * cov1 + (n2 - 1) * cov2) / (n1 + n2 - 2)
 
-    # Compute Hotelling's T^2 statistic
-    # T^2 = n1 * n2 / (n1 + n2) * (mean1 - mean2)' * pooled_cov^-1 * (mean1 - mean2)
+    # Compute Hotelling's T^2 statistic T^2 = n1 * n2 / (n1 + n2) * (mean1 -
+    # mean2)' * pooled_cov^-1 * (mean1 - mean2)
     t2 <- n1 * n2 / (n1 + n2) * t(mean1 - mean2) %*% solve(pooled_cov) %*%
         (mean1 - mean2)
 
