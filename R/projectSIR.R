@@ -115,12 +115,17 @@ projectSIR <- function(query_data,
 
     # Check if cumulative_variance_threshold is between 0 and 1
     if (!is.numeric(cumulative_variance_threshold) ||
-        cumulative_variance_threshold < 0 || cumulative_variance_threshold > 1) {
-        stop("cumulative_variance_threshold must be a numeric value between 0 and 1.")
+        cumulative_variance_threshold < 0 ||
+        cumulative_variance_threshold > 1) {
+        stop(
+            "cumulative_variance_threshold must be a numeric value ",
+            "between 0 and 1."
+        )
     }
 
     # Check if n_neighbor is a positive integer
-    if (!is.numeric(n_neighbor) || n_neighbor <= 0 || n_neighbor != as.integer(n_neighbor)) {
+    if (!is.numeric(n_neighbor) || n_neighbor <= 0 ||
+        n_neighbor != as.integer(n_neighbor)) {
         stop("n_neighbor must be a positive integer.")
     }
 
@@ -222,11 +227,11 @@ projectSIR <- function(query_data,
 #' before clustering when computing multiple conditional means.
 #'
 #' @details The function offers two modes of operation:
-#' - **Single conditional mean per cell type**: For each cell type, it computes the mean expression
-#' across all observations.
-#' - **Multiple conditional means per cell type**: For each cell type, the function performs PCA to
-#' reduce dimensionality, followed by clustering to compute multiple conditional
-#' means.
+#' - **Single conditional mean per cell type**: For each cell type, it
+#' computes the mean expression across all observations.
+#' - **Multiple conditional means per cell type**: For each cell type, the
+#' function performs PCA to reduce dimensionality, followed by clustering to
+#' compute multiple conditional means.
 #'
 #' @param reference_data A \code{SingleCellExperiment} object containing the
 #' reference data, where rows represent genes and columns represent cells.
@@ -271,12 +276,16 @@ conditionalMeans <- function(reference_data,
         for (cell_type in cell_types) {
             # Compute multiple conditional means per cell type
             assay_mat <- scale(t(as.matrix(assay(
-                reference_data[, which(reference_data[[ref_cell_type_col]] == cell_type)],
+                reference_data[
+                    , which(reference_data[[ref_cell_type_col]] == cell_type)
+                ],
                 assay_name
             ))), center = TRUE, scale = FALSE)
             assay_svd <- svd(assay_mat)
             cumulative_variance <- cumsum(assay_svd$d^2) / sum(assay_svd$d^2)
-            n_components <- min(which(cumulative_variance >= cumulative_variance_threshold))
+            n_components <- min(which(
+                cumulative_variance >= cumulative_variance_threshold
+            ))
             projections <- assay_mat %*%
                 assay_svd$v[, seq_len(n_components)]
             clusters <- suppressWarnings(
@@ -292,7 +301,9 @@ conditionalMeans <- function(reference_data,
             cluster_means <- do.call(
                 rbind, lapply(
                     unique(clusters),
-                    function(cl) colMeans(assay_mat[clusters == cl, , drop = FALSE])
+                    function(cl) {
+                        colMeans(assay_mat[clusters == cl, , drop = FALSE])
+                    }
                 )
             )
             rownames(cluster_means) <- rep(cell_type, nrow(cluster_means))
@@ -302,7 +313,9 @@ conditionalMeans <- function(reference_data,
         # Compute a single conditional mean per cell type
         cond_means <- lapply(cell_types, function(x) {
             apply(as.matrix(assay(
-                reference_data[, which(reference_data[[ref_cell_type_col]] == x)],
+                reference_data[
+                    , which(reference_data[[ref_cell_type_col]] == x)
+                ],
                 assay_name
             )), 1, mean)
         })

@@ -137,7 +137,10 @@ projectPCA <- function(query_data,
     ref_pca_valid <- .validateReferencePCA(reference_data, assay_name)
 
     if (!ref_pca_valid) {
-        message("Reference PCA is invalid or missing. Computing PCA for reference data only...")
+        message(
+            "Reference PCA is invalid or missing. ",
+            "Computing PCA for reference data only..."
+        )
 
         # Use processPCA to recompute PCA for REFERENCE DATA ONLY
         reference_data <- processPCA(
@@ -147,10 +150,16 @@ projectPCA <- function(query_data,
 
         # Validate that PCA was properly computed
         if (!.validateReferencePCA(reference_data, assay_name)) {
-            stop("Failed to compute valid PCA for reference data. Please check your data and try again.")
+            stop(
+                "Failed to compute valid PCA for reference data. ",
+                "Please check your data and try again."
+            )
         }
 
-        message("Reference PCA computation completed. Proceeding with projection...")
+        message(
+            "Reference PCA computation completed. ",
+            "Proceeding with projection..."
+        )
     }
 
     # Select cell types
@@ -166,7 +175,9 @@ projectPCA <- function(query_data,
 
     # Extract reference PCA components and rotation matrix
     ref_mat <- reducedDim(reference_data, "PCA")[, pc_subset, drop = FALSE]
-    rotation_mat <- attributes(reducedDim(reference_data, "PCA"))[["rotation"]][, pc_subset, drop = FALSE]
+    rotation_mat <- attributes(
+        reducedDim(reference_data, "PCA")
+    )[["rotation"]][, pc_subset, drop = FALSE]
     PCA_genes <- rownames(rotation_mat)
 
     # Check if genes used for PCA are available in query data
@@ -178,11 +189,17 @@ projectPCA <- function(query_data,
     # centering)
     ref_assay <- assay(reference_data, assay_name)
     centering_vec <- Matrix::rowMeans(ref_assay)[PCA_genes]
-    query_assay_subset <- assay(query_data, assay_name)[PCA_genes, , drop = FALSE]
+    query_assay_subset <- assay(query_data, assay_name)[
+        PCA_genes, ,
+        drop = FALSE
+    ]
 
     # Ensure gene order matches
     centering_vec <- centering_vec[rownames(rotation_mat)]
-    query_assay_subset <- query_assay_subset[rownames(rotation_mat), , drop = FALSE]
+    query_assay_subset <- query_assay_subset[
+        rownames(rotation_mat), ,
+        drop = FALSE
+    ]
 
     # Use sparse-compatible operations
     query_transposed <- Matrix::t(query_assay_subset)
@@ -226,13 +243,19 @@ projectPCA <- function(query_data,
 
         missing_types <- setdiff(cell_types, available_types)
         if (length(missing_types) > 0) {
-            warning("Cell types not found in data: ", paste(missing_types, collapse = ", "))
+            warning(
+                "Cell types not found in data: ",
+                paste(missing_types, collapse = ", ")
+            )
         }
 
         # Filter to specified cell types
         cell_type_mask <- full_output[["cell_type"]] %in% cell_types
         if (sum(cell_type_mask) == 0) {
-            warning("No cells found for the specified cell types. Returning empty data frame.")
+            warning(
+                "No cells found for the specified cell types. ",
+                "Returning empty data frame."
+            )
             return(full_output[FALSE, ])
         }
 

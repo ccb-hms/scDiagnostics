@@ -143,7 +143,10 @@ plotCellTypeMDS <- function(query_data,
 
         # Validate MDS dimensions (ensure at least 2D)
         if (ncol(query_mds) < 2 || ncol(ref_mds) < 2) {
-            warning("Precomputed MDS has fewer than 2 dimensions. Computing MDS from scratch.")
+            warning(
+                "Precomputed MDS has fewer than 2 dimensions. ",
+                "Computing MDS from scratch."
+            )
             use_precomputed_mds <- FALSE
         }
 
@@ -152,8 +155,14 @@ plotCellTypeMDS <- function(query_data,
             cmd <- data.frame(
                 Dim1 = c(ref_mds[, 1], query_mds[, 1]),
                 Dim2 = c(ref_mds[, 2], query_mds[, 2]),
-                dataset = c(rep("Reference", nrow(ref_mds)), rep("Query", nrow(query_mds))),
-                cellType = c(reference_data[[ref_cell_type_col]], query_data[[query_cell_type_col]]),
+                dataset = c(
+                    rep("Reference", nrow(ref_mds)),
+                    rep("Query", nrow(query_mds))
+                ),
+                cellType = c(
+                    reference_data[[ref_cell_type_col]],
+                    query_data[[query_cell_type_col]]
+                ),
                 stringsAsFactors = FALSE
             )
         }
@@ -162,7 +171,10 @@ plotCellTypeMDS <- function(query_data,
     # Fall back to computing MDS if not precomputed or validation failed
     if (!use_precomputed_mds) {
         if (query_has_mds || ref_has_mds) {
-            message("MDS not available in both datasets or validation failed. Computing MDS from expression data.")
+            message(
+                "MDS not available in both datasets or validation failed. ",
+                "Computing MDS from expression data."
+            )
         } else {
             message("Computing MDS from expression data.")
         }
@@ -197,15 +209,24 @@ plotCellTypeMDS <- function(query_data,
         cmd <- data.frame(
             Dim1 = mds_coords[, 1],
             Dim2 = mds_coords[, 2],
-            dataset = c(rep("Query", ncol(query_assay)), rep("Reference", ncol(ref_assay))),
-            cellType = c(query_data[[query_cell_type_col]], reference_data[[ref_cell_type_col]]),
+            dataset = c(
+                rep("Query", ncol(query_assay)),
+                rep("Reference", ncol(ref_assay))
+            ),
+            cellType = c(
+                query_data[[query_cell_type_col]],
+                reference_data[[ref_cell_type_col]]
+            ),
             stringsAsFactors = FALSE
         )
     }
 
     # Clean up data and create combined cell type-dataset labels
     cmd <- na.omit(cmd)
-    cmd[["cell_type_dataset"]] <- paste(cmd[["dataset"]], cmd[["cellType"]], sep = " ")
+    cmd[["cell_type_dataset"]] <- paste(
+        cmd[["dataset"]], cmd[["cellType"]],
+        sep = " "
+    )
 
     # Define the order of cell type and dataset combinations
     order_combinations <- paste(
@@ -229,7 +250,9 @@ plotCellTypeMDS <- function(query_data,
         )
     ) +
         ggplot2::geom_point(alpha = 0.5, size = 1) +
-        ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Types") +
+        ggplot2::scale_color_manual(
+            values = cell_type_colors, name = "Cell Types"
+        ) +
         ggplot2::theme_bw() +
         ggplot2::theme(
             panel.grid.minor = ggplot2::element_blank(),
