@@ -572,28 +572,25 @@ calculateGraphIntegration <- function(query_data,
             )
         }))
 
+    # Precompute the query cells belonging to the relevant communities once,
+    # since these do not depend on the cell type being tallied below
+    high_query_prop_query_cells <- cell_info[
+        cell_info[["community"]] %in% high_query_prop_df[["community"]] &
+            cell_info[["dataset"]] == "Query", ]
+    cross_type_query_cells <- cell_info[
+        cell_info[["community"]] %in% cross_type_df[["community"]] &
+            cell_info[["dataset"]] == "Query", ]
+
     # Calculate annotation consistency summary
     annotation_summary <- data.frame(
         cell_type = cell_types,
         total_query_cells = sapply(
             cell_types, function(ct) sum(cell_info[["cell_type"]] == ct &
                                              cell_info[["dataset"]] == "Query")),
-        high_query_prop_cells = sapply(cell_types, function(ct) {
-            if (nrow(high_query_prop_df) == 0) return(0)
-            sum(sapply(seq_len(nrow(high_query_prop_df)), function(i) {
-                comm_id <- high_query_prop_df[["community"]][i]
-                comm_cells <- cell_info[cell_info[["community"]] == comm_id, ]
-                sum(comm_cells[["cell_type"]] == ct & comm_cells[["dataset"]] == "Query")
-            }))
-        }),
-        true_cross_mixing_cells = sapply(cell_types, function(ct) {
-            if (nrow(cross_type_df) == 0) return(0)
-            sum(sapply(seq_len(nrow(cross_type_df)), function(i) {
-                comm_id <- cross_type_df[["community"]][i]
-                comm_cells <- cell_info[cell_info[["community"]] == comm_id, ]
-                sum(comm_cells[["cell_type"]] == ct & comm_cells[["dataset"]] == "Query")
-            }))
-        }),
+        high_query_prop_cells = sapply(
+            cell_types, function(ct) sum(high_query_prop_query_cells[["cell_type"]] == ct)),
+        true_cross_mixing_cells = sapply(
+            cell_types, function(ct) sum(cross_type_query_cells[["cell_type"]] == ct)),
         stringsAsFactors = FALSE
     )
 
