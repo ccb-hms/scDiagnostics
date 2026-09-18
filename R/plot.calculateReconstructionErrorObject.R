@@ -56,12 +56,13 @@
 #' @rdname calculateReconstructionError
 #'
 # Function to plot reconstruction errors
-plot.calculateReconstructionErrorObject <- function(x,
-                                                    cell_type = NULL,
-                                                    data_type = c("both", "query", "reference"),
-                                                    plot_type = c("violin", "boxplot", "ridge", "heatmap"),
-                                                    draw_plot = FALSE,
-                                                    ...) {
+plot.calculateReconstructionErrorObject <- function(
+    x,
+    cell_type = NULL,
+    data_type = c("both", "query", "reference"),
+    plot_type = c("violin", "boxplot", "ridge", "heatmap"),
+    draw_plot = FALSE,
+    ...) {
     # Match arguments
     data_type <- match.arg(data_type)
     plot_type <- match.arg(plot_type)
@@ -76,18 +77,26 @@ plot.calculateReconstructionErrorObject <- function(x,
         }
     } else {
         if (!(cell_type %in% names(x))) {
-            stop(paste0("Cell type '", cell_type, "' is not available in the provided object."))
+            stop(paste0(
+                "Cell type '", cell_type,
+                "' is not available in the provided object."
+            ))
         }
     }
 
     # ______________________ PATH A: HEATMAP LOGIC ______________________
 
     if (plot_type == "heatmap") {
-        if (!requireNamespace("ComplexHeatmap", quietly = TRUE) || !requireNamespace("circlize", quietly = TRUE)) {
-            stop("Packages 'ComplexHeatmap' and 'circlize' are required to plot heatmaps. Please install them.")
+        if (!requireNamespace("ComplexHeatmap", quietly = TRUE) ||
+            !requireNamespace("circlize", quietly = TRUE)) {
+            stop(
+                "Packages 'ComplexHeatmap' and 'circlize' are required to ",
+                "plot heatmaps. Please install them."
+            )
         }
 
-        if (is.null(x[[cell_type]][["query_mat_subset"]]) && data_type %in% c("query", "both")) {
+        if (is.null(x[[cell_type]][["query_mat_subset"]]) &&
+            data_type %in% c("query", "both")) {
             stop("There is no query data available in the object to plot.")
         }
 
@@ -100,12 +109,17 @@ plot.calculateReconstructionErrorObject <- function(x,
         # Combine data based on data_type
         if (data_type == "both") {
             mat <- rbind(ref_mat, query_mat)
-            dataset <- c(rep("Reference", nrow(ref_mat)), rep("Query", nrow(query_mat)))
+            dataset <- c(
+                rep("Reference", nrow(ref_mat)), rep("Query", nrow(query_mat))
+            )
 
             # Force reference anomalies to FALSE so we don't distract the user
             anomaly <- c(rep(FALSE, length(ref_anomaly)), query_anomaly)
 
-            cell_names <- c(paste0("Ref_", seq_len(nrow(ref_mat))), paste0("Query_", seq_len(nrow(query_mat))))
+            cell_names <- c(
+                paste0("Ref_", seq_len(nrow(ref_mat))),
+                paste0("Query_", seq_len(nrow(query_mat)))
+            )
         } else if (data_type == "query") {
             mat <- query_mat
             dataset <- rep("Query", nrow(query_mat))
@@ -131,7 +145,9 @@ plot.calculateReconstructionErrorObject <- function(x,
 
         annotation_col <- data.frame(
             Dataset = factor(dataset, levels = c("Query", "Reference")),
-            Status = factor(anomaly_labels, levels = c("Anomalous", "Non-Anomalous"))
+            Status = factor(
+                anomaly_labels, levels = c("Anomalous", "Non-Anomalous")
+            )
         )
         rownames(annotation_col) <- cell_names
 
@@ -141,9 +157,13 @@ plot.calculateReconstructionErrorObject <- function(x,
         annotation_col <- annotation_col[order_idx, , drop = FALSE]
 
         dataset_colors <- c("Query" = "#B565D8", "Reference" = "#5A9BD8")
-        anomaly_colors <- c("Non-Anomalous" = "#9E9E9E", "Anomalous" = "#D2314C")
+        anomaly_colors <- c(
+            "Non-Anomalous" = "#9E9E9E", "Anomalous" = "#D2314C"
+        )
 
-        zscore_col_fun <- circlize::colorRamp2(c(-2, 0, 2), c("#313695", "white", "#A50026"))
+        zscore_col_fun <- circlize::colorRamp2(
+            c(-2, 0, 2), c("#313695", "white", "#A50026")
+        )
 
         top_ha <- ComplexHeatmap::HeatmapAnnotation(
             Status = annotation_col$Status,
@@ -164,21 +184,32 @@ plot.calculateReconstructionErrorObject <- function(x,
                 labels = c("-2", "-1", "0", "1", "2")
             ),
             show_row_names = nrow(plot_mat) <= 100,
-            row_names_gp = if (requireNamespace("grid", quietly = TRUE)) grid::gpar(fontsize = 8) else NULL,
+            row_names_gp = if (requireNamespace("grid", quietly = TRUE)) {
+                grid::gpar(fontsize = 8)
+            } else {
+                NULL
+            },
             cluster_rows = TRUE,
             show_column_names = FALSE,
             cluster_columns = FALSE,
             column_order = colnames(plot_mat),
             top_annotation = top_ha,
             border = TRUE,
-            column_title = paste0("Local PCA HVG Expression Heatmap: ", cell_type),
+            column_title = paste0(
+                "Local PCA HVG Expression Heatmap: ", cell_type
+            ),
             use_raster = ncol(plot_mat) > 1000 || nrow(plot_mat) > 1000,
             raster_quality = 2,
             ...
         )
 
         if (draw_plot) {
-            return(ComplexHeatmap::draw(ht, heatmap_legend_side = "right", annotation_legend_side = "right", merge_legends = TRUE))
+            return(ComplexHeatmap::draw(
+                ht,
+                heatmap_legend_side = "right",
+                annotation_legend_side = "right",
+                merge_legends = TRUE
+            ))
         } else {
             return(ht)
         }
@@ -238,10 +269,13 @@ plot.calculateReconstructionErrorObject <- function(x,
     plot_df <- do.call(rbind, df_list)
     rownames(plot_df) <- NULL
 
-    plot_df[["Dataset"]] <- factor(plot_df[["Dataset"]], levels = c("Reference", "Query"))
+    plot_df[["Dataset"]] <- factor(
+        plot_df[["Dataset"]], levels = c("Reference", "Query")
+    )
 
     # Updated to Non-Anomalous to match package convention
-    plot_df[["Anomaly"]] <- factor(ifelse(plot_df[["Anomaly"]], "Anomalous", "Non-Anomalous"),
+    plot_df[["Anomaly"]] <- factor(
+        ifelse(plot_df[["Anomaly"]], "Anomalous", "Non-Anomalous"),
         levels = c("Non-Anomalous", "Anomalous")
     )
 
@@ -256,16 +290,26 @@ plot.calculateReconstructionErrorObject <- function(x,
     )
 
     if (plot_type == "violin") {
-        p <- ggplot2::ggplot(plot_df, ggplot2::aes(x = .data[["Dataset"]], y = .data[["Error"]])) +
+        p <- ggplot2::ggplot(
+            plot_df,
+            ggplot2::aes(x = .data[["Dataset"]], y = .data[["Error"]])
+        ) +
             ggplot2::geom_violin(ggplot2::aes(fill = .data[["Dataset"]]),
                 alpha = 0.4, color = "grey50", trim = TRUE, scale = "width"
             ) +
             ggplot2::geom_jitter(ggplot2::aes(color = .data[["Anomaly"]]),
                 width = 0.25, size = 1.5, alpha = 0.7
             ) +
-            ggplot2::geom_hline(yintercept = threshold, linetype = "dashed", color = "#D2314C", linewidth = 0.8) +
-            ggplot2::scale_fill_manual(values = dataset_colors, guide = "none") +
-            ggplot2::scale_color_manual(values = anomaly_colors, name = "Status") +
+            ggplot2::geom_hline(
+                yintercept = threshold, linetype = "dashed",
+                color = "#D2314C", linewidth = 0.8
+            ) +
+            ggplot2::scale_fill_manual(
+                values = dataset_colors, guide = "none"
+            ) +
+            ggplot2::scale_color_manual(
+                values = anomaly_colors, name = "Status"
+            ) +
             ggplot2::labs(
                 title = paste0("PCA Reconstruction Error: ", cell_type),
                 subtitle = sub_title,
@@ -275,23 +319,35 @@ plot.calculateReconstructionErrorObject <- function(x,
             ggplot2::theme_bw() +
             ggplot2::theme(
                 panel.grid.minor = ggplot2::element_blank(),
-                panel.border = ggplot2::element_rect(color = "grey70", linewidth = 0.5),
+                panel.border = ggplot2::element_rect(
+                    color = "grey70", linewidth = 0.5
+                ),
                 axis.text.x = ggplot2::element_text(face = "bold", size = 11),
                 axis.title.y = ggplot2::element_text(face = "bold", size = 10),
                 legend.position = "right",
                 legend.title = ggplot2::element_text(face = "bold", size = 10)
             )
     } else if (plot_type == "boxplot") {
-        p <- ggplot2::ggplot(plot_df, ggplot2::aes(x = .data[["Dataset"]], y = .data[["Error"]])) +
+        p <- ggplot2::ggplot(
+            plot_df,
+            ggplot2::aes(x = .data[["Dataset"]], y = .data[["Error"]])
+        ) +
             ggplot2::geom_boxplot(ggplot2::aes(fill = .data[["Dataset"]]),
                 alpha = 0.5, outlier.shape = NA, width = 0.6
             ) +
             ggplot2::geom_jitter(ggplot2::aes(color = .data[["Anomaly"]]),
                 width = 0.2, size = 1.5, alpha = 0.6
             ) +
-            ggplot2::geom_hline(yintercept = threshold, linetype = "dashed", color = "#D2314C", linewidth = 0.8) +
-            ggplot2::scale_fill_manual(values = dataset_colors, guide = "none") +
-            ggplot2::scale_color_manual(values = anomaly_colors, name = "Status") +
+            ggplot2::geom_hline(
+                yintercept = threshold, linetype = "dashed",
+                color = "#D2314C", linewidth = 0.8
+            ) +
+            ggplot2::scale_fill_manual(
+                values = dataset_colors, guide = "none"
+            ) +
+            ggplot2::scale_color_manual(
+                values = anomaly_colors, name = "Status"
+            ) +
             ggplot2::labs(
                 title = paste0("PCA Reconstruction Error: ", cell_type),
                 subtitle = sub_title,
@@ -301,17 +357,33 @@ plot.calculateReconstructionErrorObject <- function(x,
             ggplot2::theme_bw() +
             ggplot2::theme(
                 panel.grid.minor = ggplot2::element_blank(),
-                panel.border = ggplot2::element_rect(color = "grey70", linewidth = 0.5),
+                panel.border = ggplot2::element_rect(
+                    color = "grey70", linewidth = 0.5
+                ),
                 axis.text.x = ggplot2::element_text(face = "bold", size = 11),
                 axis.title.y = ggplot2::element_text(face = "bold", size = 10),
                 legend.position = "right",
                 legend.title = ggplot2::element_text(face = "bold", size = 10)
             )
     } else if (plot_type == "ridge") {
-        p <- ggplot2::ggplot(plot_df, ggplot2::aes(x = .data[["Error"]], y = .data[["Dataset"]], fill = .data[["Dataset"]])) +
-            ggridges::geom_density_ridges(alpha = 0.6, scale = 1.8, color = "grey30", linewidth = 0.5, rel_min_height = 0.01) +
-            ggplot2::geom_vline(xintercept = threshold, linetype = "dashed", color = "#D2314C", linewidth = 0.8) +
-            ggplot2::scale_fill_manual(values = dataset_colors, guide = "none") +
+        p <- ggplot2::ggplot(
+            plot_df,
+            ggplot2::aes(
+                x = .data[["Error"]], y = .data[["Dataset"]],
+                fill = .data[["Dataset"]]
+            )
+        ) +
+            ggridges::geom_density_ridges(
+                alpha = 0.6, scale = 1.8, color = "grey30",
+                linewidth = 0.5, rel_min_height = 0.01
+            ) +
+            ggplot2::geom_vline(
+                xintercept = threshold, linetype = "dashed",
+                color = "#D2314C", linewidth = 0.8
+            ) +
+            ggplot2::scale_fill_manual(
+                values = dataset_colors, guide = "none"
+            ) +
             ggplot2::labs(
                 title = paste0("PCA Reconstruction Error: ", cell_type),
                 subtitle = sub_title,
@@ -321,8 +393,12 @@ plot.calculateReconstructionErrorObject <- function(x,
             ggplot2::theme_bw() +
             ggplot2::theme(
                 panel.grid.minor = ggplot2::element_blank(),
-                panel.border = ggplot2::element_rect(color = "grey70", linewidth = 0.5),
-                axis.text.y = ggplot2::element_text(face = "bold", size = 11, vjust = 0),
+                panel.border = ggplot2::element_rect(
+                    color = "grey70", linewidth = 0.5
+                ),
+                axis.text.y = ggplot2::element_text(
+                    face = "bold", size = 11, vjust = 0
+                ),
                 axis.title.x = ggplot2::element_text(face = "bold", size = 10)
             )
     }

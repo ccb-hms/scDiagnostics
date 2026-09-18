@@ -55,17 +55,24 @@ plot.regressPCObject <- function(x,
 
         # Check if at least one coefficient type is specified
         if (length(coefficients_include) == 0) {
-            stop("coefficients_include must contain at least one coefficient type")
+            stop(
+                "coefficients_include must contain at least one ",
+                "coefficient type"
+            )
         }
 
         # Check if the specified coefficients are available in the object
         available_coefficients <- .getAvailableCoefficients(x)
-        unavailable <- coefficients_include[!coefficients_include %in% available_coefficients]
+        unavailable <- coefficients_include[
+            !coefficients_include %in% available_coefficients
+        ]
         if (length(unavailable) > 0) {
             stop(
-                "The following coefficient types are not available in the regression object: ",
+                "The following coefficient types are not available in ",
+                "the regression object: ",
                 paste(unavailable, collapse = ", "),
-                ". Available types: ", paste(available_coefficients, collapse = ", ")
+                ". Available types: ",
+                paste(available_coefficients, collapse = ", ")
             )
         }
     }
@@ -74,7 +81,9 @@ plot.regressPCObject <- function(x,
     switch(plot_type,
         "r_squared" = plotRSquared(x, ...),
         "variance_contribution" = plotVarianceContribution(x, ...),
-        "coefficient_heatmap" = plotCoefficientHeatmap(x, alpha, coefficients_include, ...)
+        "coefficient_heatmap" = plotCoefficientHeatmap(
+            x, alpha, coefficients_include, ...
+        )
     )
 }
 
@@ -97,12 +106,14 @@ plot.regressPCObject <- function(x,
     available <- c("cell_type") # cell_type is always available
 
     # Check for batch coefficients
-    if (x[["indep_var"]] %in% c("cell_type_batch_interaction", "cell_type_dataset_interaction")) {
+    if (x[["indep_var"]] %in%
+        c("cell_type_batch_interaction", "cell_type_dataset_interaction")) {
         available <- c(available, "batch")
     }
 
     # Check for interaction coefficients
-    if (x[["indep_var"]] %in% c("cell_type_batch_interaction", "cell_type_dataset_interaction")) {
+    if (x[["indep_var"]] %in%
+        c("cell_type_batch_interaction", "cell_type_dataset_interaction")) {
         available <- c(available, "interaction")
     }
 
@@ -175,10 +186,13 @@ plotRSquared <- function(x, ...) {
 
     # Create PC names with variance labels
     pc_names <- names(x[["r_squared"]])
-    pc_labels <- paste0(pc_names, "\n(", sprintf("%.1f%%", pca_var[pc_indices]), ")")
+    pc_labels <- paste0(
+        pc_names, "\n(", sprintf("%.1f%%", pca_var[pc_indices]), ")"
+    )
 
     # Check if component breakdown is available
-    if (!is.null(x[["r_squared_components"]]) && length(x[["r_squared_components"]]) > 1) {
+    if (!is.null(x[["r_squared_components"]]) &&
+        length(x[["r_squared_components"]]) > 1) {
         # Create stacked bar plot with components
 
         # Prepare component data
@@ -209,7 +223,8 @@ plotRSquared <- function(x, ...) {
         )
 
         # Get colors for available components
-        available_colors <- component_colors[names(x[["r_squared_components"]])]
+        available_colors <-
+            component_colors[names(x[["r_squared_components"]])]
 
         # Create component labels for legend
         component_labels <- names(x[["r_squared_components"]])
@@ -217,7 +232,10 @@ plotRSquared <- function(x, ...) {
         component_labels <- tools::toTitleCase(component_labels)
 
         # Add total R² labels on top of bars
-        total_r_squared <- aggregate(R_squared ~ PC, data = plot_data, FUN = sum)
+        total_r_squared <- aggregate(
+            R_squared ~ PC,
+            data = plot_data, FUN = sum
+        )
 
         # Create plot
         p <- ggplot2::ggplot(plot_data, ggplot2::aes(
@@ -249,16 +267,29 @@ plotRSquared <- function(x, ...) {
             ) +
             ggplot2::theme_minimal() +
             ggplot2::theme(
-                plot.title = ggplot2::element_text(size = 16, face = "bold", margin = ggplot2::margin(b = 10)),
-                plot.subtitle = ggplot2::element_text(size = 12, color = "gray40", margin = ggplot2::margin(b = 20)),
-                axis.text.x = ggplot2::element_text(size = 10, color = "gray20"),
-                axis.text.y = ggplot2::element_text(size = 10, color = "gray20"),
-                axis.title.y = ggplot2::element_text(size = 12, face = "bold", color = "gray20"),
+                plot.title = ggplot2::element_text(
+                    size = 16, face = "bold", margin = ggplot2::margin(b = 10)
+                ),
+                plot.subtitle = ggplot2::element_text(
+                    size = 12, color = "gray40",
+                    margin = ggplot2::margin(b = 20)
+                ),
+                axis.text.x = ggplot2::element_text(
+                    size = 10, color = "gray20"
+                ),
+                axis.text.y = ggplot2::element_text(
+                    size = 10, color = "gray20"
+                ),
+                axis.title.y = ggplot2::element_text(
+                    size = 12, face = "bold", color = "gray20"
+                ),
                 legend.position = "right",
                 legend.title = ggplot2::element_text(size = 11, face = "bold"),
                 panel.grid.major.x = ggplot2::element_blank(),
                 panel.grid.minor = ggplot2::element_blank(),
-                panel.grid.major.y = ggplot2::element_line(color = "gray90", linewidth = 0.5),
+                panel.grid.major.y = ggplot2::element_line(
+                    color = "gray90", linewidth = 0.5
+                ),
                 plot.margin = ggplot2::margin(20, 20, 20, 20)
             ) +
             ggplot2::ylim(0, max(total_r_squared[["R_squared"]]) * 1.1)
@@ -269,9 +300,13 @@ plotRSquared <- function(x, ...) {
             R_squared = x[["r_squared"]]
         )
 
-        p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["PC"]], y = .data[["R_squared"]])) +
+        p <- ggplot2::ggplot(
+            plot_data,
+            ggplot2::aes(x = .data[["PC"]], y = .data[["R_squared"]])
+        ) +
             ggplot2::geom_col(fill = "steelblue", alpha = 0.8, width = 0.6) +
-            ggplot2::geom_text(ggplot2::aes(label = sprintf("%.3f", .data[["R_squared"]])),
+            ggplot2::geom_text(
+                ggplot2::aes(label = sprintf("%.3f", .data[["R_squared"]])),
                 vjust = -0.5, size = 3.5, fontface = "bold"
             ) +
             ggplot2::labs(
@@ -282,14 +317,27 @@ plotRSquared <- function(x, ...) {
             ) +
             ggplot2::theme_minimal() +
             ggplot2::theme(
-                plot.title = ggplot2::element_text(size = 16, face = "bold", margin = ggplot2::margin(b = 10)),
-                plot.subtitle = ggplot2::element_text(size = 12, color = "gray40", margin = ggplot2::margin(b = 20)),
-                axis.text.x = ggplot2::element_text(size = 10, color = "gray20"),
-                axis.text.y = ggplot2::element_text(size = 10, color = "gray20"),
-                axis.title.y = ggplot2::element_text(size = 12, face = "bold", color = "gray20"),
+                plot.title = ggplot2::element_text(
+                    size = 16, face = "bold", margin = ggplot2::margin(b = 10)
+                ),
+                plot.subtitle = ggplot2::element_text(
+                    size = 12, color = "gray40",
+                    margin = ggplot2::margin(b = 20)
+                ),
+                axis.text.x = ggplot2::element_text(
+                    size = 10, color = "gray20"
+                ),
+                axis.text.y = ggplot2::element_text(
+                    size = 10, color = "gray20"
+                ),
+                axis.title.y = ggplot2::element_text(
+                    size = 12, face = "bold", color = "gray20"
+                ),
                 panel.grid.major.x = ggplot2::element_blank(),
                 panel.grid.minor = ggplot2::element_blank(),
-                panel.grid.major.y = ggplot2::element_line(color = "gray90", linewidth = 0.5),
+                panel.grid.major.y = ggplot2::element_line(
+                    color = "gray90", linewidth = 0.5
+                ),
                 plot.margin = ggplot2::margin(20, 20, 20, 20)
             ) +
             ggplot2::ylim(0, max(plot_data[["R_squared"]]) * 1.1)
@@ -367,10 +415,13 @@ plotVarianceContribution <- function(x, ...) {
 
     # Create PC names with variance labels
     pc_names <- names(x[["var_contributions"]])
-    pc_labels <- paste0(pc_names, "\n(", sprintf("%.1f%%", pca_var[pc_indices]), ")")
+    pc_labels <- paste0(
+        pc_names, "\n(", sprintf("%.1f%%", pca_var[pc_indices]), ")"
+    )
 
     # Check if component breakdown is available
-    if (!is.null(x[["var_contributions_components"]]) && length(x[["var_contributions_components"]]) > 1) {
+    if (!is.null(x[["var_contributions_components"]]) &&
+        length(x[["var_contributions_components"]]) > 1) {
         # Create stacked bar plot with components
 
         # Prepare component data
@@ -379,7 +430,8 @@ plotVarianceContribution <- function(x, ...) {
             component_data[[component_name]] <- data.frame(
                 PC = factor(pc_labels, levels = pc_labels),
                 Component = component_name,
-                Variance_Contribution = x[["var_contributions_components"]][[component_name]],
+                Variance_Contribution =
+                    x[["var_contributions_components"]][[component_name]],
                 stringsAsFactors = FALSE
             )
         }
@@ -401,7 +453,8 @@ plotVarianceContribution <- function(x, ...) {
         )
 
         # Get colors for available components
-        available_colors <- component_colors[names(x[["var_contributions_components"]])]
+        available_colors <-
+            component_colors[names(x[["var_contributions_components"]])]
 
         # Create component labels for legend
         component_labels <- names(x[["var_contributions_components"]])
@@ -409,7 +462,10 @@ plotVarianceContribution <- function(x, ...) {
         component_labels <- tools::toTitleCase(component_labels)
 
         # Add total variance contribution labels on top of bars
-        total_var_contrib <- aggregate(Variance_Contribution ~ PC, data = plot_data, FUN = sum)
+        total_var_contrib <- aggregate(
+            Variance_Contribution ~ PC,
+            data = plot_data, FUN = sum
+        )
 
         # Create plot
         p <- ggplot2::ggplot(plot_data, ggplot2::aes(
@@ -423,7 +479,9 @@ plotVarianceContribution <- function(x, ...) {
                 ggplot2::aes(
                     x = .data[["PC"]],
                     y = .data[["Variance_Contribution"]],
-                    label = sprintf("%.2f%%", .data[["Variance_Contribution"]])
+                    label = sprintf(
+                        "%.2f%%", .data[["Variance_Contribution"]]
+                    )
                 ),
                 vjust = -0.5, size = 3.5, fontface = "bold",
                 inherit.aes = FALSE
@@ -445,19 +503,34 @@ plotVarianceContribution <- function(x, ...) {
             ) +
             ggplot2::theme_minimal() +
             ggplot2::theme(
-                plot.title = ggplot2::element_text(size = 16, face = "bold", margin = ggplot2::margin(b = 10)),
-                plot.subtitle = ggplot2::element_text(size = 12, color = "gray40", margin = ggplot2::margin(b = 20)),
-                axis.text.x = ggplot2::element_text(size = 10, color = "gray20"),
-                axis.text.y = ggplot2::element_text(size = 10, color = "gray20"),
-                axis.title.y = ggplot2::element_text(size = 12, face = "bold", color = "gray20"),
+                plot.title = ggplot2::element_text(
+                    size = 16, face = "bold", margin = ggplot2::margin(b = 10)
+                ),
+                plot.subtitle = ggplot2::element_text(
+                    size = 12, color = "gray40",
+                    margin = ggplot2::margin(b = 20)
+                ),
+                axis.text.x = ggplot2::element_text(
+                    size = 10, color = "gray20"
+                ),
+                axis.text.y = ggplot2::element_text(
+                    size = 10, color = "gray20"
+                ),
+                axis.title.y = ggplot2::element_text(
+                    size = 12, face = "bold", color = "gray20"
+                ),
                 legend.position = "right",
                 legend.title = ggplot2::element_text(size = 11, face = "bold"),
                 panel.grid.major.x = ggplot2::element_blank(),
                 panel.grid.minor = ggplot2::element_blank(),
-                panel.grid.major.y = ggplot2::element_line(color = "gray90", linewidth = 0.5),
+                panel.grid.major.y = ggplot2::element_line(
+                    color = "gray90", linewidth = 0.5
+                ),
                 plot.margin = ggplot2::margin(20, 20, 20, 20)
             ) +
-            ggplot2::ylim(0, max(total_var_contrib[["Variance_Contribution"]]) * 1.1)
+            ggplot2::ylim(
+                0, max(total_var_contrib[["Variance_Contribution"]]) * 1.1
+            )
     } else {
         # Fallback to simple bar plot (original behavior)
         plot_data <- data.frame(
@@ -467,9 +540,17 @@ plotVarianceContribution <- function(x, ...) {
             R_squared = x[["r_squared"]]
         )
 
-        p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["PC"]], y = .data[["Variance_Contribution"]])) +
+        p <- ggplot2::ggplot(
+            plot_data,
+            ggplot2::aes(
+                x = .data[["PC"]], y = .data[["Variance_Contribution"]]
+            )
+        ) +
             ggplot2::geom_col(fill = "darkgreen", alpha = 0.8, width = 0.6) +
-            ggplot2::geom_text(ggplot2::aes(label = sprintf("%.2f%%", .data[["Variance_Contribution"]])),
+            ggplot2::geom_text(
+                ggplot2::aes(
+                    label = sprintf("%.2f%%", .data[["Variance_Contribution"]])
+                ),
                 vjust = -0.5, size = 3.5, fontface = "bold"
             ) +
             ggplot2::labs(
@@ -484,14 +565,27 @@ plotVarianceContribution <- function(x, ...) {
             ) +
             ggplot2::theme_minimal() +
             ggplot2::theme(
-                plot.title = ggplot2::element_text(size = 16, face = "bold", margin = ggplot2::margin(b = 10)),
-                plot.subtitle = ggplot2::element_text(size = 12, color = "gray40", margin = ggplot2::margin(b = 20)),
-                axis.text.x = ggplot2::element_text(size = 10, color = "gray20"),
-                axis.text.y = ggplot2::element_text(size = 10, color = "gray20"),
-                axis.title.y = ggplot2::element_text(size = 12, face = "bold", color = "gray20"),
+                plot.title = ggplot2::element_text(
+                    size = 16, face = "bold", margin = ggplot2::margin(b = 10)
+                ),
+                plot.subtitle = ggplot2::element_text(
+                    size = 12, color = "gray40",
+                    margin = ggplot2::margin(b = 20)
+                ),
+                axis.text.x = ggplot2::element_text(
+                    size = 10, color = "gray20"
+                ),
+                axis.text.y = ggplot2::element_text(
+                    size = 10, color = "gray20"
+                ),
+                axis.title.y = ggplot2::element_text(
+                    size = 12, face = "bold", color = "gray20"
+                ),
                 panel.grid.major.x = ggplot2::element_blank(),
                 panel.grid.minor = ggplot2::element_blank(),
-                panel.grid.major.y = ggplot2::element_line(color = "gray90", linewidth = 0.5),
+                panel.grid.major.y = ggplot2::element_line(
+                    color = "gray90", linewidth = 0.5
+                ),
                 plot.margin = ggplot2::margin(20, 20, 20, 20)
             ) +
             ggplot2::ylim(0, max(plot_data[["Variance_Contribution"]]) * 1.1)
@@ -554,7 +648,8 @@ plotVarianceContribution <- function(x, ...) {
 #' unit scale_y_discrete
 #'
 # Helper function: Coefficient heatmap
-plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL, ...) {
+plotCoefficientHeatmap <- function(
+    x, alpha = 0.05, coefficients_include = NULL, ...) {
     # Determine which PCA variance to use based on data type
     if (!is.null(x[["reference_pca_var"]])) {
         # Reference + Query data
@@ -569,7 +664,9 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
     pc_indices <- as.numeric(gsub("PC", "", pc_names))
 
     # Create PC labels with variance percentages
-    pc_labels <- paste0(pc_names, "\n(", sprintf("%.1f%%", pca_var[pc_indices]), ")")
+    pc_labels <- paste0(
+        pc_names, "\n(", sprintf("%.1f%%", pca_var[pc_indices]), ")"
+    )
 
     # Extract coefficient data
     coef_list <- lapply(pc_names, function(pc) {
@@ -605,7 +702,8 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
         plot_data[["Category"]][celltype_main] <- "Cell Type"
 
         # Identify main effect batch (starts with "batch" but no ":")
-        batch_main <- grepl("^batch", plot_data[["Term"]]) & !grepl(":", plot_data[["Term"]])
+        batch_main <- grepl("^batch", plot_data[["Term"]]) &
+            !grepl(":", plot_data[["Term"]])
         plot_data[["Category"]][batch_main] <- "Batch"
 
         # Identify interactions (contains ":")
@@ -613,12 +711,15 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
         plot_data[["Category"]][interactions] <- "Cell Type : Batch"
 
         # Clean up term names
-        plot_data[["Term_clean"]] <- gsub("cell_type", "", plot_data[["Term_clean"]])
+        plot_data[["Term_clean"]] <-
+            gsub("cell_type", "", plot_data[["Term_clean"]])
 
         # Special handling for batch names
         batch_pattern <- grepl("^batch", plot_data[["Term_clean"]])
         if (any(batch_pattern)) {
-            batch_names <- gsub("^batch", "", plot_data[["Term_clean"]][batch_pattern])
+            batch_names <- gsub(
+                "^batch", "", plot_data[["Term_clean"]][batch_pattern]
+            )
             # Remove any remaining "batch" or "sample" prefixes
             batch_names <- gsub("^batch", "", batch_names, ignore.case = TRUE)
             batch_names <- gsub("^sample", "", batch_names, ignore.case = TRUE)
@@ -627,7 +728,8 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
             batch_names <- gsub("^Query_", "", batch_names)
             # Remove leading non-alphanumeric characters
             batch_names <- gsub("^[^A-Za-z0-9]+", "", batch_names)
-            plot_data[["Term_clean"]][batch_pattern] <- paste("Query Batch", batch_names)
+            plot_data[["Term_clean"]][batch_pattern] <-
+                paste("Query Batch", batch_names)
         }
 
         # Clean up remaining terms
@@ -636,40 +738,54 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
         # Special handling for interactions
         interaction_indices <- grepl(":", plot_data[["Term_clean"]])
         if (any(interaction_indices)) {
-            interaction_terms <- plot_data[["Term_clean"]][interaction_indices]
+            interaction_terms <-
+                plot_data[["Term_clean"]][interaction_indices]
             interaction_parts <- strsplit(interaction_terms, ":")
-            formatted_interactions <- sapply(interaction_parts, function(parts) {
-                if (length(parts) == 2) {
-                    cell_type_part <- trimws(parts[1])
-                    batch_part <- trimws(parts[2])
+            formatted_interactions <- sapply(
+                interaction_parts, function(parts) {
+                    if (length(parts) == 2) {
+                        cell_type_part <- trimws(parts[1])
+                        batch_part <- trimws(parts[2])
 
-                    # Clean batch part thoroughly
-                    batch_part <- gsub("^batch", "", batch_part, ignore.case = TRUE)
-                    batch_part <- gsub("^sample", "", batch_part, ignore.case = TRUE)
-                    batch_part <- gsub("^[^A-Za-z0-9]+", "", batch_part)
+                        # Clean batch part thoroughly
+                        batch_part <- gsub(
+                            "^batch", "", batch_part,
+                            ignore.case = TRUE
+                        )
+                        batch_part <- gsub(
+                            "^sample", "", batch_part,
+                            ignore.case = TRUE
+                        )
+                        batch_part <- gsub("^[^A-Za-z0-9]+", "", batch_part)
 
-                    # Remove Query_ prefix if present (fixes the double Query
-                    # issue)
-                    batch_part <- gsub("^Query_", "", batch_part)
-                    batch_part <- trimws(batch_part)
+                        # Remove Query_ prefix if present (fixes the double
+                        # Query issue)
+                        batch_part <- gsub("^Query_", "", batch_part)
+                        batch_part <- trimws(batch_part)
 
-                    # Add "Query Batch" prefix if not already there
-                    if (!grepl("Query Batch", batch_part)) {
-                        batch_part <- paste("Query Batch", batch_part)
+                        # Add "Query Batch" prefix if not already there
+                        if (!grepl("Query Batch", batch_part)) {
+                            batch_part <- paste("Query Batch", batch_part)
+                        }
+                        return(paste(
+                            "Cell Type", cell_type_part, ":", batch_part
+                        ))
                     }
-                    return(paste("Cell Type", cell_type_part, ":", batch_part))
+                    return(paste(parts, collapse = " : "))
                 }
-                return(paste(parts, collapse = " : "))
-            })
-            plot_data[["Term_clean"]][interaction_indices] <- formatted_interactions
+            )
+            plot_data[["Term_clean"]][interaction_indices] <-
+                formatted_interactions
         }
     } else if (x[["indep_var"]] == "cell_type_dataset_interaction") {
         # Identify main effect cell types (no "dataset" and no ":")
-        celltype_main <- !grepl("dataset", plot_data[["Term"]]) & !grepl(":", plot_data[["Term"]])
+        celltype_main <- !grepl("dataset", plot_data[["Term"]]) &
+            !grepl(":", plot_data[["Term"]])
         plot_data[["Category"]][celltype_main] <- "Cell Type"
 
         # Identify main effect dataset (starts with "dataset" but no ":")
-        dataset_main <- grepl("^dataset", plot_data[["Term"]]) & !grepl(":", plot_data[["Term"]])
+        dataset_main <- grepl("^dataset", plot_data[["Term"]]) &
+            !grepl(":", plot_data[["Term"]])
         plot_data[["Category"]][dataset_main] <- "Batch"
 
         # Identify interactions (contains ":")
@@ -677,12 +793,15 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
         plot_data[["Category"]][interactions] <- "Cell Type : Batch"
 
         # Clean up term names
-        plot_data[["Term_clean"]] <- gsub("cell_type", "", plot_data[["Term_clean"]])
+        plot_data[["Term_clean"]] <-
+            gsub("cell_type", "", plot_data[["Term_clean"]])
 
         # Special handling for dataset names - convert to batch terminology
         dataset_pattern <- grepl("^dataset", plot_data[["Term_clean"]])
         if (any(dataset_pattern)) {
-            dataset_names <- gsub("^dataset", "", plot_data[["Term_clean"]][dataset_pattern])
+            dataset_names <- gsub(
+                "^dataset", "", plot_data[["Term_clean"]][dataset_pattern]
+            )
             # For dataset interaction, "Query" becomes "Query Batch"
             dataset_names <- gsub("Query", "Query Batch", dataset_names)
             plot_data[["Term_clean"]][dataset_pattern] <- dataset_names
@@ -694,31 +813,41 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
         # Special handling for interactions
         interaction_indices <- grepl(":", plot_data[["Term_clean"]])
         if (any(interaction_indices)) {
-            interaction_terms <- plot_data[["Term_clean"]][interaction_indices]
+            interaction_terms <-
+                plot_data[["Term_clean"]][interaction_indices]
             interaction_parts <- strsplit(interaction_terms, ":")
-            formatted_interactions <- sapply(interaction_parts, function(parts) {
-                if (length(parts) == 2) {
-                    cell_type_part <- trimws(parts[1])
-                    dataset_part <- trimws(parts[2])
+            formatted_interactions <- sapply(
+                interaction_parts, function(parts) {
+                    if (length(parts) == 2) {
+                        cell_type_part <- trimws(parts[1])
+                        dataset_part <- trimws(parts[2])
 
-                    # Clean dataset part
-                    dataset_part <- gsub("^dataset", "", dataset_part, ignore.case = TRUE)
-                    dataset_part <- trimws(dataset_part)
+                        # Clean dataset part
+                        dataset_part <- gsub(
+                            "^dataset", "", dataset_part,
+                            ignore.case = TRUE
+                        )
+                        dataset_part <- trimws(dataset_part)
 
-                    # Convert "Query" to "Query Batch"
-                    if (dataset_part == "Query") {
-                        dataset_part <- "Query Batch"
+                        # Convert "Query" to "Query Batch"
+                        if (dataset_part == "Query") {
+                            dataset_part <- "Query Batch"
+                        }
+
+                        return(paste(
+                            "Cell Type", cell_type_part, ":", dataset_part
+                        ))
                     }
-
-                    return(paste("Cell Type", cell_type_part, ":", dataset_part))
+                    return(paste(parts, collapse = " : "))
                 }
-                return(paste(parts, collapse = " : "))
-            })
-            plot_data[["Term_clean"]][interaction_indices] <- formatted_interactions
+            )
+            plot_data[["Term_clean"]][interaction_indices] <-
+                formatted_interactions
         }
     } else if (x[["indep_var"]] == "cell_type") {
         # For cell type only model
-        plot_data[["Term_clean"]] <- gsub("cell_type", "", plot_data[["Term_clean"]])
+        plot_data[["Term_clean"]] <-
+            gsub("cell_type", "", plot_data[["Term_clean"]])
     }
 
     # Filter coefficients based on coefficients_include parameter
@@ -731,10 +860,13 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
         )
 
         # Get categories to include
-        categories_to_include <- unlist(category_mapping[coefficients_include])
+        categories_to_include <-
+            unlist(category_mapping[coefficients_include])
 
         # Filter plot data
-        plot_data <- plot_data[plot_data[["Category"]] %in% categories_to_include, ]
+        plot_data <- plot_data[
+            plot_data[["Category"]] %in% categories_to_include,
+        ]
 
         # If no data remains after filtering, stop with informative message
         if (nrow(plot_data) == 0) {
@@ -749,9 +881,13 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
     # in data)
     available_categories <- unique(plot_data[["Category"]])
     all_category_levels <- c("Cell Type", "Batch", "Cell Type : Batch")
-    category_levels <- all_category_levels[all_category_levels %in% available_categories]
+    category_levels <-
+        all_category_levels[all_category_levels %in% available_categories]
 
-    plot_data[["Category"]] <- factor(plot_data[["Category"]], levels = category_levels)
+    plot_data[["Category"]] <- factor(
+        plot_data[["Category"]],
+        levels = category_levels
+    )
 
     # Create PC factor with labels
     existing_pc_names <- unique(plot_data[["PC"]])
@@ -764,15 +900,27 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
     )
 
     # Create y-axis ordering - special handling for interactions
-    if (x[["indep_var"]] %in% c("cell_type_batch_interaction", "cell_type_dataset_interaction")) {
+    if (x[["indep_var"]] %in%
+        c("cell_type_batch_interaction", "cell_type_dataset_interaction")) {
         # For interactions, we want to order by batch first, then by cell type
-        interaction_data <- plot_data[plot_data[["Category"]] == "Cell Type : Batch", ]
+        interaction_data <- plot_data[
+            plot_data[["Category"]] == "Cell Type : Batch",
+        ]
 
         if (nrow(interaction_data) > 0) {
             # Extract batch and cell type parts from interaction terms
-            interaction_parts <- strsplit(interaction_data[["Term_clean"]], " : ")
-            batch_parts <- sapply(interaction_parts, function(x) if (length(x) == 2) trimws(x[2]) else "")
-            cell_type_parts <- sapply(interaction_parts, function(x) if (length(x) == 2) gsub("Cell Type ", "", trimws(x[1])) else "")
+            interaction_parts <-
+                strsplit(interaction_data[["Term_clean"]], " : ")
+            batch_parts <- sapply(interaction_parts, function(x) {
+                if (length(x) == 2) trimws(x[2]) else ""
+            })
+            cell_type_parts <- sapply(interaction_parts, function(x) {
+                if (length(x) == 2) {
+                    gsub("Cell Type ", "", trimws(x[1]))
+                } else {
+                    ""
+                }
+            })
 
             # Create ordering data frame with unique terms only
             ordering_df <- data.frame(
@@ -786,19 +934,27 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
             ordering_df <- unique(ordering_df)
 
             # Order by batch first, then by cell type
-            ordering_df <- ordering_df[order(ordering_df[["batch_part"]], ordering_df[["cell_type_part"]]), ]
+            ordering_df <- ordering_df[order(
+                ordering_df[["batch_part"]], ordering_df[["cell_type_part"]]
+            ), ]
 
             # Get the ordered interaction terms
             ordered_interaction_terms <- ordering_df[["Term_clean"]]
 
             # Get unique non-interaction terms
-            non_interaction_terms <- unique(plot_data[plot_data[["Category"]] != "Cell Type : Batch", "Term_clean"])
+            non_interaction_terms <- unique(plot_data[
+                plot_data[["Category"]] != "Cell Type : Batch", "Term_clean"
+            ])
 
             # Combine all unique terms in desired order
-            all_terms <- unique(c(non_interaction_terms, ordered_interaction_terms))
+            all_terms <-
+                unique(c(non_interaction_terms, ordered_interaction_terms))
 
             # Create factor with custom ordering
-            plot_data[["Term_factor"]] <- factor(plot_data[["Term_clean"]], levels = all_terms)
+            plot_data[["Term_factor"]] <- factor(
+                plot_data[["Term_clean"]],
+                levels = all_terms
+            )
         } else {
             # No interactions, use default ordering
             plot_data[["Term_factor"]] <- factor(plot_data[["Term_clean"]])
@@ -809,14 +965,19 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
     }
 
     # Check if Batch category has only one term and add padding if needed
-    if (x[["indep_var"]] %in% c("cell_type_batch_interaction", "cell_type_dataset_interaction") &&
+    if (x[["indep_var"]] %in%
+        c("cell_type_batch_interaction", "cell_type_dataset_interaction") &&
         "Batch" %in% available_categories) {
-        batch_terms <- unique(plot_data[plot_data[["Category"]] == "Batch", "Term_clean"])
+        batch_terms <- unique(
+            plot_data[plot_data[["Category"]] == "Batch", "Term_clean"]
+        )
         if (length(batch_terms) == 1) {
             # Add a dummy row for better spacing
             dummy_row <- plot_data[plot_data[["Category"]] == "Batch", ][1, ]
             dummy_row[["Term_clean"]] <- ""
-            dummy_row[["Term_factor"]] <- factor("", levels = c(levels(plot_data[["Term_factor"]]), ""))
+            dummy_row[["Term_factor"]] <- factor(
+                "", levels = c(levels(plot_data[["Term_factor"]]), "")
+            )
             dummy_row[["coef"]] <- NA
             dummy_row[["Significant"]] <- FALSE
             plot_data <- rbind(plot_data, dummy_row)
@@ -830,11 +991,16 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
         "cell_type_dataset_interaction" = "PC ~ Cell Type * Batch"
     )
 
-    subtitle_text1 <- paste("Model:", model_text, "| * indicates significance at alpha =", alpha)
+    subtitle_text1 <- paste(
+        "Model:", model_text, "| * indicates significance at alpha =", alpha
+    )
 
     # Add information about coefficient filtering if applied
     if (!is.null(coefficients_include)) {
-        coefficient_text <- paste("Showing coefficients:", paste(coefficients_include, collapse = ", "))
+        coefficient_text <- paste(
+            "Showing coefficients:",
+            paste(coefficients_include, collapse = ", ")
+        )
         subtitle_text1 <- paste(subtitle_text1, "|", coefficient_text)
     }
 
@@ -843,14 +1009,20 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
 
     # Always include cell type reference
     if (!is.null(x[["reference_cell_type"]])) {
-        reference_text_parts <- c(reference_text_parts, paste("Cell Type:", x[["reference_cell_type"]]))
+        reference_text_parts <- c(
+            reference_text_parts,
+            paste("Cell Type:", x[["reference_cell_type"]])
+        )
     }
 
     # Include batch/dataset reference based on model type
     if (x[["indep_var"]] == "cell_type_batch_interaction") {
         # For query+reference with multiple batches OR query-only with batches
         if (!is.null(x[["reference_batch"]])) {
-            reference_text_parts <- c(reference_text_parts, paste("Batch: Query Batch", x[["reference_batch"]]))
+            reference_text_parts <- c(
+                reference_text_parts,
+                paste("Batch: Query Batch", x[["reference_batch"]])
+            )
         } else if (!is.null(x[["reference_pca_var"]])) {
             # Query+reference with multiple batches (Reference is reference
             # category)
@@ -863,7 +1035,10 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
 
     # Create subtitle
     if (length(reference_text_parts) > 0) {
-        subtitle_text2 <- paste("Reference categories -", paste(reference_text_parts, collapse = "; "))
+        subtitle_text2 <- paste(
+            "Reference categories -",
+            paste(reference_text_parts, collapse = "; ")
+        )
     } else {
         subtitle_text2 <- "Reference category is first alphabetically"
     }
@@ -876,7 +1051,9 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
     )) +
         ggplot2::geom_tile(color = "white", linewidth = 0.5) +
         ggplot2::geom_point(
-            data = plot_data[plot_data[["Significant"]] & !is.na(plot_data[["coef"]]), ],
+            data = plot_data[
+                plot_data[["Significant"]] & !is.na(plot_data[["coef"]]),
+            ],
             ggplot2::aes(
                 x = .data[["PC_labeled"]],
                 y = .data[["Term_factor"]]
@@ -899,16 +1076,26 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
         ggplot2::theme(
             axis.text.y = ggplot2::element_text(size = 9),
             axis.text.x = ggplot2::element_text(size = 10),
-            plot.title = ggplot2::element_text(size = 16, face = "bold", margin = ggplot2::margin(b = 10)),
-            plot.subtitle = ggplot2::element_text(size = 11, color = "gray40", margin = ggplot2::margin(b = 20)),
+            plot.title = ggplot2::element_text(
+                size = 16, face = "bold", margin = ggplot2::margin(b = 10)
+            ),
+            plot.subtitle = ggplot2::element_text(
+                size = 11, color = "gray40", margin = ggplot2::margin(b = 20)
+            ),
             legend.position = "right",
             legend.title = ggplot2::element_text(size = 11, face = "bold"),
             panel.grid = ggplot2::element_blank(),
             plot.margin = ggplot2::margin(20, 20, 20, 20),
-            strip.text.y = ggplot2::element_text(size = 10, face = "bold", color = "black"),
-            strip.background = ggplot2::element_rect(fill = "gray92", color = "black", linewidth = 0.5),
+            strip.text.y = ggplot2::element_text(
+                size = 10, face = "bold", color = "black"
+            ),
+            strip.background = ggplot2::element_rect(
+                fill = "gray92", color = "black", linewidth = 0.5
+            ),
             panel.spacing = ggplot2::unit(0.8, "lines"),
-            panel.background = ggplot2::element_rect(fill = "white", color = "black", linewidth = 0.5)
+            panel.background = ggplot2::element_rect(
+                fill = "white", color = "black", linewidth = 0.5
+            )
         ) +
         ggplot2::scale_y_discrete(labels = function(x) ifelse(x == "", "", x))
 
