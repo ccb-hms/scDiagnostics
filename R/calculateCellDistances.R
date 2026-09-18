@@ -41,20 +41,24 @@
 #' data("query_data")
 #'
 #' # Plot the PC data
-#' distance_data <- calculateCellDistances(query_data = query_data,
-#'                                         reference_data = reference_data,
-#'                                         query_cell_type_col = "SingleR_annotation",
-#'                                         ref_cell_type_col = "expert_annotation",
-#'                                         pc_subset = 1:10)
+#' distance_data <- calculateCellDistances(
+#'     query_data = query_data,
+#'     reference_data = reference_data,
+#'     query_cell_type_col = "SingleR_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     pc_subset = 1:10
+#' )
 #'
 #' # Identify outliers for CD4
-#' cd4_anomalies <- detectAnomaly(reference_data = reference_data,
-#'                                query_data = query_data,
-#'                                query_cell_type_col = "SingleR_annotation",
-#'                                ref_cell_type_col = "expert_annotation",
-#'                                pc_subset = 1:10,
-#'                                n_tree = 500,
-#'                                anomaly_threshold = 0.5)
+#' cd4_anomalies <- detectAnomaly(
+#'     reference_data = reference_data,
+#'     query_data = query_data,
+#'     query_cell_type_col = "SingleR_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     pc_subset = 1:10,
+#'     n_tree = 500,
+#'     anomaly_threshold = 0.5
+#' )
 #' cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE)[1:6])
 #'
 #' # Plot the densities of the distances
@@ -71,43 +75,52 @@ calculateCellDistances <- function(query_data,
                                    assay_name = "logcounts",
                                    max_cells_query = 5000,
                                    max_cells_ref = 5000) {
-
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  pc_subset_ref = pc_subset,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        pc_subset_ref = pc_subset,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = FALSE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = FALSE,
+        n_cell_types = NULL
+    )
 
 
     # Get the projected PCA data
-    pca_output <- projectPCA(query_data = query_data,
-                             reference_data = reference_data,
-                             query_cell_type_col = query_cell_type_col,
-                             ref_cell_type_col = ref_cell_type_col,
-                             cell_types = cell_types,
-                             pc_subset = pc_subset,
-                             assay_name = assay_name,
-                             max_cells_ref = max_cells_ref,
-                             max_cells_query = max_cells_query)
+    pca_output <- projectPCA(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        pc_subset = pc_subset,
+        assay_name = assay_name,
+        max_cells_ref = max_cells_ref,
+        max_cells_query = max_cells_query
+    )
 
     # Create a list to store distance data for each cell type
     distance_data <- vector("list", length = length(cell_types))
@@ -115,23 +128,24 @@ calculateCellDistances <- function(query_data,
 
     # Function to compute Euclidean distance between a vector and each row of a matrix
     .computeDistances <- function(matrix, vector) {
-
         # Apply the distance function to each row of the matrix
         distances <- apply(matrix, 1, function(row) {
-            sqrt(sum((row - vector) ^ 2))
+            sqrt(sum((row - vector)^2))
         })
 
         return(distances)
     }
 
     for (cell_type in cell_types) {
-
         # Subset principal component scores for current cell type
         ref_subset_scores <- pca_output[which(
             pca_output[["dataset"]] == "Reference" &
-                pca_output[["cell_type"]] == cell_type), pc_subset]
-        query_subset_scores <- pca_output[pca_output[["dataset"]] == "Query",
-                                          pc_subset]
+                pca_output[["cell_type"]] == cell_type
+        ), pc_subset]
+        query_subset_scores <- pca_output[
+            pca_output[["dataset"]] == "Query",
+            pc_subset
+        ]
 
         # Compute all pairwise distances within the reference subset
         ref_distances <- as.vector(dist(ref_subset_scores))
@@ -140,9 +154,13 @@ calculateCellDistances <- function(query_data,
         query_to_ref_distances <- apply(
             query_subset_scores, 1, function(query_cell,
                                              ref_subset_scores) {
-                .computeDistances(ref_subset_scores,
-                                   query_cell)
-                }, ref_subset_scores = ref_subset_scores)
+                .computeDistances(
+                    ref_subset_scores,
+                    query_cell
+                )
+            },
+            ref_subset_scores = ref_subset_scores
+        )
 
         # Store the distances
         distance_data[[cell_type]] <- list(
@@ -152,8 +170,10 @@ calculateCellDistances <- function(query_data,
     }
 
     # Add class of object
-    class(distance_data) <- c(class(distance_data),
-                              "calculateCellDistancesObject")
+    class(distance_data) <- c(
+        class(distance_data),
+        "calculateCellDistancesObject"
+    )
 
     # Return the distance data
     return(distance_data)

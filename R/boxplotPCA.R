@@ -40,22 +40,26 @@
 #' data("query_data")
 #'
 #' # Plot the PC data with boxplots (default)
-#' pc_plot <- boxplotPCA(query_data = query_data,
-#'                       reference_data = reference_data,
-#'                       cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-#'                       query_cell_type_col = "SingleR_annotation",
-#'                       ref_cell_type_col = "expert_annotation",
-#'                       pc_subset = 1:6)
+#' pc_plot <- boxplotPCA(
+#'     query_data = query_data,
+#'     reference_data = reference_data,
+#'     cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+#'     query_cell_type_col = "SingleR_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     pc_subset = 1:6
+#' )
 #' pc_plot
 #'
 #' # Plot the PC data with violin plots
-#' pc_violin <- boxplotPCA(query_data = query_data,
-#'                         reference_data = reference_data,
-#'                         cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-#'                         query_cell_type_col = "SingleR_annotation",
-#'                         ref_cell_type_col = "expert_annotation",
-#'                         pc_subset = 1:6,
-#'                         shape = "violin")
+#' pc_violin <- boxplotPCA(
+#'     query_data = query_data,
+#'     reference_data = reference_data,
+#'     cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+#'     query_cell_type_col = "SingleR_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     pc_subset = 1:6,
+#'     shape = "violin"
+#' )
 #' pc_violin
 #'
 #' @importFrom stats approxfun cancor density setNames
@@ -71,46 +75,55 @@ boxplotPCA <- function(query_data,
                        shape = c("box", "violin"),
                        assay_name = "logcounts",
                        max_cells_query = NULL,
-                       max_cells_ref = NULL){
-
+                       max_cells_ref = NULL) {
     # Match the shape argument
     shape <- match.arg(shape)
 
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  pc_subset_ref = pc_subset,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        pc_subset_ref = pc_subset,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = FALSE,
-                                  n_cell_types = 10)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = FALSE,
+        n_cell_types = 10
+    )
 
     # Get the projected PCA data
-    pca_output <- projectPCA(query_data = query_data,
-                             reference_data = reference_data,
-                             query_cell_type_col = query_cell_type_col,
-                             ref_cell_type_col = ref_cell_type_col,
-                             cell_types = cell_types,
-                             pc_subset = pc_subset,
-                             assay_name = assay_name,
-                             max_cells_ref = max_cells_ref,
-                             max_cells_query = max_cells_query)
+    pca_output <- projectPCA(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        pc_subset = pc_subset,
+        assay_name = assay_name,
+        max_cells_ref = max_cells_ref,
+        max_cells_query = max_cells_query
+    )
 
     # Get variance explained percentages
     pca_data <- SingleCellExperiment::reducedDim(reference_data, "PCA")
@@ -121,13 +134,20 @@ boxplotPCA <- function(query_data,
     names(pc_labels) <- paste0("pc", pc_subset)
 
     # Create the long format data frame manually
-    pca_long <- data.frame(PC = rep(paste0("pc", pc_subset),
-                                    each = nrow(pca_output)),
-                           Value = unlist(c(pca_output[, pc_subset])),
-                           dataset = rep(pca_output[["dataset"]],
-                                         length(pc_subset)),
-                           cell_type = rep(pca_output[["cell_type"]],
-                                           length(pc_subset)))
+    pca_long <- data.frame(
+        PC = rep(paste0("pc", pc_subset),
+            each = nrow(pca_output)
+        ),
+        Value = unlist(c(pca_output[, pc_subset])),
+        dataset = rep(
+            pca_output[["dataset"]],
+            length(pc_subset)
+        ),
+        cell_type = rep(
+            pca_output[["cell_type"]],
+            length(pc_subset)
+        )
+    )
 
     # Create properly ordered PC factor with variance explained labels
     pc_order <- paste0("pc", pc_subset)
@@ -135,61 +155,86 @@ boxplotPCA <- function(query_data,
 
     # Create a new variable representing the combination of cell type and dataset
     pca_long[["cell_type_dataset"]] <- paste(pca_long[["dataset"]],
-                                             pca_long[["cell_type"]],
-                                             sep = " ")
+        pca_long[["cell_type"]],
+        sep = " "
+    )
 
     # Define the order of cell type and dataset combinations
-    order_combinations <- paste(rep(c("Reference", "Query"),
-                                    length(unique(pca_long[["cell_type"]]))),
-                                rep(sort(unique(pca_long[["cell_type"]])),
-                                    each = 2))
+    order_combinations <- paste(
+        rep(
+            c("Reference", "Query"),
+            length(unique(pca_long[["cell_type"]]))
+        ),
+        rep(sort(unique(pca_long[["cell_type"]])),
+            each = 2
+        )
+    )
 
     # Reorder the levels of cell type and dataset factor
     pca_long[["cell_type_dataset"]] <- factor(pca_long[["cell_type_dataset"]],
-                                              levels = order_combinations)
+        levels = order_combinations
+    )
 
     # Define the colors for cell types
     cell_type_colors <- generateColors(order_combinations,
-                                       paired = TRUE)
+        paired = TRUE
+    )
 
     # Create the ggplot
     plot <- ggplot2::ggplot(pca_long, ggplot2::aes(
         x = .data[["cell_type"]],
         y = .data[["Value"]],
-        fill = .data[["cell_type_dataset"]]))
+        fill = .data[["cell_type_dataset"]]
+    ))
 
     # Add either boxplot or violin plot based on the shape parameter
-    if(shape == "box") {
-        plot <- plot + ggplot2::geom_boxplot(alpha = 0.7,
-                                             outlier.shape = NA,
-                                             width = 0.7)
+    if (shape == "box") {
+        plot <- plot + ggplot2::geom_boxplot(
+            alpha = 0.7,
+            outlier.shape = NA,
+            width = 0.7
+        )
     } else { # shape == "violin"
-        plot <- plot + ggplot2::geom_violin(alpha = 0.7,
-                                            trim = FALSE,
-                                            width = 0.7)
+        plot <- plot + ggplot2::geom_violin(
+            alpha = 0.7,
+            trim = FALSE,
+            width = 0.7
+        )
     }
 
     # Continue with common plot elements
     plot <- plot +
-        ggplot2::facet_wrap(~ .data[["PC"]], scales = "free",
-                            labeller = ggplot2::labeller(PC = pc_labels)) +
-        ggplot2::scale_fill_manual(values = cell_type_colors,
-                                   name = "Cell Types") +
+        ggplot2::facet_wrap(~ .data[["PC"]],
+            scales = "free",
+            labeller = ggplot2::labeller(PC = pc_labels)
+        ) +
+        ggplot2::scale_fill_manual(
+            values = cell_type_colors,
+            name = "Cell Types"
+        ) +
         ggplot2::labs(x = "", y = "PCA Score") +
         ggplot2::theme_bw() +
         ggplot2::theme(
             strip.background = ggplot2::element_rect(
-                fill = "white", color = "black", linewidth = 0.5),
+                fill = "white", color = "black", linewidth = 0.5
+            ),
             panel.grid.minor = ggplot2::element_blank(),
-            panel.grid.major = ggplot2::element_line(color = "gray",
-                                                     linetype = "dotted"),
-            plot.title = ggplot2::element_text(size = 14,
-                                               face = "bold", hjust = 0.5),
+            panel.grid.major = ggplot2::element_line(
+                color = "gray",
+                linetype = "dotted"
+            ),
+            plot.title = ggplot2::element_text(
+                size = 14,
+                face = "bold", hjust = 0.5
+            ),
             axis.title = ggplot2::element_text(size = 12),
             axis.text = ggplot2::element_text(size = 10),
-            axis.text.x = ggplot2::element_text(angle = 45,
-                                                hjust = 1,
-                                                size = 10))
+            axis.text.x = ggplot2::element_text(
+                angle = 45,
+                hjust = 1,
+                size = 10
+            )
+        )
 
     # Return the plot
     return(plot)

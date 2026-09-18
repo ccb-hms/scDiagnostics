@@ -47,29 +47,35 @@
 #' data("query_data")
 #'
 #' # Plot the PC data
-#' distance_data <- calculateCellDistances(query_data = query_data,
-#'                                         reference_data = reference_data,
-#'                                         query_cell_type_col = "SingleR_annotation",
-#'                                         ref_cell_type_col = "expert_annotation",
-#'                                         pc_subset = 1:10)
+#' distance_data <- calculateCellDistances(
+#'     query_data = query_data,
+#'     reference_data = reference_data,
+#'     query_cell_type_col = "SingleR_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     pc_subset = 1:10
+#' )
 #'
 #' # Identify outliers for CD4
-#' cd4_anomalies <- detectAnomaly(reference_data = reference_data,
-#'                                query_data = query_data,
-#'                                query_cell_type_col = "SingleR_annotation",
-#'                                ref_cell_type_col = "expert_annotation",
-#'                                pc_subset = 1:10,
-#'                                n_tree = 500,
-#'                                anomaly_threshold = 0.5)
+#' cd4_anomalies <- detectAnomaly(
+#'     reference_data = reference_data,
+#'     query_data = query_data,
+#'     query_cell_type_col = "SingleR_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     pc_subset = 1:10,
+#'     n_tree = 500,
+#'     anomaly_threshold = 0.5
+#' )
 #' cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE)[1:6])
 #'
 #' # Get overlap measures
-#' overlap_measures <- calculateCellDistancesSimilarity(query_data = query_data,
-#'                                                      reference_data = reference_data,
-#'                                                      cell_names_query = cd4_top6_anomalies,
-#'                                                      query_cell_type_col = "SingleR_annotation",
-#'                                                      ref_cell_type_col = "expert_annotation",
-#'                                                      pc_subset = 1:10)
+#' overlap_measures <- calculateCellDistancesSimilarity(
+#'     query_data = query_data,
+#'     reference_data = reference_data,
+#'     cell_names_query = cd4_top6_anomalies,
+#'     query_cell_type_col = "SingleR_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     pc_subset = 1:10
+#' )
 #' overlap_measures
 #'
 # Function to compute Bhattacharyya coefficients and Hellinger distances
@@ -82,34 +88,41 @@ calculateCellDistancesSimilarity <- function(query_data,
                                              pc_subset = 1:5,
                                              assay_name = "logcounts",
                                              max_cells_ref = 5000) {
-
     # Format the query cell names - remove "Query_" prefix if present
     cell_names_query <- gsub("^Query_", "", cell_names_query)
 
     # Check standard input arguments (now with proper cell_types)
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  cell_names_query = cell_names_query,
-                  pc_subset_ref = pc_subset,
-                  assay_name = assay_name,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_names_query = cell_names_query,
+        pc_subset_ref = pc_subset,
+        assay_name = assay_name,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = FALSE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = FALSE,
+        n_cell_types = NULL
+    )
 
     # Subset query data first
     query_data_subset <- query_data[, cell_names_query, drop = FALSE]
@@ -123,7 +136,8 @@ calculateCellDistancesSimilarity <- function(query_data,
         cell_types = cell_types,
         pc_subset = pc_subset,
         assay_name = assay_name,
-        max_cells_ref = max_cells_ref)
+        max_cells_ref = max_cells_ref
+    )
 
     # Update the names of the query cells
     cell_names_query <- paste0("Query_", cell_names_query)
@@ -135,7 +149,6 @@ calculateCellDistancesSimilarity <- function(query_data,
 
     # Iterate over each cell type
     for (cell_type in names(distance_data)) {
-
         # Extract distances within the reference dataset for the current cell type
         ref_distances <- distance_data[[cell_type]][["ref_distances"]]
 
@@ -148,7 +161,6 @@ calculateCellDistancesSimilarity <- function(query_data,
 
         # Iterate over each cell
         for (i in seq_len(length(cell_names_query))) {
-
             # Extract distances from the current cell to reference cells
             cell_distances <-
                 distance_data[[cell_type]][["query_to_ref_distances"]][cell_names_query[i], , drop = FALSE]
@@ -157,27 +169,39 @@ calculateCellDistancesSimilarity <- function(query_data,
             cell_density <- density(cell_distances)
 
             # Create a common grid for evaluating densities
-            common_grid <- seq(min(min(ref_density[["x"]]),
-                                   min(cell_density[["x"]]), 0),
-                               max(max(ref_density[["x"]]),
-                                   max(cell_density[["x"]])),
-                               length.out = 1000)
+            common_grid <- seq(
+                min(
+                    min(ref_density[["x"]]),
+                    min(cell_density[["x"]]), 0
+                ),
+                max(
+                    max(ref_density[["x"]]),
+                    max(cell_density[["x"]])
+                ),
+                length.out = 1000
+            )
 
             # Interpolate densities onto the common grid
-            ref_density_interp <- approxfun(ref_density[["x"]],
-                                            ref_density[["y"]])(common_grid)
+            ref_density_interp <- approxfun(
+                ref_density[["x"]],
+                ref_density[["y"]]
+            )(common_grid)
             ref_density_interp[is.na(ref_density_interp)] <- 0
-            cell_density_interp <- approxfun(cell_density[["x"]],
-                                             cell_density[["y"]])(common_grid)
+            cell_density_interp <- approxfun(
+                cell_density[["x"]],
+                cell_density[["y"]]
+            )(common_grid)
             cell_density_interp[is.na(cell_density_interp)] <- 0
 
             # Compute and store Bhattacharyya coefficient/Hellinger distance
             bhattacharyya_coef[i] <- sum(
                 sqrt(ref_density_interp * cell_density_interp) *
-                    mean(diff(common_grid)))
+                    mean(diff(common_grid))
+            )
             hellinger_dist[i] <- sqrt(
                 1 - sum(sqrt(ref_density_interp * cell_density_interp)) *
-                    mean(diff(common_grid)))
+                    mean(diff(common_grid))
+            )
         }
 
         # Store overlap measures for the current cell type
@@ -188,8 +212,8 @@ calculateCellDistancesSimilarity <- function(query_data,
     # Return list with overlap measures
     bhattacharyya_coef <- data.frame(Cell = cell_names_query, bhattacharyya_list)
     hellinger_dist <- data.frame(Cell = cell_names_query, hellinger_list)
-    return(list(bhattacharyya_coef = bhattacharyya_coef,
-                hellinger_dist = hellinger_dist))
+    return(list(
+        bhattacharyya_coef = bhattacharyya_coef,
+        hellinger_dist = hellinger_dist
+    ))
 }
-
-

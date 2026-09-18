@@ -48,7 +48,6 @@ selectCellTypes <- function(query_data = NULL,
                             cell_types = NULL,
                             dual_only = FALSE,
                             n_cell_types = NULL) {
-
     # Check that at least one dataset is provided
     if (is.null(query_data) && is.null(reference_data)) {
         stop("At least one of 'query_data' or 'reference_data' must be provided.")
@@ -120,11 +119,15 @@ selectCellTypes <- function(query_data = NULL,
         if (length(all_available_types) == 0) {
             missing_types <- setdiff(cell_types, valid_types_pool)
             if (dual_only) {
-                stop("None of the specified cell types are present in both datasets. ",
-                     "Missing types: ", paste(missing_types, collapse = ", "))
+                stop(
+                    "None of the specified cell types are present in both datasets. ",
+                    "Missing types: ", paste(missing_types, collapse = ", ")
+                )
             } else {
-                stop("None of the specified cell types are present in the provided datasets. ",
-                     "Missing types: ", paste(missing_types, collapse = ", "))
+                stop(
+                    "None of the specified cell types are present in the provided datasets. ",
+                    "Missing types: ", paste(missing_types, collapse = ", ")
+                )
             }
         }
 
@@ -132,11 +135,15 @@ selectCellTypes <- function(query_data = NULL,
         missing_types <- setdiff(cell_types, all_available_types)
         if (length(missing_types) > 0) {
             if (dual_only) {
-                warning("Some specified cell types are not present in both datasets and will be excluded: ",
-                        paste(missing_types, collapse = ", "))
+                warning(
+                    "Some specified cell types are not present in both datasets and will be excluded: ",
+                    paste(missing_types, collapse = ", ")
+                )
             } else {
-                warning("Some specified cell types are not present in the provided datasets and will be excluded: ",
-                        paste(missing_types, collapse = ", "))
+                warning(
+                    "Some specified cell types are not present in the provided datasets and will be excluded: ",
+                    paste(missing_types, collapse = ", ")
+                )
             }
         }
     }
@@ -182,8 +189,10 @@ selectCellTypes <- function(query_data = NULL,
 
         # Warn about selection
         excluded_types <- setdiff(all_available_types, selected_types)
-        warning("Selected top ", n_cell_types, " cell types by cell count. ",
-                "Excluded types: ", paste(excluded_types, collapse = ", "))
+        warning(
+            "Selected top ", n_cell_types, " cell types by cell count. ",
+            "Excluded types: ", paste(excluded_types, collapse = ", ")
+        )
 
         final_cell_types <- selected_types
     } else {

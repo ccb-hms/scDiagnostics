@@ -54,13 +54,13 @@ plot.detectAnomalyObject <- function(x,
                                      max_cells_query = NULL,
                                      draw_plot = TRUE,
                                      ...) {
-
     # Check input for cell type
-    if(is.null(cell_type)){
+    if (is.null(cell_type)) {
         cell_type <- "Combined"
     } else {
-        if(!(cell_type %in% names(x)))
+        if (!(cell_type %in% names(x))) {
             stop("'cell_type' is not available in 'x'.")
+        }
     }
 
     # Determine if this is PCA data or HVG data
@@ -87,13 +87,12 @@ plot.detectAnomalyObject <- function(x,
     # PATH A: HVG COMPLEX HEATMAP LOGIC
     # __________________________________
     if (!is_pca) {
-
         if (!requireNamespace("ComplexHeatmap", quietly = TRUE) || !requireNamespace("circlize", quietly = TRUE)) {
             stop("Packages 'ComplexHeatmap' and 'circlize' are required to plot HVG heatmaps. Please install them.")
         }
 
         # Check query availability
-        if(is.null(x[[cell_type]][["query_mat_subset"]]) && data_type %in% c("query", "both")){
+        if (is.null(x[[cell_type]][["query_mat_subset"]]) && data_type %in% c("query", "both")) {
             stop("There is no query data available in the 'detectAnomaly' object.")
         }
 
@@ -105,12 +104,12 @@ plot.detectAnomalyObject <- function(x,
         query_anomaly <- x[[cell_type]][["query_anomaly"]]
 
         # Downsample if requested
-        if(!is.null(max_cells_ref) && nrow(ref_mat) > max_cells_ref){
+        if (!is.null(max_cells_ref) && nrow(ref_mat) > max_cells_ref) {
             idx <- sample(nrow(ref_mat), max_cells_ref)
             ref_mat <- ref_mat[idx, , drop = FALSE]
             ref_anomaly <- ref_anomaly[idx]
         }
-        if(!is.null(max_cells_query) && !is.null(query_mat) && nrow(query_mat) > max_cells_query){
+        if (!is.null(max_cells_query) && !is.null(query_mat) && nrow(query_mat) > max_cells_query) {
             idx <- sample(nrow(query_mat), max_cells_query)
             query_mat <- query_mat[idx, , drop = FALSE]
             query_anomaly <- query_anomaly[idx]
@@ -143,7 +142,7 @@ plot.detectAnomalyObject <- function(x,
         # Z-score scaling by gene (row)
         plot_mat <- t(scale(t(plot_mat)))
         plot_mat[is.na(plot_mat)] <- 0 # Handle zero-variance genes
-        plot_mat[plot_mat > 2] <- 2    # Cap extremes for better color contrast
+        plot_mat[plot_mat > 2] <- 2 # Cap extremes for better color contrast
         plot_mat[plot_mat < -2] <- -2
 
         # Determine anomaly labels
@@ -218,31 +217,32 @@ plot.detectAnomalyObject <- function(x,
     }
 
     # Check input for pc_subset
-    if(!is.null(pc_subset)){
-        if(!all(pc_subset %in% seq_len(length(x[[cell_type]][["var_explained"]]))))
+    if (!is.null(pc_subset)) {
+        if (!all(pc_subset %in% seq_len(length(x[[cell_type]][["var_explained"]])))) {
             stop("'pc_subset' is out of range.")
+        }
     } else {
         pc_subset <- seq_len(length(x[[cell_type]][["var_explained"]]))
     }
 
     # Filter and prepare data based on data type
-    if(is.null(x[[cell_type]][["query_mat_subset"]]) && data_type == "query"){
+    if (is.null(x[[cell_type]][["query_mat_subset"]]) && data_type == "query") {
         stop("There is no query data available in the 'detectAnomaly' object.")
     } else {
-        if(data_type == "query"){
+        if (data_type == "query") {
             data_subset <- x[[cell_type]][["query_mat_subset"]][, pc_subset, drop = FALSE]
             anomaly <- x[[cell_type]][["query_anomaly"]]
 
-            if(!is.null(max_cells_query) && nrow(data_subset) > max_cells_query){
+            if (!is.null(max_cells_query) && nrow(data_subset) > max_cells_query) {
                 sampled_indices <- sample(nrow(data_subset), max_cells_query)
                 data_subset <- data_subset[sampled_indices, , drop = FALSE]
                 anomaly <- anomaly[sampled_indices]
             }
-        } else if(data_type == "reference"){
+        } else if (data_type == "reference") {
             data_subset <- x[[cell_type]][["reference_mat_subset"]][, pc_subset, drop = FALSE]
             anomaly <- x[[cell_type]][["reference_anomaly"]]
 
-            if(!is.null(max_cells_ref) && nrow(data_subset) > max_cells_ref){
+            if (!is.null(max_cells_ref) && nrow(data_subset) > max_cells_ref) {
                 sampled_indices <- sample(nrow(data_subset), max_cells_ref)
                 data_subset <- data_subset[sampled_indices, , drop = FALSE]
                 anomaly <- anomaly[sampled_indices]
@@ -253,7 +253,8 @@ plot.detectAnomalyObject <- function(x,
     # Add variance explained to column names
     colnames(data_subset) <- paste0(
         "PC", pc_subset,
-        " (", sprintf("%.1f%%", x[[cell_type]][["var_explained"]][pc_subset]), ")")
+        " (", sprintf("%.1f%%", x[[cell_type]][["var_explained"]][pc_subset]), ")"
+    )
 
     # Create a data frame with PC values and anomaly info
     pc_df <- data.frame(data_subset)
@@ -266,22 +267,22 @@ plot.detectAnomalyObject <- function(x,
 
     # Train isolation forest for each PC combination
     isolation_forests <- list()
-    for(i in seq_along(pc_subset)){
-        for(j in seq_along(pc_subset)){
-            if(i < j){
+    for (i in seq_along(pc_subset)) {
+        for (j in seq_along(pc_subset)) {
+            if (i < j) {
                 pc_i <- paste0("PC", pc_subset[i])
                 pc_j <- paste0("PC", pc_subset[j])
 
                 train_data <- x[[cell_type]][["reference_mat_subset"]][, c(pc_i, pc_j)]
 
-                isolation_forests[[paste(pc_i, pc_j, sep="-")]] <-
+                isolation_forests[[paste(pc_i, pc_j, sep = "-")]] <-
                     isotree::isolation.forest(train_data, ntree = n_tree, ...)
             }
         }
     }
 
     # --- Plotting helper functions ---
-    .anomalyScatterFunc <- function(data, mapping, ...){
+    .anomalyScatterFunc <- function(data, mapping, ...) {
         x_name <- rlang::as_name(mapping[["x"]])
         y_name <- rlang::as_name(mapping[["y"]])
 
@@ -322,8 +323,10 @@ plot.detectAnomalyObject <- function(x,
         p <- ggplot2::ggplot() +
             ggplot2::geom_tile(
                 data = background_data,
-                ggplot2::aes(x = .data[["x_value"]], y = .data[["y_value"]],
-                             fill = .data[["anomaly_score"]], width = .data[["width"]], height = .data[["height"]])
+                ggplot2::aes(
+                    x = .data[["x_value"]], y = .data[["y_value"]],
+                    fill = .data[["anomaly_score"]], width = .data[["width"]], height = .data[["height"]]
+                )
             ) +
             ggplot2::scale_fill_gradientn(
                 colors = gradient_colors, values = scales::rescale(stops), limits = c(0, 1), guide = "none"
@@ -345,7 +348,7 @@ plot.detectAnomalyObject <- function(x,
         return(p)
     }
 
-    .densityDiagFunc <- function(data, mapping, ...){
+    .densityDiagFunc <- function(data, mapping, ...) {
         x_name <- rlang::as_name(mapping[["x"]])
         ggplot2::ggplot(data, ggplot2::aes(x = !!rlang::sym(x_name))) +
             ggplot2::geom_density(ggplot2::aes(fill = anomaly, color = anomaly), alpha = 0.3, linewidth = 0.8) +
@@ -360,12 +363,14 @@ plot.detectAnomalyObject <- function(x,
             )
     }
 
-    .ridgeDiagFunc <- function(data, mapping, ...){
+    .ridgeDiagFunc <- function(data, mapping, ...) {
         x_name <- rlang::as_name(mapping[["x"]])
         plot_data <- data.frame(value = data[[x_name]], anomaly = data[["anomaly"]])
         suppressMessages({
-            p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["value"]], y = .data[["anomaly"]],
-                                                         fill = .data[["anomaly"]], color = .data[["anomaly"]])) +
+            p <- ggplot2::ggplot(plot_data, ggplot2::aes(
+                x = .data[["value"]], y = .data[["anomaly"]],
+                fill = .data[["anomaly"]], color = .data[["anomaly"]]
+            )) +
                 ggridges::geom_density_ridges(alpha = 0.6, scale = 1.8, rel_min_height = 0.01, quantile_lines = FALSE) +
                 ggplot2::scale_fill_manual(values = anomaly_fill_colors) +
                 ggplot2::scale_color_manual(values = anomaly_colors) +
@@ -381,7 +386,7 @@ plot.detectAnomalyObject <- function(x,
         return(p)
     }
 
-    .boxplotDiagFunc <- function(data, mapping, ...){
+    .boxplotDiagFunc <- function(data, mapping, ...) {
         x_name <- rlang::as_name(mapping[["x"]])
         plot_data <- data.frame(value = data[[x_name]], anomaly = data[["anomaly"]])
         ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["value"]], y = .data[["anomaly"]], fill = .data[["anomaly"]])) +
@@ -397,8 +402,9 @@ plot.detectAnomalyObject <- function(x,
             )
     }
 
-    .blankFunc <- function(data, mapping, ...){
-        ggplot2::ggplot() + ggplot2::theme_minimal() +
+    .blankFunc <- function(data, mapping, ...) {
+        ggplot2::ggplot() +
+            ggplot2::theme_minimal() +
             ggplot2::theme(
                 panel.border = ggplot2::element_rect(color = "black", fill = NA, linewidth = 0.5),
                 panel.grid = ggplot2::element_blank(), axis.title = ggplot2::element_blank(),
@@ -406,7 +412,7 @@ plot.detectAnomalyObject <- function(x,
             )
     }
 
-    .contourFunc <- function(data, mapping, ...){
+    .contourFunc <- function(data, mapping, ...) {
         x_name <- rlang::as_name(mapping[["x"]])
         y_name <- rlang::as_name(mapping[["y"]])
         p <- ggplot2::ggplot(data, ggplot2::aes(x = !!rlang::sym(x_name), y = !!rlang::sym(y_name))) +
@@ -416,25 +422,32 @@ plot.detectAnomalyObject <- function(x,
                 panel.grid = ggplot2::element_blank(), axis.title = ggplot2::element_blank(),
                 axis.text = ggplot2::element_blank(), axis.ticks = ggplot2::element_blank(), legend.position = "none"
             )
-        data_normal <- data[data[["anomaly"]] == "FALSE",]
-        if(nrow(data_normal) >= 10) {
-            p <- p + ggplot2::stat_density_2d(data = data_normal, ggplot2::aes(x = !!rlang::sym(x_name), y = !!rlang::sym(y_name)),
-                                              color = anomaly_colors[["FALSE"]], linewidth = 0.5, contour = TRUE, bins = 5)
+        data_normal <- data[data[["anomaly"]] == "FALSE", ]
+        if (nrow(data_normal) >= 10) {
+            p <- p + ggplot2::stat_density_2d(
+                data = data_normal, ggplot2::aes(x = !!rlang::sym(x_name), y = !!rlang::sym(y_name)),
+                color = anomaly_colors[["FALSE"]], linewidth = 0.5, contour = TRUE, bins = 5
+            )
         }
-        data_anomaly <- data[data[["anomaly"]] == "TRUE",]
-        if(nrow(data_anomaly) >= 10) {
-            p <- p + ggplot2::stat_density_2d(data = data_anomaly, ggplot2::aes(x = !!rlang::sym(x_name), y = !!rlang::sym(y_name)),
-                                              color = anomaly_colors[["TRUE"]], linewidth = 0.5, contour = TRUE, bins = 5)
+        data_anomaly <- data[data[["anomaly"]] == "TRUE", ]
+        if (nrow(data_anomaly) >= 10) {
+            p <- p + ggplot2::stat_density_2d(
+                data = data_anomaly, ggplot2::aes(x = !!rlang::sym(x_name), y = !!rlang::sym(y_name)),
+                color = anomaly_colors[["TRUE"]], linewidth = 0.5, contour = TRUE, bins = 5
+            )
         }
         return(p)
     }
 
-    .ellipseFunc <- function(data, mapping, ...){
+    .ellipseFunc <- function(data, mapping, ...) {
         x_name <- rlang::as_name(mapping[["x"]])
         y_name <- rlang::as_name(mapping[["y"]])
         createEllipse <- function(d) {
-            if (nrow(d) < 10) return(NULL)
-            x <- d[[x_name]]; y <- d[[y_name]]
+            if (nrow(d) < 10) {
+                return(NULL)
+            }
+            x <- d[[x_name]]
+            y <- d[[y_name]]
             cov_mat <- cov(cbind(x, y), use = "pairwise.complete.obs")
             center <- c(mean(x, na.rm = TRUE), mean(y, na.rm = TRUE))
             ellipse <- MASS::cov.trob(cbind(x, y))
@@ -442,43 +455,57 @@ plot.detectAnomalyObject <- function(x,
             a <- sqrt(ev[["values"]][1]) * 2.45
             b <- sqrt(ev[["values"]][2]) * 2.45
             # BUG FIX: Use 'vectors' instead of 'values' for correct dimension
-            angle <- atan2(ev[["vectors"]][2,1], ev[["vectors"]][1,1])
+            angle <- atan2(ev[["vectors"]][2, 1], ev[["vectors"]][1, 1])
             theta <- seq(0, 2 * pi, length.out = 100)
             ellipse_x <- center[1] + a * cos(theta) * cos(angle) - b * sin(theta) * sin(angle)
             ellipse_y <- center[2] + a * cos(theta) * sin(angle) + b * sin(theta) * cos(angle)
             return(data.frame(x = ellipse_x, y = ellipse_y))
         }
-        p <- ggplot2::ggplot() + ggplot2::theme_minimal() +
+        p <- ggplot2::ggplot() +
+            ggplot2::theme_minimal() +
             ggplot2::theme(
                 panel.border = ggplot2::element_rect(color = "black", fill = NA, linewidth = 0.5),
                 panel.grid = ggplot2::element_blank(), axis.title = ggplot2::element_blank(),
                 axis.text = ggplot2::element_blank(), axis.ticks = ggplot2::element_blank(), legend.position = "none"
             )
-        data_normal <- data[data[["anomaly"]] == "FALSE",]
+        data_normal <- data[data[["anomaly"]] == "FALSE", ]
         ellipse_normal <- createEllipse(data_normal)
         if (!is.null(ellipse_normal)) {
-            p <- p + ggplot2::geom_path(data = ellipse_normal, ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
-                                        color = anomaly_colors[["FALSE"]], linewidth = 0.7)
+            p <- p + ggplot2::geom_path(
+                data = ellipse_normal, ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
+                color = anomaly_colors[["FALSE"]], linewidth = 0.7
+            )
         }
-        data_anomaly <- data[data[["anomaly"]] == "TRUE",]
+        data_anomaly <- data[data[["anomaly"]] == "TRUE", ]
         ellipse_anomaly <- createEllipse(data_anomaly)
         if (!is.null(ellipse_anomaly)) {
-            p <- p + ggplot2::geom_path(data = ellipse_anomaly, ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
-                                        color = anomaly_colors[["TRUE"]], linewidth = 0.7)
+            p <- p + ggplot2::geom_path(
+                data = ellipse_anomaly, ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
+                color = anomaly_colors[["TRUE"]], linewidth = 0.7
+            )
         }
         return(p)
     }
 
-    if (diagonal_facet == "density") { diag_func <- .densityDiagFunc }
-    else if (diagonal_facet == "ridge") { diag_func <- .ridgeDiagFunc }
-    else if (diagonal_facet == "boxplot") { diag_func <- .boxplotDiagFunc }
-    else if (diagonal_facet == "blank") { diag_func <- .blankFunc }
+    if (diagonal_facet == "density") {
+        diag_func <- .densityDiagFunc
+    } else if (diagonal_facet == "ridge") {
+        diag_func <- .ridgeDiagFunc
+    } else if (diagonal_facet == "boxplot") {
+        diag_func <- .boxplotDiagFunc
+    } else if (diagonal_facet == "blank") {
+        diag_func <- .blankFunc
+    }
 
-    if (upper_facet == "blank") { upper_func <- .blankFunc }
-    else if (upper_facet == "contour") { upper_func <- .contourFunc }
-    else if (upper_facet == "ellipse") { upper_func <- .ellipseFunc }
+    if (upper_facet == "blank") {
+        upper_func <- .blankFunc
+    } else if (upper_facet == "contour") {
+        upper_func <- .contourFunc
+    } else if (upper_facet == "ellipse") {
+        upper_func <- .ellipseFunc
+    }
 
-    legend_plot <- ggplot2::ggplot(pc_df, ggplot2::aes(x = pc_df[,1], y = pc_df[,2])) +
+    legend_plot <- ggplot2::ggplot(pc_df, ggplot2::aes(x = pc_df[, 1], y = pc_df[, 2])) +
         ggplot2::geom_point(ggplot2::aes(color = anomaly)) +
         ggplot2::scale_color_manual(values = anomaly_colors, name = "Anomalous") +
         ggplot2::theme(legend.position = "right", legend.box = "vertical", legend.key = ggplot2::element_rect(fill = "white"))
@@ -487,9 +514,10 @@ plot.detectAnomalyObject <- function(x,
 
     plot_obj <- suppressMessages(
         GGally::ggpairs(
-            pc_df, columns = seq_len(length(pc_subset)), mapping = ggplot2::aes(color = anomaly),
+            pc_df,
+            columns = seq_len(length(pc_subset)), mapping = ggplot2::aes(color = anomaly),
             lower = list(continuous = .anomalyScatterFunc), diag = list(continuous = diag_func),
-            upper = list(continuous = upper_func), progress = FALSE, 
+            upper = list(continuous = upper_func), progress = FALSE,
             title = pca_title,
             legend = GGally::grab_legend(legend_plot)
         )
@@ -498,7 +526,7 @@ plot.detectAnomalyObject <- function(x,
     plot_obj <- plot_obj +
         ggplot2::theme(
             strip.background = ggplot2::element_rect(fill = "white", color = "black", linewidth = 0.5),
-            strip.text = ggplot2::element_text(color = "black"), 
+            strip.text = ggplot2::element_text(color = "black"),
             plot.title = ggplot2::element_text(size = 14, hjust = 0.5)
         )
 

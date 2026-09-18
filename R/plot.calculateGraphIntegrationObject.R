@@ -32,16 +32,16 @@
 #' @importFrom stats reorder
 #'
 # Function to plot the graph integration diagnostics
-plot.calculateGraphIntegrationObject <- function(
-        x,
-        plot_type = c("community_network", "cell_network", "community_data",
-                      "summary", "local_issues", "annotation_issues"),
-        color_by = c("cell_type", "community_type"),
-        max_nodes = 2000,
-        point_size = 0.8,
-        exclude_reference_only = FALSE,
-        ...) {
-
+plot.calculateGraphIntegrationObject <- function(x,
+                                                 plot_type = c(
+                                                     "community_network", "cell_network", "community_data",
+                                                     "summary", "local_issues", "annotation_issues"
+                                                 ),
+                                                 color_by = c("cell_type", "community_type"),
+                                                 max_nodes = 2000,
+                                                 point_size = 0.8,
+                                                 exclude_reference_only = FALSE,
+                                                 ...) {
     plot_type <- match.arg(plot_type)
     color_by <- match.arg(color_by)
 
@@ -58,8 +58,11 @@ plot.calculateGraphIntegrationObject <- function(
     )
 
     pluralize <- function(count, singular, plural = paste0(singular, "s")) {
-        if (count == 1) return(paste(count, singular))
-        else return(paste(count, plural))
+        if (count == 1) {
+            return(paste(count, singular))
+        } else {
+            return(paste(count, plural))
+        }
     }
 
     if (plot_type == "community_network") {
@@ -67,14 +70,18 @@ plot.calculateGraphIntegrationObject <- function(
 
         if (nrow(community_composition) == 0) {
             p <- ggplot2::ggplot() +
-                ggplot2::annotate("text", x = 0.5, y = 0.5,
-                                  label = "No communities to display",
-                                  size = 8, color = "gray50") +
+                ggplot2::annotate("text",
+                    x = 0.5, y = 0.5,
+                    label = "No communities to display",
+                    size = 8, color = "gray50"
+                ) +
                 ggplot2::labs(title = "Community Network") +
                 ggplot2::theme_void() +
-                ggplot2::theme(plot.title = ggplot2::element_text(size = 14,
-                                                                  face = "bold",
-                                                                  hjust = 0.5))
+                ggplot2::theme(plot.title = ggplot2::element_text(
+                    size = 14,
+                    face = "bold",
+                    hjust = 0.5
+                ))
         } else {
             # Filter out reference-only communities if requested
             if (exclude_reference_only) {
@@ -84,14 +91,18 @@ plot.calculateGraphIntegrationObject <- function(
 
             if (nrow(community_composition) == 0) {
                 p <- ggplot2::ggplot() +
-                    ggplot2::annotate("text", x = 0.5, y = 0.5,
-                                      label = "No communities to display after filtering",
-                                      size = 8, color = "gray50") +
+                    ggplot2::annotate("text",
+                        x = 0.5, y = 0.5,
+                        label = "No communities to display after filtering",
+                        size = 8, color = "gray50"
+                    ) +
                     ggplot2::labs(title = "Community Network") +
                     ggplot2::theme_void() +
-                    ggplot2::theme(plot.title = ggplot2::element_text(size = 14,
-                                                                      face = "bold",
-                                                                      hjust = 0.5))
+                    ggplot2::theme(plot.title = ggplot2::element_text(
+                        size = 14,
+                        face = "bold",
+                        hjust = 0.5
+                    ))
             } else {
                 # Calculate community centroids in PCA space
                 centroid_rows <- lapply(community_composition[["community"]], function(comm) {
@@ -130,8 +141,10 @@ plot.calculateGraphIntegrationObject <- function(
                 adaptive_threshold <- max(0.005, min(0.05, 2 * base_connectivity))
 
                 # Create edge lookup for fast checking (both directions)
-                edge_keys <- c(paste(original_edges[, 1], original_edges[, 2], sep = "_"),
-                              paste(original_edges[, 2], original_edges[, 1], sep = "_"))
+                edge_keys <- c(
+                    paste(original_edges[, 1], original_edges[, 2], sep = "_"),
+                    paste(original_edges[, 2], original_edges[, 1], sep = "_")
+                )
 
                 communities <- community_composition[["community"]]
                 n_communities <- length(communities)
@@ -183,24 +196,29 @@ plot.calculateGraphIntegrationObject <- function(
                 edge_data <- if (length(edge_rows) > 0) {
                     do.call(rbind, edge_rows)
                 } else {
-                    data.frame(x = numeric(0), y = numeric(0),
-                              xend = numeric(0), yend = numeric(0),
-                              connection_strength = numeric(0))
+                    data.frame(
+                        x = numeric(0), y = numeric(0),
+                        xend = numeric(0), yend = numeric(0),
+                        connection_strength = numeric(0)
+                    )
                 }
 
                 # Prepare node data
                 node_data <- merge(community_centroids,
-                                   community_composition,
-                                   by = "community")
+                    community_composition,
+                    by = "community"
+                )
 
                 if (color_by == "cell_type") {
                     # Get all cell types and generate paired colors
                     all_cell_types <- sort(unique(x[["cell_info"]][["cell_type"]]))
                     cell_types_cases <- c()
-                    for(cell_type_case in all_cell_types){
-                        cell_types_cases <- c(cell_types_cases,
-                                              paste(cell_type_case, "(Mixed)"),
-                                              paste(cell_type_case, "(Pure)"))
+                    for (cell_type_case in all_cell_types) {
+                        cell_types_cases <- c(
+                            cell_types_cases,
+                            paste(cell_type_case, "(Mixed)"),
+                            paste(cell_type_case, "(Pure)")
+                        )
                     }
                     paired_colors <- generateColors(cell_types_cases, paired = TRUE)
 
@@ -212,8 +230,10 @@ plot.calculateGraphIntegrationObject <- function(
                     })
                     node_data[["is_mixed"]] <- node_data[["n_cell_types"]] > 1
                     node_data[["cell_type_case"]] <-
-                        paste(node_data[["dominant_cell_type"]],
-                              ifelse(node_data[["is_mixed"]], "(Mixed)", "(Pure)"))
+                        paste(
+                            node_data[["dominant_cell_type"]],
+                            ifelse(node_data[["is_mixed"]], "(Mixed)", "(Pure)")
+                        )
 
                     # Assign colors based on dominant cell type and mixing status
                     node_data[["color"]] <- paired_colors[node_data[["cell_type_case"]]]
@@ -221,13 +241,13 @@ plot.calculateGraphIntegrationObject <- function(
                     # Classify communities for shapes
                     node_data[["shape_type"]] <- "Well Integrated"
                     node_data[["shape_type"]][node_data[["community"]] %in%
-                                                  x[["cross_type_mixing"]][["community"]]] <-
+                        x[["cross_type_mixing"]][["community"]]] <-
                         "Cross-Type Mixing"
                     node_data[["shape_type"]][node_data[["community"]] %in%
-                                                  x[["high_query_prop_analysis"]][["community"]]] <-
+                        x[["high_query_prop_analysis"]][["community"]]] <-
                         "High Query Proportion"
                     node_data[["shape_type"]][node_data[["query_proportion"]] < 0.1 &
-                                                  node_data[["shape_type"]] == "Well Integrated"] <-
+                        node_data[["shape_type"]] == "Well Integrated"] <-
                         "High Reference Proportion"
 
                     # Create color legend - only show colors that are actually used
@@ -239,30 +259,40 @@ plot.calculateGraphIntegrationObject <- function(
                     color_legend_values <- paired_colors
 
                     p <- ggplot2::ggplot() +
-                        {if (nrow(edge_data) > 0) {
-                            ggplot2::geom_segment(data = edge_data,
-                                                  ggplot2::aes(
-                                                      x = .data[["x"]], y = .data[["y"]],
-                                                      xend = .data[["xend"]], yend = .data[["yend"]],
-                                                      alpha = .data[["connection_strength"]]),
-                                                  color = "gray60", linewidth = 0.8)
-                        }} +
-                        ggplot2::geom_point(data = node_data,
-                                            ggplot2::aes(
-                                                x = .data[["x"]], y = .data[["y"]],
-                                                color = .data[["cell_type_case"]],
-                                                shape = .data[["shape_type"]],
-                                                size = .data[["total_cells"]]),
-                                            alpha = 0.8) +
+                        {
+                            if (nrow(edge_data) > 0) {
+                                ggplot2::geom_segment(
+                                    data = edge_data,
+                                    ggplot2::aes(
+                                        x = .data[["x"]], y = .data[["y"]],
+                                        xend = .data[["xend"]], yend = .data[["yend"]],
+                                        alpha = .data[["connection_strength"]]
+                                    ),
+                                    color = "gray60", linewidth = 0.8
+                                )
+                            }
+                        } +
+                        ggplot2::geom_point(
+                            data = node_data,
+                            ggplot2::aes(
+                                x = .data[["x"]], y = .data[["y"]],
+                                color = .data[["cell_type_case"]],
+                                shape = .data[["shape_type"]],
+                                size = .data[["total_cells"]]
+                            ),
+                            alpha = 0.8
+                        ) +
                         ggplot2::scale_color_manual(
                             values = color_legend_values,
                             name = "Dominant Cell Type"
                         ) +
                         ggplot2::scale_shape_manual(
-                            values = c("Well Integrated" = 16,
-                                       "Cross-Type Mixing" = 18,
-                                       "High Query Proportion" = 17,
-                                       "High Reference Proportion" = 15),
+                            values = c(
+                                "Well Integrated" = 16,
+                                "Cross-Type Mixing" = 18,
+                                "High Query Proportion" = 17,
+                                "High Reference Proportion" = 15
+                            ),
                             name = "Community Classification"
                         ) +
                         ggplot2::scale_size_continuous(
@@ -276,15 +306,20 @@ plot.calculateGraphIntegrationObject <- function(
                         ) +
                         ggplot2::geom_text(
                             data = node_data,
-                            ggplot2::aes(x = .data[["x"]], y = .data[["y"]],
-                                         label = .data[["community"]]),
-                            color = "black", size = 3, fontface = "bold") +
+                            ggplot2::aes(
+                                x = .data[["x"]], y = .data[["y"]],
+                                label = .data[["community"]]
+                            ),
+                            color = "black", size = 3, fontface = "bold"
+                        ) +
                         ggplot2::labs(
                             title = "Community Network: Cell Type Composition",
-                            subtitle = paste0("Showing ", nrow(node_data),
-                                              " communities with ",
-                                              nrow(edge_data),
-                                              " connections"),
+                            subtitle = paste0(
+                                "Showing ", nrow(node_data),
+                                " communities with ",
+                                nrow(edge_data),
+                                " connections"
+                            ),
                             caption = "Node size proportional to # cells; Shape indicates community classification; Edge opacity proportional to connection strength"
                         ) +
                         ggplot2::theme_void() +
@@ -297,35 +332,45 @@ plot.calculateGraphIntegrationObject <- function(
                     # Original community type classification
                     node_data[["issue_type"]] <- "Well Integrated"
                     node_data[["issue_type"]][node_data[["community"]] %in%
-                                                  x[["cross_type_mixing"]][["community"]]] <-
+                        x[["cross_type_mixing"]][["community"]]] <-
                         "Cross-Type Mixing"
                     node_data[["issue_type"]][node_data[["community"]] %in%
-                                                  x[["high_query_prop_analysis"]][["community"]]] <-
+                        x[["high_query_prop_analysis"]][["community"]]] <-
                         "High Query Proportion"
                     node_data[["issue_type"]][node_data[["query_proportion"]] < 0.1 &
-                                                  node_data[["issue_type"]] == "Well Integrated"] <-
+                        node_data[["issue_type"]] == "Well Integrated"] <-
                         "High Reference Proportion"
 
                     p <- ggplot2::ggplot() +
-                        {if (nrow(edge_data) > 0) {
-                            ggplot2::geom_segment(data = edge_data,
-                                                  ggplot2::aes(
-                                                      x = .data[["x"]], y = .data[["y"]],
-                                                      xend = .data[["xend"]], yend = .data[["yend"]],
-                                                      alpha = .data[["connection_strength"]]),
-                                                  color = "gray60", linewidth = 0.8)
-                        }} +
-                        ggplot2::geom_point(data = node_data,
-                                            ggplot2::aes(
-                                                x = .data[["x"]], y = .data[["y"]],
-                                                color = .data[["issue_type"]],
-                                                size = .data[["total_cells"]]),
-                                            alpha = 0.8) +
+                        {
+                            if (nrow(edge_data) > 0) {
+                                ggplot2::geom_segment(
+                                    data = edge_data,
+                                    ggplot2::aes(
+                                        x = .data[["x"]], y = .data[["y"]],
+                                        xend = .data[["xend"]], yend = .data[["yend"]],
+                                        alpha = .data[["connection_strength"]]
+                                    ),
+                                    color = "gray60", linewidth = 0.8
+                                )
+                            }
+                        } +
+                        ggplot2::geom_point(
+                            data = node_data,
+                            ggplot2::aes(
+                                x = .data[["x"]], y = .data[["y"]],
+                                color = .data[["issue_type"]],
+                                size = .data[["total_cells"]]
+                            ),
+                            alpha = 0.8
+                        ) +
                         ggplot2::scale_color_manual(
-                            values = c("High Query Proportion" = colors[["high_query_prop"]],
-                                       "Cross-Type Mixing" = colors[["cross_mixing"]],
-                                       "Well Integrated" = colors[["well_integrated"]],
-                                       "High Reference Proportion" = colors[["reference_only"]]),
+                            values = c(
+                                "High Query Proportion" = colors[["high_query_prop"]],
+                                "Cross-Type Mixing" = colors[["cross_mixing"]],
+                                "Well Integrated" = colors[["well_integrated"]],
+                                "High Reference Proportion" = colors[["reference_only"]]
+                            ),
                             name = "Community Type"
                         ) +
                         ggplot2::scale_size_continuous(
@@ -339,13 +384,18 @@ plot.calculateGraphIntegrationObject <- function(
                         ) +
                         ggplot2::geom_text(
                             data = node_data,
-                            ggplot2::aes(x = .data[["x"]], y = .data[["y"]],
-                                         label = .data[["community"]]),
-                            color = "black", size = 3, fontface = "bold") +
+                            ggplot2::aes(
+                                x = .data[["x"]], y = .data[["y"]],
+                                label = .data[["community"]]
+                            ),
+                            color = "black", size = 3, fontface = "bold"
+                        ) +
                         ggplot2::labs(
                             title = "Community Network: Inter-Community Connection Strength",
-                            subtitle = paste0("Showing ", nrow(node_data), " communities with ",
-                                              nrow(edge_data), " connections"),
+                            subtitle = paste0(
+                                "Showing ", nrow(node_data), " communities with ",
+                                nrow(edge_data), " connections"
+                            ),
                             caption = "Node size proportional to # cells in community; Edge opacity proportional to connection strength"
                         ) +
                         ggplot2::theme_void() +
@@ -354,11 +404,9 @@ plot.calculateGraphIntegrationObject <- function(
                             plot.subtitle = ggplot2::element_text(size = 10, hjust = 0.5),
                             legend.position = "right"
                         )
-
                 }
             }
         }
-
     } else if (plot_type == "cell_network") {
         # Identify reference-only communities (communities with very low query proportion)
         reference_only_comms <- x[["community_composition"]][["community"]][
@@ -409,20 +457,22 @@ plot.calculateGraphIntegrationObject <- function(
             cross_mixing_comms <- x[["cross_type_mixing"]][["community"]]
 
             priority_1 <- which(cell_info_filtered[["community"]] %in%
-                                    high_query_prop_comms &
-                                    cell_info_filtered[["dataset"]] == "Query")
+                high_query_prop_comms &
+                cell_info_filtered[["dataset"]] == "Query")
             priority_2 <- setdiff(local_inconsistent_cells, priority_1)
             priority_3 <- which(cell_info_filtered[["community"]] %in%
-                                    cross_mixing_comms &
-                                    cell_info_filtered[["dataset"]] == "Query" &
-                                    !(seq_len(nrow(cell_info_filtered)) %in%
-                                          c(priority_1, priority_2)))
+                cross_mixing_comms &
+                cell_info_filtered[["dataset"]] == "Query" &
+                !(seq_len(nrow(cell_info_filtered)) %in%
+                    c(priority_1, priority_2)))
             priority_4 <- which(cell_info_filtered[["community"]] %in%
-                                    c(high_query_prop_comms, cross_mixing_comms) &
-                                    cell_info_filtered[["dataset"]] == "Reference" &
-                                    !(seq_len(nrow(cell_info_filtered)) %in% c(priority_1,
-                                                                               priority_2,
-                                                                               priority_3)))
+                c(high_query_prop_comms, cross_mixing_comms) &
+                cell_info_filtered[["dataset"]] == "Reference" &
+                !(seq_len(nrow(cell_info_filtered)) %in% c(
+                    priority_1,
+                    priority_2,
+                    priority_3
+                )))
 
             keep_nodes <- c()
             remaining_slots <- max_nodes
@@ -455,11 +505,15 @@ plot.calculateGraphIntegrationObject <- function(
             }
 
             if (remaining_slots > 0) {
-                all_priority <- c(priority_1, priority_2,
-                                  priority_3,
-                                  priority_4)
-                remaining_cells <- setdiff(seq_len(nrow(cell_info_filtered)),
-                                           all_priority)
+                all_priority <- c(
+                    priority_1, priority_2,
+                    priority_3,
+                    priority_4
+                )
+                remaining_cells <- setdiff(
+                    seq_len(nrow(cell_info_filtered)),
+                    all_priority
+                )
                 if (length(remaining_cells) > 0) {
                     take_random <- min(length(remaining_cells), remaining_slots)
                     keep_nodes <- c(keep_nodes, sample(remaining_cells, take_random))
@@ -511,8 +565,10 @@ plot.calculateGraphIntegrationObject <- function(
                 yend = layout_subset[edges_subset[, 2], 2]
             )
         } else {
-            edge_data <- data.frame(x = numeric(0), y = numeric(0),
-                                    xend = numeric(0), yend = numeric(0))
+            edge_data <- data.frame(
+                x = numeric(0), y = numeric(0),
+                xend = numeric(0), yend = numeric(0)
+            )
         }
 
         # Create plot based on color_by parameter
@@ -520,36 +576,47 @@ plot.calculateGraphIntegrationObject <- function(
             # Generate colors for cell types
             all_cell_types <- sort(unique(node_data[["cell_type"]]))
             cell_types_cases <- c()
-            for(cell_type_case in all_cell_types){
-                cell_types_cases <- c(cell_types_cases,
-                                      paste(c("Reference", "Query"), cell_type_case))
+            for (cell_type_case in all_cell_types) {
+                cell_types_cases <- c(
+                    cell_types_cases,
+                    paste(c("Reference", "Query"), cell_type_case)
+                )
             }
             cell_type_colors <- generateColors(cell_types_cases, paired = TRUE)
 
             # Set up data for node colors
-            node_data[["cell_type_case"]] <- paste(node_data[["dataset"]],
-                                                   node_data[["cell_type"]])
+            node_data[["cell_type_case"]] <- paste(
+                node_data[["dataset"]],
+                node_data[["cell_type"]]
+            )
 
             p <- ggplot2::ggplot() +
-                {if (nrow(edge_data) > 0) {
-                    ggplot2::geom_segment(
-                        data = edge_data,
-                        ggplot2::aes(x = .data[["x"]], y = .data[["y"]],
-                                     xend = .data[["xend"]], yend = .data[["yend"]]),
-                        alpha = 0.2, color = "gray80", linewidth = 0.2)
-                }} +
+                {
+                    if (nrow(edge_data) > 0) {
+                        ggplot2::geom_segment(
+                            data = edge_data,
+                            ggplot2::aes(
+                                x = .data[["x"]], y = .data[["y"]],
+                                xend = .data[["xend"]], yend = .data[["yend"]]
+                            ),
+                            alpha = 0.2, color = "gray80", linewidth = 0.2
+                        )
+                    }
+                } +
                 ggplot2::geom_point(
                     data = node_data,
-                    ggplot2::aes(x = .data[["x"]], y = .data[["y"]],
-                                 color = .data[["cell_type_case"]]),
-                    size = point_size, alpha = 0.7) +
+                    ggplot2::aes(
+                        x = .data[["x"]], y = .data[["y"]],
+                        color = .data[["cell_type_case"]]
+                    ),
+                    size = point_size, alpha = 0.7
+                ) +
                 ggplot2::scale_color_manual(
                     values = cell_type_colors,
                     name = "Cell Type"
                 )
 
             plot_title <- "Cell Network: Cell Type Distribution"
-
         } else if (color_by == "community_type") {
             # Add issue type classification
             node_data[["issue_type"]] <- "Well Integrated"
@@ -560,13 +627,13 @@ plot.calculateGraphIntegrationObject <- function(
             ]
 
             node_data[["issue_type"]][node_data[["community"]] %in%
-                                          reference_only_comms_remaining] <-
+                reference_only_comms_remaining] <-
                 "High Reference Proportion"
             node_data[["issue_type"]][node_data[["community"]] %in%
-                                          x[["cross_type_mixing"]][["community"]]] <-
+                x[["cross_type_mixing"]][["community"]]] <-
                 "Cross-Type Mixing"
             node_data[["issue_type"]][node_data[["community"]] %in%
-                                          x[["high_query_prop_analysis"]][["community"]]] <-
+                x[["high_query_prop_analysis"]][["community"]]] <-
                 "High Query Proportion"
 
             if (nrow(x[["local_annotation_inconsistencies"]]) > 0) {
@@ -602,23 +669,34 @@ plot.calculateGraphIntegrationObject <- function(
             }
 
             p <- ggplot2::ggplot() +
-                {if (nrow(edge_data) > 0) {
-                    ggplot2::geom_segment(
-                        data = edge_data,
-                        ggplot2::aes(x = .data[["x"]], y = .data[["y"]],
-                                     xend = .data[["xend"]], yend = .data[["yend"]]),
-                        alpha = 0.2, color = "gray80", linewidth = 0.2)
-                }} +
-                ggplot2::geom_point(data = node_data,
-                                    ggplot2::aes(x = .data[["x"]], y = .data[["y"]],
-                                                 color = .data[["issue_type"]]),
-                                    size = point_size, alpha = 0.7) +
+                {
+                    if (nrow(edge_data) > 0) {
+                        ggplot2::geom_segment(
+                            data = edge_data,
+                            ggplot2::aes(
+                                x = .data[["x"]], y = .data[["y"]],
+                                xend = .data[["xend"]], yend = .data[["yend"]]
+                            ),
+                            alpha = 0.2, color = "gray80", linewidth = 0.2
+                        )
+                    }
+                } +
+                ggplot2::geom_point(
+                    data = node_data,
+                    ggplot2::aes(
+                        x = .data[["x"]], y = .data[["y"]],
+                        color = .data[["issue_type"]]
+                    ),
+                    size = point_size, alpha = 0.7
+                ) +
                 ggplot2::scale_color_manual(
-                    values = c("High Query Proportion" = colors[["high_query_prop"]],
-                               "Cross-Type Mixing" = colors[["cross_mixing"]],
-                               "Local Inconsistent" = colors[["local_inconsistent"]],
-                               "Well Integrated" = colors[["well_integrated"]],
-                               "High Reference Proportion" = colors[["reference_only"]]),
+                    values = c(
+                        "High Query Proportion" = colors[["high_query_prop"]],
+                        "Cross-Type Mixing" = colors[["cross_mixing"]],
+                        "Local Inconsistent" = colors[["local_inconsistent"]],
+                        "Well Integrated" = colors[["well_integrated"]],
+                        "High Reference Proportion" = colors[["reference_only"]]
+                    ),
                     name = "Annotation Status"
                 )
 
@@ -632,22 +710,40 @@ plot.calculateGraphIntegrationObject <- function(
 
         subtitle_parts <- c()
         if (high_query_prop_comms > 0) {
-            subtitle_parts <- c(subtitle_parts,
-                                paste0("Query-Only (",
-                                       pluralize(high_query_prop_comms,
-                                                 "community", "communities"), ")"))
+            subtitle_parts <- c(
+                subtitle_parts,
+                paste0(
+                    "Query-Only (",
+                    pluralize(
+                        high_query_prop_comms,
+                        "community", "communities"
+                    ), ")"
+                )
+            )
         }
         if (cross_mixing_comms > 0) {
-            subtitle_parts <- c(subtitle_parts,
-                                paste0("Cross-Type Mixing (",
-                                       pluralize(cross_mixing_comms,
-                                                 "community", "communities"), ")"))
+            subtitle_parts <- c(
+                subtitle_parts,
+                paste0(
+                    "Cross-Type Mixing (",
+                    pluralize(
+                        cross_mixing_comms,
+                        "community", "communities"
+                    ), ")"
+                )
+            )
         }
         if (local_inconsistent_cells > 0) {
-            subtitle_parts <- c(subtitle_parts,
-                                paste0("Local Inconsistent (",
-                                       pluralize(local_inconsistent_cells,
-                                                 "cell"), ")"))
+            subtitle_parts <- c(
+                subtitle_parts,
+                paste0(
+                    "Local Inconsistent (",
+                    pluralize(
+                        local_inconsistent_cells,
+                        "cell"
+                    ), ")"
+                )
+            )
         }
 
         subtitle_text <- if (length(subtitle_parts) > 0) {
@@ -661,36 +757,48 @@ plot.calculateGraphIntegrationObject <- function(
             ggplot2::labs(
                 title = plot_title,
                 subtitle = subtitle_text,
-                caption = if(nrow(x[["graph_info"]][["layout"]]) >
-                             max_nodes) paste0(
-                                 "Showing ",
-                                 nrow(node_data), " of ",
-                                 nrow(x[["graph_info"]][["layout"]]),
-                                 " cells (prioritizing problematic cells)") else ""
+                caption = if (nrow(x[["graph_info"]][["layout"]]) >
+                    max_nodes) {
+                    paste0(
+                        "Showing ",
+                        nrow(node_data), " of ",
+                        nrow(x[["graph_info"]][["layout"]]),
+                        " cells (prioritizing problematic cells)"
+                    )
+                } else {
+                    ""
+                }
             ) +
             ggplot2::theme_void() +
             ggplot2::theme(
-                plot.title = ggplot2::element_text(size = 14,
-                                                   face = "bold",
-                                                   hjust = 0.5),
-                plot.subtitle = ggplot2::element_text(size = 10,
-                                                      hjust = 0.5),
+                plot.title = ggplot2::element_text(
+                    size = 14,
+                    face = "bold",
+                    hjust = 0.5
+                ),
+                plot.subtitle = ggplot2::element_text(
+                    size = 10,
+                    hjust = 0.5
+                ),
                 legend.position = "right"
             )
-
     } else if (plot_type == "community_data") {
         community_composition <- x[["community_composition"]]
 
         if (nrow(community_composition) == 0) {
             p <- ggplot2::ggplot() +
-                ggplot2::annotate("text", x = 0.5, y = 0.5,
-                                  label = "No communities to display",
-                                  size = 8, color = "gray50") +
+                ggplot2::annotate("text",
+                    x = 0.5, y = 0.5,
+                    label = "No communities to display",
+                    size = 8, color = "gray50"
+                ) +
                 ggplot2::labs(title = "Community Overview") +
                 ggplot2::theme_void() +
-                ggplot2::theme(plot.title = ggplot2::element_text(size = 14,
-                                                                  face = "bold",
-                                                                  hjust = 0.5))
+                ggplot2::theme(plot.title = ggplot2::element_text(
+                    size = 14,
+                    face = "bold",
+                    hjust = 0.5
+                ))
         } else {
             # Ensure n_cell_types is integer
             community_composition[["n_cell_types"]] <-
@@ -705,9 +813,11 @@ plot.calculateGraphIntegrationObject <- function(
 
             if (nrow(community_composition) == 0) {
                 p <- ggplot2::ggplot() +
-                    ggplot2::annotate("text", x = 0.5, y = 0.5,
-                                      label = "No communities to display after filtering",
-                                      size = 8, color = "gray50") +
+                    ggplot2::annotate("text",
+                        x = 0.5, y = 0.5,
+                        label = "No communities to display after filtering",
+                        size = 8, color = "gray50"
+                    ) +
                     ggplot2::labs(title = "Community Overview") +
                     ggplot2::theme_void() +
                     ggplot2::theme(plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5))
@@ -716,27 +826,35 @@ plot.calculateGraphIntegrationObject <- function(
                 community_composition[["issue_type"]] <-
                     "Well Integrated"
                 community_composition[["issue_type"]][community_composition[["community"]] %in%
-                                                          x[["cross_type_mixing"]][["community"]]] <-
+                    x[["cross_type_mixing"]][["community"]]] <-
                     "Cross-Type Mixing"
                 community_composition[["issue_type"]][community_composition[["community"]] %in%
-                                                          x[["high_query_prop_analysis"]][["community"]]] <-
+                    x[["high_query_prop_analysis"]][["community"]]] <-
                     "High Query Proportion"
 
                 # Add Reference Only communities (communities with very low query proportion)
                 community_composition[["issue_type"]][community_composition[["query_proportion"]] < 0.1 &
-                                                          community_composition[["issue_type"]] == "Well Integrated"] <-
+                    community_composition[["issue_type"]] == "Well Integrated"] <-
                     "High Reference Proportion"
 
-                p <- ggplot2::ggplot(community_composition, ggplot2::aes(x = .data[["query_proportion"]],
-                                                                         y = .data[["total_cells"]])) +
-                    ggplot2::geom_point(ggplot2::aes(color = .data[["issue_type"]],
-                                                     size = .data[["n_cell_types"]]),
-                                        alpha = 0.7) +
+                p <- ggplot2::ggplot(community_composition, ggplot2::aes(
+                    x = .data[["query_proportion"]],
+                    y = .data[["total_cells"]]
+                )) +
+                    ggplot2::geom_point(
+                        ggplot2::aes(
+                            color = .data[["issue_type"]],
+                            size = .data[["n_cell_types"]]
+                        ),
+                        alpha = 0.7
+                    ) +
                     ggplot2::scale_color_manual(
-                        values = c("High Query Proportion" = colors[["high_query_prop"]],
-                                   "Cross-Type Mixing" = colors[["cross_mixing"]],
-                                   "Well Integrated" = colors[["well_integrated"]],
-                                   "High Reference Proportion" = colors[["reference_only"]]),
+                        values = c(
+                            "High Query Proportion" = colors[["high_query_prop"]],
+                            "Cross-Type Mixing" = colors[["cross_mixing"]],
+                            "Well Integrated" = colors[["well_integrated"]],
+                            "High Reference Proportion" = colors[["reference_only"]]
+                        ),
                         name = "Community Type"
                     ) +
                     ggplot2::scale_size_continuous(
@@ -745,12 +863,16 @@ plot.calculateGraphIntegrationObject <- function(
                             pretty_breaks <- pretty(x, n = 5)
                             return(pretty_breaks[pretty_breaks == round(pretty_breaks)])
                         },
-                        labels = function(x) as.character(as.integer(x))) +
-                    ggplot2::geom_text(ggplot2::aes(
-                        label = .data[["community"]],
-                        vjust = -0.75 - (.data[["n_cell_types"]] - min(.data[["n_cell_types"]])) /
-                            (max(.data[["n_cell_types"]]) - min(.data[["n_cell_types"]]) + 1) * 1.5),
-                        size = 3) +
+                        labels = function(x) as.character(as.integer(x))
+                    ) +
+                    ggplot2::geom_text(
+                        ggplot2::aes(
+                            label = .data[["community"]],
+                            vjust = -0.75 - (.data[["n_cell_types"]] - min(.data[["n_cell_types"]])) /
+                                (max(.data[["n_cell_types"]]) - min(.data[["n_cell_types"]]) + 1) * 1.5
+                        ),
+                        size = 3
+                    ) +
                     ggplot2::labs(
                         title = "Community Data Overview",
                         x = "Query Proportion",
@@ -763,7 +885,6 @@ plot.calculateGraphIntegrationObject <- function(
                     )
             }
         }
-
     } else if (plot_type == "summary") {
         summary_data <- x[["annotation_consistency"]]
         summary_data[["total_issues"]] <- summary_data[["high_query_prop_cells"]] +
@@ -771,42 +892,64 @@ plot.calculateGraphIntegrationObject <- function(
 
         local_summary <- x[["local_inconsistency_summary"]]
         summary_data <- merge(summary_data,
-                              local_summary[, c("cell_type",
-                                                "locally_inconsistent_cells")],
-                              by = "cell_type")
+            local_summary[, c(
+                "cell_type",
+                "locally_inconsistent_cells"
+            )],
+            by = "cell_type"
+        )
         summary_data[["total_issues"]] <- summary_data[["total_issues"]] +
             summary_data[["locally_inconsistent_cells"]]
         summary_data[["total_issue_rate"]] <- summary_data[["total_issues"]] /
             summary_data[["total_query_cells"]]
 
         summary_data[["issue_category"]] <- cut(summary_data[["total_issue_rate"]],
-                                                breaks = c(-Inf, 0.05, 0.15, Inf),
-                                                labels = c("Excellent",
-                                                           "Concerning",
-                                                           "Problematic"))
+            breaks = c(-Inf, 0.05, 0.15, Inf),
+            labels = c(
+                "Excellent",
+                "Concerning",
+                "Problematic"
+            )
+        )
 
-        p <- ggplot2::ggplot(summary_data, ggplot2::aes(x = reorder(.data[["cell_type"]],
-                                                                    .data[["total_issue_rate"]]))) +
-            ggplot2::geom_col(ggplot2::aes(y = .data[["total_issue_rate"]],
-                                           fill = .data[["issue_category"]]),
-                              alpha = 0.8, color = "black", linewidth = 0.3) +
+        p <- ggplot2::ggplot(summary_data, ggplot2::aes(x = reorder(
+            .data[["cell_type"]],
+            .data[["total_issue_rate"]]
+        ))) +
+            ggplot2::geom_col(
+                ggplot2::aes(
+                    y = .data[["total_issue_rate"]],
+                    fill = .data[["issue_category"]]
+                ),
+                alpha = 0.8, color = "black", linewidth = 0.3
+            ) +
             ggplot2::scale_fill_manual(
-                values = c("Excellent" = colors[["excellent"]],
-                           "Concerning" = colors[["concerning"]],
-                           "Problematic" = colors[["problematic"]]),
+                values = c(
+                    "Excellent" = colors[["excellent"]],
+                    "Concerning" = colors[["concerning"]],
+                    "Problematic" = colors[["problematic"]]
+                ),
                 name = "Issue Level"
             ) +
-            ggplot2::geom_text(ggplot2::aes(y = .data[["total_issue_rate"]],
-                                            label = paste0(.data[["total_issues"]], "/",
-                                                           .data[["total_query_cells"]])),
-                               vjust = -0.5, size = 3) +
+            ggplot2::geom_text(
+                ggplot2::aes(
+                    y = .data[["total_issue_rate"]],
+                    label = paste0(
+                        .data[["total_issues"]], "/",
+                        .data[["total_query_cells"]]
+                    )
+                ),
+                vjust = -0.5, size = 3
+            ) +
             ggplot2::labs(
                 title = "Total Annotation Issues by Cell Type",
                 subtitle = "Includes query-only, cross-mixing, and local inconsistencies",
                 x = "Cell Type",
                 y = "Proportion of Query Cells with Issues",
-                caption = paste0("Mean issue rate: ",
-                                 round(mean(summary_data[["total_issue_rate"]]), 3))
+                caption = paste0(
+                    "Mean issue rate: ",
+                    round(mean(summary_data[["total_issue_rate"]]), 3)
+                )
             ) +
             ggplot2::theme_bw() +
             ggplot2::theme(
@@ -815,16 +958,19 @@ plot.calculateGraphIntegrationObject <- function(
                 legend.position = "bottom"
             ) +
             ggplot2::coord_cartesian(ylim = c(0, max(1, max(summary_data[["total_issue_rate"]]) * 1.1)))
-
     } else if (plot_type == "local_issues") {
         if (nrow(x[["local_annotation_inconsistencies"]]) == 0) {
             p <- ggplot2::ggplot() +
-                ggplot2::annotate("text", x = 0.5, y = 0.6,
-                                  label = "No local annotation inconsistencies detected!",
-                                  size = 8, color = colors[["excellent"]], fontface = "bold") +
-                ggplot2::annotate("text", x = 0.5, y = 0.4,
-                                  label = "All query annotations supported by local neighborhoods",
-                                  size = 6, color = colors[["excellent"]]) +
+                ggplot2::annotate("text",
+                    x = 0.5, y = 0.6,
+                    label = "No local annotation inconsistencies detected!",
+                    size = 8, color = colors[["excellent"]], fontface = "bold"
+                ) +
+                ggplot2::annotate("text",
+                    x = 0.5, y = 0.4,
+                    label = "All query annotations supported by local neighborhoods",
+                    size = 6, color = colors[["excellent"]]
+                ) +
                 ggplot2::labs(title = "Local Annotation Consistency") +
                 ggplot2::theme_void() +
                 ggplot2::theme(plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5))
@@ -836,26 +982,38 @@ plot.calculateGraphIntegrationObject <- function(
                 local_data[["inconsistency_category"]] <- cut(
                     local_data[["local_inconsistency_rate"]],
                     breaks = c(-Inf, 0.1, 0.3, Inf),
-                    labels = c("Minor", "Moderate", "Severe"))
+                    labels = c("Minor", "Moderate", "Severe")
+                )
 
                 p <- ggplot2::ggplot(local_data, ggplot2::aes(x = reorder(
                     .data[["cell_type"]],
-                    .data[["local_inconsistency_rate"]]))) +
-                    ggplot2::geom_col(ggplot2::aes(
-                        y = .data[["local_inconsistency_rate"]],
-                        fill = .data[["inconsistency_category"]]),
-                        alpha = 0.8, color = "black", linewidth = 0.3) +
+                    .data[["local_inconsistency_rate"]]
+                ))) +
+                    ggplot2::geom_col(
+                        ggplot2::aes(
+                            y = .data[["local_inconsistency_rate"]],
+                            fill = .data[["inconsistency_category"]]
+                        ),
+                        alpha = 0.8, color = "black", linewidth = 0.3
+                    ) +
                     ggplot2::scale_fill_manual(
-                        values = c("Minor" = colors[["excellent"]],
-                                   "Moderate" = colors[["concerning"]],
-                                   "Severe" = colors[["problematic"]]),
+                        values = c(
+                            "Minor" = colors[["excellent"]],
+                            "Moderate" = colors[["concerning"]],
+                            "Severe" = colors[["problematic"]]
+                        ),
                         name = "Severity"
                     ) +
-                    ggplot2::geom_text(ggplot2::aes(
-                        y = .data[["local_inconsistency_rate"]],
-                        label = paste0(.data[["locally_inconsistent_cells"]], "/",
-                                       .data[["total_query_cells"]])),
-                        vjust = -0.5, size = 3) +
+                    ggplot2::geom_text(
+                        ggplot2::aes(
+                            y = .data[["local_inconsistency_rate"]],
+                            label = paste0(
+                                .data[["locally_inconsistent_cells"]], "/",
+                                .data[["total_query_cells"]]
+                            )
+                        ),
+                        vjust = -0.5, size = 3
+                    ) +
                     ggplot2::labs(
                         title = "Local Annotation Inconsistencies by Cell Type",
                         subtitle = "Query cells not supported by reference neighbors",
@@ -863,7 +1021,8 @@ plot.calculateGraphIntegrationObject <- function(
                         y = "Local Inconsistency Rate",
                         caption = paste0(
                             "Mean rate: ",
-                            round(x[["overall_metrics"]][["mean_local_inconsistency_rate"]], 3))
+                            round(x[["overall_metrics"]][["mean_local_inconsistency_rate"]], 3)
+                        )
                     ) +
                     ggplot2::theme_bw() +
                     ggplot2::theme(
@@ -877,19 +1036,22 @@ plot.calculateGraphIntegrationObject <- function(
                     ggplot2::theme_void()
             }
         }
-
     } else if (plot_type == "annotation_issues") {
         total_issues <- nrow(x[["high_query_prop_analysis"]]) + nrow(x[["cross_type_mixing"]]) +
             nrow(x[["local_annotation_inconsistencies"]])
 
         if (total_issues == 0) {
             p <- ggplot2::ggplot() +
-                ggplot2::annotate("text", x = 0.5, y = 0.6,
-                                  label = "No annotation issues detected!",
-                                  size = 8, color = colors[["excellent"]], fontface = "bold") +
-                ggplot2::annotate("text", x = 0.5, y = 0.4,
-                                  label = "Excellent annotation consistency across all metrics",
-                                  size = 6, color = colors[["excellent"]]) +
+                ggplot2::annotate("text",
+                    x = 0.5, y = 0.6,
+                    label = "No annotation issues detected!",
+                    size = 8, color = colors[["excellent"]], fontface = "bold"
+                ) +
+                ggplot2::annotate("text",
+                    x = 0.5, y = 0.4,
+                    label = "Excellent annotation consistency across all metrics",
+                    size = 6, color = colors[["excellent"]]
+                ) +
                 ggplot2::labs(title = "Comprehensive Annotation Assessment") +
                 ggplot2::theme_void() +
                 ggplot2::theme(plot.title = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5))
@@ -912,8 +1074,11 @@ plot.calculateGraphIntegrationObject <- function(
                     count = high_query_prop_comms,
                     affected_cells = sum(x[["high_query_prop_analysis"]][["total_query_cells"]]),
                     label_text = paste0(
-                        "Query-Only Communities\n(", pluralize(high_query_prop_comms,
-                                                               "community", "communities"), ")"),
+                        "Query-Only Communities\n(", pluralize(
+                            high_query_prop_comms,
+                            "community", "communities"
+                        ), ")"
+                    ),
                     stringsAsFactors = FALSE
                 ))
             }
@@ -924,8 +1089,11 @@ plot.calculateGraphIntegrationObject <- function(
                     count = cross_mixing_comms,
                     affected_cells = sum(x[["cross_type_mixing"]][["n_query"]]),
                     label_text = paste0(
-                        "Cross-Type Mixing\n(", pluralize(cross_mixing_comms,
-                                                          "community", "communities"), ")"),
+                        "Cross-Type Mixing\n(", pluralize(
+                            cross_mixing_comms,
+                            "community", "communities"
+                        ), ")"
+                    ),
                     stringsAsFactors = FALSE
                 ))
             }
@@ -937,20 +1105,25 @@ plot.calculateGraphIntegrationObject <- function(
                     affected_cells = local_inconsistent_cells,
                     label_text = paste0(
                         "Local Inconsistencies\n(",
-                        pluralize(local_inconsistent_cells, "cell"), ")"),
+                        pluralize(local_inconsistent_cells, "cell"), ")"
+                    ),
                     stringsAsFactors = FALSE
                 ))
             }
 
             p <- ggplot2::ggplot(issue_summary, ggplot2::aes(
                 x = reorder(.data[["label_text"]], .data[["affected_cells"]]),
-                y = .data[["affected_cells"]])) +
+                y = .data[["affected_cells"]]
+            )) +
                 ggplot2::geom_col(ggplot2::aes(fill = .data[["issue_type"]]),
-                                  alpha = 0.8, color = "black", linewidth = 0.3) +
+                    alpha = 0.8, color = "black", linewidth = 0.3
+                ) +
                 ggplot2::scale_fill_manual(
-                    values = c("Query-Only Communities" = colors[["high_query_prop"]],
-                               "Cross-Type Mixing" = colors[["cross_mixing"]],
-                               "Local Inconsistencies" = colors[["local_inconsistent"]]),
+                    values = c(
+                        "Query-Only Communities" = colors[["high_query_prop"]],
+                        "Cross-Type Mixing" = colors[["cross_mixing"]],
+                        "Local Inconsistencies" = colors[["local_inconsistent"]]
+                    ),
                     name = "Issue Type"
                 ) +
                 ggplot2::labs(

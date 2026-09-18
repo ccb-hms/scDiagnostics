@@ -37,22 +37,27 @@ downsampleSCE <- function(sce_object,
                           cell_types = NULL,
                           max_cells = 2500,
                           seed = NULL) {
-
     # Check standard input arguments
-    argumentCheck(query_data = sce_object,
-                  query_cell_type_col = cell_type_col,
-                  max_cells_query = max_cells)
+    argumentCheck(
+        query_data = sce_object,
+        query_cell_type_col = cell_type_col,
+        max_cells_query = max_cells
+    )
 
     # Convert cell type columns to character if needed
-    sce_object <- convertColumnsToCharacter(sce_object = sce_object,
-                                            convert_cols = cell_type_col)
+    sce_object <- convertColumnsToCharacter(
+        sce_object = sce_object,
+        convert_cols = cell_type_col
+    )
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = sce_object,
-                                  query_cell_type_col = cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = FALSE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = sce_object,
+        query_cell_type_col = cell_type_col,
+        cell_types = cell_types,
+        dual_only = FALSE,
+        n_cell_types = NULL
+    )
 
     # Check seed argument
     if (!is.null(seed)) {
@@ -72,7 +77,7 @@ downsampleSCE <- function(sce_object,
         cell_type_mask <- sce_object[[cell_type_col]] %in% cell_types
         if (sum(cell_type_mask) == 0) {
             warning("No cells found for the specified cell types. Returning empty sce_object object.")
-            return(sce_object[, FALSE])  # Return empty sce_object with same genes but no cells
+            return(sce_object[, FALSE]) # Return empty sce_object with same genes but no cells
         }
         sce_object <- sce_object[, cell_type_mask]
     }

@@ -37,14 +37,15 @@
 #' # Selecting highly variable genes
 #' ref_var <- scran::getTopHVGs(reference_data, n = 500)
 #' query_var <- scran::getTopHVGs(query_data, n = 500)
-#' overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var,
-#'                                            query_genes = query_var)
+#' overlap_coefficient <- calculateHVGOverlap(
+#'     reference_genes = ref_var,
+#'     query_genes = query_var
+#' )
 #' overlap_coefficient
 #'
 # Function to calculate overlap between HVGs of reference and query datasets
 calculateHVGOverlap <- function(reference_genes,
                                 query_genes) {
-
     # Sanity checks
     if (!is.vector(reference_genes) || !is.character(reference_genes)) {
         stop("reference_genes must be a character vector.")

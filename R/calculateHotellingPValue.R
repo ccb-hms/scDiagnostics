@@ -40,11 +40,13 @@
 #' data("query_data")
 #'
 #' # Get the p-values
-#' p_values <- calculateHotellingPValue(query_data = query_data,
-#'                                      reference_data = reference_data,
-#'                                      query_cell_type_col = "SingleR_annotation",
-#'                                      ref_cell_type_col = "expert_annotation",
-#'                                      pc_subset = 1:10)
+#' p_values <- calculateHotellingPValue(
+#'     query_data = query_data,
+#'     reference_data = reference_data,
+#'     query_cell_type_col = "SingleR_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     pc_subset = 1:10
+#' )
 #' round(p_values, 5)
 #'
 # Function to perform Hotelling T^2 test for each cell type
@@ -59,42 +61,51 @@ calculateHotellingPValue <- function(query_data,
                                      assay_name = "logcounts",
                                      max_cells_query = 5000,
                                      max_cells_ref = 5000) {
-
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  pc_subset_ref = pc_subset,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        pc_subset_ref = pc_subset,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = TRUE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = TRUE,
+        n_cell_types = NULL
+    )
 
     # Get the projected PCA data
-    pca_output <- projectPCA(query_data = query_data,
-                             reference_data = reference_data,
-                             query_cell_type_col = query_cell_type_col,
-                             ref_cell_type_col = ref_cell_type_col,
-                             cell_types = cell_types,
-                             pc_subset = pc_subset,
-                             assay_name = assay_name,
-                             max_cells_ref = max_cells_ref,
-                             max_cells_query = max_cells_query)
+    pca_output <- projectPCA(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        pc_subset = pc_subset,
+        assay_name = assay_name,
+        max_cells_ref = max_cells_ref,
+        max_cells_query = max_cells_query
+    )
 
     # Set data for Hotelling permutation test
     cell_list <- split(pca_output, pca_output[["cell_type"]])
@@ -103,19 +114,21 @@ calculateHotellingPValue <- function(query_data,
     p_values <- numeric(length(cell_types))
     names(p_values) <- cell_types
     for (cell_type in cell_types) {
-
         ref_ind <- cell_list[[cell_type]][["dataset"]] == "Reference"
         observed_t2_data <- as.matrix(cell_list[[cell_type]][, paste0("PC", pc_subset)])
-        observed_t2 <- hotellingT2(observed_t2_data[ref_ind,],
-                                   observed_t2_data[!ref_ind,])
+        observed_t2 <- hotellingT2(
+            observed_t2_data[ref_ind, ],
+            observed_t2_data[!ref_ind, ]
+        )
 
         perm_t2 <- numeric(n_permutation)
-        for(perm_id in seq_len(n_permutation)){
-
+        for (perm_id in seq_len(n_permutation)) {
             ref_sample_id <- sample(seq_len(nrow(cell_list[[cell_type]])), sum(ref_ind), replace = FALSE)
             perm_t2_data <- as.matrix(cell_list[[cell_type]][, paste0("PC", pc_subset)])
-            perm_t2[perm_id] <- hotellingT2(perm_t2_data[ref_sample_id,],
-                                            perm_t2_data[-ref_sample_id,])
+            perm_t2[perm_id] <- hotellingT2(
+                perm_t2_data[ref_sample_id, ],
+                perm_t2_data[-ref_sample_id, ]
+            )
         }
         p_values[cell_type] <- mean(observed_t2 < perm_t2)
     }
@@ -139,7 +152,6 @@ calculateHotellingPValue <- function(query_data,
 #'
 # Function to calculate hotelling T2 statistic between two groups
 hotellingT2 <- function(sample1, sample2) {
-
     # Number of observations in each sample
     n1 <- nrow(sample1)
     n2 <- nrow(sample2)
@@ -166,4 +178,3 @@ hotellingT2 <- function(sample1, sample2) {
     # Return the computed T^2 statistic
     return(as.numeric(t2))
 }
-

@@ -85,8 +85,7 @@ plot.calculateGeneShiftsObject <- function(x,
                                            max_cells_ref = NULL,
                                            max_cells_query = NULL,
                                            ...) {
-
-    #Input Validation
+    # Input Validation
     if (missing(cell_type) || length(cell_type) != 1) {
         stop("cell_type must be specified and be a single character string.")
     }
@@ -124,14 +123,18 @@ plot.calculateGeneShiftsObject <- function(x,
 
     # Restrict boxplot with pseudo_bulk
     if (pseudo_bulk && plot_type == "boxplot") {
-        stop("Boxplot visualization is not compatible with pseudo_bulk = TRUE. ",
-             "Please use plot_type = 'heatmap' or set pseudo_bulk = FALSE.")
+        stop(
+            "Boxplot visualization is not compatible with pseudo_bulk = TRUE. ",
+            "Please use plot_type = 'heatmap' or set pseudo_bulk = FALSE."
+        )
     }
 
     # Require pseudo_bulk for barplot
     if (plot_type == "barplot" && !pseudo_bulk) {
-        stop("Barplot visualization requires pseudo_bulk = TRUE. ",
-             "Please set pseudo_bulk = TRUE for barplot.")
+        stop(
+            "Barplot visualization requires pseudo_bulk = TRUE. ",
+            "Please set pseudo_bulk = TRUE for barplot."
+        )
     }
 
     # Restrict cluster_cols without pseudo_bulk
@@ -142,8 +145,10 @@ plot.calculateGeneShiftsObject <- function(x,
     # Check if anomaly data is available when requested
     if (show_anomalies) {
         if (!"anomaly_status" %in% names(x[["cell_metadata"]])) {
-            stop("Anomaly visualization requested but anomaly data not found in object. ",
-                 "Please re-run calculateGeneShifts() with detect_anomalies = TRUE.")
+            stop(
+                "Anomaly visualization requested but anomaly data not found in object. ",
+                "Please re-run calculateGeneShifts() with detect_anomalies = TRUE."
+            )
         }
     }
 
@@ -158,15 +163,15 @@ plot.calculateGeneShiftsObject <- function(x,
     }
     if (!is.null(n_genes) &&
         (!is.numeric(n_genes) ||
-         length(n_genes) != 1 ||
-         n_genes <= 0)) {
+            length(n_genes) != 1 ||
+            n_genes <= 0)) {
         stop("If not NULL, 'n_genes' must be a positive integer.")
     }
     if (!is.null(significance_threshold) &&
         (!is.numeric(significance_threshold) ||
-         length(significance_threshold) != 1 ||
-         significance_threshold < 0 ||
-         significance_threshold > 1)) {
+            length(significance_threshold) != 1 ||
+            significance_threshold < 0 ||
+            significance_threshold > 1)) {
         stop("If not NULL, 'significance_threshold' must be a numeric value between 0 and 1.")
     }
 
@@ -174,7 +179,8 @@ plot.calculateGeneShiftsObject <- function(x,
     if (plot_type == "heatmap") {
         if (!requireNamespace("ComplexHeatmap", quietly = TRUE)) {
             stop("Packages 'ComplexHeatmap' and 'circlize' are required. Please install them.",
-                 call. = FALSE)
+                call. = FALSE
+            )
         }
     }
 
@@ -230,14 +236,17 @@ plot.calculateGeneShiftsObject <- function(x,
     x_plotting <- x
     x_plotting[["cell_metadata"]] <- cell_subset_final
     x_plotting[["expression_data"]] <- x[["expression_data"]][, cell_subset_final[["cell_id"]],
-                                                              drop = FALSE]
+        drop = FALSE
+    ]
 
     # Route to Plotting Functions
     if (plot_type == "heatmap") {
-        ht <- plotHeatmap(x_plotting, cell_type,
-                          available_pcs, plot_by, n_genes,
-                          significance_threshold, show_anomalies,
-                          pseudo_bulk, cluster_cols)
+        ht <- plotHeatmap(
+            x_plotting, cell_type,
+            available_pcs, plot_by, n_genes,
+            significance_threshold, show_anomalies,
+            pseudo_bulk, cluster_cols
+        )
 
         if (is.null(ht)) {
             message("No data available to generate a heatmap for the specified parameters.")
@@ -249,25 +258,30 @@ plot.calculateGeneShiftsObject <- function(x,
             # Draw the heatmap and return the drawn object
             return(
                 ComplexHeatmap::draw(ht,
-                                     heatmap_legend_side = "right",
-                                     annotation_legend_side = "right",
-                                     merge_legends = TRUE,
-                                     ...)
+                    heatmap_legend_side = "right",
+                    annotation_legend_side = "right",
+                    merge_legends = TRUE,
+                    ...
+                )
             )
         } else {
             # Return the undrawn Heatmap object for further customization
             return(ht)
         }
     } else if (plot_type == "barplot") {
-        return(plotBarplot(x_plotting, cell_type,
-                           available_pcs, plot_by,
-                           n_genes, significance_threshold,
-                           show_anomalies, show_all_query))
+        return(plotBarplot(
+            x_plotting, cell_type,
+            available_pcs, plot_by,
+            n_genes, significance_threshold,
+            show_anomalies, show_all_query
+        ))
     } else {
-        return(plotBoxplot(x_plotting, cell_type,
-                           available_pcs, plot_by,
-                           n_genes, significance_threshold,
-                           show_anomalies))
+        return(plotBoxplot(
+            x_plotting, cell_type,
+            available_pcs, plot_by,
+            n_genes, significance_threshold,
+            show_anomalies
+        ))
     }
 }
 
@@ -324,7 +338,6 @@ plotHeatmap <- function(x, cell_type,
                         n_genes, significance_threshold,
                         show_anomalies, pseudo_bulk = FALSE,
                         cluster_cols = FALSE) {
-
     # Initialize gene collection
     all_genes_to_plot <- c()
 
@@ -344,7 +357,8 @@ plotHeatmap <- function(x, cell_type,
             # Order genes by selection criterion
             if (plot_by == "top_loading") {
                 gene_order <- order(abs(pc_cell_data[["loading"]]),
-                                    decreasing = TRUE)
+                    decreasing = TRUE
+                )
             } else {
                 gene_order <- order(pc_cell_data[["p_adjusted"]])
             }
@@ -353,7 +367,6 @@ plotHeatmap <- function(x, cell_type,
             return(pc_cell_data[selected_indices, "gene"])
         })
         all_genes_to_plot <- unique(unlist(gene_list))
-
     } else if (!is.null(significance_threshold)) {
         # Gene selection based on significance threshold
         sig_gene_list <- lapply(available_pcs, function(pc_name) {
@@ -363,7 +376,7 @@ plotHeatmap <- function(x, cell_type,
             }
 
             sig_df <- pc_results[pc_results[["cell_type"]] == cell_type &
-                                     pc_results[["p_adjusted"]] < significance_threshold, ]
+                pc_results[["p_adjusted"]] < significance_threshold, ]
             return(sig_df[["gene"]])
         })
         all_genes_to_plot <- unique(unlist(sig_gene_list))
@@ -371,7 +384,7 @@ plotHeatmap <- function(x, cell_type,
 
     # Check if any genes were selected
     if (length(all_genes_to_plot) == 0) {
-        return(NULL)  # Return NULL instead of warning
+        return(NULL) # Return NULL instead of warning
     }
 
     # Identify significant genes for annotation
@@ -384,7 +397,7 @@ plotHeatmap <- function(x, cell_type,
             }
 
             sig_df <- pc_results[pc_results[["cell_type"]] == cell_type &
-                                     pc_results[["p_adjusted"]] < significance_threshold, ]
+                pc_results[["p_adjusted"]] < significance_threshold, ]
             return(sig_df[["gene"]])
         })
         significant_genes <- unique(unlist(sig_gene_list))
@@ -403,8 +416,9 @@ plotHeatmap <- function(x, cell_type,
 
             # 3 categories: Reference_Normal, Query_Normal, Query_Anomaly (no Reference_Anomaly)
             cell_subset_modified[["group"]] <- paste(cell_subset_modified[["dataset"]],
-                                                     cell_subset_modified[["anomaly_status"]],
-                                                     sep = "_")
+                cell_subset_modified[["anomaly_status"]],
+                sep = "_"
+            )
             group_order <- c("Reference_Normal", "Query_Normal", "Query_Anomaly")
 
             # Update cell_subset to use modified version
@@ -519,11 +533,13 @@ plotHeatmap <- function(x, cell_type,
 
             # Convert to hex colors
             rgb_vals <- col_ramp(x_norm)
-            grDevices::rgb(rgb_vals[,1], rgb_vals[,2], rgb_vals[,3], maxColorValue = 255)
+            grDevices::rgb(rgb_vals[, 1], rgb_vals[, 2], rgb_vals[, 3], maxColorValue = 255)
         }
     }
-    zscore_col_fun <- .createColorMapping(c(-2, 0, 2),
-                                          c("#313695", "white", "#A50026"))
+    zscore_col_fun <- .createColorMapping(
+        c(-2, 0, 2),
+        c("#313695", "white", "#A50026")
+    )
 
     # Create top annotation with query-only anomaly status
     annotation_list <- list()
@@ -533,7 +549,8 @@ plotHeatmap <- function(x, cell_type,
     if (show_anomalies && "anomaly_status" %in% names(cell_subset)) {
         # Map anomaly status to new labels (reference cells are already set to "Normal")
         anomaly_labels <- ifelse(cell_subset[["anomaly_status"]] == "Anomaly",
-                                 "Anomalous", "Non-Anomalous")
+            "Anomalous", "Non-Anomalous"
+        )
         annotation_list[["Status"]] <- anomaly_labels
         color_list[["Status"]] <- anomaly_colors
         legend_params[["Status"]] <- list(title = "Query Anomaly Status")
@@ -554,8 +571,10 @@ plotHeatmap <- function(x, cell_type,
 
     # Prepare gene labels with significance indicators
     final_genes <- rownames(expr_matrix)
-    row_labels <- paste0(final_genes,
-                         ifelse(final_genes %in% significant_genes, "*", ""))
+    row_labels <- paste0(
+        final_genes,
+        ifelse(final_genes %in% significant_genes, "*", "")
+    )
 
     # Smart dependency checking for grid package
     if (requireNamespace("grid", quietly = TRUE)) {
@@ -575,8 +594,8 @@ plotHeatmap <- function(x, cell_type,
             row_names_gp = row_gp,
             cluster_rows = TRUE,
             show_column_names = FALSE,
-            cluster_columns = if(pseudo_bulk && cluster_cols) TRUE else FALSE,
-            column_order = if(pseudo_bulk && cluster_cols) NULL else cell_subset[["cell_id"]],
+            cluster_columns = if (pseudo_bulk && cluster_cols) TRUE else FALSE,
+            column_order = if (pseudo_bulk && cluster_cols) NULL else cell_subset[["cell_id"]],
             top_annotation = top_ha,
             border = TRUE,
             use_raster = TRUE,
@@ -599,8 +618,8 @@ plotHeatmap <- function(x, cell_type,
             row_names_gp = row_gp,
             cluster_rows = TRUE,
             show_column_names = FALSE,
-            cluster_columns = if(pseudo_bulk && cluster_cols) TRUE else FALSE,
-            column_order = if(pseudo_bulk && cluster_cols) NULL else cell_subset[["cell_id"]],
+            cluster_columns = if (pseudo_bulk && cluster_cols) TRUE else FALSE,
+            column_order = if (pseudo_bulk && cluster_cols) NULL else cell_subset[["cell_id"]],
             top_annotation = top_ha,
             border = TRUE,
             use_raster = TRUE,
@@ -652,7 +671,6 @@ plotHeatmap <- function(x, cell_type,
 plotBarplot <- function(x, cell_type, available_pcs, plot_by,
                         n_genes, significance_threshold, show_anomalies,
                         show_all_query = TRUE) {
-
     # Validate required parameters
     if (is.null(n_genes)) {
         stop("'plot_type = \"barplot\"' requires 'n_genes' to be set.")
@@ -665,13 +683,17 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
 
     # Create internal heatmap object to extract gene order
     # Use the same parameters as would be used for heatmap plotting
-    internal_heatmap <- tryCatch({
-        plotHeatmap(x, cell_type, available_pcs, plot_by, n_genes,
-                    significance_threshold, show_anomalies,
-                    pseudo_bulk = TRUE, cluster_cols = FALSE)
-    }, error = function(e) {
-        stop("Failed to create internal heatmap for gene ordering: ", e$message)
-    })
+    internal_heatmap <- tryCatch(
+        {
+            plotHeatmap(x, cell_type, available_pcs, plot_by, n_genes,
+                significance_threshold, show_anomalies,
+                pseudo_bulk = TRUE, cluster_cols = FALSE
+            )
+        },
+        error = function(e) {
+            stop("Failed to create internal heatmap for gene ordering: ", e$message)
+        }
+    )
 
     if (is.null(internal_heatmap)) {
         warning("No genes met the selection criteria for the barplot.")
@@ -698,8 +720,9 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
 
         # 3 categories: Query_Normal, Query_Anomaly, Reference_Normal
         cell_subset_modified[["group"]] <- paste(cell_subset_modified[["dataset"]],
-                                                 cell_subset_modified[["anomaly_status"]],
-                                                 sep = "_")
+            cell_subset_modified[["anomaly_status"]],
+            sep = "_"
+        )
         group_order <- c("Query_Normal", "Query_Anomaly", "Reference_Normal")
         cell_subset <- cell_subset_modified
     } else {
@@ -736,7 +759,7 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
         # Query non-anomaly vs Reference (always calculated)
         query_normal_column <- if (has_anomaly_data) "Query_Normal" else "Query"
         query_normal_expr <- pseudo_bulk_matrix[gene, query_normal_column]
-        query_normal_fc <- query_normal_expr - ref_expr  # Log2 fold change
+        query_normal_fc <- query_normal_expr - ref_expr # Log2 fold change
 
         # All Query vs Reference (calculated when anomaly data available AND show_all_query is TRUE)
         if (has_anomaly_data && show_all_query) {
@@ -788,7 +811,7 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
             }
 
             sig_df <- pc_results[pc_results[["cell_type"]] == cell_type &
-                                     pc_results[["p_adjusted"]] < significance_threshold, ]
+                pc_results[["p_adjusted"]] < significance_threshold, ]
             return(sig_df[["gene"]])
         })
         significant_genes <- unique(unlist(sig_gene_list))
@@ -849,18 +872,23 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
     plot_df[["gene"]] <- factor(plot_df[["gene"]], levels = rev(gene_order_clustered))
 
     # Set comparison factor levels for proper ordering
-    comparison_levels <- c("All Query vs Reference",
-                           "Query Non-Anomaly vs Reference",
-                           "Query Anomaly vs Reference")
+    comparison_levels <- c(
+        "All Query vs Reference",
+        "Query Non-Anomaly vs Reference",
+        "Query Anomaly vs Reference"
+    )
     plot_df[["comparison"]] <- factor(plot_df[["comparison"]], levels = comparison_levels)
 
     # Set factor levels on color_group to control bar order
     plot_df[["color_group"]] <- factor(plot_df[["color_group"]],
-                                       levels = c("anomaly", "normal", "all"))
+        levels = c("anomaly", "normal", "all")
+    )
 
-    bar_colors <- c("normal" = "#9E9E9E",
-                    "all" = "#666666",
-                    "anomaly" = "#DC2F41")
+    bar_colors <- c(
+        "normal" = "#9E9E9E",
+        "all" = "#666666",
+        "anomaly" = "#DC2F41"
+    )
 
     # Prepare gene labels with significance indicators
     gene_labels <- sapply(gene_order_clustered, function(g) {
@@ -869,23 +897,37 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
     names(gene_labels) <- gene_order_clustered
 
     # Create the plot
-    p <- ggplot2::ggplot(data = plot_df,
-                         ggplot2::aes(x = .data[["fold_change"]],
-                                      y = .data[["gene"]],
-                                      fill = .data[["color_group"]])) +
-        ggplot2::geom_col(position = ggplot2::position_dodge(width = 0.8),
-                          alpha = 0.8, width = 0.4) +
-        ggplot2::geom_vline(xintercept = 0, linetype = "dashed",
-                            color = "grey50", alpha = 0.7) +
-        ggplot2::scale_fill_manual(name = "Comparison",
-                                   values = bar_colors,
-                                   labels = c("normal" = "Query Non-Anomaly vs Ref",
-                                              "all" = "All Query vs Ref",
-                                              "anomaly" = "Query Anomaly vs Ref"),
-                                   guide = ggplot2::guide_legend(reverse = TRUE)) +
+    p <- ggplot2::ggplot(
+        data = plot_df,
+        ggplot2::aes(
+            x = .data[["fold_change"]],
+            y = .data[["gene"]],
+            fill = .data[["color_group"]]
+        )
+    ) +
+        ggplot2::geom_col(
+            position = ggplot2::position_dodge(width = 0.8),
+            alpha = 0.8, width = 0.4
+        ) +
+        ggplot2::geom_vline(
+            xintercept = 0, linetype = "dashed",
+            color = "grey50", alpha = 0.7
+        ) +
+        ggplot2::scale_fill_manual(
+            name = "Comparison",
+            values = bar_colors,
+            labels = c(
+                "normal" = "Query Non-Anomaly vs Ref",
+                "all" = "All Query vs Ref",
+                "anomaly" = "Query Anomaly vs Ref"
+            ),
+            guide = ggplot2::guide_legend(reverse = TRUE)
+        ) +
         ggplot2::scale_y_discrete(labels = rev(gene_labels), name = NULL) +
-        ggplot2::scale_x_continuous(name = "Log2 Fold Change (Pseudo-Bulk)",
-                                    expand = ggplot2::expansion(mult = c(0.05, 0.05))) +
+        ggplot2::scale_x_continuous(
+            name = "Log2 Fold Change (Pseudo-Bulk)",
+            expand = ggplot2::expansion(mult = c(0.05, 0.05))
+        ) +
         ggplot2::labs(title = NULL, subtitle = NULL) +
         ggplot2::theme_bw() +
         ggplot2::theme(
@@ -959,7 +1001,6 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
 # Helper boxplot function
 plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
                         n_genes, significance_threshold, show_anomalies) {
-
     # Validate required parameters
     if (is.null(n_genes)) {
         stop("'plot_type = \"boxplot\"' requires 'n_genes' to be set.")
@@ -980,7 +1021,8 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
         # Order genes by selection criterion
         if (plot_by == "top_loading") {
             gene_order <- order(abs(pc_cell_data[["loading"]]),
-                                decreasing = TRUE)
+                decreasing = TRUE
+            )
         } else {
             gene_order <- order(pc_cell_data[["p_adjusted"]])
         }
@@ -1068,29 +1110,36 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
     } else {
         FALSE
     }
-    gene_labels <- paste0(final_gene_data[["gene"]],
-                          ifelse(is_significant, "*", ""))
+    gene_labels <- paste0(
+        final_gene_data[["gene"]],
+        ifelse(is_significant, "*", "")
+    )
     full_plot_df[["gene"]] <- factor(full_plot_df[["gene"]],
-                                     levels = rev(final_gene_data[["gene"]]))
+        levels = rev(final_gene_data[["gene"]])
+    )
 
     # Format p-value labels for secondary axis
     p_value_data <- final_gene_data[, c("gene", "p_adjusted")]
-    p_value_labels <- paste0("p = ",
-                             sprintf("%.2g", p_value_data[["p_adjusted"]]))
+    p_value_labels <- paste0(
+        "p = ",
+        sprintf("%.2g", p_value_data[["p_adjusted"]])
+    )
     p_value_labels[p_value_data[["p_adjusted"]] < 0.001] <- "p < .001"
     names(p_value_labels) <- p_value_data[["gene"]]
 
     # Create PC legend labels with variance explained
-    pc_legend_labels <- paste0(available_pcs, " (",
-                               sprintf("%.1f%%", x[["percent_var"]][available_pcs]),
-                               ")")
+    pc_legend_labels <- paste0(
+        available_pcs, " (",
+        sprintf("%.1f%%", x[["percent_var"]][available_pcs]),
+        ")"
+    )
     names(pc_legend_labels) <- available_pcs
 
     # Define color and shape palettes
     dataset_colors <- c("Reference" = "#377EB8", "Query" = "#E41A1C")
     num_pcs <- length(available_pcs)
     pc_color_palette <- grDevices::hcl.colors(num_pcs, palette = "Dark 3")
-    pc_shape_palette <- c(16, 17, 15, 18, 8)  # circle, triangle, square, diamond, star
+    pc_shape_palette <- c(16, 17, 15, 18, 8) # circle, triangle, square, diamond, star
 
     pc_colors <- pc_color_palette[1:num_pcs]
     pc_shapes <- pc_shape_palette[1:num_pcs]
@@ -1099,8 +1148,10 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
 
     # Create facet labeller for panel titles
     facet_labeller <- ggplot2::labeller(
-        metric = c("Expression" = "Log-Normalized Expression",
-                   "PC Loading" = "PC Loading")
+        metric = c(
+            "Expression" = "Log-Normalized Expression",
+            "PC Loading" = "PC Loading"
+        )
     )
 
     # Build the base ggplot object
@@ -1113,12 +1164,14 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
     if (show_anomalies && "anomaly_status" %in% names(full_plot_df)) {
         # Boxplots with anomaly-aware border styling using linetype
         p <- p + ggplot2::geom_boxplot(
-            data = ~subset(., metric == "Expression"),
-            ggplot2::aes(fill = .data[["dataset"]],
-                         linetype = .data[["anomaly_status"]]),
+            data = ~ subset(., metric == "Expression"),
+            ggplot2::aes(
+                fill = .data[["dataset"]],
+                linetype = .data[["anomaly_status"]]
+            ),
             alpha = 0.8,
             outlier.size = 0.5,
-            size = 0.8  # Slightly thicker borders for better linetype visibility
+            size = 0.8 # Slightly thicker borders for better linetype visibility
         ) +
             ggplot2::scale_linetype_manual(
                 name = "Status",
@@ -1132,7 +1185,7 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
     } else {
         # Standard boxplots without anomaly information
         p <- p + ggplot2::geom_boxplot(
-            data = ~subset(., metric == "Expression"),
+            data = ~ subset(., metric == "Expression"),
             ggplot2::aes(fill = .data[["dataset"]]),
             alpha = 0.8,
             outlier.size = 0.5
@@ -1150,16 +1203,18 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
         ) +
         # PC loading points with color and shape encoding
         ggplot2::geom_point(
-            data = ~subset(., metric == "PC Loading"),
-            ggplot2::aes(color = .data[["pc_group"]],
-                         shape = .data[["pc_group"]]),
+            data = ~ subset(., metric == "PC Loading"),
+            ggplot2::aes(
+                color = .data[["pc_group"]],
+                shape = .data[["pc_group"]]
+            ),
             size = 3,
             alpha = 0.8
         ) +
 
         # Panel configuration with custom labelling
         ggplot2::facet_grid(
-            ~ metric,
+            ~metric,
             scales = "free_x",
             switch = "x",
             labeller = facet_labeller
@@ -1209,7 +1264,7 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
             fill = ggplot2::guide_legend(order = 1),
             color = ggplot2::guide_legend(order = 2),
             shape = ggplot2::guide_legend(order = 2),
-            linetype = if(show_anomalies && "anomaly_status" %in% names(full_plot_df)) {
+            linetype = if (show_anomalies && "anomaly_status" %in% names(full_plot_df)) {
                 ggplot2::guide_legend(order = 3)
             } else {
                 "none"
@@ -1267,35 +1322,38 @@ plotBoxplot <- function(x, cell_type, available_pcs, plot_by,
 #'
 # Function to extract genes used by heatmap plot
 extractGeneOrder <- function(heatmap_object) {
-
     # Check if it's a ComplexHeatmap object
     if (!inherits(heatmap_object, "Heatmap")) {
         stop("Input must be a ComplexHeatmap Heatmap object")
     }
 
-    tryCatch({
-        # Open a null device to draw without displaying
-        pdf(NULL)
-        on.exit(dev.off(), add = TRUE)
+    tryCatch(
+        {
+            # Open a null device to draw without displaying
+            pdf(NULL)
+            on.exit(dev.off(), add = TRUE)
 
-        # Draw to initialize the heatmap clustering
-        drawn_ht <- ComplexHeatmap::draw(heatmap_object, show_heatmap_legend = FALSE,
-                                         show_annotation_legend = FALSE)
+            # Draw to initialize the heatmap clustering
+            drawn_ht <- ComplexHeatmap::draw(heatmap_object,
+                show_heatmap_legend = FALSE,
+                show_annotation_legend = FALSE
+            )
 
-        # Extract row order from the drawn heatmap
-        gene_order_indices <- ComplexHeatmap::row_order(drawn_ht)
+            # Extract row order from the drawn heatmap
+            gene_order_indices <- ComplexHeatmap::row_order(drawn_ht)
 
-        # Get the matrix and extract gene names in clustered order
-        heatmap_matrix <- heatmap_object@matrix
-        if (is.null(rownames(heatmap_matrix))) {
-            stop("Heatmap matrix has no row names (gene names)")
+            # Get the matrix and extract gene names in clustered order
+            heatmap_matrix <- heatmap_object@matrix
+            if (is.null(rownames(heatmap_matrix))) {
+                stop("Heatmap matrix has no row names (gene names)")
+            }
+
+            # Return genes in clustered order
+            clustered_genes <- rownames(heatmap_matrix)[gene_order_indices]
+            return(clustered_genes)
+        },
+        error = function(e) {
+            stop("Failed to extract gene order from heatmap object. Error: ", e$message)
         }
-
-        # Return genes in clustered order
-        clustered_genes <- rownames(heatmap_matrix)[gene_order_indices]
-        return(clustered_genes)
-
-    }, error = function(e) {
-        stop("Failed to extract gene order from heatmap object. Error: ", e$message)
-    })
+    )
 }

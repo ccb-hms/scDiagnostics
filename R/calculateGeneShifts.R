@@ -92,7 +92,6 @@ calculateGeneShifts <- function(query_data,
                                 n_tree = 500,
                                 max_cells_query = 5000,
                                 max_cells_ref = 5000) {
-
     # Match arguments
     threshold_method <- match.arg(threshold_method)
 
@@ -102,20 +101,26 @@ calculateGeneShifts <- function(query_data,
     }
 
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  ref_cell_type_col = ref_cell_type_col,
-                  query_cell_type_col = query_cell_type_col,
-                  pc_subset_query = pc_subset,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        ref_cell_type_col = ref_cell_type_col,
+        query_cell_type_col = query_cell_type_col,
+        pc_subset_query = pc_subset,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Input validation
     if (!is.numeric(n_top_loadings) || length(n_top_loadings) != 1 || n_top_loadings <= 0) {
@@ -193,13 +198,15 @@ calculateGeneShifts <- function(query_data,
     }
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = TRUE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = TRUE,
+        n_cell_types = NULL
+    )
 
     original_ref_names <- colnames(reference_data)
     original_query_names <- colnames(query_data)
@@ -232,37 +239,44 @@ calculateGeneShifts <- function(query_data,
     # Perform anomaly detection FIRST (before any downsampling)
     anomaly_results <- NULL
     if (detect_anomalies) {
-        tryCatch({
-            anomaly_results <- detectAnomaly(
-                reference_data = reference_data,
-                query_data = query_data,
-                ref_cell_type_col = ref_cell_type_col,
-                query_cell_type_col = query_cell_type_col,
-                cell_types = cell_types,
-                pc_subset = pc_subset,
-                n_tree = n_tree,
-                threshold_method = threshold_method, # NEW
-                mad_multiplier = mad_multiplier,     # NEW
-                anomaly_threshold = anomaly_threshold, # UPDATED DEFAULT
-                assay_name = assay_name,
-                max_cells_ref = NULL,
-                max_cells_query = NULL
-            )
-        }, error = function(e) {
-            warning("Anomaly detection failed: ", e[["message"]], ". Continuing without anomaly detection.")
-            anomaly_results <<- NULL
-        })
+        tryCatch(
+            {
+                anomaly_results <- detectAnomaly(
+                    reference_data = reference_data,
+                    query_data = query_data,
+                    ref_cell_type_col = ref_cell_type_col,
+                    query_cell_type_col = query_cell_type_col,
+                    cell_types = cell_types,
+                    pc_subset = pc_subset,
+                    n_tree = n_tree,
+                    threshold_method = threshold_method, # NEW
+                    mad_multiplier = mad_multiplier, # NEW
+                    anomaly_threshold = anomaly_threshold, # UPDATED DEFAULT
+                    assay_name = assay_name,
+                    max_cells_ref = NULL,
+                    max_cells_query = NULL
+                )
+            },
+            error = function(e) {
+                warning("Anomaly detection failed: ", e[["message"]], ". Continuing without anomaly detection.")
+                anomaly_results <<- NULL
+            }
+        )
     }
 
     # Now downsample the data (with cell type filtering)
-    query_data <- downsampleSCE(sce_object = query_data,
-                                max_cells = max_cells_query,
-                                cell_types = cell_types,
-                                cell_type_col = query_cell_type_col)
-    reference_data <- downsampleSCE(sce_object = reference_data,
-                                    max_cells = max_cells_ref,
-                                    cell_types = cell_types,
-                                    cell_type_col = ref_cell_type_col)
+    query_data <- downsampleSCE(
+        sce_object = query_data,
+        max_cells = max_cells_query,
+        cell_types = cell_types,
+        cell_type_col = query_cell_type_col
+    )
+    reference_data <- downsampleSCE(
+        sce_object = reference_data,
+        max_cells = max_cells_ref,
+        cell_types = cell_types,
+        cell_type_col = ref_cell_type_col
+    )
 
     if (!query_cell_type_col %in% names(SummarizedExperiment::colData(query_data))) {
         stop(paste("Column '", query_cell_type_col, "' not found in query_data colData"))
@@ -293,13 +307,15 @@ calculateGeneShifts <- function(query_data,
     if (!is.null(genes_to_analyze)) {
         genes_to_use <- genes_to_analyze
         available_genes <- genes_to_use[genes_to_use %in% rownames(query_data) &
-                                            genes_to_use %in% rownames(reference_data)]
+            genes_to_use %in% rownames(reference_data)]
         if (length(available_genes) == 0) {
             stop("None of the specified genes in genes_to_analyze are found in both query and reference data.")
         }
         if (length(available_genes) < length(genes_to_use)) {
-            warning("Some genes in genes_to_analyze were not found in both datasets. Using ",
-                    length(available_genes), " out of ", length(genes_to_use), " genes.")
+            warning(
+                "Some genes in genes_to_analyze were not found in both datasets. Using ",
+                length(available_genes), " out of ", length(genes_to_use), " genes."
+            )
         }
         genes_to_use <- available_genes
 
@@ -314,7 +330,6 @@ calculateGeneShifts <- function(query_data,
 
         all_top_genes <- genes_to_use
         pc_results <- stats::setNames(vector("list", length(pc_subset)), paste0("PC", pc_subset))
-
     } else {
         all_top_genes <- character(0)
         gene_metadata_list <- list()
@@ -324,15 +339,18 @@ calculateGeneShifts <- function(query_data,
             pc_name <- paste0("PC", pc)
             pc_loadings <- pca_rotation[, pc]
             top_loading_indices <- order(abs(pc_loadings),
-                                         decreasing = TRUE)[1:min(n_top_loadings, length(pc_loadings))]
+                decreasing = TRUE
+            )[1:min(n_top_loadings, length(pc_loadings))]
             top_genes <- names(pc_loadings)[top_loading_indices]
             top_loadings_vals <- pc_loadings[top_loading_indices]
 
             all_top_genes <- unique(c(all_top_genes, top_genes))
-            gene_metadata_list[[pc_name]] <- data.frame(gene = top_genes,
-                                                        pc = pc,
-                                                        loading = top_loadings_vals,
-                                                        stringsAsFactors = FALSE)
+            gene_metadata_list[[pc_name]] <- data.frame(
+                gene = top_genes,
+                pc = pc,
+                loading = top_loadings_vals,
+                stringsAsFactors = FALSE
+            )
         }
     }
 
@@ -347,11 +365,13 @@ calculateGeneShifts <- function(query_data,
             if (anomaly_comparison && !is.null(anomaly_results)) {
                 ref_cells_ct <- .filterCellsByAnomalyStatus(
                     ref_cells_ct, colnames(reference_data), anomaly_results,
-                    ct, "reference", keep_anomalous = FALSE
+                    ct, "reference",
+                    keep_anomalous = FALSE
                 )
                 query_cells_ct <- .filterCellsByAnomalyStatus(
                     query_cells_ct, colnames(query_data), anomaly_results,
-                    ct, "query", keep_anomalous = TRUE
+                    ct, "query",
+                    keep_anomalous = TRUE
                 )
 
                 if (length(query_cells_ct) < 3) {
@@ -371,8 +391,9 @@ calculateGeneShifts <- function(query_data,
 
             loadings_placeholder <- rep(NA_real_, length(genes_to_use))
             gene_results <- processGenesSimple(genes_to_use, loadings_placeholder, query_expr_ct, ref_expr_ct, ct)
-            if (length(gene_results) > 0)
+            if (length(gene_results) > 0) {
                 pc_result_list <- c(pc_result_list, gene_results)
+            }
         }
 
         if (length(pc_result_list) > 0) {
@@ -385,7 +406,6 @@ calculateGeneShifts <- function(query_data,
         } else {
             pc_results[[1]] <- data.frame()
         }
-
     } else {
         for (pc in pc_subset) {
             pc_name <- paste0("PC", pc)
@@ -402,11 +422,13 @@ calculateGeneShifts <- function(query_data,
                 if (anomaly_comparison && !is.null(anomaly_results)) {
                     ref_cells_ct <- .filterCellsByAnomalyStatus(
                         ref_cells_ct, colnames(reference_data), anomaly_results,
-                        ct, "reference", keep_anomalous = FALSE
+                        ct, "reference",
+                        keep_anomalous = FALSE
                     )
                     query_cells_ct <- .filterCellsByAnomalyStatus(
                         query_cells_ct, colnames(query_data), anomaly_results,
-                        ct, "query", keep_anomalous = TRUE
+                        ct, "query",
+                        keep_anomalous = TRUE
                     )
 
                     if (length(query_cells_ct) < 3) {
@@ -425,8 +447,9 @@ calculateGeneShifts <- function(query_data,
                 ref_expr_ct <- SummarizedExperiment::assay(reference_data, assay_name)[top_genes, ref_cells_ct, drop = FALSE]
 
                 gene_results <- processGenesSimple(top_genes, top_loadings_vals, query_expr_ct, ref_expr_ct, ct)
-                if (length(gene_results) > 0)
+                if (length(gene_results) > 0) {
                     pc_result_list <- c(pc_result_list, gene_results)
+                }
             }
 
             if (length(pc_result_list) > 0) {
@@ -455,19 +478,21 @@ calculateGeneShifts <- function(query_data,
         if (anomaly_comparison && !is.null(anomaly_results)) {
             ref_cells_ct <- .filterCellsByAnomalyStatus(
                 ref_cells_ct, colnames(reference_data), anomaly_results,
-                ct, "reference", keep_anomalous = FALSE
+                ct, "reference",
+                keep_anomalous = FALSE
             )
             query_cells_ct <- .filterCellsByAnomalyStatus(
                 query_cells_ct, colnames(query_data), anomaly_results,
-                ct, "query", keep_anomalous = TRUE
+                ct, "query",
+                keep_anomalous = TRUE
             )
         }
 
         ref_expr_ct <- full_ref_assay[, ref_cells_ct, drop = FALSE]
         query_expr_ct <- full_query_assay[, query_cells_ct, drop = FALSE]
 
-        total_var_ref <- if(ncol(ref_expr_ct) > 1) sum(apply(as.matrix(ref_expr_ct), 1, stats::var)) else 0
-        total_var_query <- if(ncol(query_expr_ct) > 1) sum(apply(as.matrix(query_expr_ct), 1, stats::var)) else 0
+        total_var_ref <- if (ncol(ref_expr_ct) > 1) sum(apply(as.matrix(ref_expr_ct), 1, stats::var)) else 0
+        total_var_query <- if (ncol(query_expr_ct) > 1) sum(apply(as.matrix(query_expr_ct), 1, stats::var)) else 0
 
         for (pc in pc_subset) {
             pc_name <- paste0("PC", pc)
@@ -479,7 +504,8 @@ calculateGeneShifts <- function(query_data,
                 pct_var_ref <- (var_scores_ref / total_var_ref) * 100
                 var_explained_list[[length(var_explained_list) + 1]] <- data.frame(
                     pc = pc_name, cell_type = ct, dataset = "Reference",
-                    percent_variance = pct_var_ref, stringsAsFactors = FALSE)
+                    percent_variance = pct_var_ref, stringsAsFactors = FALSE
+                )
             }
             if (total_var_query > .Machine[["double.eps"]]) {
                 query_scores <- crossprod(query_expr_ct, loadings_pc)
@@ -487,7 +513,8 @@ calculateGeneShifts <- function(query_data,
                 pct_var_query <- (var_scores_query / total_var_query) * 100
                 var_explained_list[[length(var_explained_list) + 1]] <- data.frame(
                     pc = pc_name, cell_type = ct, dataset = "Query",
-                    percent_variance = pct_var_query, stringsAsFactors = FALSE)
+                    percent_variance = pct_var_query, stringsAsFactors = FALSE
+                )
             }
         }
     }
@@ -502,12 +529,16 @@ calculateGeneShifts <- function(query_data,
     expression_data <- cbind(ref_expr_plot, query_expr_plot)
 
     cell_metadata <- rbind(
-        data.frame(cell_id = colnames(ref_expr_plot), dataset = "Reference",
-                   cell_type = reference_data[[ref_cell_type_col]][ref_relevant_cells],
-                   original_index = ref_relevant_cells, stringsAsFactors = FALSE),
-        data.frame(cell_id = colnames(query_expr_plot), dataset = "Query",
-                   cell_type = query_data[[query_cell_type_col]][query_relevant_cells],
-                   original_index = query_relevant_cells, stringsAsFactors = FALSE)
+        data.frame(
+            cell_id = colnames(ref_expr_plot), dataset = "Reference",
+            cell_type = reference_data[[ref_cell_type_col]][ref_relevant_cells],
+            original_index = ref_relevant_cells, stringsAsFactors = FALSE
+        ),
+        data.frame(
+            cell_id = colnames(query_expr_plot), dataset = "Query",
+            cell_type = query_data[[query_cell_type_col]][query_relevant_cells],
+            original_index = query_relevant_cells, stringsAsFactors = FALSE
+        )
     )
 
     if (!is.null(anomaly_results)) {
@@ -574,7 +605,6 @@ processGenesSimple <- function(top_genes,
                                query_expr_matrix,
                                ref_expr_matrix,
                                cell_type) {
-
     result_list <- list()
 
     for (i in seq_along(top_genes)) {

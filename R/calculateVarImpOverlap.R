@@ -43,12 +43,14 @@
 #' data("query_data")
 #'
 #' # Compute important variables for all pairwise cell comparisons
-#' rf_output <- calculateVarImpOverlap(reference_data = reference_data,
-#'                                     query_data = query_data,
-#'                                     query_cell_type_col = "SingleR_annotation",
-#'                                     ref_cell_type_col = "expert_annotation",
-#'                                     n_tree = 500,
-#'                                     n_top = 50)
+#' rf_output <- calculateVarImpOverlap(
+#'     reference_data = reference_data,
+#'     query_data = query_data,
+#'     query_cell_type_col = "SingleR_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     n_tree = 500,
+#'     n_top = 50
+#' )
 #'
 #' # Comparison table
 #' rf_output$var_imp_comparison
@@ -63,23 +65,28 @@ calculateVarImpOverlap <- function(reference_data,
                                    n_top = 50,
                                    assay_name = "logcounts",
                                    max_cells_ref = 5000,
-                                   max_cells_query = 5000){
-
+                                   max_cells_query = 5000) {
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  assay_name = assay_name,
-                  max_cells_ref = max_cells_ref,
-                  max_cells_query = max_cells_query)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        assay_name = assay_name,
+        max_cells_ref = max_cells_ref,
+        max_cells_query = max_cells_query
+    )
 
     # Convert cell type columns to character if needed
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
-    if(!is.null(query_data)){
-        query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                                convert_cols = query_cell_type_col)
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
+    if (!is.null(query_data)) {
+        query_data <- convertColumnsToCharacter(
+            sce_object = query_data,
+            convert_cols = query_cell_type_col
+        )
     }
 
     # Check if n_tree is a positive integer
@@ -93,24 +100,30 @@ calculateVarImpOverlap <- function(reference_data,
     }
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = FALSE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = FALSE,
+        n_cell_types = NULL
+    )
 
     # Downsample query and reference data (with cell type filtering)
-    reference_data <- downsampleSCE(sce_object = reference_data,
-                                    max_cells = max_cells_ref,
-                                    cell_types = cell_types,
-                                    cell_type_col = ref_cell_type_col)
-    if(!is.null(query_data)){
-        query_data <- downsampleSCE(sce_object = query_data,
-                                    max_cells = max_cells_query,
-                                    cell_types = cell_types,
-                                    cell_type_col = query_cell_type_col)
+    reference_data <- downsampleSCE(
+        sce_object = reference_data,
+        max_cells = max_cells_ref,
+        cell_types = cell_types,
+        cell_type_col = ref_cell_type_col
+    )
+    if (!is.null(query_data)) {
+        query_data <- downsampleSCE(
+            sce_object = query_data,
+            max_cells = max_cells_query,
+            cell_types = cell_types,
+            cell_type_col = query_cell_type_col
+        )
     }
 
     # Extract assay data for reference and query datasets
@@ -120,46 +133,59 @@ calculateVarImpOverlap <- function(reference_data,
     ref_y <- reference_data[[ref_cell_type_col]]
 
     # Remove NA from reference
-    ref_x <- ref_x[which(!is.na(ref_y)),]
+    ref_x <- ref_x[which(!is.na(ref_y)), ]
     ref_y <- na.omit(ref_y)
 
     # Finding importance scores for each cell type in reference dataset
     var_imp_ref <- list()
     cell_types <- unique(ref_y)
     cell_types_combn <- combn(length(cell_types), 2)
-    for(combn_id in seq_len(ncol(cell_types_combn))){
-
+    for (combn_id in seq_len(ncol(cell_types_combn))) {
         ref_x_subset <- ref_x[which(
-            ref_y %in% c(cell_types[cell_types_combn[1, combn_id]],
-                         cell_types[cell_types_combn[2, combn_id]])),]
+            ref_y %in% c(
+                cell_types[cell_types_combn[1, combn_id]],
+                cell_types[cell_types_combn[2, combn_id]]
+            )
+        ), ]
         ref_y_subset <- ref_y[which(
-            ref_y %in% c(cell_types[cell_types_combn[1, combn_id]],
-                         cell_types[cell_types_combn[2, combn_id]]))]
+            ref_y %in% c(
+                cell_types[cell_types_combn[1, combn_id]],
+                cell_types[cell_types_combn[2, combn_id]]
+            )
+        )]
 
         # Using x/y interface instead of formula interface
-        rf_binary <- ranger::ranger(x = ref_x_subset,
-                                    y = factor(ref_y_subset),
-                                    num.trees = n_tree,
-                                    importance = "impurity")
+        rf_binary <- ranger::ranger(
+            x = ref_x_subset,
+            y = factor(ref_y_subset),
+            num.trees = n_tree,
+            importance = "impurity"
+        )
 
-        var_importance_name <- paste0(cell_types[cell_types_combn[1, combn_id]],
-                                      "-",
-                                      cell_types[cell_types_combn[2, combn_id]])
+        var_importance_name <- paste0(
+            cell_types[cell_types_combn[1, combn_id]],
+            "-",
+            cell_types[cell_types_combn[2, combn_id]]
+        )
         var_imp_ref[[var_importance_name]] <- rf_binary$variable.importance
         names(var_imp_ref[[var_importance_name]]) <- colnames(ref_x_subset)
         var_imp_ref[[var_importance_name]] <-
-            data.frame(Gene = names(
-                var_imp_ref[[var_importance_name]])[order(
+            data.frame(
+                Gene = names(
+                    var_imp_ref[[var_importance_name]]
+                )[order(
                     var_imp_ref[[var_importance_name]],
-                    decreasing = TRUE)],
+                    decreasing = TRUE
+                )],
                 RF_Importance = var_imp_ref[[var_importance_name]][order(
                     var_imp_ref[[var_importance_name]],
-                    decreasing = TRUE)])
+                    decreasing = TRUE
+                )]
+            )
         rownames(var_imp_ref[[var_importance_name]]) <- NULL
     }
 
-    if(!is.null(query_data)){
-
+    if (!is.null(query_data)) {
         # Extract assay data for query dataset
         query_x <- t(as.matrix(assay(query_data, assay_name)))
 
@@ -167,60 +193,78 @@ calculateVarImpOverlap <- function(reference_data,
         query_y <- query_data[[query_cell_type_col]]
 
         # Remove NA from query
-        query_x <- query_x[which(!is.na(query_y)),]
+        query_x <- query_x[which(!is.na(query_y)), ]
         query_y <- na.omit(query_y)
 
         # Finding importance scores for each cell type in query dataset
         cell_types <- unique(intersect(ref_y, query_y))
         var_imp_query <- list()
-        for(combn_id in seq_len(ncol(cell_types_combn))){
-
+        for (combn_id in seq_len(ncol(cell_types_combn))) {
             query_x_subset <- query_x[which(
-                query_y %in% c(cell_types[cell_types_combn[1, combn_id]],
-                               cell_types[cell_types_combn[2, combn_id]])),]
+                query_y %in% c(
+                    cell_types[cell_types_combn[1, combn_id]],
+                    cell_types[cell_types_combn[2, combn_id]]
+                )
+            ), ]
             query_y_subset <- query_y[which(
-                query_y %in% c(cell_types[cell_types_combn[1, combn_id]],
-                               cell_types[cell_types_combn[2, combn_id]]))]
+                query_y %in% c(
+                    cell_types[cell_types_combn[1, combn_id]],
+                    cell_types[cell_types_combn[2, combn_id]]
+                )
+            )]
 
             # Using x/y interface instead of formula interface
-            rf_binary <- ranger::ranger(x = query_x_subset,
-                                        y = factor(query_y_subset),
-                                        num.trees = n_tree,
-                                        importance = "impurity")
+            rf_binary <- ranger::ranger(
+                x = query_x_subset,
+                y = factor(query_y_subset),
+                num.trees = n_tree,
+                importance = "impurity"
+            )
 
             var_importance_name <- paste0(
                 cell_types[cell_types_combn[1, combn_id]], "-",
-                cell_types[cell_types_combn[2, combn_id]])
+                cell_types[cell_types_combn[2, combn_id]]
+            )
             var_imp_query[[var_importance_name]] <-
                 rf_binary$variable.importance
             names(var_imp_query[[var_importance_name]]) <-
                 colnames(query_x_subset)
             var_imp_query[[var_importance_name]] <-
-                data.frame(Gene = names(
-                    var_imp_query[[var_importance_name]])[order(
+                data.frame(
+                    Gene = names(
+                        var_imp_query[[var_importance_name]]
+                    )[order(
                         var_imp_query[[var_importance_name]],
-                        decreasing = TRUE)],
+                        decreasing = TRUE
+                    )],
                     RF_Importance = var_imp_query[[var_importance_name]][order(
                         var_imp_query[[var_importance_name]],
-                        decreasing = TRUE)])
+                        decreasing = TRUE
+                    )]
+                )
             rownames(var_imp_query[[var_importance_name]]) <- NULL
         }
 
         # Comparison vector
         var_imp_comparison <- rep(NA, length(var_imp_ref))
         names(var_imp_comparison) <- names(var_imp_ref)
-        for(cells in names(var_imp_comparison)){
+        for (cells in names(var_imp_comparison)) {
             var_imp_comparison[cells] <- length(
-                intersect(var_imp_ref[[cells]][["Gene"]][seq_len(n_top)],
-                          var_imp_query[[cells]][["Gene"]][seq_len(n_top)])) /
+                intersect(
+                    var_imp_ref[[cells]][["Gene"]][seq_len(n_top)],
+                    var_imp_query[[cells]][["Gene"]][seq_len(n_top)]
+                )
+            ) /
                 n_top
         }
 
         # Return variable importance scores for each combination of cell types in each dataset and the comparison
-        return(list(var_imp_ref = var_imp_ref,
-                    var_imp_query = var_imp_query,
-                    var_imp_comparison = var_imp_comparison))
-    } else{
+        return(list(
+            var_imp_ref = var_imp_ref,
+            var_imp_query = var_imp_query,
+            var_imp_comparison = var_imp_comparison
+        ))
+    } else {
         return(list(var_imp_ref = var_imp_ref))
     }
 }

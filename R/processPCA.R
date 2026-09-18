@@ -55,30 +55,34 @@
 #'
 #' # Example 1: Dataset without PCA (will compute PCA)
 #' query_no_pca <- query_data
-#' reducedDims(query_no_pca) <- list()  # Remove existing PCA
+#' reducedDims(query_no_pca) <- list() # Remove existing PCA
 #'
 #' processed_query <- processPCA(sce_object = query_no_pca, n_hvgs = 500)
-#' "PCA" %in% reducedDimNames(processed_query)  # Should be TRUE
-#' ncol(processed_query)  # Should be 503 (unchanged)
+#' "PCA" %in% reducedDimNames(processed_query) # Should be TRUE
+#' ncol(processed_query) # Should be 503 (unchanged)
 #'
 #' # Example 2: Dataset with existing valid PCA (will be preserved)
 #' processed_existing <- processPCA(sce_object = query_data, n_hvgs = 500)
-#' ncol(processed_existing)  # Should be 503 (unchanged, no downsampling)
+#' ncol(processed_existing) # Should be 503 (unchanged, no downsampling)
 #'
 #' # Example 3: Large dataset requiring downsampling for PCA computation
 #' ref_no_pca <- reference_data
-#' reducedDims(ref_no_pca) <- list()  # Remove existing PCA
+#' reducedDims(ref_no_pca) <- list() # Remove existing PCA
 #'
-#' processed_large <- processPCA(sce_object = ref_no_pca,
-#'                               n_hvgs = 800,
-#'                               max_cells = 1000)
-#' ncol(processed_large)  # Should be 1000 (downsampled for PCA computation)
+#' processed_large <- processPCA(
+#'     sce_object = ref_no_pca,
+#'     n_hvgs = 800,
+#'     max_cells = 1000
+#' )
+#' ncol(processed_large) # Should be 1000 (downsampled for PCA computation)
 #'
 #' # Example 4: Large dataset with existing PCA (no downsampling)
-#' processed_large_existing <- processPCA(sce_object = reference_data,
-#'                                        n_hvgs = 800,
-#'                                        max_cells = 1000)
-#' ncol(processed_large_existing)  # Should be 1500 (preserved, no downsampling)
+#' processed_large_existing <- processPCA(
+#'     sce_object = reference_data,
+#'     n_hvgs = 800,
+#'     max_cells = 1000
+#' )
+#' ncol(processed_large_existing) # Should be 1500 (preserved, no downsampling)
 #'
 #' @export
 #'
@@ -89,7 +93,6 @@ processPCA <- function(sce_object,
                        assay_name = "logcounts",
                        n_hvgs = 2000,
                        max_cells = NULL) {
-
     # Validate input
     if (!is(sce_object, "SingleCellExperiment")) {
         stop("'sce_object' must be a SingleCellExperiment object.")
@@ -153,7 +156,6 @@ processPCA <- function(sce_object,
 
     # Helper function to compute PCA with HVGs (UPDATED FOR SCALABILITY)
     .computePCAWithHvgs <- function(sce, n_hvgs, assay_name) {
-
         # Check if required packages are available
         if (!requireNamespace("scran", quietly = TRUE)) {
             stop("Package 'scran' is required but not installed.")
@@ -181,9 +183,10 @@ processPCA <- function(sce_object,
 
         # Compute PCA on HVGs
         sce <- scater::runPCA(sce,
-                              assay.type = assay_name,
-                              subset_row = hvg_genes,
-                              BSPARAM = svd_algo) # The scalability magic happens here
+            assay.type = assay_name,
+            subset_row = hvg_genes,
+            BSPARAM = svd_algo
+        ) # The scalability magic happens here
 
         return(sce)
     }
@@ -207,17 +210,21 @@ processPCA <- function(sce_object,
         # Downsample if needed
         processed_sce <- sce_object
         if (!is.null(max_cells) && n_cells > max_cells) {
-            message("Downsampling data from ", n_cells, " to ",
-                    max_cells, " cells before PCA computation")
+            message(
+                "Downsampling data from ", n_cells, " to ",
+                max_cells, " cells before PCA computation"
+            )
             cell_indices <- sample(n_cells, max_cells)
             processed_sce <- sce_object[, cell_indices]
         }
 
         # Compute PCA
         message("Computing PCA...")
-        processed_sce <- .computePCAWithHvgs(processed_sce,
-                                             n_hvgs,
-                                             assay_name)
+        processed_sce <- .computePCAWithHvgs(
+            processed_sce,
+            n_hvgs,
+            assay_name
+        )
 
         return(processed_sce)
     }

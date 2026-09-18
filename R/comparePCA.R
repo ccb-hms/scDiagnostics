@@ -54,23 +54,25 @@
 #'
 #' # Intersect the gene symbols to obtain common genes
 #' common_genes <- intersect(ref_top_genes, query_top_genes)
-#' ref_data_subset <- ref_data_subset[common_genes,]
-#' query_data_subset <- query_data_subset[common_genes,]
+#' ref_data_subset <- ref_data_subset[common_genes, ]
+#' query_data_subset <- query_data_subset[common_genes, ]
 #'
 #' # Run PCA on datasets separately
 #' ref_data_subset <- runPCA(ref_data_subset)
 #' query_data_subset <- runPCA(query_data_subset)
 #'
 #' # Call the PCA comparison function
-#' similarity_mat <- comparePCA(query_data = query_data_subset,
-#'                              reference_data = ref_data_subset,
-#'                              query_cell_type_col = "expert_annotation",
-#'                              ref_cell_type_col = "expert_annotation",
-#'                              pc_subset = 1:5,
-#'                              n_top_vars = 50,
-#'                              metric = c("cosine", "correlation")[1],
-#'                              correlation_method = c("spearman", "pearson")[1],
-#'                              n_permutation = 100)
+#' similarity_mat <- comparePCA(
+#'     query_data = query_data_subset,
+#'     reference_data = ref_data_subset,
+#'     query_cell_type_col = "expert_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     pc_subset = 1:5,
+#'     n_top_vars = 50,
+#'     metric = c("cosine", "correlation")[1],
+#'     correlation_method = c("spearman", "pearson")[1],
+#'     n_permutation = 100
+#' )
 #'
 #' # Create the heatmap
 #' plot(similarity_mat, show_significance = TRUE)
@@ -85,22 +87,27 @@ comparePCA <- function(query_data,
                        metric = c("cosine", "correlation"),
                        correlation_method = c("spearman", "pearson"),
                        n_permutations = 0) {
-
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  unique_cell_type = TRUE,
-                  pc_subset_query = pc_subset,
-                  pc_subset_ref = pc_subset,
-                  common_rotation_genes = TRUE)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        unique_cell_type = TRUE,
+        pc_subset_query = pc_subset,
+        pc_subset_ref = pc_subset,
+        common_rotation_genes = TRUE
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Match arguments
     metric <- match.arg(metric)
@@ -128,8 +135,10 @@ comparePCA <- function(query_data,
     # Check if n_top_vars is reasonable given the number of genes
     n_genes <- nrow(ref_rotation)
     if (n_top_vars > n_genes) {
-        warning(sprintf("n_top_vars (%d) is greater than the number of genes (%d). Using all genes.",
-                        n_top_vars, n_genes))
+        warning(sprintf(
+            "n_top_vars (%d) is greater than the number of genes (%d). Using all genes.",
+            n_top_vars, n_genes
+        ))
         n_top_vars <- n_genes
     }
 
@@ -151,8 +160,9 @@ comparePCA <- function(query_data,
 
     # Initialize similarity matrix
     similarity_matrix <- matrix(NA,
-                                nrow = length(pc_subset),
-                                ncol = length(pc_subset))
+        nrow = length(pc_subset),
+        ncol = length(pc_subset)
+    )
 
     # Vectorized similarity computation function
     .computeSimilarityMatrix <- function(ref_rot, query_rot, top_ref, top_query,
@@ -179,7 +189,8 @@ comparePCA <- function(query_data,
                     sim_mat[i, j] <- dot_product / (norm_ref * norm_query)
                 } else if (metric == "correlation") {
                     sim_mat[i, j] <- cor(ref_loadings, query_loadings,
-                                         method = correlation_method)
+                        method = correlation_method
+                    )
                 }
             }
         }
@@ -188,23 +199,29 @@ comparePCA <- function(query_data,
     }
 
     # Compute similarity matrix
-    result <- .computeSimilarityMatrix(ref_rotation, query_rotation,
-                                       top_ref, top_query,
-                                       metric, correlation_method)
+    result <- .computeSimilarityMatrix(
+        ref_rotation, query_rotation,
+        top_ref, top_query,
+        metric, correlation_method
+    )
     similarity_matrix <- result[["similarity_matrix"]]
     top_variables_info <- result[["top_variables"]]
 
     # Perform permutation test if requested
     p_values <- NULL
     if (n_permutations > 0) {
-        message(sprintf("Performing %d permutations for significance testing...",
-                        n_permutations))
+        message(sprintf(
+            "Performing %d permutations for significance testing...",
+            n_permutations
+        ))
 
         # Store original similarities for comparison
         original_similarities <- similarity_matrix
-        permuted_similarities <- array(NA, dim = c(nrow(similarity_matrix),
-                                                   ncol(similarity_matrix),
-                                                   n_permutations))
+        permuted_similarities <- array(NA, dim = c(
+            nrow(similarity_matrix),
+            ncol(similarity_matrix),
+            n_permutations
+        ))
 
         for (perm in seq_len(n_permutations)) {
             # Permute gene labels
@@ -213,15 +230,19 @@ comparePCA <- function(query_data,
             rownames(ref_rotation_perm) <- permuted_genes
 
             # Recompute similarities with permuted data
-            perm_result <- .computeSimilarityMatrix(ref_rotation_perm, query_rotation,
-                                                    top_ref, top_query,
-                                                    metric, correlation_method)
+            perm_result <- .computeSimilarityMatrix(
+                ref_rotation_perm, query_rotation,
+                top_ref, top_query,
+                metric, correlation_method
+            )
             permuted_similarities[, , perm] <- perm_result[["similarity_matrix"]]
         }
 
         # Calculate p-values
-        p_values <- matrix(NA, nrow = nrow(similarity_matrix),
-                           ncol = ncol(similarity_matrix))
+        p_values <- matrix(NA,
+            nrow = nrow(similarity_matrix),
+            ncol = ncol(similarity_matrix)
+        )
         for (i in seq_len(nrow(similarity_matrix))) {
             for (j in seq_len(ncol(similarity_matrix))) {
                 observed_sim <- abs(original_similarities[i, j])
@@ -254,7 +275,7 @@ comparePCA <- function(query_data,
         top_variables = top_variables_info,
         p_values = p_values,
         metric = metric,
-        correlation_method = if(metric == "correlation") correlation_method else NULL,
+        correlation_method = if (metric == "correlation") correlation_method else NULL,
         n_top_vars = n_top_vars,
         n_permutations = n_permutations,
         pc_subset = pc_subset

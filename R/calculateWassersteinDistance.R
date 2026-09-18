@@ -49,12 +49,14 @@
 #' data("query_data")
 #'
 #' # Compute Wasserstein distance distributions for all cell types
-#' wasserstein_data <- calculateWassersteinDistance(query_data = query_data,
-#'                                                  reference_data = reference_data,
-#'                                                  query_cell_type_col = "expert_annotation",
-#'                                                  ref_cell_type_col = "expert_annotation",
-#'                                                  pc_subset = 1:5,
-#'                                                  n_resamples = 100)
+#' wasserstein_data <- calculateWassersteinDistance(
+#'     query_data = query_data,
+#'     reference_data = reference_data,
+#'     query_cell_type_col = "expert_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     pc_subset = 1:5,
+#'     n_resamples = 100
+#' )
 #' plot(wasserstein_data)
 #'
 #' @importFrom stats quantile
@@ -68,23 +70,28 @@ calculateWassersteinDistance <- function(query_data,
                                          n_resamples = 300,
                                          assay_name = "logcounts",
                                          max_cells_query = 5000,
-                                         max_cells_ref = 5000){
-
+                                         max_cells_ref = 5000) {
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  pc_subset_ref = pc_subset,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        pc_subset_ref = pc_subset,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Check if n_resamples is a positive integer
     if (!inherits(n_resamples, "numeric")) {
@@ -94,33 +101,39 @@ calculateWassersteinDistance <- function(query_data,
     }
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = TRUE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = TRUE,
+        n_cell_types = NULL
+    )
 
     # Get the projected PCA data
-    pca_output <- projectPCA(query_data = query_data,
-                             reference_data = reference_data,
-                             query_cell_type_col = query_cell_type_col,
-                             ref_cell_type_col = ref_cell_type_col,
-                             cell_types = cell_types,
-                             pc_subset = pc_subset,
-                             assay_name = assay_name,
-                             max_cells_ref = max_cells_ref,
-                             max_cells_query = max_cells_query)
+    pca_output <- projectPCA(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        pc_subset = pc_subset,
+        assay_name = assay_name,
+        max_cells_ref = max_cells_ref,
+        max_cells_query = max_cells_query
+    )
 
     # Split by cell type
     cell_list <- split(pca_output, pca_output[["cell_type"]])
 
     # Extract variance explained for weighting
     weights <- attributes(reducedDim(
-        reference_data, "PCA"))[["varExplained"]][pc_subset] /
+        reference_data, "PCA"
+    ))[["varExplained"]][pc_subset] /
         sum(attributes(reducedDim(
-            reference_data, "PCA"))[["varExplained"]][pc_subset])
+            reference_data, "PCA"
+        ))[["varExplained"]][pc_subset])
 
     # Initialize results
     ref_ref_dist <- list()
@@ -130,7 +143,6 @@ calculateWassersteinDistance <- function(query_data,
 
     # Process each cell type
     for (cell_type in cell_types) {
-
         # Skip if cell type not present in data
         if (!cell_type %in% names(cell_list)) {
             warning(paste("Cell type", cell_type, "not found in data. Skipping."))
@@ -148,7 +160,7 @@ calculateWassersteinDistance <- function(query_data,
         }
 
         # Get sample size for Wasserstein distributions
-        n_sample <- min(floor(sum(ref_indices)/2), sum(query_indices), 200)
+        n_sample <- min(floor(sum(ref_indices) / 2), sum(query_indices), 200)
 
         if (n_sample < 10) {
             warning(paste("Too few cells for cell type", cell_type, ". Skipping."))
@@ -161,50 +173,64 @@ calculateWassersteinDistance <- function(query_data,
 
         # Apply variance weighting
         pca_ref_weighted <- t(apply(pca_ref, 1,
-                                    function(x, weights) return(x * weights),
-                                    weights = sqrt(weights)))
+            function(x, weights) {
+                return(x * weights)
+            },
+            weights = sqrt(weights)
+        ))
         pca_query_weighted <- t(apply(pca_query, 1,
-                                      function(x, weights) return(x * weights),
-                                      weights = sqrt(weights)))
+            function(x, weights) {
+                return(x * weights)
+            },
+            weights = sqrt(weights)
+        ))
 
         # Compute reference-reference weighted distances (full distance matrix)
         weighted_dist_ref <- as.matrix(dist(pca_ref_weighted))
 
         # Compute reference-query weighted distances (full distance matrix)
-        weighted_dist_query <- sqrt(outer(rowSums(pca_ref_weighted^2),
-                                          rowSums(pca_query_weighted^2), "+") -
-                                        2 * pca_ref_weighted %*% t(pca_query_weighted))
+        weighted_dist_query <- sqrt(outer(
+            rowSums(pca_ref_weighted^2),
+            rowSums(pca_query_weighted^2), "+"
+        ) -
+            2 * pca_ref_weighted %*% t(pca_query_weighted))
 
         # Computing reference-reference Wasserstein distance distribution
         ref_ref_distances <- numeric(n_resamples)
-        prob_masses <- rep(1/n_sample, n_sample)
+        prob_masses <- rep(1 / n_sample, n_sample)
 
-        for(iter in seq_len(n_resamples)){
+        for (iter in seq_len(n_resamples)) {
             sample_ref_1 <- sample(seq_len(nrow(pca_ref)), n_sample, replace = FALSE)
             sample_ref_2 <- sample(seq_len(nrow(pca_ref))[-sample_ref_1],
-                                   n_sample, replace = FALSE)
+                n_sample,
+                replace = FALSE
+            )
             cost_mat <- weighted_dist_ref[sample_ref_1, sample_ref_2]
             opt_plan <- transport::transport(prob_masses, prob_masses,
-                                             costm = cost_mat)
+                costm = cost_mat
+            )
             ref_ref_distances[iter] <- transport::wasserstein(prob_masses,
-                                                              prob_masses,
-                                                              tplan = opt_plan,
-                                                              costm = cost_mat)
+                prob_masses,
+                tplan = opt_plan,
+                costm = cost_mat
+            )
         }
 
         # Computing reference-query Wasserstein distance distribution
         ref_query_distances <- numeric(n_resamples)
 
-        for(iter in seq_len(n_resamples)){
+        for (iter in seq_len(n_resamples)) {
             sample_ref <- sample(seq_len(nrow(pca_ref)), n_sample, replace = FALSE)
             sample_query <- sample(seq_len(nrow(pca_query)), n_sample, replace = FALSE)
             cost_mat <- weighted_dist_query[sample_ref, sample_query]
             opt_plan <- transport::transport(prob_masses, prob_masses,
-                                             costm = cost_mat)
+                costm = cost_mat
+            )
             ref_query_distances[iter] <- transport::wasserstein(prob_masses,
-                                                                prob_masses,
-                                                                tplan = opt_plan,
-                                                                costm = cost_mat)
+                prob_masses,
+                tplan = opt_plan,
+                costm = cost_mat
+            )
         }
 
         # Store distributions for this cell type
@@ -239,7 +265,9 @@ calculateWassersteinDistance <- function(query_data,
         probability_superiority = probability_superiority,
         cell_types = processed_cell_types
     )
-    class(wasserstein_data) <- c(class(wasserstein_data),
-                                 "calculateWassersteinDistanceObject")
+    class(wasserstein_data) <- c(
+        class(wasserstein_data),
+        "calculateWassersteinDistanceObject"
+    )
     return(wasserstein_data)
 }

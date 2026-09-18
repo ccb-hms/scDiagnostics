@@ -27,12 +27,10 @@
 #' @rdname calculateWassersteinDistance
 #'
 # Function to plot densities of Wasserstein distances
-plot.calculateWassersteinDistanceObject <- function(
-        x,
-        cell_types = NULL,
-        bandwidth = NULL,
-        ...){
-
+plot.calculateWassersteinDistanceObject <- function(x,
+                                                    cell_types = NULL,
+                                                    bandwidth = NULL,
+                                                    ...) {
     # Determine which cell types to plot
     if (is.null(cell_types)) {
         cell_types <- x[["cell_types"]]
@@ -40,8 +38,10 @@ plot.calculateWassersteinDistanceObject <- function(
         # Check that requested cell types are available
         missing_types <- setdiff(cell_types, x[["cell_types"]])
         if (length(missing_types) > 0) {
-            warning(paste("Cell types not found in data:",
-                          paste(missing_types, collapse = ", ")))
+            warning(paste(
+                "Cell types not found in data:",
+                paste(missing_types, collapse = ", ")
+            ))
         }
         cell_types <- intersect(cell_types, x[["cell_types"]])
     }
@@ -73,22 +73,29 @@ plot.calculateWassersteinDistanceObject <- function(
 
     # Set factor levels to control order (Reference-Reference at bottom, Reference-Query at top)
     plot_data[["distribution"]] <- factor(plot_data[["distribution"]],
-                                     levels = c("Reference-Query",
-                                                "Reference-Reference"))
+        levels = c(
+            "Reference-Query",
+            "Reference-Reference"
+        )
+    )
 
     # Set factor levels for cell_type to preserve the order specified in cell_types parameter
     plot_data[["cell_type"]] <- factor(plot_data[["cell_type"]], levels = cell_types)
 
     # Setting up color data
     plot_data[["cell_type_distribution"]] <-
-        paste(plot_data[["cell_type"]],
-              plot_data[["distribution"]])
+        paste(
+            plot_data[["cell_type"]],
+            plot_data[["distribution"]]
+        )
     plot_data[["cell_type_distribution"]] <-
         factor(plot_data[["cell_type_distribution"]],
-               levels = unique(plot_data[["cell_type_distribution"]]))
+            levels = unique(plot_data[["cell_type_distribution"]])
+        )
     cell_type_distribution_colors <-
         generateColors(levels(plot_data[["cell_type_distribution"]]),
-                       paired = TRUE)
+            paired = TRUE
+        )
 
     # Build geom_density_ridges arguments conditionally
     ridge_args <- list(
@@ -105,11 +112,14 @@ plot.calculateWassersteinDistanceObject <- function(
     }
 
     # Create the ridge plot
-    ridge_plot <- ggplot2::ggplot(plot_data,
-                                  ggplot2::aes(
-                                      x = .data[["wasserstein_dist"]],
-                                      y = .data[["distribution"]],
-                                      fill = .data[["cell_type_distribution"]])) +
+    ridge_plot <- ggplot2::ggplot(
+        plot_data,
+        ggplot2::aes(
+            x = .data[["wasserstein_dist"]],
+            y = .data[["distribution"]],
+            fill = .data[["cell_type_distribution"]]
+        )
+    ) +
         do.call(ggridges::geom_density_ridges, ridge_args) +
         ggplot2::facet_wrap(~ .data[["cell_type"]], scales = "free_x", ncol = 2) +
         ggplot2::scale_fill_manual(
@@ -127,24 +137,34 @@ plot.calculateWassersteinDistanceObject <- function(
         ) +
         ggplot2::theme_minimal() +
         ggplot2::theme(
-            panel.border = ggplot2::element_rect(color = "black",
-                                                 fill = NA,
-                                                 linewidth = 0.5),
+            panel.border = ggplot2::element_rect(
+                color = "black",
+                fill = NA,
+                linewidth = 0.5
+            ),
             axis.title.x = ggplot2::element_text(size = 12),
             legend.position = "bottom",
             axis.title.y = ggplot2::element_blank(),
             axis.text.y = ggplot2::element_text(size = 10),
             axis.ticks.y = ggplot2::element_blank(),
-            plot.title = ggplot2::element_text(size = 14,
-                                               face = "bold", hjust = 0.5),
-            strip.text = ggplot2::element_text(size = 11,
-                                               face = "bold"),
-            strip.background = ggplot2::element_rect(fill = "white",
-                                                     color = "black",
-                                                     linewidth = 0.5),
+            plot.title = ggplot2::element_text(
+                size = 14,
+                face = "bold", hjust = 0.5
+            ),
+            strip.text = ggplot2::element_text(
+                size = 11,
+                face = "bold"
+            ),
+            strip.background = ggplot2::element_rect(
+                fill = "white",
+                color = "black",
+                linewidth = 0.5
+            ),
             panel.grid.minor = ggplot2::element_blank(),
-            panel.grid.major.x = ggplot2::element_line(color = "gray",
-                                                       linetype = "dotted"),
+            panel.grid.major.x = ggplot2::element_line(
+                color = "gray",
+                linetype = "dotted"
+            ),
             panel.grid.major.y = ggplot2::element_blank()
         ) +
         ggplot2::guides(

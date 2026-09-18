@@ -59,32 +59,30 @@ argumentCheck <- function(query_data = NULL,
                           assay_name = NULL,
                           max_cells_ref = NULL,
                           max_cells_query = NULL) {
-
     # Check if query_data is a SingleCellExperiment object
     if (!is.null(query_data)) {
-
         if (!is(query_data, "SingleCellExperiment")) {
             stop("'query_data' must be a SingleCellExperiment object.")
         }
 
-        if(!is.null(assay_name) && !(assay_name %in% SummarizedExperiment::assayNames(query_data)))
+        if (!is.null(assay_name) && !(assay_name %in% SummarizedExperiment::assayNames(query_data))) {
             stop("'query_data' does not contain the specified assay.")
+        }
     }
 
     # Check if reference_data is a SingleCellExperiment object
     if (!is.null(reference_data)) {
-
         if (!is(reference_data, "SingleCellExperiment")) {
             stop("'reference_data' must be a SingleCellExperiment object.")
         }
 
-        if(!is.null(assay_name) && !(assay_name %in% SummarizedExperiment::assayNames(reference_data)))
+        if (!is.null(assay_name) && !(assay_name %in% SummarizedExperiment::assayNames(reference_data))) {
             stop("'reference_data' does not contain the specified assay.")
+        }
     }
 
     # Check if query_cell_type_col is a character string of length 1 and exists in query_data
     if (!is.null(query_cell_type_col)) {
-
         if (!is.null(query_data)) {
             if (!is.character(query_cell_type_col) ||
                 length(query_cell_type_col) != 1) {
@@ -99,7 +97,6 @@ argumentCheck <- function(query_data = NULL,
 
     # Check if ref_cell_type_col is a character string of length 1 and exists in reference_data
     if (!is.null(ref_cell_type_col)) {
-
         if (!is.null(reference_data)) {
             if (!is.character(ref_cell_type_col) ||
                 length(ref_cell_type_col) != 1) {
@@ -114,7 +111,6 @@ argumentCheck <- function(query_data = NULL,
 
     # Check that the SingleCellExperiment object(s) have a unique cell type
     if (isTRUE(unique_cell_type)) {
-
         if (!is.null(query_data)) {
             if (length(unique(query_data[[query_cell_type_col]])) > 1) {
                 stop("This function should be used when there is only one cell type in 'query_data'.")
@@ -122,7 +118,6 @@ argumentCheck <- function(query_data = NULL,
         }
 
         if (!is.null(reference_data)) {
-
             if (length(unique(reference_data[[ref_cell_type_col]])) > 1) {
                 stop("This function should be used when there is only one cell type in 'reference_data'.")
             }
@@ -137,7 +132,6 @@ argumentCheck <- function(query_data = NULL,
 
     # Check cell_names contain valid cell names in query_data
     if (!is.null(cell_names_query)) {
-
         if (!all(cell_names_query %in% colnames(query_data))) {
             stop("'cell_names' contains one or more cells that are not available in 'query_data'.")
         }
@@ -145,7 +139,6 @@ argumentCheck <- function(query_data = NULL,
 
     # Check cell_names contain valid cell names in reference_data
     if (!is.null(cell_names_ref)) {
-
         if (!all(cell_names_ref %in% colnames(reference_data))) {
             stop("'cell_names' contains one or more cells that are not available in 'reference_data'.")
         }
@@ -153,12 +146,13 @@ argumentCheck <- function(query_data = NULL,
 
     # Check PC subset for query_data
     if (!is.null(pc_subset_query)) {
-
         # Check if "PCA" is present in query's reduced dimensions
         if (!"PCA" %in% names(reducedDims(query_data))) {
-            stop("'query_data' must have pre-computed PCA in 'reducedDims'. ",
-                 "Use processPCA() to compute PCA: ",
-                 "query_data <- processPCA(query_data = query_data)")
+            stop(
+                "'query_data' must have pre-computed PCA in 'reducedDims'. ",
+                "Use processPCA() to compute PCA: ",
+                "query_data <- processPCA(query_data = query_data)"
+            )
         }
 
         # Check input if PC subset is valid
@@ -169,12 +163,13 @@ argumentCheck <- function(query_data = NULL,
 
     # Check PC subset for reference_data
     if (!is.null(pc_subset_ref)) {
-
         # Check if "PCA" is present in reference's reduced dimensions
         if (!"PCA" %in% names(reducedDims(reference_data))) {
-            stop("'reference_data' must have pre-computed PCA in 'reducedDims'. ",
-                 "Use processPCA() to compute PCA: ",
-                 "reference_data <- processPCA(reference_data = reference_data)")
+            stop(
+                "'reference_data' must have pre-computed PCA in 'reducedDims'. ",
+                "Use processPCA() to compute PCA: ",
+                "reference_data <- processPCA(reference_data = reference_data)"
+            )
         }
 
         # Check input if PC subset is valid
@@ -185,18 +180,21 @@ argumentCheck <- function(query_data = NULL,
 
     # Check if the rotation matrices have the same genes in the same order
     if (common_rotation_genes == TRUE) {
-
         # Check if both datasets have PCA before comparing rotation matrices
         if (!"PCA" %in% names(reducedDims(query_data))) {
-            stop("'query_data' must have pre-computed PCA in 'reducedDims' for rotation matrix comparison. ",
-                 "Use processPCA() to compute PCA for both datasets: ",
-                 "result <- processPCA(query_data = query_data, reference_data = reference_data)")
+            stop(
+                "'query_data' must have pre-computed PCA in 'reducedDims' for rotation matrix comparison. ",
+                "Use processPCA() to compute PCA for both datasets: ",
+                "result <- processPCA(query_data = query_data, reference_data = reference_data)"
+            )
         }
 
         if (!"PCA" %in% names(reducedDims(reference_data))) {
-            stop("'reference_data' must have pre-computed PCA in 'reducedDims' for rotation matrix comparison. ",
-                 "Use processPCA() to compute PCA for both datasets: ",
-                 "result <- processPCA(query_data = query_data, reference_data = reference_data)")
+            stop(
+                "'reference_data' must have pre-computed PCA in 'reducedDims' for rotation matrix comparison. ",
+                "Use processPCA() to compute PCA for both datasets: ",
+                "result <- processPCA(query_data = query_data, reference_data = reference_data)"
+            )
         }
 
         # Check if the rotation matrices have the same number of genes
@@ -207,7 +205,7 @@ argumentCheck <- function(query_data = NULL,
 
         # Check if genes in both rotation matrices are the same
         if (!all(rownames(attributes(reducedDim(query_data, "PCA"))[["rotation"]]) %in%
-                 rownames(attributes(reducedDim(reference_data, "PCA"))[["rotation"]]))) {
+            rownames(attributes(reducedDim(reference_data, "PCA"))[["rotation"]]))) {
             stop("The genes in the rotation matrices differ.")
         }
     }
@@ -222,9 +220,10 @@ argumentCheck <- function(query_data = NULL,
         # Warning for plot functions when max_cells_ref > 50000 and reference_data exists
         if (plot_function && !is.null(reference_data) && max_cells_ref > 50000) {
             warning("'max_cells_ref' is set to ", max_cells_ref,
-                    " which is greater than 50,000. For better plot performance, ",
-                    "consider using a smaller value for 'max_cells_ref' to downsample the reference data.",
-                    call. = FALSE)
+                " which is greater than 50,000. For better plot performance, ",
+                "consider using a smaller value for 'max_cells_ref' to downsample the reference data.",
+                call. = FALSE
+            )
         }
     }
 
@@ -238,9 +237,10 @@ argumentCheck <- function(query_data = NULL,
         # Warning for plot functions when max_cells_query > 50000 and query_data exists
         if (plot_function && !is.null(query_data) && max_cells_query > 50000) {
             warning("'max_cells_query' is set to ", max_cells_query,
-                    " which is greater than 50,000. For better plot performance, ",
-                    "consider using a smaller value for 'max_cells_query' to downsample the query data.",
-                    call. = FALSE)
+                " which is greater than 50,000. For better plot performance, ",
+                "consider using a smaller value for 'max_cells_query' to downsample the query data.",
+                call. = FALSE
+            )
         }
     }
 }

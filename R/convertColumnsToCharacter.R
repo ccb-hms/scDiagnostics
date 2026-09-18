@@ -31,7 +31,6 @@
 #'
 # Function to convert specified columns to character in SingleCellExperiment objects
 convertColumnsToCharacter <- function(sce_object, convert_cols) {
-
     # Validate input object
     if (!is(sce_object, "SingleCellExperiment")) {
         stop("'sce_object' must be a SingleCellExperiment object.")
@@ -47,8 +46,10 @@ convertColumnsToCharacter <- function(sce_object, convert_cols) {
     missing_cols <- convert_cols[!convert_cols %in% existing_cols]
 
     if (length(missing_cols) > 0) {
-        stop("The following columns are not found in colData: ",
-             paste(missing_cols, collapse = ", "))
+        stop(
+            "The following columns are not found in colData: ",
+            paste(missing_cols, collapse = ", ")
+        )
     }
 
     # Convert columns to character if they are not already character

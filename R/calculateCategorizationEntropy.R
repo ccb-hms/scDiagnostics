@@ -48,9 +48,7 @@ calculateCategorizationEntropy <- function(X,
                                            inverseNormalTransformationform = FALSE,
                                            plot = TRUE,
                                            verbose = TRUE) {
-
     if (inverseNormalTransformationform) {
-
         # https://cran.r-project.org/web/packages/RNOmni/vignettes/RNOmni.html#inverse-normal-transformation
         if (verbose) message("Applying global inverse normal transformation.")
         # You can't do the INT column-wise (by cell) because it will set a
@@ -89,7 +87,7 @@ calculateCategorizationEntropy <- function(X,
         message(
             "Max possible entropy given ", ncat, " categories: ",
             round(max_ent,
-                  digits = 2
+                digits = 2
             )
         )
     }
@@ -127,7 +125,6 @@ calculateCategorizationEntropy <- function(X,
 #'
 # Function to calculate entropy
 calculateEntropy <- function(p) {
-
     nonzeros <- p != 0
 
     -sum(p[nonzeros] * log(p[nonzeros]))
@@ -150,8 +147,7 @@ calculateEntropy <- function(p) {
 #' @author Andrew Ghazi, \email{andrew_ghazi@hms.harvard.edu}
 #'
 # Function to return the number of elements
-nElements <- function(X){
-
+nElements <- function(X) {
     return(ifelse(is.matrix(X), prod(dim(X)), length(X)))
 }
 
@@ -175,7 +171,6 @@ nElements <- function(X){
 # Function to compute the inverse normal rank transformation
 inverseNormalTransformation <- function(X,
                                         constant = 3 / 8) {
-
     n <- nElements(X)
 
     rankX <- rank(X)

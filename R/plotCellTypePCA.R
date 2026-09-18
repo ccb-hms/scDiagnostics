@@ -39,23 +39,28 @@ plotCellTypePCA <- function(query_data,
                             diagonal_facet = c("ridge", "density", "boxplot"),
                             upper_facet = c("blank", "scatter", "contour", "ellipse"),
                             max_cells_query = 2000,
-                            max_cells_ref = 2000){
-
+                            max_cells_ref = 2000) {
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  pc_subset_ref = pc_subset,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        pc_subset_ref = pc_subset,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Match diagonal_facet and upper_facet arguments
     lower_facet <- match.arg(lower_facet)
@@ -63,34 +68,42 @@ plotCellTypePCA <- function(query_data,
     upper_facet <- match.arg(upper_facet)
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = FALSE,
-                                  n_cell_types = 10)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = FALSE,
+        n_cell_types = 10
+    )
 
     # Get the projected PCA data
-    pca_output <- projectPCA(query_data = query_data,
-                             reference_data = reference_data,
-                             query_cell_type_col = query_cell_type_col,
-                             ref_cell_type_col = ref_cell_type_col,
-                             cell_types = cell_types,
-                             pc_subset = pc_subset,
-                             assay_name = assay_name,
-                             max_cells_ref = max_cells_ref,
-                             max_cells_query = max_cells_query)
+    pca_output <- projectPCA(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        pc_subset = pc_subset,
+        assay_name = assay_name,
+        max_cells_ref = max_cells_ref,
+        max_cells_query = max_cells_query
+    )
 
     # Create PC column names with variance explained
     plot_names <- paste0(
         "PC", pc_subset, " (",
         sprintf("%.1f%%", attributes(
-            reducedDim(reference_data, "PCA"))[["percentVar"]][pc_subset]), ")")
+            reducedDim(reference_data, "PCA")
+        )[["percentVar"]][pc_subset]), ")"
+    )
 
     # Create a new data frame with selected PCs
-    pc_df <- data.frame(matrix(0, nrow = nrow(pca_output),
-                               ncol = length(pc_subset)))
+    pc_df <- data.frame(matrix(0,
+        nrow = nrow(pca_output),
+        ncol = length(pc_subset)
+    ))
     colnames(pc_df) <- plot_names
 
     for (i in 1:length(pc_subset)) {
@@ -99,16 +112,22 @@ plotCellTypePCA <- function(query_data,
 
     # Create a cell type dataset column for coloring
     cell_type_dataset <- paste(pca_output[["dataset"]],
-                               pca_output[["cell_type"]], sep = " ")
+        pca_output[["cell_type"]],
+        sep = " "
+    )
 
     # Define the order of cell type and dataset combinations
     order_combinations <- paste(
-        rep(c("Reference", "Query"),
-            length(cell_types)),
-        rep(sort(cell_types), each = 2))
+        rep(
+            c("Reference", "Query"),
+            length(cell_types)
+        ),
+        rep(sort(cell_types), each = 2)
+    )
 
     cell_type_dataset <- factor(cell_type_dataset,
-                                levels = order_combinations)
+        levels = order_combinations
+    )
 
     # Generate colors for cell types and datasets
     cell_type_colors <- generateColors(order_combinations, paired = TRUE)
@@ -117,12 +136,18 @@ plotCellTypePCA <- function(query_data,
     pc_df[["cell_type_dataset"]] <- cell_type_dataset
 
     # Create a simple plot to extract the legend using GGally::grab_legend
-    legend_plot <- ggplot2::ggplot(pc_df,
-                                   ggplot2::aes(x = pc_df[,1],
-                                                y = pc_df[,2])) +
+    legend_plot <- ggplot2::ggplot(
+        pc_df,
+        ggplot2::aes(
+            x = pc_df[, 1],
+            y = pc_df[, 2]
+        )
+    ) +
         ggplot2::geom_point(ggplot2::aes(color = cell_type_dataset)) +
-        ggplot2::scale_color_manual(values = cell_type_colors,
-                                    name = "Cell Type") +
+        ggplot2::scale_color_manual(
+            values = cell_type_colors,
+            name = "Cell Type"
+        ) +
         ggplot2::theme(
             legend.position = "right",
             legend.box = "vertical",
@@ -133,22 +158,24 @@ plotCellTypePCA <- function(query_data,
 
     # Scatterplot facet function
     .scatterFunc <- function(data, mapping, ...) {
-
         ggplot2::ggplot(data = data, mapping = mapping) +
-            ggplot2::geom_point(alpha = 0.5, size = 1,
-                                ggplot2::aes(color = cell_type_dataset)) +
+            ggplot2::geom_point(
+                alpha = 0.5, size = 1,
+                ggplot2::aes(color = cell_type_dataset)
+            ) +
             ggplot2::scale_color_manual(values = cell_type_colors) +
             ggplot2::theme_minimal() +
             ggplot2::theme(
                 panel.border = ggplot2::element_rect(
                     color = "black",
                     fill = NA,
-                    linewidth = 0.5))
+                    linewidth = 0.5
+                )
+            )
     }
 
     # Contour facet function
     .smoothContourFunc <- function(data, mapping, ...) {
-
         x_name <- rlang::as_name(mapping[["x"]])
         y_name <- rlang::as_name(mapping[["y"]])
 
@@ -177,7 +204,8 @@ plotCellTypePCA <- function(query_data,
                 adjust = adjust_factor,
                 bins = 5,
                 color = cell_type_colors[which(
-                    levels(data[["cell_type_dataset"]]) == ct)],
+                    levels(data[["cell_type_dataset"]]) == ct
+                )],
                 linewidth = 0.5,
                 na.rm = TRUE
             )
@@ -187,7 +215,8 @@ plotCellTypePCA <- function(query_data,
         p + ggplot2::theme_minimal() +
             ggplot2::theme(
                 panel.border = ggplot2::element_rect(
-                    color = "black", fill = NA, linewidth = 0.5),
+                    color = "black", fill = NA, linewidth = 0.5
+                ),
                 legend.position = "none",
                 axis.text = ggplot2::element_blank(),
                 axis.ticks = ggplot2::element_blank(),
@@ -197,10 +226,11 @@ plotCellTypePCA <- function(query_data,
 
     # Ellipse facet function
     .robustEllipseFunc <- function(data, mapping, ...) {
-
         # Function to calculate robust ellipses through bootstrapping
         createEllipse <- function(d) {
-            if (nrow(d) < 10) return(NULL)
+            if (nrow(d) < 10) {
+                return(NULL)
+            }
 
             x_var <- rlang::as_name(mapping[["x"]])
             y_var <- rlang::as_name(mapping[["y"]])
@@ -223,7 +253,7 @@ plotCellTypePCA <- function(query_data,
             b <- sqrt(ev[["values"]][2]) * 2.45
 
             # Create ellipse coordinates
-            angle <- atan2(ev[["vectors"]][2,1], ev[["vectors"]][1,1])
+            angle <- atan2(ev[["vectors"]][2, 1], ev[["vectors"]][1, 1])
             ellipse_x <- center[1] + a * cos(theta) * cos(angle) -
                 b * sin(theta) * sin(angle)
             ellipse_y <- center[2] + a * cos(theta) * sin(angle) +
@@ -236,7 +266,7 @@ plotCellTypePCA <- function(query_data,
 
         # Split by cell type and create robust ellipses
         for (ct in unique(data[["cell_type_dataset"]])) {
-            subset_data <- data[data[["cell_type_dataset"]] == ct,]
+            subset_data <- data[data[["cell_type_dataset"]] == ct, ]
             ellipse_data <- createEllipse(subset_data)
 
             if (!is.null(ellipse_data)) {
@@ -244,7 +274,8 @@ plotCellTypePCA <- function(query_data,
                     data = ellipse_data,
                     ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
                     color = cell_type_colors[
-                        which(levels(data[["cell_type_dataset"]]) == ct)],
+                        which(levels(data[["cell_type_dataset"]]) == ct)
+                    ],
                     linewidth = 0.7
                 )
             }
@@ -254,7 +285,8 @@ plotCellTypePCA <- function(query_data,
             ggplot2::theme(
                 panel.border = ggplot2::element_rect(
                     color = "black", fill = NA,
-                    linewidth = 0.5),
+                    linewidth = 0.5
+                ),
                 legend.position = "none",
                 axis.text = ggplot2::element_blank(),
                 axis.ticks = ggplot2::element_blank(),
@@ -264,13 +296,13 @@ plotCellTypePCA <- function(query_data,
 
     # Blank facet function
     .blankFunc <- function(data, mapping, ...) {
-
         ggplot2::ggplot() +
             ggplot2::theme_minimal() +
             ggplot2::theme(
                 panel.border = ggplot2::element_rect(
                     color = "black", fill = NA,
-                    linewidth = 0.5),
+                    linewidth = 0.5
+                ),
                 legend.position = "none",
                 axis.text = ggplot2::element_blank(),
                 axis.ticks = ggplot2::element_blank(),
@@ -281,7 +313,6 @@ plotCellTypePCA <- function(query_data,
 
     # Ridge diagonal facet
     .ridgeFunc <- function(data, mapping, ...) {
-
         # Get current mapping info
         x_var_name <- rlang::as_name(mapping[["x"]])
 
@@ -293,10 +324,14 @@ plotCellTypePCA <- function(query_data,
 
         # Create ridge plot with ggridges
         suppressMessages({
-            p <- ggplot2::ggplot(plot_data,
-                                 ggplot2::aes(x = .data[["value"]],
-                                              y = .data[["group"]],
-                                              fill = .data[["group"]])) +
+            p <- ggplot2::ggplot(
+                plot_data,
+                ggplot2::aes(
+                    x = .data[["value"]],
+                    y = .data[["group"]],
+                    fill = .data[["group"]]
+                )
+            ) +
                 ggridges::geom_density_ridges(
                     alpha = 0.7,
                     scale = 2,
@@ -305,12 +340,15 @@ plotCellTypePCA <- function(query_data,
                 ) +
                 ggplot2::scale_fill_manual(values = cell_type_colors) +
                 ggplot2::scale_y_discrete(
-                    limits = rev(levels(cell_type_dataset))) +
+                    limits = rev(levels(cell_type_dataset))
+                ) +
                 ggplot2::theme_minimal() +
                 ggplot2::theme(
-                    panel.border = ggplot2::element_rect(color = "black",
-                                                         fill = NA,
-                                                         linewidth = 0.5),
+                    panel.border = ggplot2::element_rect(
+                        color = "black",
+                        fill = NA,
+                        linewidth = 0.5
+                    ),
                     axis.title = ggplot2::element_blank(),
                     axis.text.y = ggplot2::element_blank(),
                     axis.ticks.y = ggplot2::element_blank(),
@@ -323,21 +361,26 @@ plotCellTypePCA <- function(query_data,
 
     # Density diagonal facet
     .densityFunc <- function(data, mapping, ...) {
-
         # Get current mapping info
         x_var_name <- rlang::as_name(mapping[["x"]])
 
         ggplot2::ggplot(data = data, mapping = mapping) +
-            ggplot2::geom_density(ggplot2::aes(fill = cell_type_dataset,
-                                               color = cell_type_dataset),
-                                  alpha = 0.5) +
+            ggplot2::geom_density(
+                ggplot2::aes(
+                    fill = cell_type_dataset,
+                    color = cell_type_dataset
+                ),
+                alpha = 0.5
+            ) +
             ggplot2::scale_fill_manual(values = cell_type_colors) +
             ggplot2::scale_color_manual(values = cell_type_colors) +
             ggplot2::theme_minimal() +
             ggplot2::theme(
-                panel.border = ggplot2::element_rect(color = "black",
-                                                     fill = NA,
-                                                     linewidth = 0.5),
+                panel.border = ggplot2::element_rect(
+                    color = "black",
+                    fill = NA,
+                    linewidth = 0.5
+                ),
                 axis.title.y = ggplot2::element_blank(),
                 axis.text.y = ggplot2::element_blank(),
                 axis.ticks.y = ggplot2::element_blank()
@@ -346,7 +389,6 @@ plotCellTypePCA <- function(query_data,
 
     # Boxplot diagonal facet
     .boxplotFunc <- function(data, mapping, ...) {
-
         # Extract the x variable name for the boxplot title
         x_name <- rlang::as_name(mapping[["x"]])
 
@@ -357,21 +399,28 @@ plotCellTypePCA <- function(query_data,
         )
 
         # Create horizontal boxplot
-        ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["value"]],
-                                                y = .data[["group"]],
-                                                fill = .data[["group"]])) +
-            ggplot2::geom_boxplot(alpha = 0.7,
-                                  outlier.size = 0.5,
-                                  width = 0.6) +
+        ggplot2::ggplot(plot_data, ggplot2::aes(
+            x = .data[["value"]],
+            y = .data[["group"]],
+            fill = .data[["group"]]
+        )) +
+            ggplot2::geom_boxplot(
+                alpha = 0.7,
+                outlier.size = 0.5,
+                width = 0.6
+            ) +
             ggplot2::scale_fill_manual(values = cell_type_colors) +
             ggplot2::scale_y_discrete(limits = rev(
-                levels(cell_type_dataset))) +
+                levels(cell_type_dataset)
+            )) +
             ggplot2::labs(x = "", y = "") +
             ggplot2::theme_minimal() +
             ggplot2::theme(
-                panel.border = ggplot2::element_rect(color = "black",
-                                                     fill = NA,
-                                                     linewidth = 0.5),
+                panel.border = ggplot2::element_rect(
+                    color = "black",
+                    fill = NA,
+                    linewidth = 0.5
+                ),
                 axis.title.x = ggplot2::element_blank(),
                 legend.position = "none",
                 axis.title.y = ggplot2::element_blank(),
@@ -429,7 +478,8 @@ plotCellTypePCA <- function(query_data,
     plot_obj <- plot_obj +
         ggplot2::theme(
             strip.background = ggplot2::element_rect(
-                fill = "white", color = "black", linewidth = 0.5),
+                fill = "white", color = "black", linewidth = 0.5
+            ),
             strip.text = ggplot2::element_text(color = "black")
         )
 

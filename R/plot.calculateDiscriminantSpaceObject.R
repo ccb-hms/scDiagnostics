@@ -37,20 +37,19 @@
 #' @rdname calculateDiscriminantSpace
 #'
 # Function to plot data projected onto discriminant space
-plot.calculateDiscriminantSpaceObject <- function(
-        x,
-        cell_types = NULL,
-        dv_subset = NULL,
-        lower_facet = c("scatter", "contour", "ellipse", "blank"),
-        diagonal_facet = c("ridge", "density", "boxplot", "blank"),
-        upper_facet = c("blank", "scatter", "contour", "ellipse"),
-        max_cells_ref = NULL,
-        max_cells_query = NULL,
-        ...){
-
+plot.calculateDiscriminantSpaceObject <- function(x,
+                                                  cell_types = NULL,
+                                                  dv_subset = NULL,
+                                                  lower_facet = c("scatter", "contour", "ellipse", "blank"),
+                                                  diagonal_facet = c("ridge", "density", "boxplot", "blank"),
+                                                  upper_facet = c("blank", "scatter", "contour", "ellipse"),
+                                                  max_cells_ref = NULL,
+                                                  max_cells_query = NULL,
+                                                  ...) {
     # Check if query data is available in the object
-    if(!("query_proj" %in% names(x)))
+    if (!("query_proj" %in% names(x))) {
         stop("There is no query data to plot.")
+    }
 
     # Match facet arguments
     lower_facet <- match.arg(lower_facet)
@@ -58,34 +57,38 @@ plot.calculateDiscriminantSpaceObject <- function(
     upper_facet <- match.arg(upper_facet)
 
     # Extract all cell types if not specified
-    if(is.null(cell_types)){
-        cell_types <- unique(c(x[["ref_proj"]][["cell_type"]],
-                               x[["query_proj"]][["cell_type"]]))
+    if (is.null(cell_types)) {
+        cell_types <- unique(c(
+            x[["ref_proj"]][["cell_type"]],
+            x[["query_proj"]][["cell_type"]]
+        ))
     }
 
     # Filter data to include only requested cell types
     ref_data <- x[["ref_proj"]][x[["ref_proj"]][["cell_type"]] %in%
-                                    cell_types, ]
+        cell_types, ]
     query_data <- x[["query_proj"]][x[["query_proj"]][["cell_type"]] %in%
-                                        cell_types, ]
+        cell_types, ]
 
     # Downsample reference data if max_cells_ref is specified
-    if(!is.null(max_cells_ref)){
+    if (!is.null(max_cells_ref)) {
         # Input validation for max_cells_ref
         if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 || max_cells_ref != as.integer(max_cells_ref)) {
             stop("'max_cells_ref' must be a positive integer.")
         }
 
-        if(nrow(ref_data) > max_cells_ref){
+        if (nrow(ref_data) > max_cells_ref) {
             # Stratified sampling by cell type
             ref_data_list <- list()
-            for(ct in cell_types){
+            for (ct in cell_types) {
                 ct_data <- ref_data[ref_data[["cell_type"]] == ct, ]
-                if(nrow(ct_data) > 0){
+                if (nrow(ct_data) > 0) {
                     # Calculate proportional allocation
-                    n_cells_ct <- min(nrow(ct_data),
-                                      max(1, round(max_cells_ref * nrow(ct_data) / nrow(ref_data))))
-                    if(nrow(ct_data) > n_cells_ct){
+                    n_cells_ct <- min(
+                        nrow(ct_data),
+                        max(1, round(max_cells_ref * nrow(ct_data) / nrow(ref_data)))
+                    )
+                    if (nrow(ct_data) > n_cells_ct) {
                         sampled_indices <- sample(nrow(ct_data), n_cells_ct)
                         ct_data <- ct_data[sampled_indices, ]
                     }
@@ -98,22 +101,24 @@ plot.calculateDiscriminantSpaceObject <- function(
     }
 
     # Downsample query data if max_cells_query is specified
-    if(!is.null(max_cells_query)){
+    if (!is.null(max_cells_query)) {
         # Input validation for max_cells_query
         if (!is.numeric(max_cells_query) || max_cells_query <= 0 || max_cells_query != as.integer(max_cells_query)) {
             stop("'max_cells_query' must be a positive integer.")
         }
 
-        if(nrow(query_data) > max_cells_query){
+        if (nrow(query_data) > max_cells_query) {
             # Stratified sampling by cell type
             query_data_list <- list()
-            for(ct in cell_types){
+            for (ct in cell_types) {
                 ct_data <- query_data[query_data[["cell_type"]] == ct, ]
-                if(nrow(ct_data) > 0){
+                if (nrow(ct_data) > 0) {
                     # Calculate proportional allocation
-                    n_cells_ct <- min(nrow(ct_data),
-                                      max(1, round(max_cells_query * nrow(ct_data) / nrow(query_data))))
-                    if(nrow(ct_data) > n_cells_ct){
+                    n_cells_ct <- min(
+                        nrow(ct_data),
+                        max(1, round(max_cells_query * nrow(ct_data) / nrow(query_data)))
+                    )
+                    if (nrow(ct_data) > n_cells_ct) {
                         sampled_indices <- sample(nrow(ct_data), n_cells_ct)
                         ct_data <- ct_data[sampled_indices, ]
                     }
@@ -130,16 +135,18 @@ plot.calculateDiscriminantSpaceObject <- function(
     total_dvs <- length(dv_cols)
 
     # Handle dv_subset parameter
-    if(is.null(dv_subset)) {
+    if (is.null(dv_subset)) {
         # Use all available discriminant vectors if dv_subset is NULL
         dv_subset <- seq_len(total_dvs)
     } else {
         # Check if specified dv_subset is valid
-        if(max(dv_subset) > total_dvs) {
-            stop(sprintf("Invalid \"dv_subset\".",
-                         total_dvs))
+        if (max(dv_subset) > total_dvs) {
+            stop(sprintf(
+                "Invalid \"dv_subset\".",
+                total_dvs
+            ))
         }
-        if(min(dv_subset) < 1) {
+        if (min(dv_subset) < 1) {
             stop("Invalid dv_subset. Indices must be positive integers.")
         }
     }
@@ -148,7 +155,7 @@ plot.calculateDiscriminantSpaceObject <- function(
     dv_cols <- dv_cols[dv_subset]
 
     # Check that we have at least one discriminant vector
-    if(length(dv_cols) == 0) {
+    if (length(dv_cols) == 0) {
         stop("No valid discriminant vectors specified.")
     }
 
@@ -162,8 +169,10 @@ plot.calculateDiscriminantSpaceObject <- function(
     plot_names <- paste0("DV", dv_subset)
 
     # Create a new data frame with selected DVs
-    dv_df <- data.frame(matrix(0, nrow = nrow(plot_data),
-                               ncol = length(dv_subset)))
+    dv_df <- data.frame(matrix(0,
+        nrow = nrow(plot_data),
+        ncol = length(dv_subset)
+    ))
     colnames(dv_df) <- plot_names
 
     for (i in 1:length(dv_subset)) {
@@ -172,13 +181,15 @@ plot.calculateDiscriminantSpaceObject <- function(
 
     # Create a cell type dataset column for coloring
     cell_type_dataset <- paste(plot_data[["dataset"]],
-                               plot_data[["cell_type"]],
-                               sep = " ")
+        plot_data[["cell_type"]],
+        sep = " "
+    )
 
     # Define the order of cell type and dataset combinations
     order_combinations <- paste(
         rep(c("Reference", "Query"), length(cell_types)),
-        rep(sort(cell_types), each = 2))
+        rep(sort(cell_types), each = 2)
+    )
 
     cell_type_dataset <- factor(cell_type_dataset, levels = order_combinations)
 
@@ -189,12 +200,18 @@ plot.calculateDiscriminantSpaceObject <- function(
     dv_df[["cell_type_dataset"]] <- cell_type_dataset
 
     # Create a simple plot to extract the legend using GGally::grab_legend
-    legend_plot <- ggplot2::ggplot(dv_df,
-                                   ggplot2::aes(x = dv_df[,1],
-                                                y = dv_df[,2])) +
+    legend_plot <- ggplot2::ggplot(
+        dv_df,
+        ggplot2::aes(
+            x = dv_df[, 1],
+            y = dv_df[, 2]
+        )
+    ) +
         ggplot2::geom_point(ggplot2::aes(color = cell_type_dataset)) +
-        ggplot2::scale_color_manual(values = cell_type_colors,
-                                    name = "Cell Type") +
+        ggplot2::scale_color_manual(
+            values = cell_type_colors,
+            name = "Cell Type"
+        ) +
         ggplot2::theme(
             legend.position = "right",
             legend.box = "vertical",
@@ -206,15 +223,19 @@ plot.calculateDiscriminantSpaceObject <- function(
     # Scatterplot facet function
     .scatterFunc <- function(data, mapping, ...) {
         ggplot2::ggplot(data = data, mapping = mapping) +
-            ggplot2::geom_point(alpha = 0.5, size = 1,
-                                ggplot2::aes(color = cell_type_dataset)) +
+            ggplot2::geom_point(
+                alpha = 0.5, size = 1,
+                ggplot2::aes(color = cell_type_dataset)
+            ) +
             ggplot2::scale_color_manual(values = cell_type_colors) +
             ggplot2::theme_minimal() +
             ggplot2::theme(
                 panel.border = ggplot2::element_rect(
                     color = "black",
                     fill = NA,
-                    linewidth = 0.5))
+                    linewidth = 0.5
+                )
+            )
     }
 
     # Contour facet function
@@ -247,7 +268,8 @@ plot.calculateDiscriminantSpaceObject <- function(
                 adjust = adjust_factor,
                 bins = 5,
                 color = cell_type_colors[which(
-                    levels(data[["cell_type_dataset"]]) == ct)],
+                    levels(data[["cell_type_dataset"]]) == ct
+                )],
                 linewidth = 0.5,
                 na.rm = TRUE
             )
@@ -257,7 +279,8 @@ plot.calculateDiscriminantSpaceObject <- function(
         p + ggplot2::theme_minimal() +
             ggplot2::theme(
                 panel.border = ggplot2::element_rect(
-                    color = "black", fill = NA, linewidth = 0.5),
+                    color = "black", fill = NA, linewidth = 0.5
+                ),
                 legend.position = "none",
                 axis.text = ggplot2::element_blank(),
                 axis.ticks = ggplot2::element_blank(),
@@ -270,7 +293,9 @@ plot.calculateDiscriminantSpaceObject <- function(
     .robustEllipseFunc <- function(data, mapping, ...) {
         # Function to calculate robust ellipses through bootstrapping
         createEllipse <- function(d) {
-            if (nrow(d) < 10) return(NULL)
+            if (nrow(d) < 10) {
+                return(NULL)
+            }
 
             x_var <- rlang::as_name(mapping[["x"]])
             y_var <- rlang::as_name(mapping[["y"]])
@@ -293,7 +318,7 @@ plot.calculateDiscriminantSpaceObject <- function(
             b <- sqrt(ev[["values"]][2]) * 2.45
 
             # Create ellipse coordinates
-            angle <- atan2(ev[["vectors"]][2,1], ev[["vectors"]][1,1])
+            angle <- atan2(ev[["vectors"]][2, 1], ev[["vectors"]][1, 1])
             ellipse_x <- center[1] + a * cos(theta) * cos(angle) -
                 b * sin(theta) * sin(angle)
             ellipse_y <- center[2] + a * cos(theta) * sin(angle) +
@@ -306,7 +331,7 @@ plot.calculateDiscriminantSpaceObject <- function(
 
         # Split by cell type and create robust ellipses
         for (ct in unique(data[["cell_type_dataset"]])) {
-            subset_data <- data[data[["cell_type_dataset"]] == ct,]
+            subset_data <- data[data[["cell_type_dataset"]] == ct, ]
             ellipse_data <- createEllipse(subset_data)
 
             if (!is.null(ellipse_data)) {
@@ -314,7 +339,8 @@ plot.calculateDiscriminantSpaceObject <- function(
                     data = ellipse_data,
                     ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
                     color = cell_type_colors[
-                        which(levels(data[["cell_type_dataset"]]) == ct)],
+                        which(levels(data[["cell_type_dataset"]]) == ct)
+                    ],
                     linewidth = 0.7
                 )
             }
@@ -324,7 +350,8 @@ plot.calculateDiscriminantSpaceObject <- function(
             ggplot2::theme(
                 panel.border = ggplot2::element_rect(
                     color = "black", fill = NA,
-                    linewidth = 0.5),
+                    linewidth = 0.5
+                ),
                 legend.position = "none",
                 axis.text = ggplot2::element_blank(),
                 axis.ticks = ggplot2::element_blank(),
@@ -339,7 +366,8 @@ plot.calculateDiscriminantSpaceObject <- function(
             ggplot2::theme(
                 panel.border = ggplot2::element_rect(
                     color = "black", fill = NA,
-                    linewidth = 0.5),
+                    linewidth = 0.5
+                ),
                 legend.position = "none",
                 axis.text = ggplot2::element_blank(),
                 axis.ticks = ggplot2::element_blank(),
@@ -361,10 +389,14 @@ plot.calculateDiscriminantSpaceObject <- function(
 
         # Create ridge plot with ggridges
         suppressMessages({
-            p <- ggplot2::ggplot(plot_data,
-                                 ggplot2::aes(x = .data[["value"]],
-                                              y = .data[["group"]],
-                                              fill = .data[["group"]])) +
+            p <- ggplot2::ggplot(
+                plot_data,
+                ggplot2::aes(
+                    x = .data[["value"]],
+                    y = .data[["group"]],
+                    fill = .data[["group"]]
+                )
+            ) +
                 ggridges::geom_density_ridges(
                     alpha = 0.7,
                     scale = 2,
@@ -373,12 +405,15 @@ plot.calculateDiscriminantSpaceObject <- function(
                 ) +
                 ggplot2::scale_fill_manual(values = cell_type_colors) +
                 ggplot2::scale_y_discrete(
-                    limits = rev(levels(cell_type_dataset))) +
+                    limits = rev(levels(cell_type_dataset))
+                ) +
                 ggplot2::theme_minimal() +
                 ggplot2::theme(
-                    panel.border = ggplot2::element_rect(color = "black",
-                                                         fill = NA,
-                                                         linewidth = 0.5),
+                    panel.border = ggplot2::element_rect(
+                        color = "black",
+                        fill = NA,
+                        linewidth = 0.5
+                    ),
                     axis.title = ggplot2::element_blank(),
                     axis.text.y = ggplot2::element_blank(),
                     axis.ticks.y = ggplot2::element_blank(),
@@ -395,16 +430,22 @@ plot.calculateDiscriminantSpaceObject <- function(
         x_var_name <- rlang::as_name(mapping[["x"]])
 
         ggplot2::ggplot(data = data, mapping = mapping) +
-            ggplot2::geom_density(ggplot2::aes(fill = cell_type_dataset,
-                                               color = cell_type_dataset),
-                                  alpha = 0.5) +
+            ggplot2::geom_density(
+                ggplot2::aes(
+                    fill = cell_type_dataset,
+                    color = cell_type_dataset
+                ),
+                alpha = 0.5
+            ) +
             ggplot2::scale_fill_manual(values = cell_type_colors) +
             ggplot2::scale_color_manual(values = cell_type_colors) +
             ggplot2::theme_minimal() +
             ggplot2::theme(
-                panel.border = ggplot2::element_rect(color = "black",
-                                                     fill = NA,
-                                                     linewidth = 0.5),
+                panel.border = ggplot2::element_rect(
+                    color = "black",
+                    fill = NA,
+                    linewidth = 0.5
+                ),
                 axis.title.y = ggplot2::element_blank(),
                 axis.text.y = ggplot2::element_blank(),
                 axis.ticks.y = ggplot2::element_blank()
@@ -423,25 +464,34 @@ plot.calculateDiscriminantSpaceObject <- function(
         )
 
         # Create horizontal boxplot
-        ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["value"]],
-                                                y = .data[["group"]],
-                                                fill = .data[["group"]])) +
-            ggplot2::geom_boxplot(alpha = 0.7,
-                                  outlier.size = 0.5,
-                                  width = 0.6) +
+        ggplot2::ggplot(plot_data, ggplot2::aes(
+            x = .data[["value"]],
+            y = .data[["group"]],
+            fill = .data[["group"]]
+        )) +
+            ggplot2::geom_boxplot(
+                alpha = 0.7,
+                outlier.size = 0.5,
+                width = 0.6
+            ) +
             ggplot2::scale_fill_manual(values = cell_type_colors) +
             ggplot2::scale_y_discrete(limits = rev(
-                levels(cell_type_dataset))) +
+                levels(cell_type_dataset)
+            )) +
             ggplot2::labs(x = "", y = "") +
             ggplot2::theme_minimal() +
             ggplot2::theme(
-                panel.border = ggplot2::element_rect(color = "black",
-                                                     fill = NA,
-                                                     linewidth = 0.5),
+                panel.border = ggplot2::element_rect(
+                    color = "black",
+                    fill = NA,
+                    linewidth = 0.5
+                ),
                 axis.title.x = ggplot2::element_blank(),
-                axis.text.x = ggplot2::element_text(angle = 45,
-                                                    hjust = 1,
-                                                    size = 7),
+                axis.text.x = ggplot2::element_text(
+                    angle = 45,
+                    hjust = 1,
+                    size = 7
+                ),
                 legend.position = "none",
                 axis.title.y = ggplot2::element_blank(),
                 axis.text.y = ggplot2::element_blank(),
@@ -498,7 +548,8 @@ plot.calculateDiscriminantSpaceObject <- function(
     plot_obj <- plot_obj +
         ggplot2::theme(
             strip.background = ggplot2::element_rect(
-                fill = "white", color = "black", linewidth = 0.5),
+                fill = "white", color = "black", linewidth = 0.5
+            ),
             strip.text = ggplot2::element_text(color = "black")
         )
 

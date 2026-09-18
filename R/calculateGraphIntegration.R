@@ -58,7 +58,8 @@
 #' reference_data <- reference_data[, reference_data$expert_annotation != "Myeloid"]
 #' reference_data <- runPCA(reference_data, ncomponents = 50)
 #' SingleR_annotation <- SingleR(query_data, reference_data,
-#'                               labels = reference_data$expert_annotation)
+#'     labels = reference_data$expert_annotation
+#' )
 #' query_data$SingleR_annotation <- SingleR_annotation$labels
 #'
 #' # Check annotation data
@@ -70,8 +71,8 @@
 #'     reference_data = reference_data,
 #'     query_cell_type_col = "SingleR_annotation",
 #'     ref_cell_type_col = "expert_annotation",
-#'    pc_subset = 1:10,
-#'    k_neighbors = 30,
+#'     pc_subset = 1:10,
+#'     k_neighbors = 30,
 #'     resolution = 0.1,
 #'     high_query_prop_threshold = 0.9,
 #'     cross_type_threshold = 0.15,
@@ -86,8 +87,10 @@
 #' plot(graph_diagnostics, plot_type = "community_network", color_by = "cell_type")
 #'
 #' # Network graph showing all issue types
-#' plot(graph_diagnostics, plot_type = "cell_network",
-#'      max_nodes = 2000, color_by = "community_type")
+#' plot(graph_diagnostics,
+#'     plot_type = "cell_network",
+#'     max_nodes = 2000, color_by = "community_type"
+#' )
 #'
 #' # Network graph showing all issue types
 #' plot(graph_diagnostics, plot_type = "community_data")
@@ -121,22 +124,27 @@ calculateGraphIntegration <- function(query_data,
                                       local_confidence_threshold = 0.2,
                                       max_cells_query = 5000,
                                       max_cells_ref = 5000) {
-
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  pc_subset_ref = pc_subset,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        pc_subset_ref = pc_subset,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Check additional parameters
     if (!is.numeric(k_neighbors) || k_neighbors <= 0 ||
@@ -169,13 +177,15 @@ calculateGraphIntegration <- function(query_data,
     }
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = TRUE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = TRUE,
+        n_cell_types = NULL
+    )
 
     # Filter cell types by minimum cell count
     ref_counts <- table(reference_data[[ref_cell_type_col]])
@@ -193,15 +203,17 @@ calculateGraphIntegration <- function(query_data,
     }
 
     # Get PCA projection
-    pca_output <- projectPCA(query_data = query_data,
-                             reference_data = reference_data,
-                             query_cell_type_col = query_cell_type_col,
-                             ref_cell_type_col = ref_cell_type_col,
-                             cell_types = cell_types,
-                             pc_subset = pc_subset,
-                             assay_name = assay_name,
-                             max_cells_ref = max_cells_ref,
-                             max_cells_query = max_cells_query)
+    pca_output <- projectPCA(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        pc_subset = pc_subset,
+        assay_name = assay_name,
+        max_cells_ref = max_cells_ref,
+        max_cells_query = max_cells_query
+    )
 
     # Extract PCA coordinates
     pc_coords <- as.matrix(pca_output[, paste0("PC", pc_subset)])
@@ -249,9 +261,11 @@ calculateGraphIntegration <- function(query_data,
 
             total_cells <- nrow(comm_info)
             n_reference <- ifelse("Reference" %in% names(dataset_counts),
-                                  as.numeric(dataset_counts[["Reference"]]), 0)
+                as.numeric(dataset_counts[["Reference"]]), 0
+            )
             n_query <- ifelse("Query" %in% names(dataset_counts),
-                              as.numeric(dataset_counts[["Query"]]), 0)
+                as.numeric(dataset_counts[["Query"]]), 0
+            )
 
             query_prop <- n_query / total_cells
 
@@ -275,13 +289,17 @@ calculateGraphIntegration <- function(query_data,
                     community = comm,
                     total_query_cells = n_query,
                     query_cell_types = names(
-                        table(comm_info[["cell_type"]][comm_info[["dataset"]] == "Query"])),
+                        table(comm_info[["cell_type"]][comm_info[["dataset"]] == "Query"])
+                    ),
                     query_celltype_counts = table(
-                        comm_info[["cell_type"]][comm_info[["dataset"]] == "Query"]),
+                        comm_info[["cell_type"]][comm_info[["dataset"]] == "Query"]
+                    ),
                     is_homogeneous = length(unique(comm_info[["cell_type"]])) == 1,
-                    mixed_types = if(length(unique(comm_info[["cell_type"]])) > 1) {
+                    mixed_types = if (length(unique(comm_info[["cell_type"]])) > 1) {
                         paste(names(table(comm_info[["cell_type"]])), collapse = ", ")
-                    } else { NA }
+                    } else {
+                        NA
+                    }
                 )
                 high_query_prop_communities[[length(high_query_prop_communities) + 1]] <-
                     query_analysis
@@ -291,9 +309,11 @@ calculateGraphIntegration <- function(query_data,
             if (n_reference > 0 && n_query > 0) {
                 # Get cell types for each dataset
                 ref_celltypes <- table(
-                    comm_info[["cell_type"]][comm_info[["dataset"]] == "Reference"])
+                    comm_info[["cell_type"]][comm_info[["dataset"]] == "Reference"]
+                )
                 query_celltypes <- table(
-                    comm_info[["cell_type"]][comm_info[["dataset"]] == "Query"])
+                    comm_info[["cell_type"]][comm_info[["dataset"]] == "Query"]
+                )
 
                 ref_types <- names(ref_celltypes)
                 query_types <- names(query_celltypes)
@@ -317,16 +337,19 @@ calculateGraphIntegration <- function(query_data,
                             ref_mixing_with <- ref_types
                             ref_counts_mixing <- ref_celltypes[ref_mixing_with]
 
-                            cross_details[[paste("Query", qt, "with Ref",
-                                                 paste(ref_mixing_with,
-                                                       collapse = "+"))]] <- list(
-                                                           query_type = qt,
-                                                           reference_types_mixing_with = ref_mixing_with,
-                                                           reference_counts_mixing_with = ref_counts_mixing,
-                                                           query_cells = query_count,
-                                                           query_proportion = query_prop_in_community,
-                                                           is_true_mismatch = TRUE
-                                                       )
+                            cross_details[[paste(
+                                "Query", qt, "with Ref",
+                                paste(ref_mixing_with,
+                                    collapse = "+"
+                                )
+                            )]] <- list(
+                                query_type = qt,
+                                reference_types_mixing_with = ref_mixing_with,
+                                reference_counts_mixing_with = ref_counts_mixing,
+                                query_cells = query_count,
+                                query_proportion = query_prop_in_community,
+                                is_true_mismatch = TRUE
+                            )
                         }
                     }
                 }
@@ -338,8 +361,10 @@ calculateGraphIntegration <- function(query_data,
                         n_query = n_query,
                         n_reference = n_reference,
                         cross_mixing_details = cross_details,
-                        query_types_with_no_ref_match = setdiff(query_types,
-                                                                ref_types),
+                        query_types_with_no_ref_match = setdiff(
+                            query_types,
+                            ref_types
+                        ),
                         reference_types_in_community = ref_types,
                         query_types_in_community = query_types
                     )
@@ -357,9 +382,8 @@ calculateGraphIntegration <- function(query_data,
     }
 
     # NEW: Local annotation consistency analysis
-    .analyzeLocalAnnotationConsistency <- function(
-        membership, cell_info, knn_edges,
-        local_threshold, confidence_threshold) {
+    .analyzeLocalAnnotationConsistency <- function(membership, cell_info, knn_edges,
+                                                   local_threshold, confidence_threshold) {
         # For each query cell, check if its immediate neighbors support its annotation
         query_cells <- which(cell_info[["dataset"]] == "Query")
         local_inconsistencies <- list()
@@ -389,8 +413,9 @@ calculateGraphIntegration <- function(query_data,
 
             # Support for query's annotation
             support_for_query_type <- ifelse(query_type %in% names(ref_neighbor_types),
-                                             as.numeric(ref_neighbor_types[[query_type]]),
-                                             0)
+                as.numeric(ref_neighbor_types[[query_type]]),
+                0
+            )
             support_proportion <- support_for_query_type / total_ref_neighbors
 
             # Flag as inconsistent if support is below threshold
@@ -489,11 +514,15 @@ calculateGraphIntegration <- function(query_data,
                     ref_summary <- paste(
                         names(detail[["reference_counts_mixing_with"]]),
                         paste0("(", detail[["reference_counts_mixing_with"]], ")"),
-                        collapse = "+")
-                    paste0("Query ", detail[["query_type"]], " (",
-                           detail[["query_cells"]], ") with Ref ",
-                           ref_summary)
-                })
+                        collapse = "+"
+                    )
+                    paste0(
+                        "Query ", detail[["query_type"]], " (",
+                        detail[["query_cells"]], ") with Ref ",
+                        ref_summary
+                    )
+                }
+            )
 
             data.frame(
                 community = x[["community"]],
@@ -501,9 +530,11 @@ calculateGraphIntegration <- function(query_data,
                 n_query = x[["n_query"]],
                 n_reference = x[["n_reference"]],
                 query_types_no_ref_match = paste(x[["query_types_with_no_ref_match"]],
-                                                 collapse = ", "),
+                    collapse = ", "
+                ),
                 reference_types_available = paste(x[["reference_types_in_community"]],
-                                                  collapse = ", "),
+                    collapse = ", "
+                ),
                 cross_mixing_summary = paste(cross_summary, collapse = "; "),
                 n_true_mismatches = length(x[["cross_mixing_details"]]),
                 stringsAsFactors = FALSE
@@ -576,42 +607,53 @@ calculateGraphIntegration <- function(query_data,
     # since these do not depend on the cell type being tallied below
     high_query_prop_query_cells <- cell_info[
         cell_info[["community"]] %in% high_query_prop_df[["community"]] &
-            cell_info[["dataset"]] == "Query", ]
+            cell_info[["dataset"]] == "Query",
+    ]
     cross_type_query_cells <- cell_info[
         cell_info[["community"]] %in% cross_type_df[["community"]] &
-            cell_info[["dataset"]] == "Query", ]
+            cell_info[["dataset"]] == "Query",
+    ]
 
     # Calculate annotation consistency summary
     annotation_summary <- data.frame(
         cell_type = cell_types,
         total_query_cells = sapply(
-            cell_types, function(ct) sum(cell_info[["cell_type"]] == ct &
-                                             cell_info[["dataset"]] == "Query")),
+            cell_types, function(ct) {
+                sum(cell_info[["cell_type"]] == ct &
+                    cell_info[["dataset"]] == "Query")
+            }
+        ),
         high_query_prop_cells = sapply(
-            cell_types, function(ct) sum(high_query_prop_query_cells[["cell_type"]] == ct)),
+            cell_types, function(ct) sum(high_query_prop_query_cells[["cell_type"]] == ct)
+        ),
         true_cross_mixing_cells = sapply(
-            cell_types, function(ct) sum(cross_type_query_cells[["cell_type"]] == ct)),
+            cell_types, function(ct) sum(cross_type_query_cells[["cell_type"]] == ct)
+        ),
         stringsAsFactors = FALSE
     )
 
     annotation_summary[["query_isolation_rate"]] <-
         annotation_summary[["high_query_prop_cells"]] /
-        annotation_summary[["total_query_cells"]]
+            annotation_summary[["total_query_cells"]]
     annotation_summary[["true_cross_mixing_rate"]] <-
         annotation_summary[["true_cross_mixing_cells"]] /
-        annotation_summary[["total_query_cells"]]
+            annotation_summary[["total_query_cells"]]
 
     # Replace NaN with 0
     annotation_summary[["query_isolation_rate"]][
-        is.nan(annotation_summary[["query_isolation_rate"]])] <- 0
+        is.nan(annotation_summary[["query_isolation_rate"]])
+    ] <- 0
     annotation_summary[["true_cross_mixing_rate"]][
-        is.nan(annotation_summary[["true_cross_mixing_rate"]])] <- 0
+        is.nan(annotation_summary[["true_cross_mixing_rate"]])
+    ] <- 0
 
     # Add local inconsistency summary by cell type
     local_inconsistency_summary <- data.frame(
         cell_type = cell_types,
-        total_query_cells = sapply(cell_types, function(ct) sum(cell_info[["cell_type"]] == ct &
-                                                                    cell_info[["dataset"]] == "Query")),
+        total_query_cells = sapply(cell_types, function(ct) {
+            sum(cell_info[["cell_type"]] == ct &
+                cell_info[["dataset"]] == "Query")
+        }),
         locally_inconsistent_cells = sapply(cell_types, function(ct) {
             sum(local_inconsistency_df[["current_annotation"]] == ct)
         }),
@@ -619,14 +661,17 @@ calculateGraphIntegration <- function(query_data,
     )
     local_inconsistency_summary[["local_inconsistency_rate"]] <-
         local_inconsistency_summary[["locally_inconsistent_cells"]] /
-        local_inconsistency_summary[["total_query_cells"]]
+            local_inconsistency_summary[["total_query_cells"]]
     local_inconsistency_summary[["local_inconsistency_rate"]][
-        is.nan(local_inconsistency_summary[["local_inconsistency_rate"]])] <- 0
+        is.nan(local_inconsistency_summary[["local_inconsistency_rate"]])
+    ] <- 0
 
     # Calculate layout for graph plotting
     graph_layout <- igraph::layout_with_fr(knn_graph, dim = 2)
-    graph_info <- list(layout = graph_layout, edges = graph_result[["edges"]],
-                       n_nodes = nrow(pc_coords))
+    graph_info <- list(
+        layout = graph_layout, edges = graph_result[["edges"]],
+        n_nodes = nrow(pc_coords)
+    )
 
     # Overall metrics
     overall_metrics <- list(

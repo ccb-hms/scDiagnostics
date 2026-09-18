@@ -29,14 +29,15 @@
 #'
 # Function to produce the visualization of output from comparePCASubspace function
 plot.comparePCASubspaceObject <- function(x,
-                                          ...){
-
+                                          ...) {
     # Create a data frame for plotting
     plot_data <- data.frame(
         PC = paste0("Ref PC", x[["cosine_id"]][, 1], " - Query PC", x[["cosine_id"]][, 2]),
-        PC_Label = paste0("Ref PC", x[["cosine_id"]][, 1],
-                          " (", round(x[["var_explained_ref"]], 1), "%) - Query PC",
-                          x[["cosine_id"]][, 2], " (", round(x[["var_explained_query"]], 1), "%)"),
+        PC_Label = paste0(
+            "Ref PC", x[["cosine_id"]][, 1],
+            " (", round(x[["var_explained_ref"]], 1), "%) - Query PC",
+            x[["cosine_id"]][, 2], " (", round(x[["var_explained_query"]], 1), "%)"
+        ),
         Cosine = x[["cosine_similarity"]],
         VarianceExplained = x[["var_explained_avg"]],
         RefVariance = x[["var_explained_ref"]],
@@ -47,10 +48,13 @@ plot.comparePCASubspaceObject <- function(x,
 
     # Create plot
     pc_plot <- ggplot2::ggplot(
-        plot_data, ggplot2::aes(x = .data[["PC_Label"]],
-                                y = .data[["Cosine"]],
-                                size = .data[["VarianceExplained"]],
-                                color = .data[["VarianceDiff"]])) +
+        plot_data, ggplot2::aes(
+            x = .data[["PC_Label"]],
+            y = .data[["Cosine"]],
+            size = .data[["VarianceExplained"]],
+            color = .data[["VarianceDiff"]]
+        )
+    ) +
         ggplot2::geom_point(alpha = 0.8, stroke = 1) +
         ggplot2::scale_size_continuous(range = c(3, 10), name = "Avg Variance\nExplained (%)") +
         ggplot2::scale_color_gradient2(
@@ -65,13 +69,17 @@ plot.comparePCASubspaceObject <- function(x,
         ) +
         ggplot2::theme_bw() +
         ggplot2::theme(
-            axis.text.x = ggplot2::element_text(angle = 45, vjust = 1,
-                                                size = 10, hjust = 1),
+            axis.text.x = ggplot2::element_text(
+                angle = 45, vjust = 1,
+                size = 10, hjust = 1
+            ),
             axis.title = ggplot2::element_text(size = 12),
             axis.text = ggplot2::element_text(size = 10),
             panel.grid.minor = ggplot2::element_blank(),
-            panel.grid.major = ggplot2::element_line(color = "gray",
-                                                     linetype = "dotted"),
+            panel.grid.major = ggplot2::element_line(
+                color = "gray",
+                linetype = "dotted"
+            ),
             plot.title = ggplot2::element_text(hjust = 0.5),
             plot.subtitle = ggplot2::element_text(hjust = 0.5)
         )

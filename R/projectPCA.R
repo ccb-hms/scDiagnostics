@@ -44,21 +44,25 @@
 #' data("query_data")
 #'
 #' # Project the query data onto PCA space of reference
-#' pca_output <- projectPCA(query_data = query_data,
-#'                          reference_data = reference_data,
-#'                          query_cell_type_col = "SingleR_annotation",
-#'                          ref_cell_type_col = "expert_annotation",
-#'                          pc_subset = 1:10)
+#' pca_output <- projectPCA(
+#'     query_data = query_data,
+#'     reference_data = reference_data,
+#'     query_cell_type_col = "SingleR_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     pc_subset = 1:10
+#' )
 #'
 #' # Project with cell type filtering and balanced downsampling
-#' pca_output_filtered <- projectPCA(query_data = query_data,
-#'                                   reference_data = reference_data,
-#'                                   query_cell_type_col = "SingleR_annotation",
-#'                                   ref_cell_type_col = "expert_annotation",
-#'                                   pc_subset = 1:5,
-#'                                   cell_types = c("CD4", "CD8"),
-#'                                   max_cells_ref = 1000,
-#'                                   max_cells_query = 1000)
+#' pca_output_filtered <- projectPCA(
+#'     query_data = query_data,
+#'     reference_data = reference_data,
+#'     query_cell_type_col = "SingleR_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     pc_subset = 1:5,
+#'     cell_types = c("CD4", "CD8"),
+#'     max_cells_ref = 1000,
+#'     max_cells_query = 1000
+#' )
 #'
 # Function to project query data onto PCA space of reference data
 projectPCA <- function(query_data,
@@ -69,23 +73,28 @@ projectPCA <- function(query_data,
                        pc_subset = 1:10,
                        assay_name = "logcounts",
                        max_cells_query = NULL,
-                       max_cells_ref = NULL){
-
+                       max_cells_ref = NULL) {
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  pc_subset_ref = pc_subset,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        pc_subset_ref = pc_subset,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Helper function to validate PCA integrity for reference data only
     .validateReferencePCA <- function(sce, assay_name) {
@@ -124,8 +133,10 @@ projectPCA <- function(query_data,
         message("Reference PCA is invalid or missing. Computing PCA for reference data only...")
 
         # Use processPCA to recompute PCA for REFERENCE DATA ONLY
-        reference_data <- processPCA(sce_object = reference_data,
-                                     assay_name = assay_name)
+        reference_data <- processPCA(
+            sce_object = reference_data,
+            assay_name = assay_name
+        )
 
         # Validate that PCA was properly computed
         if (!.validateReferencePCA(reference_data, assay_name)) {
@@ -136,13 +147,15 @@ projectPCA <- function(query_data,
     }
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = FALSE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = FALSE,
+        n_cell_types = NULL
+    )
 
     # Extract reference PCA components and rotation matrix
     ref_mat <- reducedDim(reference_data, "PCA")[, pc_subset, drop = FALSE]
@@ -175,14 +188,20 @@ projectPCA <- function(query_data,
     # Create full output dataframe with all cells
     full_output <- data.frame(
         rbind(ref_mat, query_mat),
-        dataset = c(rep("Reference", nrow(ref_mat)),
-                    rep("Query", nrow(query_mat))),
-        cell_type = c(ifelse(rep(is.null(ref_cell_type_col), nrow(ref_mat)),
-                             rep(NA, nrow(ref_mat)),
-                             reference_data[[ref_cell_type_col]]),
-                      ifelse(rep(is.null(query_cell_type_col), nrow(query_mat)),
-                             rep(NA, nrow(query_mat)),
-                             query_data[[query_cell_type_col]])),
+        dataset = c(
+            rep("Reference", nrow(ref_mat)),
+            rep("Query", nrow(query_mat))
+        ),
+        cell_type = c(
+            ifelse(rep(is.null(ref_cell_type_col), nrow(ref_mat)),
+                rep(NA, nrow(ref_mat)),
+                reference_data[[ref_cell_type_col]]
+            ),
+            ifelse(rep(is.null(query_cell_type_col), nrow(query_mat)),
+                rep(NA, nrow(query_mat)),
+                query_data[[query_cell_type_col]]
+            )
+        ),
         stringsAsFactors = FALSE
     )
 

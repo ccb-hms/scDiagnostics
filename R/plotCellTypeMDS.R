@@ -47,11 +47,13 @@
 #' data("query_data")
 #'
 #' # Generate the MDS scatter plot with cell type coloring
-#' mds_plot <- plotCellTypeMDS(query_data = query_data,
-#'                             reference_data = reference_data,
-#'                             cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid")[1:4],
-#'                             query_cell_type_col = "SingleR_annotation",
-#'                             ref_cell_type_col = "expert_annotation")
+#' mds_plot <- plotCellTypeMDS(
+#'     query_data = query_data,
+#'     reference_data = reference_data,
+#'     cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid")[1:4],
+#'     query_cell_type_col = "SingleR_annotation",
+#'     ref_cell_type_col = "expert_annotation"
+#' )
 #' mds_plot
 #'
 #' @importFrom stats cmdscale cor
@@ -66,30 +68,37 @@ plotCellTypeMDS <- function(query_data,
                             assay_name = "logcounts",
                             max_cells_query = 5000,
                             max_cells_ref = 5000) {
-
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = FALSE,
-                                  n_cell_types = 10)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = FALSE,
+        n_cell_types = 10
+    )
 
     # Check if MDS is precomputed in both datasets
     query_has_mds <- "MDS" %in% reducedDimNames(query_data)
@@ -100,14 +109,18 @@ plotCellTypeMDS <- function(query_data,
         message("Using precomputed MDS coordinates from reducedDims.")
 
         # Downsample using precomputed MDS (coordinates will be preserved through subsetting)
-        query_data <- downsampleSCE(sce_object = query_data,
-                                    max_cells = max_cells_query,
-                                    cell_types = cell_types,
-                                    cell_type_col = query_cell_type_col)
-        reference_data <- downsampleSCE(sce_object = reference_data,
-                                        max_cells = max_cells_ref,
-                                        cell_types = cell_types,
-                                        cell_type_col = ref_cell_type_col)
+        query_data <- downsampleSCE(
+            sce_object = query_data,
+            max_cells = max_cells_query,
+            cell_types = cell_types,
+            cell_type_col = query_cell_type_col
+        )
+        reference_data <- downsampleSCE(
+            sce_object = reference_data,
+            max_cells = max_cells_ref,
+            cell_types = cell_types,
+            cell_type_col = ref_cell_type_col
+        )
 
         # Extract precomputed MDS coordinates
         query_mds <- reducedDim(query_data, "MDS")
@@ -140,14 +153,18 @@ plotCellTypeMDS <- function(query_data,
         }
 
         # Downsample query and reference data (with cell type filtering)
-        query_data <- downsampleSCE(sce_object = query_data,
-                                    max_cells = max_cells_query,
-                                    cell_types = cell_types,
-                                    cell_type_col = query_cell_type_col)
-        reference_data <- downsampleSCE(sce_object = reference_data,
-                                        max_cells = max_cells_ref,
-                                        cell_types = cell_types,
-                                        cell_type_col = ref_cell_type_col)
+        query_data <- downsampleSCE(
+            sce_object = query_data,
+            max_cells = max_cells_query,
+            cell_types = cell_types,
+            cell_type_col = query_cell_type_col
+        )
+        reference_data <- downsampleSCE(
+            sce_object = reference_data,
+            max_cells = max_cells_ref,
+            cell_types = cell_types,
+            cell_type_col = ref_cell_type_col
+        )
 
         # Extract assay matrices
         query_assay <- as.matrix(assay(query_data, assay_name))
@@ -176,31 +193,42 @@ plotCellTypeMDS <- function(query_data,
     cmd[["cell_type_dataset"]] <- paste(cmd[["dataset"]], cmd[["cellType"]], sep = " ")
 
     # Define the order of cell type and dataset combinations
-    order_combinations <- paste(rep(c("Reference", "Query"), length(cell_types)),
-                                rep(sort(cell_types), each = 2))
+    order_combinations <- paste(
+        rep(c("Reference", "Query"), length(cell_types)),
+        rep(sort(cell_types), each = 2)
+    )
     cmd[["cell_type_dataset"]] <- factor(cmd[["cell_type_dataset"]],
-                                         levels = order_combinations)
+        levels = order_combinations
+    )
 
     # Define the colors for cell types
     cell_type_colors <- generateColors(order_combinations, paired = TRUE)
 
     # Create the plot
-    mds_plot <- ggplot2::ggplot(cmd,
-                                ggplot2::aes(
-                                    x = .data[["Dim1"]],
-                                    y = .data[["Dim2"]],
-                                    color = .data[["cell_type_dataset"]])) +
+    mds_plot <- ggplot2::ggplot(
+        cmd,
+        ggplot2::aes(
+            x = .data[["Dim1"]],
+            y = .data[["Dim2"]],
+            color = .data[["cell_type_dataset"]]
+        )
+    ) +
         ggplot2::geom_point(alpha = 0.5, size = 1) +
         ggplot2::scale_color_manual(values = cell_type_colors, name = "Cell Types") +
         ggplot2::theme_bw() +
         ggplot2::theme(
             panel.grid.minor = ggplot2::element_blank(),
-            panel.grid.major = ggplot2::element_line(color = "gray",
-                                                     linetype = "dotted"),
-            plot.title = ggplot2::element_text(size = 14, face = "bold",
-                                               hjust = 0.5),
+            panel.grid.major = ggplot2::element_line(
+                color = "gray",
+                linetype = "dotted"
+            ),
+            plot.title = ggplot2::element_text(
+                size = 14, face = "bold",
+                hjust = 0.5
+            ),
             axis.title = ggplot2::element_text(size = 12),
-            axis.text = ggplot2::element_text(size = 10)) +
+            axis.text = ggplot2::element_text(size = 10)
+        ) +
         ggplot2::guides(color = ggplot2::guide_legend(title = "Cell Types"))
 
     return(mds_plot)

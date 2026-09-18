@@ -50,13 +50,12 @@ plot.calculateReconstructionErrorObject <- function(x,
                                                     plot_type = c("violin", "boxplot", "ridge", "heatmap"),
                                                     draw_plot = FALSE,
                                                     ...) {
-
     # Match arguments
     data_type <- match.arg(data_type)
     plot_type <- match.arg(plot_type)
 
     # Smart default for cell_type
-    if(is.null(cell_type)){
+    if (is.null(cell_type)) {
         if ("Combined" %in% names(x)) {
             cell_type <- "Combined"
         } else {
@@ -64,7 +63,7 @@ plot.calculateReconstructionErrorObject <- function(x,
             message("Defaulting to cell_type: '", cell_type, "'")
         }
     } else {
-        if(!(cell_type %in% names(x))) {
+        if (!(cell_type %in% names(x))) {
             stop(paste0("Cell type '", cell_type, "' is not available in the provided object."))
         }
     }
@@ -74,12 +73,11 @@ plot.calculateReconstructionErrorObject <- function(x,
     # ______________________
 
     if (plot_type == "heatmap") {
-
         if (!requireNamespace("ComplexHeatmap", quietly = TRUE) || !requireNamespace("circlize", quietly = TRUE)) {
             stop("Packages 'ComplexHeatmap' and 'circlize' are required to plot heatmaps. Please install them.")
         }
 
-        if(is.null(x[[cell_type]][["query_mat_subset"]]) && data_type %in% c("query", "both")){
+        if (is.null(x[[cell_type]][["query_mat_subset"]]) && data_type %in% c("query", "both")) {
             stop("There is no query data available in the object to plot.")
         }
 
@@ -234,23 +232,27 @@ plot.calculateReconstructionErrorObject <- function(x,
 
     # Updated to Non-Anomalous to match package convention
     plot_df[["Anomaly"]] <- factor(ifelse(plot_df[["Anomaly"]], "Anomalous", "Non-Anomalous"),
-                                   levels = c("Non-Anomalous", "Anomalous"))
+        levels = c("Non-Anomalous", "Anomalous")
+    )
 
     # Standardized color palettes for the package
     dataset_colors <- c("Query" = "#B565D8", "Reference" = "#5A9BD8")
     anomaly_colors <- c("Non-Anomalous" = "#9E9E9E", "Anomalous" = "#D2314C")
 
     # Subtitle with variance info
-    sub_title <- sprintf("Threshold: %.2f | PCs utilized explain %.1f%% of Reference variance",
-                         threshold, total_var)
+    sub_title <- sprintf(
+        "Threshold: %.2f | PCs utilized explain %.1f%% of Reference variance",
+        threshold, total_var
+    )
 
     if (plot_type == "violin") {
-
         p <- ggplot2::ggplot(plot_df, ggplot2::aes(x = .data[["Dataset"]], y = .data[["Error"]])) +
             ggplot2::geom_violin(ggplot2::aes(fill = .data[["Dataset"]]),
-                                 alpha = 0.4, color = "grey50", trim = TRUE, scale = "width") +
+                alpha = 0.4, color = "grey50", trim = TRUE, scale = "width"
+            ) +
             ggplot2::geom_jitter(ggplot2::aes(color = .data[["Anomaly"]]),
-                                 width = 0.25, size = 1.5, alpha = 0.7) +
+                width = 0.25, size = 1.5, alpha = 0.7
+            ) +
             ggplot2::geom_hline(yintercept = threshold, linetype = "dashed", color = "#D2314C", linewidth = 0.8) +
             ggplot2::scale_fill_manual(values = dataset_colors, guide = "none") +
             ggplot2::scale_color_manual(values = anomaly_colors, name = "Status") +
@@ -269,14 +271,14 @@ plot.calculateReconstructionErrorObject <- function(x,
                 legend.position = "right",
                 legend.title = ggplot2::element_text(face = "bold", size = 10)
             )
-
     } else if (plot_type == "boxplot") {
-
         p <- ggplot2::ggplot(plot_df, ggplot2::aes(x = .data[["Dataset"]], y = .data[["Error"]])) +
             ggplot2::geom_boxplot(ggplot2::aes(fill = .data[["Dataset"]]),
-                                  alpha = 0.5, outlier.shape = NA, width = 0.6) +
+                alpha = 0.5, outlier.shape = NA, width = 0.6
+            ) +
             ggplot2::geom_jitter(ggplot2::aes(color = .data[["Anomaly"]]),
-                                 width = 0.2, size = 1.5, alpha = 0.6) +
+                width = 0.2, size = 1.5, alpha = 0.6
+            ) +
             ggplot2::geom_hline(yintercept = threshold, linetype = "dashed", color = "#D2314C", linewidth = 0.8) +
             ggplot2::scale_fill_manual(values = dataset_colors, guide = "none") +
             ggplot2::scale_color_manual(values = anomaly_colors, name = "Status") +
@@ -295,9 +297,7 @@ plot.calculateReconstructionErrorObject <- function(x,
                 legend.position = "right",
                 legend.title = ggplot2::element_text(face = "bold", size = 10)
             )
-
     } else if (plot_type == "ridge") {
-
         p <- ggplot2::ggplot(plot_df, ggplot2::aes(x = .data[["Error"]], y = .data[["Dataset"]], fill = .data[["Dataset"]])) +
             ggridges::geom_density_ridges(alpha = 0.6, scale = 1.8, color = "grey30", linewidth = 0.5, rel_min_height = 0.01) +
             ggplot2::geom_vline(xintercept = threshold, linetype = "dashed", color = "#D2314C", linewidth = 0.8) +

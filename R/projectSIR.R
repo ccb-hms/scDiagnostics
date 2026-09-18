@@ -48,10 +48,12 @@
 #' data("query_data")
 #'
 #' # Project the query data onto SIR space of reference
-#' sir_output <- projectSIR(query_data = query_data,
-#'                          reference_data = reference_data,
-#'                          query_cell_type_col = "SingleR_annotation",
-#'                          ref_cell_type_col = "expert_annotation")
+#' sir_output <- projectSIR(
+#'     query_data = query_data,
+#'     reference_data = reference_data,
+#'     query_cell_type_col = "SingleR_annotation",
+#'     ref_cell_type_col = "expert_annotation"
+#' )
 #'
 # Function to project query data onto PCA space of reference data
 projectSIR <- function(query_data,
@@ -64,30 +66,39 @@ projectSIR <- function(query_data,
                        n_neighbor = 1,
                        assay_name = "logcounts",
                        max_cells_query = 5000,
-                       max_cells_ref = 5000){
-
+                       max_cells_ref = 5000) {
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Downsample query and reference data
-    query_data <- downsampleSCE(sce_object = query_data,
-                                cell_type_col = query_cell_type_col,
-                                max_cells = max_cells_query)
-    reference_data <- downsampleSCE(sce_object = reference_data,
-                                    cell_type_col = ref_cell_type_col,
-                                    max_cells = max_cells_ref)
+    query_data <- downsampleSCE(
+        sce_object = query_data,
+        cell_type_col = query_cell_type_col,
+        max_cells = max_cells_query
+    )
+    reference_data <- downsampleSCE(
+        sce_object = reference_data,
+        cell_type_col = ref_cell_type_col,
+        max_cells = max_cells_ref
+    )
 
     # Check if cumulative_variance_threshold is between 0 and 1
     if (!is.numeric(cumulative_variance_threshold) ||
@@ -101,22 +112,26 @@ projectSIR <- function(query_data,
     }
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = FALSE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = FALSE,
+        n_cell_types = NULL
+    )
 
     # Compute conditional means for each cell type of reference data
-    cond_means <- conditionalMeans(reference_data = reference_data,
-                                   ref_cell_type_col = ref_cell_type_col,
-                                   cell_types = cell_types,
-                                   multiple_cond_means = multiple_cond_means,
-                                   assay_name = assay_name,
-                                   cumulative_variance_threshold = cumulative_variance_threshold,
-                                   n_neighbor = n_neighbor)
+    cond_means <- conditionalMeans(
+        reference_data = reference_data,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        multiple_cond_means = multiple_cond_means,
+        assay_name = assay_name,
+        cumulative_variance_threshold = cumulative_variance_threshold,
+        n_neighbor = n_neighbor
+    )
 
     # Extract reference SVD components and rotation matrix
     SVD_genes <- rownames(reference_data)
@@ -135,33 +150,54 @@ projectSIR <- function(query_data,
         sum(svd_ref[["d"]]^2) * 100
 
     # Center and scale reference query data based on reference for projection
-    ref_mat <- scale(t(as.matrix(
-        assay(reference_data, assay_name)))[, SVD_genes, drop = FALSE],
-        center = centering_vec, scale = FALSE) %*% rotation_mat
-    query_mat <- scale(t(as.matrix(
-        assay(query_data, assay_name)))[, SVD_genes, drop = FALSE],
-        center = centering_vec, scale = FALSE) %*% rotation_mat
+    ref_mat <- scale(
+        t(as.matrix(
+            assay(reference_data, assay_name)
+        ))[, SVD_genes, drop = FALSE],
+        center = centering_vec, scale = FALSE
+    ) %*% rotation_mat
+    query_mat <- scale(
+        t(as.matrix(
+            assay(query_data, assay_name)
+        ))[, SVD_genes, drop = FALSE],
+        center = centering_vec, scale = FALSE
+    ) %*% rotation_mat
     sir_projections <- data.frame(
         rbind(ref_mat, query_mat),
-        dataset = c(rep("Reference", nrow(ref_mat)),
-                    rep("Query", nrow(query_mat))),
-        cell_type = c(ifelse(rep(is.null(ref_cell_type_col),
-                                 nrow(ref_mat)),
-                             rep(NA, nrow(ref_mat)),
-                             reference_data[[ref_cell_type_col]]),
-                      ifelse(rep(is.null(query_cell_type_col),
-                                 nrow(query_mat)),
-                             rep(NA, nrow(query_mat)),
-                             query_data[[query_cell_type_col]])))
+        dataset = c(
+            rep("Reference", nrow(ref_mat)),
+            rep("Query", nrow(query_mat))
+        ),
+        cell_type = c(
+            ifelse(rep(
+                is.null(ref_cell_type_col),
+                nrow(ref_mat)
+            ),
+            rep(NA, nrow(ref_mat)),
+            reference_data[[ref_cell_type_col]]
+            ),
+            ifelse(rep(
+                is.null(query_cell_type_col),
+                nrow(query_mat)
+            ),
+            rep(NA, nrow(query_mat)),
+            query_data[[query_cell_type_col]]
+            )
+        )
+    )
     colnames(sir_projections)[seq_len(ncol(ref_mat))] <-
-        paste0("SIR", seq_len(ncol(ref_mat)), " (",
-               sprintf("%.1f%%", percent_var[seq_len(ncol(ref_mat))]), ")")
+        paste0(
+            "SIR", seq_len(ncol(ref_mat)), " (",
+            sprintf("%.1f%%", percent_var[seq_len(ncol(ref_mat))]), ")"
+        )
 
     # Returning output as a data frame
-    return(list(cond_means = cond_means,
-                rotation_mat = rotation_mat,
-                sir_projections = sir_projections,
-                percent_var = percent_var))
+    return(list(
+        cond_means = cond_means,
+        rotation_mat = rotation_mat,
+        sir_projections = sir_projections,
+        percent_var = percent_var
+    ))
 }
 
 #' @title Compute Conditional Means for Cell Types
@@ -207,20 +243,18 @@ conditionalMeans <- function(reference_data,
                              assay_name = "logcounts",
                              cumulative_variance_threshold = 0.7,
                              n_neighbor = 1) {
-
     # Compute conditional means for each cell type of reference data
     if (multiple_cond_means) {
-
         # Matrix to store results
         cond_means <- matrix(nrow = 0, ncol = nrow(reference_data))
         colnames(cond_means) <- rownames(reference_data)
 
-        for(cell_type in cell_types){
-
+        for (cell_type in cell_types) {
             # Compute multiple conditional means per cell type
             assay_mat <- scale(t(as.matrix(assay(
                 reference_data[, which(reference_data[[ref_cell_type_col]] == cell_type)],
-                assay_name))), center = TRUE, scale = FALSE)
+                assay_name
+            ))), center = TRUE, scale = FALSE)
             assay_svd <- svd(assay_mat)
             cumulative_variance <- cumsum(assay_svd$d^2) / sum(assay_svd$d^2)
             n_components <- min(which(cumulative_variance >= cumulative_variance_threshold))
@@ -231,27 +265,32 @@ conditionalMeans <- function(reference_data,
                     projections,
                     BLUSPARAM = bluster::TwoStepParam(
                         second = bluster::NNGraphParam(
-                            k = n_neighbor))))
+                            k = n_neighbor
+                        )
+                    )
+                )
+            )
             cluster_means <- do.call(
-                rbind, lapply(unique(clusters),
-                              function(cl) colMeans(assay_mat[clusters == cl,, drop = FALSE])))
+                rbind, lapply(
+                    unique(clusters),
+                    function(cl) colMeans(assay_mat[clusters == cl, , drop = FALSE])
+                )
+            )
             rownames(cluster_means) <- rep(cell_type, nrow(cluster_means))
-            cond_means  <- rbind(cond_means, cluster_means)
+            cond_means <- rbind(cond_means, cluster_means)
         }
-
     } else {
-
         # Compute a single conditional mean per cell type
-        cond_means <- lapply(cell_types, function(x)
+        cond_means <- lapply(cell_types, function(x) {
             apply(as.matrix(assay(
                 reference_data[, which(reference_data[[ref_cell_type_col]] == x)],
-                assay_name)), 1, mean))
+                assay_name
+            )), 1, mean)
+        })
         cond_means <- do.call(rbind, cond_means)
         rownames(cond_means) <- cell_types
-
     }
 
     # Return conditional means
     return(cond_means)
 }
-

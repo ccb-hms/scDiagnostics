@@ -64,22 +64,26 @@
 #' data("query_data")
 #'
 #' # Query only analysis
-#' regress_res <- regressPC(query_data = query_data,
-#'                          query_cell_type_col = "expert_annotation",
-#'                          cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-#'                          pc_subset = 1:10)
+#' regress_res <- regressPC(
+#'     query_data = query_data,
+#'     query_cell_type_col = "expert_annotation",
+#'     cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+#'     pc_subset = 1:10
+#' )
 #' # Visualize results
 #' plot(regress_res, plot_type = "r_squared")
 #' plot(regress_res, plot_type = "variance_contribution")
 #' plot(regress_res, plot_type = "coefficient_heatmap")
 #'
 #' # Query + Reference analysis
-#' regress_res <- regressPC(query_data = query_data,
-#'                          reference_data = reference_data,
-#'                          query_cell_type_col = "SingleR_annotation",
-#'                          ref_cell_type_col = "expert_annotation",
-#'                          cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-#'                          pc_subset = 1:10)
+#' regress_res <- regressPC(
+#'     query_data = query_data,
+#'     reference_data = reference_data,
+#'     query_cell_type_col = "SingleR_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+#'     pc_subset = 1:10
+#' )
 #' # Visualize results
 #' plot(regress_res, plot_type = "r_squared")
 #' plot(regress_res, plot_type = "variance_contribution")
@@ -96,56 +100,67 @@ regressPC <- function(query_data,
                       query_batch_col = NULL,
                       cell_types = NULL,
                       pc_subset = 1:10,
-                      adjust_method = c("BH", "holm",
-                                        "hochberg", "hommel",
-                                        "bonferroni", "BY",
-                                        "fdr", "none"),
+                      adjust_method = c(
+                          "BH", "holm",
+                          "hochberg", "hommel",
+                          "bonferroni", "BY",
+                          "fdr", "none"
+                      ),
                       assay_name = "logcounts",
                       max_cells_ref = 5000,
                       max_cells_query = 5000) {
-
     # Match argument for adjustment method
     adjust_method <- match.arg(adjust_method)
 
     # Check standard input arguments
-    argumentCheck(reference_data = reference_data,
-                  query_data = query_data,
-                  ref_cell_type_col = ref_cell_type_col,
-                  query_cell_type_col = query_cell_type_col,
-                  pc_subset_query = pc_subset,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        reference_data = reference_data,
+        query_data = query_data,
+        ref_cell_type_col = ref_cell_type_col,
+        query_cell_type_col = query_cell_type_col,
+        pc_subset_query = pc_subset,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
     query_cols_to_convert <- c(query_cell_type_col)
     if (!is.null(query_batch_col)) {
         query_cols_to_convert <- c(query_cols_to_convert, query_batch_col)
     }
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cols_to_convert)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cols_to_convert
+    )
 
-    if(!is.null(reference_data)){
-        reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                    convert_cols = ref_cell_type_col)
+    if (!is.null(reference_data)) {
+        reference_data <- convertColumnsToCharacter(
+            sce_object = reference_data,
+            convert_cols = ref_cell_type_col
+        )
     }
 
     # Additional check for batch column
-    if(!is.null(query_batch_col)){
-        if(!query_batch_col %in% colnames(colData(query_data))){
-            stop("query_batch_col '", query_batch_col,
-                 "' not found in query_data colData.")
+    if (!is.null(query_batch_col)) {
+        if (!query_batch_col %in% colnames(colData(query_data))) {
+            stop(
+                "query_batch_col '", query_batch_col,
+                "' not found in query_data colData."
+            )
         }
     }
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = FALSE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = FALSE,
+        n_cell_types = NULL
+    )
 
     # Sort cell types for consistent reference category
     cell_types <- sort(cell_types)
@@ -157,35 +172,39 @@ regressPC <- function(query_data,
     dep_vars <- paste0("PC", pc_subset)
 
     # Case 1: Query data only
-    if(is.null(reference_data)){
-
+    if (is.null(reference_data)) {
         # Get query PCA variance for plotting
         query_pca_var <- attr(reducedDim(query_data, "PCA"), "percentVar")
 
         # Downsample reference and query data
-        query_data <- downsampleSCE(sce_object = query_data,
-                                    max_cells = max_cells_query,
-                                    cell_types = cell_types,
-                                    cell_type_col = query_cell_type_col)
+        query_data <- downsampleSCE(
+            sce_object = query_data,
+            max_cells = max_cells_query,
+            cell_types = cell_types,
+            cell_type_col = query_cell_type_col
+        )
 
         # Case 1a: No batch - PC ~ cell_type
-        if(is.null(query_batch_col)){
-
+        if (is.null(query_batch_col)) {
             regress_data <- data.frame(
                 reducedDim(query_data, "PCA")[, dep_vars],
                 cell_type = factor(query_data[[query_cell_type_col]],
-                                   levels = cell_types))
+                    levels = cell_types
+                )
+            )
 
             # Regress PCs against cell types
             summaries <- lapply(dep_vars, regressFastCustom,
-                                indep_var = "cell_type",
-                                df = regress_data)
+                indep_var = "cell_type",
+                df = regress_data
+            )
             names(summaries) <- dep_vars
 
             # Decompose R² by components
             r2_decomposed <- lapply(dep_vars, decomposeR2,
-                                    indep_var = "cell_type",
-                                    df = regress_data)
+                indep_var = "cell_type",
+                df = regress_data
+            )
             names(r2_decomposed) <- dep_vars
 
             # Calculate variance contributions
@@ -198,29 +217,32 @@ regressPC <- function(query_data,
             r2_cell_type <- vapply(r2_decomposed, function(x) x$cell_type, numeric(1))
             var_contr_cell_type <- var_expl * r2_cell_type
 
-            regress_res <- list(regression_summaries = summaries,
-                                r_squared = r_squared,
-                                r_squared_components = list(cell_type = r2_cell_type),
-                                var_contributions = var_contr,
-                                var_contributions_components = list(cell_type = var_contr_cell_type),
-                                total_variance_explained = total_var_expl,
-                                query_pca_var = query_pca_var,
-                                indep_var = "cell_type",
-                                reference_cell_type = reference_cell_type)
+            regress_res <- list(
+                regression_summaries = summaries,
+                r_squared = r_squared,
+                r_squared_components = list(cell_type = r2_cell_type),
+                var_contributions = var_contr,
+                var_contributions_components = list(cell_type = var_contr_cell_type),
+                total_variance_explained = total_var_expl,
+                query_pca_var = query_pca_var,
+                indep_var = "cell_type",
+                reference_cell_type = reference_cell_type
+            )
 
             regress_res <- adjustPValues(regress_res,
-                                         adjust_method = adjust_method,
-                                         indep_var = "cell_type")
+                adjust_method = adjust_method,
+                indep_var = "cell_type"
+            )
 
             # Case 1b: With batch - PC ~ cell_type * batch
         } else {
-
-
             regress_data <- data.frame(
                 reducedDim(query_data, "PCA")[, dep_vars],
                 cell_type = factor(query_data[[query_cell_type_col]],
-                                   levels = cell_types),
-                batch = factor(query_data[[query_batch_col]]))
+                    levels = cell_types
+                ),
+                batch = factor(query_data[[query_batch_col]])
+            )
 
             # Get reference batch (first alphabetically)
             batch_levels <- levels(regress_data[["batch"]])
@@ -228,14 +250,16 @@ regressPC <- function(query_data,
 
             # Regress PCs against cell_type * batch interaction
             summaries <- lapply(dep_vars, regressFastCustom,
-                                indep_var = "cell_type * batch",
-                                df = regress_data)
+                indep_var = "cell_type * batch",
+                df = regress_data
+            )
             names(summaries) <- dep_vars
 
             # Decompose R² by components
             r2_decomposed <- lapply(dep_vars, decomposeR2,
-                                    indep_var = "cell_type * batch",
-                                    df = regress_data)
+                indep_var = "cell_type * batch",
+                df = regress_data
+            )
             names(r2_decomposed) <- dep_vars
 
             # Calculate variance contributions
@@ -253,61 +277,72 @@ regressPC <- function(query_data,
             var_contr_batch <- var_expl * r2_batch
             var_contr_interaction <- var_expl * r2_interaction
 
-            regress_res <- list(regression_summaries = summaries,
-                                r_squared = r_squared,
-                                r_squared_components = list(cell_type = r2_cell_type,
-                                                            batch = r2_batch,
-                                                            interaction = r2_interaction),
-                                var_contributions = var_contr,
-                                var_contributions_components = list(cell_type = var_contr_cell_type,
-                                                                    batch = var_contr_batch,
-                                                                    interaction = var_contr_interaction),
-                                total_variance_explained = total_var_expl,
-                                query_pca_var = query_pca_var,
-                                indep_var = "cell_type_batch_interaction",
-                                reference_cell_type = reference_cell_type,
-                                reference_batch = reference_batch)
+            regress_res <- list(
+                regression_summaries = summaries,
+                r_squared = r_squared,
+                r_squared_components = list(
+                    cell_type = r2_cell_type,
+                    batch = r2_batch,
+                    interaction = r2_interaction
+                ),
+                var_contributions = var_contr,
+                var_contributions_components = list(
+                    cell_type = var_contr_cell_type,
+                    batch = var_contr_batch,
+                    interaction = var_contr_interaction
+                ),
+                total_variance_explained = total_var_expl,
+                query_pca_var = query_pca_var,
+                indep_var = "cell_type_batch_interaction",
+                reference_cell_type = reference_cell_type,
+                reference_batch = reference_batch
+            )
 
             regress_res <- adjustPValues(regress_res,
-                                         adjust_method = adjust_method,
-                                         indep_var = "cell_type_batch_interaction")
+                adjust_method = adjust_method,
+                indep_var = "cell_type_batch_interaction"
+            )
         }
 
         # Case 2: Query + Reference
     } else {
-
         # Get reference PCA variance for plotting
         reference_pca_var <- attr(reducedDim(reference_data, "PCA"), "percentVar")
 
         # Get the projected PCA data
-        pca_output <- projectPCA(reference_data = reference_data,
-                                 query_data = query_data,
-                                 ref_cell_type_col = ref_cell_type_col,
-                                 query_cell_type_col = query_cell_type_col,
-                                 cell_types = cell_types,
-                                 pc_subset = pc_subset,
-                                 assay_name = assay_name,
-                                 max_cells_ref = max_cells_ref,
-                                 max_cells_query = max_cells_query)
+        pca_output <- projectPCA(
+            reference_data = reference_data,
+            query_data = query_data,
+            ref_cell_type_col = ref_cell_type_col,
+            query_cell_type_col = query_cell_type_col,
+            cell_types = cell_types,
+            pc_subset = pc_subset,
+            assay_name = assay_name,
+            max_cells_ref = max_cells_ref,
+            max_cells_query = max_cells_query
+        )
 
         # Case 2a: No batch - PC ~ cell_type * dataset
-        if(is.null(query_batch_col)){
-
+        if (is.null(query_batch_col)) {
             pca_output[["dataset"]] <- factor(pca_output[["dataset"]],
-                                              levels = c("Reference", "Query"))
+                levels = c("Reference", "Query")
+            )
             pca_output[["cell_type"]] <- factor(pca_output[["cell_type"]],
-                                                levels = cell_types)
+                levels = cell_types
+            )
 
             # Unified interaction model: PC ~ cell_type * dataset
             summaries <- lapply(dep_vars, regressFastCustom,
-                                indep_var = "cell_type * dataset",
-                                df = pca_output)
+                indep_var = "cell_type * dataset",
+                df = pca_output
+            )
             names(summaries) <- dep_vars
 
             # Decompose R² by components
             r2_decomposed <- lapply(dep_vars, decomposeR2,
-                                    indep_var = "cell_type * dataset",
-                                    df = pca_output)
+                indep_var = "cell_type * dataset",
+                df = pca_output
+            )
             names(r2_decomposed) <- dep_vars
 
             # Calculate R-squared and variance contributions
@@ -325,27 +360,33 @@ regressPC <- function(query_data,
             var_contr_dataset <- var_expl * r2_dataset
             var_contr_interaction <- var_expl * r2_interaction
 
-            regress_res <- list(regression_summaries = summaries,
-                                r_squared = r_squared,
-                                r_squared_components = list(cell_type = r2_cell_type,
-                                                            dataset = r2_dataset,
-                                                            interaction = r2_interaction),
-                                var_contributions = var_contr,
-                                var_contributions_components = list(cell_type = var_contr_cell_type,
-                                                                    dataset = var_contr_dataset,
-                                                                    interaction = var_contr_interaction),
-                                total_variance_explained = total_var_expl,
-                                reference_pca_var = reference_pca_var,
-                                indep_var = "cell_type_dataset_interaction",
-                                reference_cell_type = reference_cell_type)
+            regress_res <- list(
+                regression_summaries = summaries,
+                r_squared = r_squared,
+                r_squared_components = list(
+                    cell_type = r2_cell_type,
+                    dataset = r2_dataset,
+                    interaction = r2_interaction
+                ),
+                var_contributions = var_contr,
+                var_contributions_components = list(
+                    cell_type = var_contr_cell_type,
+                    dataset = var_contr_dataset,
+                    interaction = var_contr_interaction
+                ),
+                total_variance_explained = total_var_expl,
+                reference_pca_var = reference_pca_var,
+                indep_var = "cell_type_dataset_interaction",
+                reference_cell_type = reference_cell_type
+            )
 
             regress_res <- adjustPValues(regress_res,
-                                         adjust_method = adjust_method,
-                                         indep_var = "cell_type_dataset_interaction")
+                adjust_method = adjust_method,
+                indep_var = "cell_type_dataset_interaction"
+            )
 
             # Case 2b: With batch - PC ~ cell_type * batch (where batch includes Reference)
         } else {
-
             # Create batch labels: "Reference" for reference, "Query_BatchName" for query
             batch_labels <- rep(NA, nrow(pca_output))
             ref_indices <- pca_output[["dataset"]] == "Reference"
@@ -364,33 +405,41 @@ regressPC <- function(query_data,
             # Add batch information to pca_output
             pca_output[["batch"]] <- factor(
                 batch_labels,
-                levels = c("Reference",
-                           sort(unique(batch_labels[query_indices]))))
+                levels = c(
+                    "Reference",
+                    sort(unique(batch_labels[query_indices]))
+                )
+            )
             pca_output[["cell_type"]] <- factor(pca_output[["cell_type"]],
-                                                levels = cell_types)
+                levels = cell_types
+            )
 
             # Remove any rows with missing batch info
-            pca_output <- pca_output[!is.na(pca_output[["batch"]]),]
+            pca_output <- pca_output[!is.na(pca_output[["batch"]]), ]
 
             # Check if this reduces to Case 2a (only one query batch)
             unique_batches <- unique(pca_output[["batch"]])
-            if(length(unique_batches) == 2 && "Reference" %in% unique_batches){
+            if (length(unique_batches) == 2 && "Reference" %in% unique_batches) {
                 # Fallback to dataset interaction analysis
                 pca_output[["dataset"]] <- ifelse(pca_output[["batch"]] == "Reference",
-                                                  "Reference", "Query")
+                    "Reference", "Query"
+                )
                 pca_output[["dataset"]] <- factor(pca_output[["dataset"]],
-                                                  levels = c("Reference", "Query"))
+                    levels = c("Reference", "Query")
+                )
 
                 # Unified interaction model: PC ~ cell_type * dataset
                 summaries <- lapply(dep_vars, regressFastCustom,
-                                    indep_var = "cell_type * dataset",
-                                    df = pca_output)
+                    indep_var = "cell_type * dataset",
+                    df = pca_output
+                )
                 names(summaries) <- dep_vars
 
                 # Decompose R² by components
                 r2_decomposed <- lapply(dep_vars, decomposeR2,
-                                        indep_var = "cell_type * dataset",
-                                        df = pca_output)
+                    indep_var = "cell_type * dataset",
+                    df = pca_output
+                )
                 names(r2_decomposed) <- dep_vars
 
                 # Calculate R-squared and variance contributions
@@ -408,34 +457,43 @@ regressPC <- function(query_data,
                 var_contr_dataset <- var_expl * r2_dataset
                 var_contr_interaction <- var_expl * r2_interaction
 
-                regress_res <- list(regression_summaries = summaries,
-                                    r_squared = r_squared,
-                                    r_squared_components = list(cell_type = r2_cell_type,
-                                                                dataset = r2_dataset,
-                                                                interaction = r2_interaction),
-                                    var_contributions = var_contr,
-                                    var_contributions_components = list(cell_type = var_contr_cell_type,
-                                                                        dataset = var_contr_dataset,
-                                                                        interaction = var_contr_interaction),
-                                    total_variance_explained = total_var_expl,
-                                    reference_pca_var = reference_pca_var,
-                                    indep_var = "cell_type_dataset_interaction",
-                                    reference_cell_type = reference_cell_type)
+                regress_res <- list(
+                    regression_summaries = summaries,
+                    r_squared = r_squared,
+                    r_squared_components = list(
+                        cell_type = r2_cell_type,
+                        dataset = r2_dataset,
+                        interaction = r2_interaction
+                    ),
+                    var_contributions = var_contr,
+                    var_contributions_components = list(
+                        cell_type = var_contr_cell_type,
+                        dataset = var_contr_dataset,
+                        interaction = var_contr_interaction
+                    ),
+                    total_variance_explained = total_var_expl,
+                    reference_pca_var = reference_pca_var,
+                    indep_var = "cell_type_dataset_interaction",
+                    reference_cell_type = reference_cell_type
+                )
 
                 regress_res <- adjustPValues(regress_res,
-                                             adjust_method = adjust_method,
-                                             indep_var = "cell_type_dataset_interaction")
+                    adjust_method = adjust_method,
+                    indep_var = "cell_type_dataset_interaction"
+                )
             } else {
                 # True multi-batch case: PC ~ cell_type * batch
                 summaries <- lapply(dep_vars, regressFastCustom,
-                                    indep_var = "cell_type * batch",
-                                    df = pca_output)
+                    indep_var = "cell_type * batch",
+                    df = pca_output
+                )
                 names(summaries) <- dep_vars
 
                 # Decompose R² by components
                 r2_decomposed <- lapply(dep_vars, decomposeR2,
-                                        indep_var = "cell_type * batch",
-                                        df = pca_output)
+                    indep_var = "cell_type * batch",
+                    df = pca_output
+                )
                 names(r2_decomposed) <- dep_vars
 
                 # Calculate R-squared and variance contributions
@@ -453,23 +511,30 @@ regressPC <- function(query_data,
                 var_contr_batch <- var_expl * r2_batch
                 var_contr_interaction <- var_expl * r2_interaction
 
-                regress_res <- list(regression_summaries = summaries,
-                                    r_squared = r_squared,
-                                    r_squared_components = list(cell_type = r2_cell_type,
-                                                                batch = r2_batch,
-                                                                interaction = r2_interaction),
-                                    var_contributions = var_contr,
-                                    var_contributions_components = list(cell_type = var_contr_cell_type,
-                                                                        batch = var_contr_batch,
-                                                                        interaction = var_contr_interaction),
-                                    total_variance_explained = total_var_expl,
-                                    reference_pca_var = reference_pca_var,
-                                    indep_var = "cell_type_batch_interaction",
-                                    reference_cell_type = reference_cell_type)
+                regress_res <- list(
+                    regression_summaries = summaries,
+                    r_squared = r_squared,
+                    r_squared_components = list(
+                        cell_type = r2_cell_type,
+                        batch = r2_batch,
+                        interaction = r2_interaction
+                    ),
+                    var_contributions = var_contr,
+                    var_contributions_components = list(
+                        cell_type = var_contr_cell_type,
+                        batch = var_contr_batch,
+                        interaction = var_contr_interaction
+                    ),
+                    total_variance_explained = total_var_expl,
+                    reference_pca_var = reference_pca_var,
+                    indep_var = "cell_type_batch_interaction",
+                    reference_cell_type = reference_cell_type
+                )
 
                 regress_res <- adjustPValues(regress_res,
-                                             adjust_method = adjust_method,
-                                             indep_var = "cell_type_batch_interaction")
+                    adjust_method = adjust_method,
+                    indep_var = "cell_type_batch_interaction"
+                )
             }
         }
     }
@@ -520,14 +585,13 @@ regressPC <- function(query_data,
 #'
 # Perform linear regression for each principal component
 regressFastCustom <- function(pc, indep_var, df) {
-
     # Extract the response variable
     y <- df[[pc]]
     n <- length(y)
 
     # Create design matrix based on independent variable specification
     if (indep_var == "cell_type") {
-        X <- model.matrix(~ cell_type, data = df)
+        X <- model.matrix(~cell_type, data = df)
     } else if (indep_var == "cell_type * batch") {
         X <- model.matrix(~ cell_type * batch, data = df)
     } else if (indep_var == "cell_type * dataset") {
@@ -572,7 +636,7 @@ regressFastCustom <- function(pc, indep_var, df) {
     r_squared <- ss_regression / ss_total
 
     # Degrees of freedom
-    p <- ncol(X)  # number of parameters including intercept
+    p <- ncol(X) # number of parameters including intercept
     df_residual <- n - p
 
     # Residual standard error
@@ -661,7 +725,6 @@ decomposeR2 <- function(pc, indep_var, df) {
         ss_explained <- sum((y_pred - y_mean)^2)
 
         return(list(cell_type = ss_explained / ss_total))
-
     } else if (indep_var %in% c("cell_type * batch", "cell_type * dataset")) {
         second_var <- if (indep_var == "cell_type * batch") "batch" else "dataset"
 
@@ -682,15 +745,17 @@ decomposeR2 <- function(pc, indep_var, df) {
         interaction_means <- tapply(y, list(df$cell_type, df[[second_var]]), mean)
 
         # Predict using full interaction model
-        y_pred_full <- interaction_means[cbind(as.character(df$cell_type),
-                                               as.character(df[[second_var]]))]
+        y_pred_full <- interaction_means[cbind(
+            as.character(df$cell_type),
+            as.character(df[[second_var]])
+        )]
 
         ss_full <- sum((y_pred_full - y_mean)^2)
         ss_interaction <- ss_full - ss_cell_type - ss_second_var
 
         result <- list(
             cell_type = ss_cell_type / ss_total,
-            interaction = max(0, ss_interaction / ss_total)  # Ensure non-negative due to numerical precision
+            interaction = max(0, ss_interaction / ss_total) # Ensure non-negative due to numerical precision
         )
         result[[second_var]] <- ss_second_var / ss_total
 
@@ -732,19 +797,22 @@ decomposeR2 <- function(pc, indep_var, df) {
 #'
 # Function to compute adjusted p-values for PC regression
 adjustPValues <- function(regress_res,
-                          adjust_method = c("BH", "holm",
-                                            "hochberg", "hommel",
-                                            "bonferroni", "BY",
-                                            "fdr", "none"),
-                          indep_var = c("cell_type", "cell_type_dataset_interaction",
-                                        "cell_type_batch_interaction")){
-
+                          adjust_method = c(
+                              "BH", "holm",
+                              "hochberg", "hommel",
+                              "bonferroni", "BY",
+                              "fdr", "none"
+                          ),
+                          indep_var = c(
+                              "cell_type", "cell_type_dataset_interaction",
+                              "cell_type_batch_interaction"
+                          )) {
     # Match arguments
     adjust_method <- match.arg(adjust_method)
     indep_var <- match.arg(indep_var)
 
     # All interaction models have the same structure
-    if(indep_var %in% c("cell_type", "cell_type_dataset_interaction", "cell_type_batch_interaction")){
+    if (indep_var %in% c("cell_type", "cell_type_dataset_interaction", "cell_type_batch_interaction")) {
         # Add adjusted p-values for unified model structure
         for (pc in names(regress_res[["regression_summaries"]])) {
             coeffs <- regress_res[["regression_summaries"]][[pc]][["coefficients"]]

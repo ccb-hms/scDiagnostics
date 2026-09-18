@@ -33,7 +33,6 @@ plot.comparePCAObject <- function(x,
                                   significance_threshold = 0.05,
                                   color_limits = NULL,
                                   ...) {
-
     # Extract similarity matrix from the object
     if (is.list(x) && "similarity_matrix" %in% names(x)) {
         similarity_matrix <- x[["similarity_matrix"]]
@@ -48,12 +47,18 @@ plot.comparePCAObject <- function(x,
 
     # Convert the matrix to a data frame
     similarity_df <- data.frame(
-        Ref = factor(rep(rownames(similarity_matrix),
-                         each = ncol(similarity_matrix)),
-                     levels = rev(rownames(similarity_matrix))),
-        Query = factor(rep(colnames(similarity_matrix),
-                           times = nrow(similarity_matrix)),
-                       levels = colnames(similarity_matrix)),
+        Ref = factor(
+            rep(rownames(similarity_matrix),
+                each = ncol(similarity_matrix)
+            ),
+            levels = rev(rownames(similarity_matrix))
+        ),
+        Query = factor(
+            rep(colnames(similarity_matrix),
+                times = nrow(similarity_matrix)
+            ),
+            levels = colnames(similarity_matrix)
+        ),
         Similarity = as.vector(similarity_matrix)
     )
 
@@ -91,16 +96,19 @@ plot.comparePCAObject <- function(x,
 
     # Create appropriate title based on metric
     title_text <- switch(metric_name,
-                         "cosine" = "Heatmap of Cosine Similarities Between PCs",
-                         "correlation" = "Heatmap of Correlations Between PCs",
-                         "Heatmap of Similarities Between PCs")
+        "cosine" = "Heatmap of Cosine Similarities Between PCs",
+        "correlation" = "Heatmap of Correlations Between PCs",
+        "Heatmap of Similarities Between PCs"
+    )
 
     # Create the base heatmap
     pc_plot <- ggplot2::ggplot(
         similarity_df,
-        ggplot2::aes(x = .data[["Query"]],
-                     y = .data[["Ref"]],
-                     fill = .data[["Similarity"]])
+        ggplot2::aes(
+            x = .data[["Query"]],
+            y = .data[["Ref"]],
+            fill = .data[["Similarity"]]
+        )
     ) +
         ggplot2::geom_tile(color = "white", linewidth = 0.5) +
         ggplot2::scale_fill_gradient2(
@@ -110,18 +118,24 @@ plot.comparePCAObject <- function(x,
             midpoint = 0,
             limit = color_limits,
             space = "Lab",
-            name = paste(stringr::str_to_title(metric_name),
-                         "\nSimilarity")
+            name = paste(
+                stringr::str_to_title(metric_name),
+                "\nSimilarity"
+            )
         ) +
         ggplot2::theme_minimal() +
         ggplot2::theme(
-            axis.text.x = ggplot2::element_text(angle = 45,
-                                                vjust = 1,
-                                                size = 10,
-                                                hjust = 1),
+            axis.text.x = ggplot2::element_text(
+                angle = 45,
+                vjust = 1,
+                size = 10,
+                hjust = 1
+            ),
             axis.text.y = ggplot2::element_text(size = 10),
-            plot.title = ggplot2::element_text(hjust = 0.5,
-                                               size = 14),
+            plot.title = ggplot2::element_text(
+                hjust = 0.5,
+                size = 14
+            ),
             legend.title = ggplot2::element_text(size = 10),
             panel.grid = ggplot2::element_blank()
         ) +
@@ -137,8 +151,10 @@ plot.comparePCAObject <- function(x,
             # Use the pre-created Label column and add color mapping
             pc_plot <- pc_plot +
                 ggplot2::geom_text(
-                    ggplot2::aes(label = .data[["Label"]],
-                                 color = .data[["Significant"]]),
+                    ggplot2::aes(
+                        label = .data[["Label"]],
+                        color = .data[["Significant"]]
+                    ),
                     size = 3, fontface = "bold"
                 ) +
                 ggplot2::scale_color_manual(
@@ -159,16 +175,20 @@ plot.comparePCAObject <- function(x,
     if (!is.null(p_values) && show_significance && show_values) {
         pc_plot <- pc_plot +
             ggplot2::labs(
-                caption = paste0("* indicates p < ",
-                                 significance_threshold,
-                                 " (based on ",
-                                 x[["n_permutations"]],
-                                 " permutations)")
+                caption = paste0(
+                    "* indicates p < ",
+                    significance_threshold,
+                    " (based on ",
+                    x[["n_permutations"]],
+                    " permutations)"
+                )
             ) +
             ggplot2::theme(
-                plot.caption = ggplot2::element_text(hjust = 0,
-                                                     size = 8,
-                                                     color = "gray50")
+                plot.caption = ggplot2::element_text(
+                    hjust = 0,
+                    size = 8,
+                    color = "gray50"
+                )
             )
     }
 

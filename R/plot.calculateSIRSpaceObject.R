@@ -44,7 +44,6 @@ plot.calculateSIRSpaceObject <- function(x,
                                          max_cells_ref = NULL,
                                          max_cells_query = NULL,
                                          ...) {
-
     # Match arguments
     plot_type <- match.arg(plot_type)
     lower_facet <- match.arg(lower_facet)
@@ -84,7 +83,6 @@ plot.calculateSIRSpaceObject <- function(x,
                             upper_facet,
                             max_cells_ref,
                             max_cells_query) {
-
         # Get SIR projections data
         sir_projections <- na.omit(x[["sir_projections"]])
 
@@ -98,7 +96,7 @@ plot.calculateSIRSpaceObject <- function(x,
             }
             # Filter projections to include only specified cell types
             sir_projections <- sir_projections[sir_projections[["cell_type"]] %in%
-                                                   cell_types, ]
+                cell_types, ]
         }
 
         # Separate reference and query data
@@ -106,22 +104,24 @@ plot.calculateSIRSpaceObject <- function(x,
         query_data <- sir_projections[sir_projections[["dataset"]] == "Query", ]
 
         # Downsample reference data if max_cells_ref is specified
-        if(!is.null(max_cells_ref)){
+        if (!is.null(max_cells_ref)) {
             # Input validation for max_cells_ref
             if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 || max_cells_ref != as.integer(max_cells_ref)) {
                 stop("'max_cells_ref' must be a positive integer.")
             }
 
-            if(nrow(ref_data) > max_cells_ref){
+            if (nrow(ref_data) > max_cells_ref) {
                 # Stratified sampling by cell type
                 ref_data_list <- list()
-                for(ct in cell_types){
+                for (ct in cell_types) {
                     ct_data <- ref_data[ref_data[["cell_type"]] == ct, ]
-                    if(nrow(ct_data) > 0){
+                    if (nrow(ct_data) > 0) {
                         # Calculate proportional allocation
-                        n_cells_ct <- min(nrow(ct_data),
-                                          max(1, round(max_cells_ref * nrow(ct_data) / nrow(ref_data))))
-                        if(nrow(ct_data) > n_cells_ct){
+                        n_cells_ct <- min(
+                            nrow(ct_data),
+                            max(1, round(max_cells_ref * nrow(ct_data) / nrow(ref_data)))
+                        )
+                        if (nrow(ct_data) > n_cells_ct) {
                             sampled_indices <- sample(nrow(ct_data), n_cells_ct)
                             ct_data <- ct_data[sampled_indices, ]
                         }
@@ -134,22 +134,24 @@ plot.calculateSIRSpaceObject <- function(x,
         }
 
         # Downsample query data if max_cells_query is specified
-        if(!is.null(max_cells_query)){
+        if (!is.null(max_cells_query)) {
             # Input validation for max_cells_query
             if (!is.numeric(max_cells_query) || max_cells_query <= 0 || max_cells_query != as.integer(max_cells_query)) {
                 stop("'max_cells_query' must be a positive integer.")
             }
 
-            if(nrow(query_data) > max_cells_query){
+            if (nrow(query_data) > max_cells_query) {
                 # Stratified sampling by cell type
                 query_data_list <- list()
-                for(ct in cell_types){
+                for (ct in cell_types) {
                     ct_data <- query_data[query_data[["cell_type"]] == ct, ]
-                    if(nrow(ct_data) > 0){
+                    if (nrow(ct_data) > 0) {
                         # Calculate proportional allocation
-                        n_cells_ct <- min(nrow(ct_data),
-                                          max(1, round(max_cells_query * nrow(ct_data) / nrow(query_data))))
-                        if(nrow(ct_data) > n_cells_ct){
+                        n_cells_ct <- min(
+                            nrow(ct_data),
+                            max(1, round(max_cells_query * nrow(ct_data) / nrow(query_data)))
+                        )
+                        if (nrow(ct_data) > n_cells_ct) {
                             sampled_indices <- sample(nrow(ct_data), n_cells_ct)
                             ct_data <- ct_data[sampled_indices, ]
                         }
@@ -167,11 +169,14 @@ plot.calculateSIRSpaceObject <- function(x,
         # Create SIR column names with variance explained
         plot_names <- paste0(
             "SIR", sir_subset, " (",
-            sprintf("%.1f%%", x[["percent_var"]][sir_subset]), ")")
+            sprintf("%.1f%%", x[["percent_var"]][sir_subset]), ")"
+        )
 
         # Create a new data frame with selected SIR components
-        sir_df <- data.frame(matrix(0, nrow = nrow(sir_projections),
-                                    ncol = length(sir_subset)))
+        sir_df <- data.frame(matrix(0,
+            nrow = nrow(sir_projections),
+            ncol = length(sir_subset)
+        ))
         colnames(sir_df) <- plot_names
 
         for (i in 1:length(sir_subset)) {
@@ -180,16 +185,22 @@ plot.calculateSIRSpaceObject <- function(x,
 
         # Create a cell type dataset column for coloring
         cell_type_dataset <- paste(sir_projections[["dataset"]],
-                                   sir_projections[["cell_type"]], sep = " ")
+            sir_projections[["cell_type"]],
+            sep = " "
+        )
 
         # Define the order of cell type and dataset combinations
         order_combinations <- paste(
-            rep(c("Reference", "Query"),
-                length(cell_types)),
-            rep(sort(cell_types), each = 2))
+            rep(
+                c("Reference", "Query"),
+                length(cell_types)
+            ),
+            rep(sort(cell_types), each = 2)
+        )
 
         cell_type_dataset <- factor(cell_type_dataset,
-                                    levels = order_combinations)
+            levels = order_combinations
+        )
 
         # Generate colors for cell types and datasets
         cell_type_colors <- generateColors(order_combinations, paired = TRUE)
@@ -198,12 +209,18 @@ plot.calculateSIRSpaceObject <- function(x,
         sir_df[["cell_type_dataset"]] <- cell_type_dataset
 
         # Create a simple plot to extract the legend using GGally::grab_legend
-        legend_plot <- ggplot2::ggplot(sir_df,
-                                       ggplot2::aes(x = sir_df[, 1],
-                                                    y = sir_df[, 2])) +
+        legend_plot <- ggplot2::ggplot(
+            sir_df,
+            ggplot2::aes(
+                x = sir_df[, 1],
+                y = sir_df[, 2]
+            )
+        ) +
             ggplot2::geom_point(ggplot2::aes(color = .data[["cell_type_dataset"]])) +
-            ggplot2::scale_color_manual(values = cell_type_colors,
-                                        name = "Cell Type") +
+            ggplot2::scale_color_manual(
+                values = cell_type_colors,
+                name = "Cell Type"
+            ) +
             ggplot2::theme(
                 legend.position = "right",
                 legend.box = "vertical",
@@ -214,22 +231,24 @@ plot.calculateSIRSpaceObject <- function(x,
 
         # Scatterplot facet function
         .scatterFunc <- function(data, mapping, ...) {
-
             ggplot2::ggplot(data = data, mapping = mapping) +
-                ggplot2::geom_point(alpha = 0.5, size = 1,
-                                    ggplot2::aes(color = cell_type_dataset)) +
+                ggplot2::geom_point(
+                    alpha = 0.5, size = 1,
+                    ggplot2::aes(color = cell_type_dataset)
+                ) +
                 ggplot2::scale_color_manual(values = cell_type_colors) +
                 ggplot2::theme_minimal() +
                 ggplot2::theme(
                     panel.border = ggplot2::element_rect(
                         color = "black",
                         fill = NA,
-                        linewidth = 0.5))
+                        linewidth = 0.5
+                    )
+                )
         }
 
         # Contour facet function
         .smoothContourFunc <- function(data, mapping, ...) {
-
             x_name <- rlang::as_name(mapping[["x"]])
             y_name <- rlang::as_name(mapping[["y"]])
 
@@ -258,7 +277,8 @@ plot.calculateSIRSpaceObject <- function(x,
                     adjust = adjust_factor,
                     bins = 5,
                     color = cell_type_colors[which(
-                        levels(data[["cell_type_dataset"]]) == ct)],
+                        levels(data[["cell_type_dataset"]]) == ct
+                    )],
                     linewidth = 0.5,
                     na.rm = TRUE
                 )
@@ -268,7 +288,8 @@ plot.calculateSIRSpaceObject <- function(x,
             p + ggplot2::theme_minimal() +
                 ggplot2::theme(
                     panel.border = ggplot2::element_rect(
-                        color = "black", fill = NA, linewidth = 0.5),
+                        color = "black", fill = NA, linewidth = 0.5
+                    ),
                     legend.position = "none",
                     axis.text = ggplot2::element_blank(),
                     axis.ticks = ggplot2::element_blank(),
@@ -278,10 +299,11 @@ plot.calculateSIRSpaceObject <- function(x,
 
         # Ellipse facet function
         .robustEllipseFunc <- function(data, mapping, ...) {
-
             # Function to calculate robust ellipses through bootstrapping
             createEllipse <- function(d) {
-                if (nrow(d) < 10) return(NULL)
+                if (nrow(d) < 10) {
+                    return(NULL)
+                }
 
                 x_var <- rlang::as_name(mapping[["x"]])
                 y_var <- rlang::as_name(mapping[["y"]])
@@ -304,7 +326,7 @@ plot.calculateSIRSpaceObject <- function(x,
                 b <- sqrt(ev[["values"]][2]) * 2.45
 
                 # Create ellipse coordinates
-                angle <- atan2(ev[["vectors"]][2,1], ev[["vectors"]][1,1])
+                angle <- atan2(ev[["vectors"]][2, 1], ev[["vectors"]][1, 1])
                 ellipse_x <- center[1] + a * cos(theta) * cos(angle) -
                     b * sin(theta) * sin(angle)
                 ellipse_y <- center[2] + a * cos(theta) * sin(angle) +
@@ -317,7 +339,7 @@ plot.calculateSIRSpaceObject <- function(x,
 
             # Split by cell type and create robust ellipses
             for (ct in unique(data[["cell_type_dataset"]])) {
-                subset_data <- data[data[["cell_type_dataset"]] == ct,]
+                subset_data <- data[data[["cell_type_dataset"]] == ct, ]
                 ellipse_data <- createEllipse(subset_data)
 
                 if (!is.null(ellipse_data)) {
@@ -325,7 +347,8 @@ plot.calculateSIRSpaceObject <- function(x,
                         data = ellipse_data,
                         ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
                         color = cell_type_colors[
-                            which(levels(data[["cell_type_dataset"]]) == ct)],
+                            which(levels(data[["cell_type_dataset"]]) == ct)
+                        ],
                         linewidth = 0.7
                     )
                 }
@@ -335,7 +358,8 @@ plot.calculateSIRSpaceObject <- function(x,
                 ggplot2::theme(
                     panel.border = ggplot2::element_rect(
                         color = "black", fill = NA,
-                        linewidth = 0.5),
+                        linewidth = 0.5
+                    ),
                     legend.position = "none",
                     axis.text = ggplot2::element_blank(),
                     axis.ticks = ggplot2::element_blank(),
@@ -345,13 +369,13 @@ plot.calculateSIRSpaceObject <- function(x,
 
         # Blank facet function
         .blankFunc <- function(data, mapping, ...) {
-
             ggplot2::ggplot() +
                 ggplot2::theme_minimal() +
                 ggplot2::theme(
                     panel.border = ggplot2::element_rect(
                         color = "black", fill = NA,
-                        linewidth = 0.5),
+                        linewidth = 0.5
+                    ),
                     legend.position = "none",
                     axis.text = ggplot2::element_blank(),
                     axis.ticks = ggplot2::element_blank(),
@@ -362,7 +386,6 @@ plot.calculateSIRSpaceObject <- function(x,
 
         # Ridge diagonal facet
         .ridgeFunc <- function(data, mapping, ...) {
-
             # Get current mapping info
             x_var_name <- rlang::as_name(mapping[["x"]])
 
@@ -374,10 +397,14 @@ plot.calculateSIRSpaceObject <- function(x,
 
             # Create ridge plot with ggridges
             suppressMessages({
-                p <- ggplot2::ggplot(plot_data,
-                                     ggplot2::aes(x = .data[["value"]],
-                                                  y = .data[["group"]],
-                                                  fill = .data[["group"]])) +
+                p <- ggplot2::ggplot(
+                    plot_data,
+                    ggplot2::aes(
+                        x = .data[["value"]],
+                        y = .data[["group"]],
+                        fill = .data[["group"]]
+                    )
+                ) +
                     ggridges::geom_density_ridges(
                         alpha = 0.7,
                         scale = 2,
@@ -386,12 +413,15 @@ plot.calculateSIRSpaceObject <- function(x,
                     ) +
                     ggplot2::scale_fill_manual(values = cell_type_colors) +
                     ggplot2::scale_y_discrete(
-                        limits = rev(levels(cell_type_dataset))) +
+                        limits = rev(levels(cell_type_dataset))
+                    ) +
                     ggplot2::theme_minimal() +
                     ggplot2::theme(
-                        panel.border = ggplot2::element_rect(color = "black",
-                                                             fill = NA,
-                                                             linewidth = 0.5),
+                        panel.border = ggplot2::element_rect(
+                            color = "black",
+                            fill = NA,
+                            linewidth = 0.5
+                        ),
                         axis.title = ggplot2::element_blank(),
                         axis.text.y = ggplot2::element_blank(),
                         axis.ticks.y = ggplot2::element_blank(),
@@ -404,21 +434,26 @@ plot.calculateSIRSpaceObject <- function(x,
 
         # Density diagonal facet
         .densityFunc <- function(data, mapping, ...) {
-
             # Get current mapping info
             x_var_name <- rlang::as_name(mapping[["x"]])
 
             ggplot2::ggplot(data = data, mapping = mapping) +
-                ggplot2::geom_density(ggplot2::aes(fill = cell_type_dataset,
-                                                   color = cell_type_dataset),
-                                      alpha = 0.5) +
+                ggplot2::geom_density(
+                    ggplot2::aes(
+                        fill = cell_type_dataset,
+                        color = cell_type_dataset
+                    ),
+                    alpha = 0.5
+                ) +
                 ggplot2::scale_fill_manual(values = cell_type_colors) +
                 ggplot2::scale_color_manual(values = cell_type_colors) +
                 ggplot2::theme_minimal() +
                 ggplot2::theme(
-                    panel.border = ggplot2::element_rect(color = "black",
-                                                         fill = NA,
-                                                         linewidth = 0.5),
+                    panel.border = ggplot2::element_rect(
+                        color = "black",
+                        fill = NA,
+                        linewidth = 0.5
+                    ),
                     axis.title.y = ggplot2::element_blank(),
                     axis.text.y = ggplot2::element_blank(),
                     axis.ticks.y = ggplot2::element_blank()
@@ -427,7 +462,6 @@ plot.calculateSIRSpaceObject <- function(x,
 
         # Boxplot diagonal facet
         .boxplotFunc <- function(data, mapping, ...) {
-
             # Extract the x variable name for the boxplot title
             x_name <- rlang::as_name(mapping[["x"]])
 
@@ -438,21 +472,28 @@ plot.calculateSIRSpaceObject <- function(x,
             )
 
             # Create horizontal boxplot
-            ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["value"]],
-                                                    y = .data[["group"]],
-                                                    fill = .data[["group"]])) +
-                ggplot2::geom_boxplot(alpha = 0.7,
-                                      outlier.size = 0.5,
-                                      width = 0.6) +
+            ggplot2::ggplot(plot_data, ggplot2::aes(
+                x = .data[["value"]],
+                y = .data[["group"]],
+                fill = .data[["group"]]
+            )) +
+                ggplot2::geom_boxplot(
+                    alpha = 0.7,
+                    outlier.size = 0.5,
+                    width = 0.6
+                ) +
                 ggplot2::scale_fill_manual(values = cell_type_colors) +
                 ggplot2::scale_y_discrete(limits = rev(
-                    levels(cell_type_dataset))) +
+                    levels(cell_type_dataset)
+                )) +
                 ggplot2::labs(x = "", y = "") +
                 ggplot2::theme_minimal() +
                 ggplot2::theme(
-                    panel.border = ggplot2::element_rect(color = "black",
-                                                         fill = NA,
-                                                         linewidth = 0.5),
+                    panel.border = ggplot2::element_rect(
+                        color = "black",
+                        fill = NA,
+                        linewidth = 0.5
+                    ),
                     axis.title.x = ggplot2::element_blank(),
                     legend.position = "none",
                     axis.title.y = ggplot2::element_blank(),
@@ -510,7 +551,8 @@ plot.calculateSIRSpaceObject <- function(x,
         plot_obj <- plot_obj +
             ggplot2::theme(
                 strip.background = ggplot2::element_rect(
-                    fill = "white", color = "black", linewidth = 0.5),
+                    fill = "white", color = "black", linewidth = 0.5
+                ),
                 strip.text = ggplot2::element_text(color = "black")
             )
 
@@ -520,7 +562,6 @@ plot.calculateSIRSpaceObject <- function(x,
 
     # Helper function to plot loadings (unchanged)
     .plotLoadings <- function(x, sir_subset, n_top) {
-
         # Get rotation matrix (loadings)
         rotation_mat <- x[["rotation_mat"]]
 
@@ -549,28 +590,37 @@ plot.calculateSIRSpaceObject <- function(x,
                 variable = var_names,
                 loading = loadings,
                 abs_loading = abs(loadings),
-                sir_component = paste0("SIR", sir_comp, " (",
-                                       sprintf("%.1f%%",
-                                               x[["percent_var"]][sir_comp]),
-                                       ")"),
+                sir_component = paste0(
+                    "SIR", sir_comp, " (",
+                    sprintf(
+                        "%.1f%%",
+                        x[["percent_var"]][sir_comp]
+                    ),
+                    ")"
+                ),
                 sir_order = i,
                 stringsAsFactors = FALSE
             )
 
             # Sort by absolute loading and take n_top variables
             loading_df <- loading_df[order(loading_df[["abs_loading"]],
-                                           decreasing = TRUE), ]
-            loading_df <- loading_df[seq_len(min(n_top,
-                                                 nrow(loading_df))), ]
+                decreasing = TRUE
+            ), ]
+            loading_df <- loading_df[seq_len(min(
+                n_top,
+                nrow(loading_df)
+            )), ]
 
             # Order variables for plotting (highest absolute loading at n_top of each facet)
             loading_df <- loading_df[order(loading_df[["abs_loading"]]), ]
             loading_df[["variable_facet"]] <- factor(loading_df[["variable"]],
-                                                     levels = loading_df[["variable"]])
+                levels = loading_df[["variable"]]
+            )
 
             # Create color based on sign of loading
             loading_df[["color"]] <- ifelse(loading_df[["loading"]] >= 0,
-                                            "Positive", "Negative")
+                "Positive", "Negative"
+            )
 
             all_loadings_list[[i]] <- loading_df
         }
@@ -580,22 +630,31 @@ plot.calculateSIRSpaceObject <- function(x,
 
         # Create factor for SIR components to control facet order
         sir_component_levels <- unique(all_loadings[["sir_component"]][
-            order(all_loadings[["sir_order"]])])
+            order(all_loadings[["sir_order"]])
+        ])
         all_loadings[["sir_component"]] <- factor(
             all_loadings[["sir_component"]],
-            levels = sir_component_levels)
+            levels = sir_component_levels
+        )
 
         # Create the faceted plot
         p <- ggplot2::ggplot(all_loadings, ggplot2::aes(
             x = .data[["loading"]],
             y = .data[["variable_facet"]],
-            fill = .data[["color"]])) +
+            fill = .data[["color"]]
+        )) +
             ggplot2::geom_col(alpha = 0.8, width = 0.6) +
-            ggplot2::facet_wrap(~ sir_component, scales = "free_y",
-                                ncol = length(sir_subset)) +
-            ggplot2::scale_fill_manual(values = c("Positive" = "#2166ac",
-                                                  "Negative" = "#d6604d"),
-                                       name = "Loading") +
+            ggplot2::facet_wrap(~sir_component,
+                scales = "free_y",
+                ncol = length(sir_subset)
+            ) +
+            ggplot2::scale_fill_manual(
+                values = c(
+                    "Positive" = "#2166ac",
+                    "Negative" = "#d6604d"
+                ),
+                name = "Loading"
+            ) +
             ggplot2::labs(
                 title = "SIR Component Loadings",
                 x = "Loading Value",
@@ -605,24 +664,34 @@ plot.calculateSIRSpaceObject <- function(x,
             ggplot2::theme(
                 panel.grid.major.y = ggplot2::element_blank(),
                 panel.grid.minor = ggplot2::element_blank(),
-                panel.border = ggplot2::element_rect(color = "black",
-                                                     fill = NA,
-                                                     linewidth = 0.5),
-                strip.background = ggplot2::element_rect(fill = "white",
-                                                         color = "black",
-                                                         linewidth = 0.5),
-                strip.text = ggplot2::element_text(size = 10,
-                                                   face = "bold"),
-                plot.title = ggplot2::element_text(hjust = 0.5,
-                                                   size = 14,
-                                                   face = "bold"),
+                panel.border = ggplot2::element_rect(
+                    color = "black",
+                    fill = NA,
+                    linewidth = 0.5
+                ),
+                strip.background = ggplot2::element_rect(
+                    fill = "white",
+                    color = "black",
+                    linewidth = 0.5
+                ),
+                strip.text = ggplot2::element_text(
+                    size = 10,
+                    face = "bold"
+                ),
+                plot.title = ggplot2::element_text(
+                    hjust = 0.5,
+                    size = 14,
+                    face = "bold"
+                ),
                 axis.text.y = ggplot2::element_text(size = 8),
                 legend.position = "bottom"
             ) +
-            ggplot2::geom_vline(xintercept = 0,
-                                linetype = "dashed",
-                                color = "gray50",
-                                alpha = 0.7)
+            ggplot2::geom_vline(
+                xintercept = 0,
+                linetype = "dashed",
+                color = "gray50",
+                alpha = 0.7
+            )
 
         return(p)
     }
@@ -630,17 +699,21 @@ plot.calculateSIRSpaceObject <- function(x,
 
     # Branch based on plot type
     if (plot_type == "scores") {
-        return(.plotScores(x,
-                           cell_types,
-                           sir_subset,
-                           lower_facet,
-                           diagonal_facet,
-                           upper_facet,
-                           max_cells_ref,
-                           max_cells_query))
+        return(.plotScores(
+            x,
+            cell_types,
+            sir_subset,
+            lower_facet,
+            diagonal_facet,
+            upper_facet,
+            max_cells_ref,
+            max_cells_query
+        ))
     } else {
-        return(.plotLoadings(x,
-                             sir_subset,
-                             n_top))
+        return(.plotLoadings(
+            x,
+            sir_subset,
+            n_top
+        ))
     }
 }

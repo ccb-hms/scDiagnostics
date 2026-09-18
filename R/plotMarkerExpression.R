@@ -41,13 +41,15 @@
 #' data("query_data")
 #'
 #' # Note: Users can use SingleR or any other method to obtain the cell type annotations.
-#' plotMarkerExpression(reference_data = reference_data,
-#'                      query_data = query_data,
-#'                      ref_cell_type_col = "expert_annotation",
-#'                      query_cell_type_col = c("expert_annotation", "SingleR_annotation")[1],
-#'                      gene_name = "CD8A",
-#'                      cell_type = "CD4",
-#'                      normalization = "z_score")
+#' plotMarkerExpression(
+#'     reference_data = reference_data,
+#'     query_data = query_data,
+#'     ref_cell_type_col = "expert_annotation",
+#'     query_cell_type_col = c("expert_annotation", "SingleR_annotation")[1],
+#'     gene_name = "CD8A",
+#'     cell_type = "CD4",
+#'     normalization = "z_score"
+#' )
 #'
 #' @importFrom SummarizedExperiment assay
 #' @importFrom stats sd
@@ -64,61 +66,80 @@ plotMarkerExpression <- function(query_data,
                                  normalization = c("z_score", "min_max", "rank", "none"),
                                  max_cells_query = NULL,
                                  max_cells_ref = NULL) {
-
     # Match normalization argument
     normalization <- match.arg(normalization)
 
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Select cell types
-    cell_type <- selectCellTypes(query_data = query_data,
-                                 reference_data = reference_data,
-                                 query_cell_type_col = query_cell_type_col,
-                                 ref_cell_type_col = ref_cell_type_col,
-                                 cell_types = cell_type,
-                                 dual_only = TRUE,
-                                 n_cell_types = NULL)
+    cell_type <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_type,
+        dual_only = TRUE,
+        n_cell_types = NULL
+    )
 
     # Downsample query and reference data
-    query_data <- downsampleSCE(sce_object = query_data,
-                                cell_type_col = query_cell_type_col,
-                                max_cells = max_cells_query)
-    reference_data <- downsampleSCE(sce_object = reference_data,
-                                    cell_type_col = ref_cell_type_col,
-                                    max_cells = max_cells_ref)
+    query_data <- downsampleSCE(
+        sce_object = query_data,
+        cell_type_col = query_cell_type_col,
+        max_cells = max_cells_query
+    )
+    reference_data <- downsampleSCE(
+        sce_object = reference_data,
+        cell_type_col = ref_cell_type_col,
+        max_cells = max_cells_ref
+    )
 
     # Check if gene_name is present in both query_data and reference_data
     if (!(gene_name %in% rownames(assay(query_data)) &&
-          gene_name %in% rownames(assay(reference_data)))) {
-        stop("gene_name: \'",
-             gene_name,
-             "\' is not present in the row names of both \'query_data\' and \'reference_data\'.")
+        gene_name %in% rownames(assay(reference_data)))) {
+        stop(
+            "gene_name: \'",
+            gene_name,
+            "\' is not present in the row names of both \'query_data\' and \'reference_data\'."
+        )
     }
 
     # Get expression of the specified gene for reference and query datasets
     ref_gene_expression <- assay(reference_data, assay_name)[gene_name, ]
     query_gene_expression <- assay(query_data, assay_name)[gene_name, ]
     ref_gene_expression_specific <- assay(
-        reference_data, assay_name)[gene_name,
-                                    which(reference_data[[ref_cell_type_col]] %in%
-                                              cell_type)]
+        reference_data, assay_name
+    )[
+        gene_name,
+        which(reference_data[[ref_cell_type_col]] %in%
+            cell_type)
+    ]
     query_gene_expression_specific <- assay(
-        query_data, assay_name)[gene_name,
-                                which(query_data[[query_cell_type_col]] %in%
-                                          cell_type)]
+        query_data, assay_name
+    )[
+        gene_name,
+        which(query_data[[query_cell_type_col]] %in%
+            cell_type)
+    ]
 
     # Transformation functions
     .quantileTransformation <- function(x) {
@@ -126,12 +147,16 @@ plotMarkerExpression <- function(query_data,
     }
 
     .zScoreTransformation <- function(x) {
-        if(sd(x) == 0) return(rep(0, length(x)))
+        if (sd(x) == 0) {
+            return(rep(0, length(x)))
+        }
         return((x - mean(x)) / sd(x))
     }
 
     .minMaxTransformation <- function(x) {
-        if(max(x) == min(x)) return(rep(0.5, length(x)))
+        if (max(x) == min(x)) {
+            return(rep(0.5, length(x)))
+        }
         return((x - min(x)) / (max(x) - min(x)))
     }
 
@@ -147,7 +172,6 @@ plotMarkerExpression <- function(query_data,
             .quantileTransformation(query_gene_expression_specific)
         x_label <-
             paste("Quantile Rank Normalized Gene Expression:", gene_name)
-
     } else if (normalization == "z_score") {
         ref_gene_expression_norm <-
             .zScoreTransformation(ref_gene_expression)
@@ -159,7 +183,6 @@ plotMarkerExpression <- function(query_data,
             .zScoreTransformation(query_gene_expression_specific)
         x_label <-
             paste("Z-Score Normalized Gene Expression:", gene_name)
-
     } else if (normalization == "min_max") {
         ref_gene_expression_norm <-
             .minMaxTransformation(ref_gene_expression)
@@ -181,7 +204,6 @@ plotMarkerExpression <- function(query_data,
             query_gene_expression_specific
         x_label <-
             paste("Log-Normalized Gene Expression:", gene_name)
-
     }
 
     # Create a combined vector of gene expression values
@@ -189,35 +211,46 @@ plotMarkerExpression <- function(query_data,
         ref_gene_expression_norm,
         query_gene_expression_norm,
         ref_gene_expression_specific_norm,
-        query_gene_expression_specific_norm)
+        query_gene_expression_specific_norm
+    )
 
     # Create a grouping vector for dataset types
     dataset_types <- rep(c("Reference", "Query", "Reference", "Query"),
-                         times = c(
-                             length(ref_gene_expression),
-                             length(query_gene_expression),
-                             length(ref_gene_expression_specific),
-                             length(query_gene_expression_specific)))
+        times = c(
+            length(ref_gene_expression),
+            length(query_gene_expression),
+            length(ref_gene_expression_specific),
+            length(query_gene_expression_specific)
+        )
+    )
 
     # Combine the gene expression values and dataset types
     marker_data <- data.frame(
         GeneExpression = combined_gene_expression,
         Dataset = dataset_types,
         plot_type = rep(c("Overall Distribution", "Cell Type-Specific Distribution"),
-                        times = c(length(ref_gene_expression) +
-                                      length(query_gene_expression),
-                                  length(ref_gene_expression_specific) +
-                                      length(query_gene_expression_specific))))
+            times = c(
+                length(ref_gene_expression) +
+                    length(query_gene_expression),
+                length(ref_gene_expression_specific) +
+                    length(query_gene_expression_specific)
+            )
+        )
+    )
     marker_data[["Dataset"]] <- factor(marker_data[["Dataset"]],
-                                       levels = c("Query", "Reference"))
+        levels = c("Query", "Reference")
+    )
 
 
     # Create a stacked density plot
     plot_obj <- ggplot2::ggplot(
         marker_data,
-        ggplot2::aes(x = .data[["GeneExpression"]],
-                     y = .data[["Dataset"]],
-                     fill = .data[["Dataset"]])) +
+        ggplot2::aes(
+            x = .data[["GeneExpression"]],
+            y = .data[["Dataset"]],
+            fill = .data[["Dataset"]]
+        )
+    ) +
         ggridges::geom_density_ridges(
             alpha = 0.7,
             scale = 1,
@@ -231,20 +264,27 @@ plotMarkerExpression <- function(query_data,
             name = "Dataset"
         ) +
         ggplot2::facet_wrap(~ .data[["plot_type"]], scales = "free") +
-        ggplot2::labs(title = NULL,
-                      x = x_label,
-                      y = "") +
+        ggplot2::labs(
+            title = NULL,
+            x = x_label,
+            y = ""
+        ) +
         ggplot2::theme_bw() +
         ggplot2::theme(
             panel.grid.minor = ggplot2::element_blank(),
-            panel.grid.major = ggplot2::element_line(color = "gray",
-                                                     linetype = "dotted"),
+            panel.grid.major = ggplot2::element_line(
+                color = "gray",
+                linetype = "dotted"
+            ),
             panel.grid.major.y = ggplot2::element_blank(),
-            strip.background = ggplot2::element_rect(fill = "white",
-                                                     color = "black"),
+            strip.background = ggplot2::element_rect(
+                fill = "white",
+                color = "black"
+            ),
             axis.title = ggplot2::element_text(size = 12),
             axis.text = ggplot2::element_text(size = 10),
             axis.text.y = ggplot2::element_blank(),
-            axis.ticks.y = ggplot2::element_blank())
+            axis.ticks.y = ggplot2::element_blank()
+        )
     return(plot_obj)
 }

@@ -31,18 +31,20 @@
 #'
 # Function to plot density functions for the reference data and the specified cell
 plot.calculateCellDistancesObject <- function(x, ref_cell_type, cell_names, ...) {
-
     # Check if cell type is available
-    if(length(ref_cell_type) != 1 || !(ref_cell_type %in% names(x)))
+    if (length(ref_cell_type) != 1 || !(ref_cell_type %in% names(x))) {
         stop("The specified \'ref_cell_type\' is not available.")
+    }
 
     # Filter distance data for the specified cell type
     distance_data <- x[[ref_cell_type]]
 
     # Check if cells are available in data for that cell type
-    if(!all(cell_names %in% rownames(
-        distance_data[["query_to_ref_distances"]])))
+    if (!all(cell_names %in% rownames(
+        distance_data[["query_to_ref_distances"]]
+    ))) {
         stop("One or more specified 'cell_names' are not available for that cell type.")
+    }
 
     # Extract distances within the reference dataset
     ref_distances <- distance_data[["ref_distances"]]
@@ -52,15 +54,19 @@ plot.calculateCellDistancesObject <- function(x, ref_cell_type, cell_names, ...)
     names(plot_data_list) <- cell_names
 
     # Loop through each cell to create the combined data frame
-    for(s in cell_names) {
+    for (s in cell_names) {
         # Extract distances for the current cell
         cell_distances <- distance_data[["query_to_ref_distances"]][s, ]
 
         # Create a data frame for the current cell and reference distances
-        cell_data <- data.frame(cell = s, Distance = cell_distances,
-                                Distance_Type = "Query")
-        ref_data <- data.frame(cell = s, Distance = ref_distances,
-                               Distance_Type = "Reference")
+        cell_data <- data.frame(
+            cell = s, Distance = cell_distances,
+            Distance_Type = "Query"
+        )
+        ref_data <- data.frame(
+            cell = s, Distance = ref_distances,
+            Distance_Type = "Reference"
+        )
 
         # Combine the reference and cell data frames
         combined_data <- rbind(ref_data, cell_data)
@@ -77,33 +83,35 @@ plot.calculateCellDistancesObject <- function(x, ref_cell_type, cell_names, ...)
 
     # Plot density comparison with facets for each cell
     density_plot <- ggplot2::ggplot(plot_data, ggplot2::aes(
-        x = .data[["Distance"]], fill = .data[["Distance_Type"]])) +
+        x = .data[["Distance"]], fill = .data[["Distance_Type"]]
+    )) +
         ggplot2::geom_density(alpha = 0.5) +
-        ggplot2::labs(title = NULL,
-                      x = "Distance", y = "Density",
-                      fill = "Distance Type") +
+        ggplot2::labs(
+            title = NULL,
+            x = "Distance", y = "Density",
+            fill = "Distance Type"
+        ) +
         ggplot2::facet_wrap(~ .data[["Query"]], scales = "free_y") +
         ggplot2::theme_bw() +
         ggplot2::theme(
-            strip.background = ggplot2::element_rect(fill = "white",
-                                                     color = "black",
-                                                     linewidth = 0.5),
+            strip.background = ggplot2::element_rect(
+                fill = "white",
+                color = "black",
+                linewidth = 0.5
+            ),
             panel.grid.minor = ggplot2::element_blank(),
             panel.grid.major = ggplot2::element_line(
                 color = "gray",
-                linetype = "dotted"),
-            plot.title = ggplot2::element_text(size = 14,
-                                               face = "bold",
-                                               hjust = 0.5),
+                linetype = "dotted"
+            ),
+            plot.title = ggplot2::element_text(
+                size = 14,
+                face = "bold",
+                hjust = 0.5
+            ),
             axis.title = ggplot2::element_text(size = 12),
             axis.text = ggplot2::element_text(size = 10),
-            legend.position = "bottom")
+            legend.position = "bottom"
+        )
     return(density_plot)
 }
-
-
-
-
-
-
-

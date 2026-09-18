@@ -63,17 +63,21 @@
 #' data("query_data")
 #'
 #' # Compare marker genes
-#' marker_comparison <- compareMarkers(query_data = query_data,
-#'                                     reference_data = reference_data,
-#'                                     query_cell_type_col = "expert_annotation",
-#'                                     ref_cell_type_col = "expert_annotation")
+#' marker_comparison <- compareMarkers(
+#'     query_data = query_data,
+#'     reference_data = reference_data,
+#'     query_cell_type_col = "expert_annotation",
+#'     ref_cell_type_col = "expert_annotation"
+#' )
 #'
 #' # With anomaly filtering
-#' marker_comparison_filtered <- compareMarkers(query_data = query_data,
-#'                                             reference_data = reference_data,
-#'                                             query_cell_type_col = "expert_annotation",
-#'                                             ref_cell_type_col = "expert_annotation",
-#'                                             anomaly_filter = "non_anomalous_only")
+#' marker_comparison_filtered <- compareMarkers(
+#'     query_data = query_data,
+#'     reference_data = reference_data,
+#'     query_cell_type_col = "expert_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     anomaly_filter = "non_anomalous_only"
+#' )
 #'
 #' # Visualize results
 #' plot(marker_comparison)
@@ -93,34 +97,41 @@ compareMarkers <- function(query_data,
                            assay_name = "logcounts",
                            max_cells_query = 5000,
                            max_cells_ref = 5000,
-                           ...){
-
+                           ...) {
     # Match arguments
     anomaly_filter <- match.arg(anomaly_filter)
 
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = TRUE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = TRUE,
+        n_cell_types = NULL
+    )
 
     # Ensure cell names exist for anomaly detection mapping
     original_ref_names <- colnames(reference_data)
@@ -141,30 +152,39 @@ compareMarkers <- function(query_data,
     # Perform anomaly detection FIRST (before any downsampling) if needed
     anomaly_output <- NULL
     if (anomaly_filter != "none") {
-        tryCatch({
-            anomaly_output <- detectAnomaly(reference_data = reference_data,
-                                            query_data = query_data,
-                                            ref_cell_type_col = ref_cell_type_col,
-                                            query_cell_type_col = query_cell_type_col,
-                                            cell_types = cell_types,
-                                            max_cells_ref = NULL,      # No downsampling in anomaly detection
-                                            max_cells_query = NULL,    # No downsampling in anomaly detection
-                                            ...)
-        }, error = function(e) {
-            warning("Anomaly detection failed: ", e[["message"]], ". Proceeding without anomaly filtering.")
-            anomaly_output <<- NULL
-        })
+        tryCatch(
+            {
+                anomaly_output <- detectAnomaly(
+                    reference_data = reference_data,
+                    query_data = query_data,
+                    ref_cell_type_col = ref_cell_type_col,
+                    query_cell_type_col = query_cell_type_col,
+                    cell_types = cell_types,
+                    max_cells_ref = NULL, # No downsampling in anomaly detection
+                    max_cells_query = NULL, # No downsampling in anomaly detection
+                    ...
+                )
+            },
+            error = function(e) {
+                warning("Anomaly detection failed: ", e[["message"]], ". Proceeding without anomaly filtering.")
+                anomaly_output <<- NULL
+            }
+        )
     }
 
     # Downsample query and reference data (with cell type filtering)
-    query_data <- downsampleSCE(sce_object = query_data,
-                                max_cells = max_cells_query,
-                                cell_types = cell_types,
-                                cell_type_col = query_cell_type_col)
-    reference_data <- downsampleSCE(sce_object = reference_data,
-                                    max_cells = max_cells_ref,
-                                    cell_types = cell_types,
-                                    cell_type_col = ref_cell_type_col)
+    query_data <- downsampleSCE(
+        sce_object = query_data,
+        max_cells = max_cells_query,
+        cell_types = cell_types,
+        cell_type_col = query_cell_type_col
+    )
+    reference_data <- downsampleSCE(
+        sce_object = reference_data,
+        max_cells = max_cells_ref,
+        cell_types = cell_types,
+        cell_type_col = ref_cell_type_col
+    )
 
     # Get cell type information after downsampling
     query_cell_types_orig <- colData(query_data)[[query_cell_type_col]]
@@ -179,7 +199,6 @@ compareMarkers <- function(query_data,
     query_cell_types <- query_cell_types_orig
 
     if (anomaly_filter != "none" && !is.null(anomaly_output)) {
-
         # Function to filter ONLY query cells based on anomaly results using cell names
         .filterQueryCellsByAnomalyNames <- function(data, anomaly_data, filter_type) {
             current_cell_names <- colnames(data)
@@ -259,8 +278,10 @@ compareMarkers <- function(query_data,
         other_cells <- cell_types != target_type
 
         if (sum(target_cells) < 3 || sum(other_cells) < 3) {
-            return(data.frame(gene = character(0), pval = numeric(0),
-                              logFC = numeric(0), stringsAsFactors = FALSE))
+            return(data.frame(
+                gene = character(0), pval = numeric(0),
+                logFC = numeric(0), stringsAsFactors = FALSE
+            ))
         }
 
         # Perform Wilcoxon test for each gene
@@ -277,11 +298,14 @@ compareMarkers <- function(query_data,
             }
 
             # Wilcoxon test with warning suppression
-            test_result <- tryCatch({
-                wilcox.test(target_expr, other_expr, alternative = "greater", exact = FALSE)
-            }, error = function(e) {
-                list(p.value = 1)
-            })
+            test_result <- tryCatch(
+                {
+                    wilcox.test(target_expr, other_expr, alternative = "greater", exact = FALSE)
+                },
+                error = function(e) {
+                    list(p.value = 1)
+                }
+            )
 
             pvals[i] <- test_result[["p.value"]]
             logFCs[i] <- mean(target_expr) - mean(other_expr)
@@ -308,7 +332,7 @@ compareMarkers <- function(query_data,
 
     # Extract expression matrices
     query_matrix <- as.matrix(assay(query_data_filtered, assay_name))
-    ref_matrix <- as.matrix(assay(reference_data_filtered, assay_name))  # Uses ALL reference cells
+    ref_matrix <- as.matrix(assay(reference_data_filtered, assay_name)) # Uses ALL reference cells
 
     # Find markers for each cell type
     markers_query <- list()
@@ -331,8 +355,8 @@ compareMarkers <- function(query_data,
     names(expression_consistency) <- common_cell_types
 
     # Cell counts - convert table to named numeric vector
-    query_table <- table(query_cell_types)  # Filtered query counts
-    ref_table <- table(ref_cell_types)      # All reference counts
+    query_table <- table(query_cell_types) # Filtered query counts
+    ref_table <- table(ref_cell_types) # All reference counts
 
     n_cells_query <- as.numeric(query_table[common_cell_types])
     names(n_cells_query) <- common_cell_types

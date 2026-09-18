@@ -53,20 +53,22 @@
 #'
 #' # Intersect the gene symbols to obtain common genes
 #' common_genes <- intersect(ref_top_genes, query_top_genes)
-#' ref_data_subset <- ref_data_subset[common_genes,]
-#' query_data_subset <- query_data_subset[common_genes,]
+#' ref_data_subset <- ref_data_subset[common_genes, ]
+#' query_data_subset <- query_data_subset[common_genes, ]
 #'
 #' # Run PCA on datasets separately
 #' ref_data_subset <- runPCA(ref_data_subset)
 #' query_data_subset <- runPCA(query_data_subset)
 #'
 #' # Compare PCA subspaces
-#' subspace_comparison <- comparePCASubspace(query_data = query_data_subset,
-#'                                           reference_data = ref_data_subset,
-#'                                           query_cell_type_col = "expert_annotation",
-#'                                           ref_cell_type_col = "expert_annotation",
-#'                                           n_top_vars = 50,
-#'                                           pc_subset = 1:5)
+#' subspace_comparison <- comparePCASubspace(
+#'     query_data = query_data_subset,
+#'     reference_data = ref_data_subset,
+#'     query_cell_type_col = "expert_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     n_top_vars = 50,
+#'     pc_subset = 1:5
+#' )
 #'
 #' # Plot output for PCA subspace comparison
 #' plot(subspace_comparison)
@@ -77,23 +79,28 @@ comparePCASubspace <- function(query_data,
                                query_cell_type_col,
                                ref_cell_type_col,
                                pc_subset = 1:5,
-                               n_top_vars = 50){
-
+                               n_top_vars = 50) {
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  unique_cell_type = TRUE,
-                  pc_subset_query = pc_subset,
-                  pc_subset_ref = pc_subset,
-                  common_rotation_genes = TRUE)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        unique_cell_type = TRUE,
+        pc_subset_query = pc_subset,
+        pc_subset_ref = pc_subset,
+        common_rotation_genes = TRUE
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Check if n_top_vars is a positive integer
     if (!is.numeric(n_top_vars) || n_top_vars <= 0 ||
@@ -102,13 +109,15 @@ comparePCASubspace <- function(query_data,
     }
 
     # Compute the cosine similarity (cosine of principal angle)
-    cosine_similarity_result <- comparePCA(query_data = query_data,
-                                           reference_data = reference_data,
-                                           query_cell_type_col = query_cell_type_col,
-                                           ref_cell_type_col = ref_cell_type_col,
-                                           pc_subset = pc_subset,
-                                           n_top_vars = n_top_vars,
-                                           metric = "cosine")
+    cosine_similarity_result <- comparePCA(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        pc_subset = pc_subset,
+        n_top_vars = n_top_vars,
+        metric = "cosine"
+    )
 
     # Extract similarity matrix from the result
     cosine_similarity <- cosine_similarity_result[["similarity_matrix"]]
@@ -120,24 +129,25 @@ comparePCASubspace <- function(query_data,
     colnames(cosine_id) <- c("Ref", "Query")
 
     # Looping to store top cosine similarities and PC IDs
-    for(id in seq_len(length(pc_subset))){
-
+    for (id in seq_len(length(pc_subset))) {
         # Store data for top cosine
         top_ref <- which.max(apply(abs(cosine_similarity), 1, max))
-        top_query <- which.max(abs(cosine_similarity)[top_ref,])
+        top_query <- which.max(abs(cosine_similarity)[top_ref, ])
         top_cosine[id] <- abs(cosine_similarity)[top_ref, top_query]
-        cosine_id[id,] <- c(top_ref, top_query)
+        cosine_id[id, ] <- c(top_ref, top_query)
 
         # Remove as candidate
-        cosine_similarity[top_ref,] <- 0
+        cosine_similarity[top_ref, ] <- 0
         cosine_similarity[, top_query] <- 0
     }
 
     # Vector of variance explained - FIXED BUG AND ADDED INDIVIDUAL VALUES
     var_explained_ref_all <- attributes(
-        reducedDim(reference_data, "PCA"))[["percentVar"]][pc_subset]
+        reducedDim(reference_data, "PCA")
+    )[["percentVar"]][pc_subset]
     var_explained_query_all <- attributes(
-        reducedDim(query_data, "PCA"))[["percentVar"]][pc_subset]
+        reducedDim(query_data, "PCA")
+    )[["percentVar"]][pc_subset]
 
     # Get variance explained for the matched PCs
     var_explained_ref <- var_explained_ref_all[cosine_id[, 1]]
@@ -145,15 +155,17 @@ comparePCASubspace <- function(query_data,
     var_explained_avg <- (var_explained_ref + var_explained_query) / 2
 
     # Weighted cosine similarity score
-    weighted_cosine_similarity <- sum(top_cosine * var_explained_avg)/100
+    weighted_cosine_similarity <- sum(top_cosine * var_explained_avg) / 100
 
     # Update class of return output
-    output <- list(cosine_similarity = top_cosine,
-                   cosine_id = cosine_id,
-                   var_explained_ref = var_explained_ref,
-                   var_explained_query = var_explained_query,
-                   var_explained_avg = var_explained_avg,
-                   weighted_cosine_similarity = weighted_cosine_similarity)
+    output <- list(
+        cosine_similarity = top_cosine,
+        cosine_id = cosine_id,
+        var_explained_ref = var_explained_ref,
+        var_explained_query = var_explained_query,
+        var_explained_avg = var_explained_avg,
+        weighted_cosine_similarity = weighted_cosine_similarity
+    )
     class(output) <- c(class(output), "comparePCASubspaceObject")
 
     # Return cosine similarity output

@@ -68,8 +68,9 @@
 #'
 #' # Plot the output for a specific cell type
 #' plot(recon_output,
-#'      cell_type = "CD4",
-#'      plot_type = "violin")
+#'     cell_type = "CD4",
+#'     plot_type = "violin"
+#' )
 #'
 #' @importFrom methods is
 #' @importFrom stats na.omit median mad prcomp
@@ -86,21 +87,22 @@ calculateReconstructionError <- function(reference_data,
                                          assay_name = "logcounts",
                                          max_cells_query = 5000,
                                          max_cells_ref = 5000) {
-
     # Reconstruction Error strictly requires PCA
     if (is.null(pc_subset)) {
         stop("'pc_subset' cannot be NULL for Reconstruction Error calculations. PCA is required.")
     }
 
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  pc_subset_ref = NULL,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        pc_subset_ref = NULL,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Check if n_hvgs is a positive integer
     if (!is.numeric(n_hvgs) || length(n_hvgs) != 1 || n_hvgs <= 0 || n_hvgs != as.integer(n_hvgs)) {
@@ -114,11 +116,15 @@ calculateReconstructionError <- function(reference_data,
     }
 
     # Convert cell type columns to character if needed
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
-    if(!is.null(query_data)){
-        query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                                convert_cols = query_cell_type_col)
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
+    if (!is.null(query_data)) {
+        query_data <- convertColumnsToCharacter(
+            sce_object = query_data,
+            convert_cols = query_cell_type_col
+        )
     }
 
     # Input check for mad_multiplier
@@ -127,30 +133,36 @@ calculateReconstructionError <- function(reference_data,
     }
 
     # Select and validate cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = FALSE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = FALSE,
+        n_cell_types = NULL
+    )
 
     # Downsample datasets
-    reference_data <- downsampleSCE(sce_object = reference_data,
-                                    max_cells = max_cells_ref,
-                                    cell_types = cell_types,
-                                    cell_type_col = ref_cell_type_col)
+    reference_data <- downsampleSCE(
+        sce_object = reference_data,
+        max_cells = max_cells_ref,
+        cell_types = cell_types,
+        cell_type_col = ref_cell_type_col
+    )
 
-    if(!is.null(query_data)){
-        query_data <- downsampleSCE(sce_object = query_data,
-                                    max_cells = max_cells_query,
-                                    cell_types = cell_types,
-                                    cell_type_col = query_cell_type_col)
+    if (!is.null(query_data)) {
+        query_data <- downsampleSCE(
+            sce_object = query_data,
+            max_cells = max_cells_query,
+            cell_types = cell_types,
+            cell_type_col = query_cell_type_col
+        )
     }
 
     # Extract metadata vectors
     ref_cell_types <- reference_data[[ref_cell_type_col]]
-    if(!is.null(query_data)){
+    if (!is.null(query_data)) {
         query_cell_types <- query_data[[query_cell_type_col]]
     }
 
@@ -163,7 +175,6 @@ calculateReconstructionError <- function(reference_data,
     cell_types_list[["Combined"]] <- cell_types
 
     for (cell_type in cell_types_list) {
-
         list_name <- ifelse(length(cell_type) == 1, cell_type, "Combined")
 
         # 1. Subset Reference Cells

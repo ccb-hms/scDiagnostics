@@ -43,13 +43,15 @@
 #' data("query_data")
 #'
 #' # Calculate MMD p-values (with query data)
-#' mmd_test <- calculateMMDPValue(reference_data = reference_data,
-#'                               query_data = query_data,
-#'                               ref_cell_type_col = "expert_annotation",
-#'                               query_cell_type_col = "SingleR_annotation",
-#'                               cell_types = c("CD4", "CD8"),
-#'                               pc_subset = 1:5,
-#'                               n_permutation = 30)
+#' mmd_test <- calculateMMDPValue(
+#'     reference_data = reference_data,
+#'     query_data = query_data,
+#'     ref_cell_type_col = "expert_annotation",
+#'     query_cell_type_col = "SingleR_annotation",
+#'     cell_types = c("CD4", "CD8"),
+#'     pc_subset = 1:5,
+#'     n_permutation = 30
+#' )
 #' mmd_test
 #'
 #' @importFrom stats median
@@ -67,42 +69,51 @@ calculateMMDPValue <- function(query_data,
                                assay_name = "logcounts",
                                max_cells_query = 5000,
                                max_cells_ref = 5000) {
-
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  pc_subset_ref = pc_subset,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        pc_subset_ref = pc_subset,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = TRUE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = TRUE,
+        n_cell_types = NULL
+    )
 
     # Get the projected PCA data
-    pca_output <- projectPCA(query_data = query_data,
-                             reference_data = reference_data,
-                             query_cell_type_col = query_cell_type_col,
-                             ref_cell_type_col = ref_cell_type_col,
-                             cell_types = cell_types,
-                             pc_subset = pc_subset,
-                             assay_name = assay_name,
-                             max_cells_ref = max_cells_ref,
-                             max_cells_query = max_cells_query)
+    pca_output <- projectPCA(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        pc_subset = pc_subset,
+        assay_name = assay_name,
+        max_cells_ref = max_cells_ref,
+        max_cells_query = max_cells_query
+    )
 
     # Set data for MMD test
     cell_list <- split(pca_output, pca_output[["cell_type"]])
@@ -114,14 +125,14 @@ calculateMMDPValue <- function(query_data,
     p_values <- vector("numeric", length = length(cell_types))
     names(p_values) <- cell_types
 
-    for(cell_type in cell_types){
+    for (cell_type in cell_types) {
         dataset_ind <- cell_list[[cell_type]][, "dataset"] == "Reference"
 
         X <- as.matrix(cell_list[[cell_type]][dataset_ind, pc_vars])
         Y <- as.matrix(cell_list[[cell_type]][!dataset_ind, pc_vars])
 
         # Skip if either group is too small
-        if(nrow(X) < 3 || nrow(Y) < 3) {
+        if (nrow(X) < 3 || nrow(Y) < 3) {
             p_values[cell_type] <- NA
             next
         }
@@ -137,7 +148,7 @@ calculateMMDPValue <- function(query_data,
         min_perms <- min(100, n_permutation)
         extreme_count <- 0
 
-        for(i in seq_len(n_permutation)) {
+        for (i in seq_len(n_permutation)) {
             perm_indices <- sample.int(n_total)
             X_perm <-
                 combined_data[perm_indices[seq_len(n_X)], , drop = FALSE]
@@ -146,22 +157,22 @@ calculateMMDPValue <- function(query_data,
             perm_stat <-
                 computeMMDStatistic(X_perm, Y_perm, kernel_type, sigma)
 
-            if(perm_stat >= observed_mmd) {
+            if (perm_stat >= observed_mmd) {
                 extreme_count <- extreme_count + 1
             }
 
             # Early stopping if we have enough evidence
-            if(i >= min_perms) {
+            if (i >= min_perms) {
                 current_pval <- (extreme_count + 1) / (i + 1)
                 # Stop early if p-value is clearly < 0.01 or > 0.1
-                if(current_pval < 0.005 || current_pval > 0.15) {
+                if (current_pval < 0.005 || current_pval > 0.15) {
                     p_values[cell_type] <- (extreme_count + 1) / (i + 1)
                     break
                 }
             }
 
             # If we've done all permutations
-            if(i == n_permutation) {
+            if (i == n_permutation) {
                 p_values[cell_type] <- (extreme_count + 1) /
                     (n_permutation + 1)
             }
@@ -208,14 +219,12 @@ calculateMMDPValue <- function(query_data,
 computeMMDStatistic <- function(X, Y,
                                 kernel_type = "gaussian",
                                 sigma = NULL) {
-
     # Get sample sizes
     n <- nrow(X)
     m <- nrow(Y)
 
     # Gaussian kernel computation
     if (kernel_type == "gaussian") {
-
         # Estimate sigma using median heuristic if not provided
         if (is.null(sigma)) {
             # Efficient median heuristic using sampled subset of distances
@@ -226,12 +235,12 @@ computeMMDStatistic <- function(X, Y,
             max_pairs <- min(1000, n_combined * (n_combined - 1) / 2)
             sampled_dists <- numeric(max_pairs)
 
-            for(k in seq_len(max_pairs)) {
+            for (k in seq_len(max_pairs)) {
                 i <- sample.int(n_combined, 1)
                 j <- sample.int(n_combined, 1)
-                if(i != j) {
+                if (i != j) {
                     sampled_dists[k] <- sqrt(sum((combined[i, ] -
-                                                      combined[j, ])^2))
+                        combined[j, ])^2))
                 }
             }
             sigma <- median(sampled_dists[sampled_dists > 0])
@@ -246,32 +255,31 @@ computeMMDStatistic <- function(X, Y,
         K_XY_sum <- 0
 
         # Compute K(X,X) sum - kernel evaluations within first dataset
-        for(i in seq_len(n - 1)) {
+        for (i in seq_len(n - 1)) {
             X_i <- X[i, ]
-            for(j in seq(i + 1, n)) {
+            for (j in seq(i + 1, n)) {
                 dist_sq <- sum((X_i - X[j, ])^2)
                 K_XX_sum <- K_XX_sum + 2 * exp(-dist_sq * sigma_sq_2_inv)
             }
         }
 
         # Compute K(Y,Y) sum - kernel evaluations within second dataset
-        for(i in seq_len(m - 1)) {
+        for (i in seq_len(m - 1)) {
             Y_i <- Y[i, ]
-            for(j in seq(i + 1, m)) {
+            for (j in seq(i + 1, m)) {
                 dist_sq <- sum((Y_i - Y[j, ])^2)
                 K_YY_sum <- K_YY_sum + 2 * exp(-dist_sq * sigma_sq_2_inv)
             }
         }
 
         # Compute K(X,Y) sum - kernel evaluations between datasets
-        for(i in seq_len(n)) {
+        for (i in seq_len(n)) {
             X_i <- X[i, ]
-            for(j in seq_len(m)) {
+            for (j in seq_len(m)) {
                 dist_sq <- sum((X_i - Y[j, ])^2)
                 K_XY_sum <- K_XY_sum + exp(-dist_sq * sigma_sq_2_inv)
             }
         }
-
     } else {
         # Linear kernel - computationally efficient alternative
         XX <- tcrossprod(X)
@@ -285,7 +293,7 @@ computeMMDStatistic <- function(X, Y,
     }
 
     # Calculate MMD^2 statistic using unbiased estimator
-    mmd_stat <- K_XX_sum/(n*(n-1)) + K_YY_sum/(m*(m-1)) - 2*K_XY_sum/(n*m)
+    mmd_stat <- K_XX_sum / (n * (n - 1)) + K_YY_sum / (m * (m - 1)) - 2 * K_XY_sum / (n * m)
 
     return(mmd_stat)
 }

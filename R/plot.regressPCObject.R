@@ -28,12 +28,13 @@
 #'
 # Plot the results of regressPC
 plot.regressPCObject <- function(x,
-                                 plot_type = c("r_squared", "variance_contribution",
-                                               "coefficient_heatmap"),
+                                 plot_type = c(
+                                     "r_squared", "variance_contribution",
+                                     "coefficient_heatmap"
+                                 ),
                                  alpha = 0.05,
                                  coefficients_include = NULL,
                                  ...) {
-
     # Match plot_type argument
     plot_type <- match.arg(plot_type)
 
@@ -42,8 +43,10 @@ plot.regressPCObject <- function(x,
         # Check if coefficients_include is valid
         valid_coefficients <- c("cell_type", "batch", "interaction")
         if (!all(coefficients_include %in% valid_coefficients)) {
-            stop("coefficients_include must be one or more of: ",
-                 paste(valid_coefficients, collapse = ", "))
+            stop(
+                "coefficients_include must be one or more of: ",
+                paste(valid_coefficients, collapse = ", ")
+            )
         }
 
         # Check if at least one coefficient type is specified
@@ -55,17 +58,19 @@ plot.regressPCObject <- function(x,
         available_coefficients <- .getAvailableCoefficients(x)
         unavailable <- coefficients_include[!coefficients_include %in% available_coefficients]
         if (length(unavailable) > 0) {
-            stop("The following coefficient types are not available in the regression object: ",
-                 paste(unavailable, collapse = ", "),
-                 ". Available types: ", paste(available_coefficients, collapse = ", "))
+            stop(
+                "The following coefficient types are not available in the regression object: ",
+                paste(unavailable, collapse = ", "),
+                ". Available types: ", paste(available_coefficients, collapse = ", ")
+            )
         }
     }
 
     # Generate plot based on type
     switch(plot_type,
-           "r_squared" = plotRSquared(x, ...),
-           "variance_contribution" = plotVarianceContribution(x, ...),
-           "coefficient_heatmap" = plotCoefficientHeatmap(x, alpha, coefficients_include, ...)
+        "r_squared" = plotRSquared(x, ...),
+        "variance_contribution" = plotVarianceContribution(x, ...),
+        "coefficient_heatmap" = plotCoefficientHeatmap(x, alpha, coefficients_include, ...)
     )
 }
 
@@ -85,7 +90,7 @@ plot.regressPCObject <- function(x,
 #' @author Anthony Christidis, \email{anthony-alexander_christidis@hms.harvard.edu}
 #'
 .getAvailableCoefficients <- function(x) {
-    available <- c("cell_type")  # cell_type is always available
+    available <- c("cell_type") # cell_type is always available
 
     # Check for batch coefficients
     if (x[["indep_var"]] %in% c("cell_type_batch_interaction", "cell_type_dataset_interaction")) {
@@ -140,14 +145,14 @@ plot.regressPCObject <- function(x,
 #'
 # Helper function: R-squared barplot with component breakdown
 plotRSquared <- function(x, ...) {
-
     # Helper function to get model text
     .getModelText <- function(indep_var) {
         switch(indep_var,
-               "cell_type" = "PC ~ Cell Type",
-               "cell_type_batch_interaction" = "PC ~ Cell Type * Batch",
-               "cell_type_dataset_interaction" = "PC ~ Cell Type * Dataset",
-               "Unknown Model")
+            "cell_type" = "PC ~ Cell Type",
+            "cell_type_batch_interaction" = "PC ~ Cell Type * Batch",
+            "cell_type_dataset_interaction" = "PC ~ Cell Type * Dataset",
+            "Unknown Model"
+        )
     }
 
     # Determine which PCA variance to use based on data type
@@ -186,14 +191,15 @@ plotRSquared <- function(x, ...) {
 
         # Create proper component labels and colors
         plot_data[["Component"]] <- factor(plot_data[["Component"]],
-                                           levels = names(x[["r_squared_components"]]))
+            levels = names(x[["r_squared_components"]])
+        )
 
         # Set up colors based on available components
         component_colors <- c(
-            "cell_type" = "#1f77b4",     # Blue
-            "batch" = "#ff7f0e",         # Orange
-            "dataset" = "#ff7f0e",       # Orange (same as batch)
-            "interaction" = "#2ca02c"    # Green
+            "cell_type" = "#1f77b4", # Blue
+            "batch" = "#ff7f0e", # Orange
+            "dataset" = "#ff7f0e", # Orange (same as batch)
+            "interaction" = "#2ca02c" # Green
         )
 
         # Get colors for available components
@@ -208,19 +214,27 @@ plotRSquared <- function(x, ...) {
         total_r_squared <- aggregate(R_squared ~ PC, data = plot_data, FUN = sum)
 
         # Create plot
-        p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["PC"]],
-                                                     y = .data[["R_squared"]],
-                                                     fill = .data[["Component"]])) +
+        p <- ggplot2::ggplot(plot_data, ggplot2::aes(
+            x = .data[["PC"]],
+            y = .data[["R_squared"]],
+            fill = .data[["Component"]]
+        )) +
             ggplot2::geom_col(alpha = 0.8, width = 0.6) +
-            ggplot2::geom_text(data = total_r_squared,
-                               ggplot2::aes(x = .data[["PC"]],
-                                            y = .data[["R_squared"]],
-                                            label = sprintf("%.3f", .data[["R_squared"]])),
-                               vjust = -0.5, size = 3.5, fontface = "bold",
-                               inherit.aes = FALSE) +
-            ggplot2::scale_fill_manual(values = available_colors,
-                                       labels = component_labels,
-                                       name = "Component") +
+            ggplot2::geom_text(
+                data = total_r_squared,
+                ggplot2::aes(
+                    x = .data[["PC"]],
+                    y = .data[["R_squared"]],
+                    label = sprintf("%.3f", .data[["R_squared"]])
+                ),
+                vjust = -0.5, size = 3.5, fontface = "bold",
+                inherit.aes = FALSE
+            ) +
+            ggplot2::scale_fill_manual(
+                values = available_colors,
+                labels = component_labels,
+                name = "Component"
+            ) +
             ggplot2::labs(
                 title = "R-squared Values by Principal Component",
                 subtitle = paste("Model:", .getModelText(x[["indep_var"]])),
@@ -242,7 +256,6 @@ plotRSquared <- function(x, ...) {
                 plot.margin = ggplot2::margin(20, 20, 20, 20)
             ) +
             ggplot2::ylim(0, max(total_r_squared[["R_squared"]]) * 1.1)
-
     } else {
         # Fallback to simple bar plot (original behavior)
         plot_data <- data.frame(
@@ -253,7 +266,8 @@ plotRSquared <- function(x, ...) {
         p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["PC"]], y = .data[["R_squared"]])) +
             ggplot2::geom_col(fill = "steelblue", alpha = 0.8, width = 0.6) +
             ggplot2::geom_text(ggplot2::aes(label = sprintf("%.3f", .data[["R_squared"]])),
-                               vjust = -0.5, size = 3.5, fontface = "bold") +
+                vjust = -0.5, size = 3.5, fontface = "bold"
+            ) +
             ggplot2::labs(
                 title = "R-squared Values by Principal Component",
                 subtitle = paste("Model:", .getModelText(x[["indep_var"]])),
@@ -320,14 +334,14 @@ plotRSquared <- function(x, ...) {
 #'
 # Helper function: Variance contribution barplot with component breakdown
 plotVarianceContribution <- function(x, ...) {
-
     # Helper function to get model text
     .getModelText <- function(indep_var) {
         switch(indep_var,
-               "cell_type" = "PC ~ Cell Type",
-               "cell_type_batch_interaction" = "PC ~ Cell Type * Batch",
-               "cell_type_dataset_interaction" = "PC ~ Cell Type * Dataset",
-               "Unknown Model")
+            "cell_type" = "PC ~ Cell Type",
+            "cell_type_batch_interaction" = "PC ~ Cell Type * Batch",
+            "cell_type_dataset_interaction" = "PC ~ Cell Type * Dataset",
+            "Unknown Model"
+        )
     }
 
     # Determine which PCA variance to use based on data type
@@ -366,14 +380,15 @@ plotVarianceContribution <- function(x, ...) {
 
         # Create proper component labels and colors
         plot_data[["Component"]] <- factor(plot_data[["Component"]],
-                                           levels = names(x[["var_contributions_components"]]))
+            levels = names(x[["var_contributions_components"]])
+        )
 
         # Set up colors based on available components
         component_colors <- c(
-            "cell_type" = "#1f77b4",     # Blue
-            "batch" = "#ff7f0e",         # Orange
-            "dataset" = "#ff7f0e",       # Orange (same as batch)
-            "interaction" = "#2ca02c"    # Green
+            "cell_type" = "#1f77b4", # Blue
+            "batch" = "#ff7f0e", # Orange
+            "dataset" = "#ff7f0e", # Orange (same as batch)
+            "interaction" = "#2ca02c" # Green
         )
 
         # Get colors for available components
@@ -388,24 +403,34 @@ plotVarianceContribution <- function(x, ...) {
         total_var_contrib <- aggregate(Variance_Contribution ~ PC, data = plot_data, FUN = sum)
 
         # Create plot
-        p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["PC"]],
-                                                     y = .data[["Variance_Contribution"]],
-                                                     fill = .data[["Component"]])) +
+        p <- ggplot2::ggplot(plot_data, ggplot2::aes(
+            x = .data[["PC"]],
+            y = .data[["Variance_Contribution"]],
+            fill = .data[["Component"]]
+        )) +
             ggplot2::geom_col(alpha = 0.8, width = 0.6) +
-            ggplot2::geom_text(data = total_var_contrib,
-                               ggplot2::aes(x = .data[["PC"]],
-                                            y = .data[["Variance_Contribution"]],
-                                            label = sprintf("%.2f%%", .data[["Variance_Contribution"]])),
-                               vjust = -0.5, size = 3.5, fontface = "bold",
-                               inherit.aes = FALSE) +
-            ggplot2::scale_fill_manual(values = available_colors,
-                                       labels = component_labels,
-                                       name = "Component") +
+            ggplot2::geom_text(
+                data = total_var_contrib,
+                ggplot2::aes(
+                    x = .data[["PC"]],
+                    y = .data[["Variance_Contribution"]],
+                    label = sprintf("%.2f%%", .data[["Variance_Contribution"]])
+                ),
+                vjust = -0.5, size = 3.5, fontface = "bold",
+                inherit.aes = FALSE
+            ) +
+            ggplot2::scale_fill_manual(
+                values = available_colors,
+                labels = component_labels,
+                name = "Component"
+            ) +
             ggplot2::labs(
                 title = "Variance Contribution by Principal Component",
-                subtitle = paste("Total variance explained:",
-                                 sprintf("%.2f%%", x[["total_variance_explained"]]),
-                                 "| Model:", .getModelText(x[["indep_var"]])),
+                subtitle = paste(
+                    "Total variance explained:",
+                    sprintf("%.2f%%", x[["total_variance_explained"]]),
+                    "| Model:", .getModelText(x[["indep_var"]])
+                ),
                 x = NULL,
                 y = "Variance Contribution (%)"
             ) +
@@ -424,7 +449,6 @@ plotVarianceContribution <- function(x, ...) {
                 plot.margin = ggplot2::margin(20, 20, 20, 20)
             ) +
             ggplot2::ylim(0, max(total_var_contrib[["Variance_Contribution"]]) * 1.1)
-
     } else {
         # Fallback to simple bar plot (original behavior)
         plot_data <- data.frame(
@@ -437,12 +461,15 @@ plotVarianceContribution <- function(x, ...) {
         p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["PC"]], y = .data[["Variance_Contribution"]])) +
             ggplot2::geom_col(fill = "darkgreen", alpha = 0.8, width = 0.6) +
             ggplot2::geom_text(ggplot2::aes(label = sprintf("%.2f%%", .data[["Variance_Contribution"]])),
-                               vjust = -0.5, size = 3.5, fontface = "bold") +
+                vjust = -0.5, size = 3.5, fontface = "bold"
+            ) +
             ggplot2::labs(
                 title = "Variance Contribution by Principal Component",
-                subtitle = paste("Total variance explained:",
-                                 sprintf("%.2f%%", x[["total_variance_explained"]]),
-                                 "| Model:", .getModelText(x[["indep_var"]])),
+                subtitle = paste(
+                    "Total variance explained:",
+                    sprintf("%.2f%%", x[["total_variance_explained"]]),
+                    "| Model:", .getModelText(x[["indep_var"]])
+                ),
                 x = NULL,
                 y = "Variance Contribution (%)"
             ) +
@@ -513,7 +540,6 @@ plotVarianceContribution <- function(x, ...) {
 #'
 # Helper function: Coefficient heatmap
 plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL, ...) {
-
     # Determine which PCA variance to use based on data type
     if (!is.null(x[["reference_pca_var"]])) {
         # Reference + Query data
@@ -556,7 +582,6 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
 
     # Handle different model types
     if (x[["indep_var"]] == "cell_type_batch_interaction") {
-
         # Identify main effect cell types (no "batch" and no ":" and no "dataset")
         celltype_main <- !grepl("batch", plot_data[["Term"]]) &
             !grepl(":", plot_data[["Term"]]) &
@@ -620,9 +645,7 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
             })
             plot_data[["Term_clean"]][interaction_indices] <- formatted_interactions
         }
-
     } else if (x[["indep_var"]] == "cell_type_dataset_interaction") {
-
         # Identify main effect cell types (no "dataset" and no ":")
         celltype_main <- !grepl("dataset", plot_data[["Term"]]) & !grepl(":", plot_data[["Term"]])
         plot_data[["Category"]][celltype_main] <- "Cell Type"
@@ -675,7 +698,6 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
             })
             plot_data[["Term_clean"]][interaction_indices] <- formatted_interactions
         }
-
     } else if (x[["indep_var"]] == "cell_type") {
         # For cell type only model
         plot_data[["Term_clean"]] <- gsub("cell_type", "", plot_data[["Term_clean"]])
@@ -698,8 +720,10 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
 
         # If no data remains after filtering, stop with informative message
         if (nrow(plot_data) == 0) {
-            stop("No coefficients found for the specified types: ",
-                 paste(coefficients_include, collapse = ", "))
+            stop(
+                "No coefficients found for the specified types: ",
+                paste(coefficients_include, collapse = ", ")
+            )
         }
     }
 
@@ -716,8 +740,9 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
     existing_pc_labels <- pc_labels[existing_pc_indices]
 
     plot_data[["PC_labeled"]] <- factor(plot_data[["PC"]],
-                                        levels = existing_pc_names,
-                                        labels = existing_pc_labels)
+        levels = existing_pc_names,
+        labels = existing_pc_labels
+    )
 
     # Create y-axis ordering - special handling for interactions
     if (x[["indep_var"]] %in% c("cell_type_batch_interaction", "cell_type_dataset_interaction")) {
@@ -727,8 +752,8 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
         if (nrow(interaction_data) > 0) {
             # Extract batch and cell type parts from interaction terms
             interaction_parts <- strsplit(interaction_data[["Term_clean"]], " : ")
-            batch_parts <- sapply(interaction_parts, function(x) if(length(x) == 2) trimws(x[2]) else "")
-            cell_type_parts <- sapply(interaction_parts, function(x) if(length(x) == 2) gsub("Cell Type ", "", trimws(x[1])) else "")
+            batch_parts <- sapply(interaction_parts, function(x) if (length(x) == 2) trimws(x[2]) else "")
+            cell_type_parts <- sapply(interaction_parts, function(x) if (length(x) == 2) gsub("Cell Type ", "", trimws(x[1])) else "")
 
             # Create ordering data frame with unique terms only
             ordering_df <- data.frame(
@@ -781,9 +806,10 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
 
     # Create main subtitle
     model_text <- switch(x[["indep_var"]],
-                         "cell_type" = "PC ~ Cell Type",
-                         "cell_type_batch_interaction" = "PC ~ Cell Type * Batch",
-                         "cell_type_dataset_interaction" = "PC ~ Cell Type * Batch")
+        "cell_type" = "PC ~ Cell Type",
+        "cell_type_batch_interaction" = "PC ~ Cell Type * Batch",
+        "cell_type_dataset_interaction" = "PC ~ Cell Type * Batch"
+    )
 
     subtitle_text1 <- paste("Model:", model_text, "| * indicates significance at alpha =", alpha)
 
@@ -823,14 +849,20 @@ plotCoefficientHeatmap <- function(x, alpha = 0.05, coefficients_include = NULL,
     }
 
     # Create plot with facets
-    p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = .data[["PC_labeled"]],
-                                                 y = .data[["Term_factor"]],
-                                                 fill = .data[["coef"]])) +
+    p <- ggplot2::ggplot(plot_data, ggplot2::aes(
+        x = .data[["PC_labeled"]],
+        y = .data[["Term_factor"]],
+        fill = .data[["coef"]]
+    )) +
         ggplot2::geom_tile(color = "white", linewidth = 0.5) +
-        ggplot2::geom_point(data = plot_data[plot_data[["Significant"]] & !is.na(plot_data[["coef"]]), ],
-                            ggplot2::aes(x = .data[["PC_labeled"]],
-                                         y = .data[["Term_factor"]]),
-                            shape = 8, size = 2, color = "black") +
+        ggplot2::geom_point(
+            data = plot_data[plot_data[["Significant"]] & !is.na(plot_data[["coef"]]), ],
+            ggplot2::aes(
+                x = .data[["PC_labeled"]],
+                y = .data[["Term_factor"]]
+            ),
+            shape = 8, size = 2, color = "black"
+        ) +
         ggplot2::scale_fill_gradient2(
             low = "blue", mid = "white", high = "red",
             midpoint = 0, name = "Coefficient",

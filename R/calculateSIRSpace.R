@@ -37,27 +37,31 @@
 #' data("query_data")
 #'
 #' # Compute important variables for all pairwise cell comparisons
-#' sir_output <- calculateSIRSpace(reference_data = reference_data,
-#'                                 query_data = query_data,
-#'                                 query_cell_type_col = "expert_annotation",
-#'                                 ref_cell_type_col = "expert_annotation",
-#'                                 multiple_cond_means = TRUE,
-#'                                 cumulative_variance_threshold = 0.9,
-#'                                 n_neighbor = 1)
+#' sir_output <- calculateSIRSpace(
+#'     reference_data = reference_data,
+#'     query_data = query_data,
+#'     query_cell_type_col = "expert_annotation",
+#'     ref_cell_type_col = "expert_annotation",
+#'     multiple_cond_means = TRUE,
+#'     cumulative_variance_threshold = 0.9,
+#'     n_neighbor = 1
+#' )
 #'
 #' # Generate plots SIR projections
 #' plot(sir_output,
-#'      sir_subset = 1:5,
-#'      cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-#'      lower_facet = "scatter",
-#'      diagonal_facet = "boxplot",
-#'      upper_facet = "blank")
+#'     sir_subset = 1:5,
+#'     cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+#'     lower_facet = "scatter",
+#'     diagonal_facet = "boxplot",
+#'     upper_facet = "blank"
+#' )
 #'
 #' # Plot top loadings
 #' plot(sir_output,
-#'      sir_subset = 1:5,
-#'      plot_type = "loadings",
-#'      n_top = 10)
+#'     sir_subset = 1:5,
+#'     plot_type = "loadings",
+#'     n_top = 10
+#' )
 #'
 # Function to plot cell types in SIR space
 calculateSIRSpace <- function(query_data,
@@ -70,16 +74,17 @@ calculateSIRSpace <- function(query_data,
                               n_neighbor = 1,
                               assay_name = "logcounts",
                               max_cells_query = 5000,
-                              max_cells_ref = 5000){
-
+                              max_cells_ref = 5000) {
     # Check standard input arguments
-    argumentCheck(query_data = query_data,
-                  reference_data = reference_data,
-                  query_cell_type_col = query_cell_type_col,
-                  ref_cell_type_col = ref_cell_type_col,
-                  assay_name = assay_name,
-                  max_cells_query = max_cells_query,
-                  max_cells_ref = max_cells_ref)
+    argumentCheck(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        assay_name = assay_name,
+        max_cells_query = max_cells_query,
+        max_cells_ref = max_cells_ref
+    )
 
     # Check if cumulative_variance_threshold is between 0 and 1
     if (!is.numeric(cumulative_variance_threshold) ||
@@ -94,44 +99,54 @@ calculateSIRSpace <- function(query_data,
     }
 
     # Select cell types
-    cell_types <- selectCellTypes(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = query_cell_type_col,
-                                  ref_cell_type_col = ref_cell_type_col,
-                                  cell_types = cell_types,
-                                  dual_only = FALSE,
-                                  n_cell_types = NULL)
+    cell_types <- selectCellTypes(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        dual_only = FALSE,
+        n_cell_types = NULL
+    )
 
     # Convert cell type columns to character if needed
-    query_data <- convertColumnsToCharacter(sce_object = query_data,
-                                            convert_cols = query_cell_type_col)
-    reference_data <- convertColumnsToCharacter(sce_object = reference_data,
-                                                convert_cols = ref_cell_type_col)
+    query_data <- convertColumnsToCharacter(
+        sce_object = query_data,
+        convert_cols = query_cell_type_col
+    )
+    reference_data <- convertColumnsToCharacter(
+        sce_object = reference_data,
+        convert_cols = ref_cell_type_col
+    )
 
     # Downsample query and reference data (with cell type filtering)
-    query_data <- downsampleSCE(sce_object = query_data,
-                                cell_types = cell_types,
-                                cell_type_col = query_cell_type_col,
-                                max_cells = max_cells_query)
-    reference_data <- downsampleSCE(sce_object = reference_data,
-                                    cell_types = cell_types,
-                                    cell_type_col = ref_cell_type_col,
-                                    max_cells = max_cells_ref)
+    query_data <- downsampleSCE(
+        sce_object = query_data,
+        cell_types = cell_types,
+        cell_type_col = query_cell_type_col,
+        max_cells = max_cells_query
+    )
+    reference_data <- downsampleSCE(
+        sce_object = reference_data,
+        cell_types = cell_types,
+        cell_type_col = ref_cell_type_col,
+        max_cells = max_cells_ref
+    )
 
     # Get the projected PCA data
-    sir_output <- projectSIR(query_data = query_data,
-                             reference_data = reference_data,
-                             query_cell_type_col = query_cell_type_col,
-                             ref_cell_type_col = ref_cell_type_col,
-                             cell_types = cell_types,
-                             multiple_cond_means = multiple_cond_means,
-                             assay_name = assay_name,
-                             cumulative_variance_threshold = cumulative_variance_threshold,
-                             n_neighbor = n_neighbor)
+    sir_output <- projectSIR(
+        query_data = query_data,
+        reference_data = reference_data,
+        query_cell_type_col = query_cell_type_col,
+        ref_cell_type_col = ref_cell_type_col,
+        cell_types = cell_types,
+        multiple_cond_means = multiple_cond_means,
+        assay_name = assay_name,
+        cumulative_variance_threshold = cumulative_variance_threshold,
+        n_neighbor = n_neighbor
+    )
 
     # Return SIR projections output
     class(sir_output) <- c(class(sir_output), "calculateSIRSpaceObject")
     return(sir_output)
 }
-
-
