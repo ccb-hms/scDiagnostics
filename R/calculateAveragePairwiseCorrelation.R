@@ -97,21 +97,25 @@ calculateAveragePairwiseCorrelation <- function(
                                   dual_only = TRUE,
                                   n_cell_types = NULL)
 
+    # Project query data onto PCA space of reference data once, since the
+    # projection does not depend on the cell type pair being correlated
+    if(!is.null(pc_subset)){
+        pca_output <- projectPCA(
+            query_data = query_data,
+            reference_data = reference_data,
+            query_cell_type_col = query_cell_type_col,
+            ref_cell_type_col = ref_cell_type_col,
+            cell_types = cell_types,
+            pc_subset = pc_subset,
+            assay_name = assay_name,
+            max_cells_ref = max_cells_ref,
+            max_cells_query = max_cells_query)
+    }
+
     # Function to compute correlation between two cell types
     .computeCorrelation <- function(type1, type2) {
 
         if(!is.null(pc_subset)){
-            # Project query data onto PCA space of reference data
-            pca_output <- projectPCA(
-                query_data = query_data,
-                reference_data = reference_data,
-                query_cell_type_col = query_cell_type_col,
-                ref_cell_type_col = ref_cell_type_col,
-                cell_types = cell_types,
-                pc_subset = pc_subset,
-                assay_name = assay_name,
-                max_cells_ref = max_cells_ref,
-                max_cells_query = max_cells_query)
             ref_mat <- pca_output[which(
                 pca_output[["dataset"]] == "Reference" &
                     pca_output[["cell_type"]] == type2),
