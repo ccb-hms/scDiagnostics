@@ -1,0 +1,25 @@
+citHeader("To cite scDiagnostics in publications use:")
+
+bibentry(
+  bibtype  = "Article",
+  title    = "scDiagnostics: systematic assessment of cell type annotation in single-cell transcriptomics data",
+  author   = c(
+    person("Anthony", "Christidis"),
+    person("Andrew", "Ghazi"),
+    person("Smriti", "Chawla"),
+    person("Nitesh", "Turaga"),
+    person("Robert", "Gentleman"),
+    person("Ludwig", "Geistlinger")
+  ),
+  journal  = "Briefings in Bioinformatics",
+  year     = "2026",
+  volume   = "27",
+  number   = "5",
+  doi      = "10.1093/bib/bbag496",
+  textVersion = paste(
+    "Christidis A, Ghazi A, Chawla S, Turaga N, Gentleman R, Geistlinger L (2026).",
+    "scDiagnostics: systematic assessment of cell type annotation in single-cell transcriptomics data.",
+    "Briefings in Bioinformatics, 27(5), bbag496.",
+    "doi:10.1093/bib/bbag496."
+  )
+)

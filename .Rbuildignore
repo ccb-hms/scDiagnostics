@@ -9,3 +9,4 @@
 sandbox
 ^inst/extdata
 ^inst/script
+^CITATION\.cff$
