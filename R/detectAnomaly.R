@@ -152,7 +152,8 @@ detectAnomaly <- function(reference_data,
 
     # Check if n_hvgs is a positive integer
     if (is.null(pc_subset)) {
-        if (!is.numeric(n_hvgs) || length(n_hvgs) != 1 || n_hvgs <= 0 || n_hvgs != as.integer(n_hvgs)) {
+        if (!is.numeric(n_hvgs) || length(n_hvgs) != 1 || n_hvgs <= 0 ||
+            n_hvgs != as.integer(n_hvgs)) {
             stop("\'n_hvgs\' must be a single positive integer.")
         }
         n_hvgs <- as.integer(n_hvgs)
@@ -171,7 +172,10 @@ detectAnomaly <- function(reference_data,
     # Input check for anomaly_threshold
     if (!is.numeric(anomaly_threshold) || anomaly_threshold <= 0 ||
         anomaly_threshold >= 1) {
-        stop("\'anomaly_threshold\' must be a positive number greater than 0 and less than 1.")
+        stop(
+            "\'anomaly_threshold\' must be a positive number greater ",
+            "than 0 and less than 1."
+        )
     }
 
     # Select cell types
@@ -200,7 +204,8 @@ detectAnomaly <- function(reference_data,
                 max_cells_query = max_cells_query
             )
             query_mat <- pca_output[pca_output[["dataset"]] == "Query", ]
-            reference_mat <- pca_output[pca_output[["dataset"]] == "Reference", ]
+            reference_mat <-
+                pca_output[pca_output[["dataset"]] == "Reference", ]
 
             # Extract cell type information from PCA output
             query_cell_types <- query_mat[["cell_type"]]
@@ -233,7 +238,10 @@ detectAnomaly <- function(reference_data,
 
         # Check for scran dependency
         if (!requireNamespace("scran", quietly = TRUE)) {
-            stop("Package 'scran' is required when pc_subset = NULL. Please install it with: BiocManager::install('scran')")
+            stop(
+                "Package 'scran' is required when pc_subset = NULL. ",
+                "Please install it with: BiocManager::install('scran')"
+            )
         }
 
         # Get Reference HVGs
@@ -252,7 +260,8 @@ detectAnomaly <- function(reference_data,
             )
 
             # Get Query HVGs
-            var_query <- scran::modelGeneVar(query_data, assay.type = assay_name)
+            var_query <-
+                scran::modelGeneVar(query_data, assay.type = assay_name)
             hvg_query <- scran::getTopHVGs(var_query, n = n_hvgs)
 
             # Combine and take unique (Union of Ref and Query HVGs)
@@ -260,11 +269,15 @@ detectAnomaly <- function(reference_data,
         }
 
         # Subset matrices to the combined HVGs
-        reference_mat <- t(as.matrix(assay(reference_data, assay_name)[hvg_combined, ]))
+        reference_mat <- t(as.matrix(
+            assay(reference_data, assay_name)[hvg_combined, ]
+        ))
         reference_cell_types <- reference_data[[ref_cell_type_col]]
 
         if (!is.null(query_data)) {
-            query_mat <- t(as.matrix(assay(query_data, assay_name)[hvg_combined, ]))
+            query_mat <- t(as.matrix(
+                assay(query_data, assay_name)[hvg_combined, ]
+            ))
             query_cell_types <- query_data[[query_cell_type_col]]
         }
     }
@@ -316,18 +329,24 @@ detectAnomaly <- function(reference_data,
         # Store cell type anomaly scores and PCA data
         list_name <- ifelse(length(cell_type) == 1, cell_type, "Combined")
         output[[list_name]] <- list()
-        output[[list_name]][["reference_anomaly_scores"]] <- reference_anomaly_scores
-        output[[list_name]][["reference_anomaly"]] <- reference_anomaly_scores > cutoff
+        output[[list_name]][["reference_anomaly_scores"]] <-
+            reference_anomaly_scores
+        output[[list_name]][["reference_anomaly"]] <-
+            reference_anomaly_scores > cutoff
         output[[list_name]][["reference_mat_subset"]] <- reference_mat_subset
 
         if (!is.null(query_data)) {
             output[[list_name]][["query_mat_subset"]] <- query_mat_subset
-            output[[list_name]][["query_anomaly_scores"]] <- query_anomaly_scores
-            output[[list_name]][["query_anomaly"]] <- query_anomaly_scores > cutoff
+            output[[list_name]][["query_anomaly_scores"]] <-
+                query_anomaly_scores
+            output[[list_name]][["query_anomaly"]] <-
+                query_anomaly_scores > cutoff
         }
 
         if (!is.null(pc_subset)) {
-            output[[list_name]][["var_explained"]] <- attributes(reducedDim(reference_data, "PCA"))[["percentVar"]][pc_subset]
+            output[[list_name]][["var_explained"]] <- attributes(
+                reducedDim(reference_data, "PCA")
+            )[["percentVar"]][pc_subset]
         }
 
         # Optionally, store the threshold used so the user (or plotting

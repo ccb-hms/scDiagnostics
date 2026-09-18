@@ -112,7 +112,10 @@ calculateReconstructionError <- function(reference_data,
                                          max_cells_ref = 5000) {
     # Reconstruction Error strictly requires PCA
     if (is.null(pc_subset)) {
-        stop("'pc_subset' cannot be NULL for Reconstruction Error calculations. PCA is required.")
+        stop(
+            "'pc_subset' cannot be NULL for Reconstruction Error ",
+            "calculations. PCA is required."
+        )
     }
 
     # Check standard input arguments
@@ -128,14 +131,18 @@ calculateReconstructionError <- function(reference_data,
     )
 
     # Check if n_hvgs is a positive integer
-    if (!is.numeric(n_hvgs) || length(n_hvgs) != 1 || n_hvgs <= 0 || n_hvgs != as.integer(n_hvgs)) {
+    if (!is.numeric(n_hvgs) || length(n_hvgs) != 1 || n_hvgs <= 0 ||
+        n_hvgs != as.integer(n_hvgs)) {
         stop("\'n_hvgs\' must be a single positive integer.")
     }
     n_hvgs <- as.integer(n_hvgs)
 
     # Check for scran dependency (needed for local HVGs)
     if (!requireNamespace("scran", quietly = TRUE)) {
-        stop("Package 'scran' is required to calculate local highly variable genes. Please install it.")
+        stop(
+            "Package 'scran' is required to calculate local highly ",
+            "variable genes. Please install it."
+        )
     }
 
     # Convert cell type columns to character if needed
@@ -205,7 +212,10 @@ calculateReconstructionError <- function(reference_data,
 
         # Check if enough cells exist to perform PCA
         if (length(ref_subset_idx) < max(pc_subset) + 1) {
-            warning(paste("Not enough reference cells in", list_name, "to compute PCA. Skipping."))
+            warning(paste(
+                "Not enough reference cells in", list_name,
+                "to compute PCA. Skipping."
+            ))
             next
         }
 
@@ -217,13 +227,23 @@ calculateReconstructionError <- function(reference_data,
         local_hvgs <- scran::getTopHVGs(var_stats, n = n_hvgs_actual)
 
         # Ensure genes exist in query
-        if (!is.null(query_data) && !all(local_hvgs %in% rownames(SummarizedExperiment::assay(query_data, assay_name)))) {
-            warning(paste("Some local HVGs for", list_name, "are missing from the query data. Skipping."))
-            next
+        if (!is.null(query_data)) {
+            query_assay_names <- rownames(
+                SummarizedExperiment::assay(query_data, assay_name)
+            )
+            if (!all(local_hvgs %in% query_assay_names)) {
+                warning(paste(
+                    "Some local HVGs for", list_name,
+                    "are missing from the query data. Skipping."
+                ))
+                next
+            }
         }
 
         # 3. Extract and Center Local Reference Matrix
-        ref_assay <- as.matrix(SummarizedExperiment::assay(ref_sce_sub, assay_name)[local_hvgs, , drop = FALSE])
+        ref_assay <- as.matrix(SummarizedExperiment::assay(
+            ref_sce_sub, assay_name
+        )[local_hvgs, , drop = FALSE])
         centering_vec <- Matrix::rowMeans(ref_assay)
 
         ref_transposed <- t(ref_assay)
@@ -240,7 +260,8 @@ calculateReconstructionError <- function(reference_data,
         rotation_mat <- pca_res$rotation[, current_pc_subset, drop = FALSE]
 
         # Calculate local variance explained
-        percent_var <- (pca_res$sdev[current_pc_subset]^2 / sum(pca_res$sdev^2)) * 100
+        percent_var <-
+            (pca_res$sdev[current_pc_subset]^2 / sum(pca_res$sdev^2)) * 100
 
         # 5. Project and Reconstruct Reference
         ref_pca_scores <- ref_centered %*% rotation_mat
@@ -261,7 +282,9 @@ calculateReconstructionError <- function(reference_data,
 
             if (length(query_subset_idx) > 0) {
                 query_sce_sub <- query_data[, query_subset_idx]
-                query_assay <- as.matrix(SummarizedExperiment::assay(query_sce_sub, assay_name)[local_hvgs, , drop = FALSE])
+                query_assay <- as.matrix(SummarizedExperiment::assay(
+                    query_sce_sub, assay_name
+                )[local_hvgs, , drop = FALSE])
 
                 query_transposed <- t(query_assay)
                 query_centered <- sweep(query_transposed, 2, centering_vec, "-")
@@ -279,14 +302,17 @@ calculateReconstructionError <- function(reference_data,
 
         # 8. Store results
         output[[list_name]] <- list()
-        output[[list_name]][["reference_reconstruction_errors"]] <- ref_errors_subset
+        output[[list_name]][["reference_reconstruction_errors"]] <-
+            ref_errors_subset
         output[[list_name]][["reference_anomaly"]] <- ref_errors_subset > cutoff
 
         output[[list_name]][["reference_mat_subset"]] <- t(ref_assay)
 
         if (!is.null(query_data)) {
-            output[[list_name]][["query_reconstruction_errors"]] <- query_errors_subset
-            output[[list_name]][["query_anomaly"]] <- query_errors_subset > cutoff
+            output[[list_name]][["query_reconstruction_errors"]] <-
+                query_errors_subset
+            output[[list_name]][["query_anomaly"]] <-
+                query_errors_subset > cutoff
 
             output[[list_name]][["query_mat_subset"]] <- t(query_assay)
         }
@@ -296,7 +322,10 @@ calculateReconstructionError <- function(reference_data,
     }
 
     if (length(output) == 0) {
-        warning("No cell types had sufficient cells to compute Reconstruction Errors.")
+        warning(
+            "No cell types had sufficient cells to compute ",
+            "Reconstruction Errors."
+        )
     }
 
     # Set the S3 class for plotting downstream

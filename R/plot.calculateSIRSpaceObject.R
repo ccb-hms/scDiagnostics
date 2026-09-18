@@ -53,17 +53,18 @@
 #' @rdname calculateSIRSpace
 #'
 # Function to plot data projected onto SIR space
-plot.calculateSIRSpaceObject <- function(x,
-                                         plot_type = c("scores", "loadings"),
-                                         cell_types = NULL,
-                                         sir_subset = 1:5,
-                                         lower_facet = c("scatter", "contour", "ellipse", "blank"),
-                                         diagonal_facet = c("ridge", "density", "boxplot", "blank"),
-                                         upper_facet = c("blank", "scatter", "contour", "ellipse"),
-                                         n_top = 10,
-                                         max_cells_ref = NULL,
-                                         max_cells_query = NULL,
-                                         ...) {
+plot.calculateSIRSpaceObject <- function(
+    x,
+    plot_type = c("scores", "loadings"),
+    cell_types = NULL,
+    sir_subset = 1:5,
+    lower_facet = c("scatter", "contour", "ellipse", "blank"),
+    diagonal_facet = c("ridge", "density", "boxplot", "blank"),
+    upper_facet = c("blank", "scatter", "contour", "ellipse"),
+    n_top = 10,
+    max_cells_ref = NULL,
+    max_cells_query = NULL,
+    ...) {
     # Match arguments
     plot_type <- match.arg(plot_type)
     lower_facet <- match.arg(lower_facet)
@@ -72,7 +73,10 @@ plot.calculateSIRSpaceObject <- function(x,
 
     # Check sir_subset against available SIR components
     if (any(!(sir_subset %in% seq_len(ncol(x[["rotation_mat"]]))))) {
-        stop("sir_subset contains values outside the range of available SIR components")
+        stop(
+            "sir_subset contains values outside the range of ",
+            "available SIR components"
+        )
     }
 
     # Check n_top parameter for loadings plot
@@ -84,13 +88,15 @@ plot.calculateSIRSpaceObject <- function(x,
 
     # Validate max_cells parameters
     if (!is.null(max_cells_ref)) {
-        if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 || max_cells_ref != as.integer(max_cells_ref)) {
+        if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 ||
+            max_cells_ref != as.integer(max_cells_ref)) {
             stop("'max_cells_ref' must be a positive integer.")
         }
     }
 
     if (!is.null(max_cells_query)) {
-        if (!is.numeric(max_cells_query) || max_cells_query <= 0 || max_cells_query != as.integer(max_cells_query)) {
+        if (!is.numeric(max_cells_query) || max_cells_query <= 0 ||
+            max_cells_query != as.integer(max_cells_query)) {
             stop("'max_cells_query' must be a positive integer.")
         }
     }
@@ -116,18 +122,22 @@ plot.calculateSIRSpaceObject <- function(x,
                 stop("One or more specified cell types not found in the data")
             }
             # Filter projections to include only specified cell types
-            sir_projections <- sir_projections[sir_projections[["cell_type"]] %in%
-                cell_types, ]
+            sir_projections <- sir_projections[
+                sir_projections[["cell_type"]] %in% cell_types,
+            ]
         }
 
         # Separate reference and query data
-        ref_data <- sir_projections[sir_projections[["dataset"]] == "Reference", ]
-        query_data <- sir_projections[sir_projections[["dataset"]] == "Query", ]
+        ref_data <-
+            sir_projections[sir_projections[["dataset"]] == "Reference", ]
+        query_data <-
+            sir_projections[sir_projections[["dataset"]] == "Query", ]
 
         # Downsample reference data if max_cells_ref is specified
         if (!is.null(max_cells_ref)) {
             # Input validation for max_cells_ref
-            if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 || max_cells_ref != as.integer(max_cells_ref)) {
+            if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 ||
+                max_cells_ref != as.integer(max_cells_ref)) {
                 stop("'max_cells_ref' must be a positive integer.")
             }
 
@@ -140,7 +150,9 @@ plot.calculateSIRSpaceObject <- function(x,
                         # Calculate proportional allocation
                         n_cells_ct <- min(
                             nrow(ct_data),
-                            max(1, round(max_cells_ref * nrow(ct_data) / nrow(ref_data)))
+                            max(1, round(
+                                max_cells_ref * nrow(ct_data) / nrow(ref_data)
+                            ))
                         )
                         if (nrow(ct_data) > n_cells_ct) {
                             sampled_indices <- sample(nrow(ct_data), n_cells_ct)
@@ -157,7 +169,8 @@ plot.calculateSIRSpaceObject <- function(x,
         # Downsample query data if max_cells_query is specified
         if (!is.null(max_cells_query)) {
             # Input validation for max_cells_query
-            if (!is.numeric(max_cells_query) || max_cells_query <= 0 || max_cells_query != as.integer(max_cells_query)) {
+            if (!is.numeric(max_cells_query) || max_cells_query <= 0 ||
+                max_cells_query != as.integer(max_cells_query)) {
                 stop("'max_cells_query' must be a positive integer.")
             }
 
@@ -170,7 +183,10 @@ plot.calculateSIRSpaceObject <- function(x,
                         # Calculate proportional allocation
                         n_cells_ct <- min(
                             nrow(ct_data),
-                            max(1, round(max_cells_query * nrow(ct_data) / nrow(query_data)))
+                            max(1, round(
+                                max_cells_query * nrow(ct_data) /
+                                    nrow(query_data)
+                            ))
                         )
                         if (nrow(ct_data) > n_cells_ct) {
                             sampled_indices <- sample(nrow(ct_data), n_cells_ct)
@@ -237,7 +253,9 @@ plot.calculateSIRSpaceObject <- function(x,
                 y = sir_df[, 2]
             )
         ) +
-            ggplot2::geom_point(ggplot2::aes(color = .data[["cell_type_dataset"]])) +
+            ggplot2::geom_point(
+                ggplot2::aes(color = .data[["cell_type_dataset"]])
+            ) +
             ggplot2::scale_color_manual(
                 values = cell_type_colors,
                 name = "Cell Type"

@@ -205,7 +205,10 @@ calculateDiscriminantSpace <- function(reference_data,
 
     # Input check for alpha
     if (!is.numeric(alpha) || alpha <= 0 || alpha >= 1) {
-        stop("\'alpha\' must be a positive number greater than 0 and less than 1.")
+        stop(
+            "\'alpha\' must be a positive number greater than 0 ",
+            "and less than 1."
+        )
     }
 
     # Getting top variables
@@ -272,10 +275,13 @@ calculateDiscriminantSpace <- function(reference_data,
 
     # Compute projected data for reference
     ref_proj <- data.frame(
-        ref_mat[which(reference_data[[ref_cell_type_col]] %in% cell_types), ] %*%
+        ref_mat[
+            which(reference_data[[ref_cell_type_col]] %in% cell_types),
+        ] %*%
             discriminant_eigenvectors,
-        reference_data[[ref_cell_type_col]][reference_data[[ref_cell_type_col]] %in%
-            cell_types]
+        reference_data[[ref_cell_type_col]][
+            reference_data[[ref_cell_type_col]] %in% cell_types
+        ]
     )
     colnames(ref_proj) <- c(
         paste0("DV", seq_len(ncol(discriminant_eigenvectors))),
@@ -285,19 +291,24 @@ calculateDiscriminantSpace <- function(reference_data,
     # Create a single entry in discriminant_output
     discriminant_output <- list()
     discriminant_output <- list()
-    discriminant_output[["discriminant_eigenvalues"]] <- discriminant_eigenvalues
-    discriminant_output[["discriminant_eigenvectors"]] <- discriminant_eigenvectors
+    discriminant_output[["discriminant_eigenvalues"]] <-
+        discriminant_eigenvalues
+    discriminant_output[["discriminant_eigenvectors"]] <-
+        discriminant_eigenvectors
     discriminant_output[["ref_proj"]] <- ref_proj
 
     # Computations for query data
     if (!is.null(query_data)) {
         # Projection on discriminant space
-        query_mat <- t(as.matrix(assay(query_data, assay_name)))[, all_top_genes]
+        query_mat <-
+            t(as.matrix(assay(query_data, assay_name)))[, all_top_genes]
         query_proj <- data.frame(
-            query_mat[which(query_data[[query_cell_type_col]] %in%
-                cell_types), ] %*% discriminant_eigenvectors,
-            query_data[[query_cell_type_col]][query_data[[query_cell_type_col]] %in%
-                cell_types]
+            query_mat[
+                which(query_data[[query_cell_type_col]] %in% cell_types),
+            ] %*% discriminant_eigenvectors,
+            query_data[[query_cell_type_col]][
+                query_data[[query_cell_type_col]] %in% cell_types
+            ]
         )
         colnames(query_proj) <- c(
             paste0("DV", seq_len(ncol(discriminant_eigenvectors))), "cell_type"
@@ -329,7 +340,8 @@ calculateDiscriminantSpace <- function(reference_data,
                 ]
 
                 # Skip if we have no cells of this type
-                if (nrow(query_cells_of_type) == 0 || nrow(ref_cells_of_type) == 0) {
+                if (nrow(query_cells_of_type) == 0 ||
+                    nrow(ref_cells_of_type) == 0) {
                     next
                 }
 
@@ -341,21 +353,25 @@ calculateDiscriminantSpace <- function(reference_data,
                 ref_cov <- cov(ref_cells_of_type)
 
                 # Check if covariance matrix is invertible
-                if (any(is.na(ref_cov)) || determinant(ref_cov)[["modulus"]][1] <= 0) {
+                if (any(is.na(ref_cov)) ||
+                    determinant(ref_cov)[["modulus"]][1] <= 0) {
                     # If not invertible, use a regularized version
                     ref_cov <- ledoitWolf(ref_cells_of_type)
                 }
 
                 # Calculate Mahalanobis distance
-                mahalanobis_dist[query_proj[, "cell_type"] == type] <- mahalanobis(
-                    query_cells_of_type, ref_mean, ref_cov
-                )
+                mahalanobis_dist[query_proj[, "cell_type"] == type] <-
+                    mahalanobis(
+                        query_cells_of_type, ref_mean, ref_cov
+                    )
 
                 # Calculate cosine similarity
                 cosine_similarity[query_proj[, "cell_type"] == type] <-
                     apply(query_cells_of_type, 1,
                         function(x, y) {
-                            return(sum(x * y) / (sqrt(sum(x^2)) * sqrt(sum(y^2))))
+                            return(
+                                sum(x * y) / (sqrt(sum(x^2)) * sqrt(sum(y^2)))
+                            )
                         },
                         y = ref_mean
                     )
