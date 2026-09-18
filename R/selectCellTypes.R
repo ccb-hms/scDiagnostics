@@ -63,12 +63,18 @@ selectCellTypes <- function(query_data = NULL,
                             n_cell_types = NULL) {
     # Check that at least one dataset is provided
     if (is.null(query_data) && is.null(reference_data)) {
-        stop("At least one of 'query_data' or 'reference_data' must be provided.")
+        stop(
+            "At least one of 'query_data' or 'reference_data' ",
+            "must be provided."
+        )
     }
 
     # Check dual_only requirements
     if (dual_only && (is.null(query_data) || is.null(reference_data))) {
-        stop("When 'dual_only' is TRUE, both 'query_data' and 'reference_data' must be provided.")
+        stop(
+            "When 'dual_only' is TRUE, both 'query_data' and ",
+            "'reference_data' must be provided."
+        )
     }
 
     # Validate n_cell_types if provided
@@ -87,14 +93,18 @@ selectCellTypes <- function(query_data = NULL,
         if (!query_cell_type_col %in% names(colData(query_data))) {
             stop("'query_cell_type_col' is not found in query_data colData.")
         }
-        available_query_types <- as.character(na.omit(unique(query_data[[query_cell_type_col]])))
+        available_query_types <- as.character(na.omit(
+            unique(query_data[[query_cell_type_col]])
+        ))
     }
 
     if (!is.null(reference_data) && !is.null(ref_cell_type_col)) {
         if (!ref_cell_type_col %in% names(colData(reference_data))) {
             stop("'ref_cell_type_col' is not found in reference_data colData.")
         }
-        available_ref_types <- as.character(na.omit(unique(reference_data[[ref_cell_type_col]])))
+        available_ref_types <- as.character(na.omit(
+            unique(reference_data[[ref_cell_type_col]])
+        ))
     }
 
     # Determine valid cell types based on input and availability
@@ -103,13 +113,19 @@ selectCellTypes <- function(query_data = NULL,
         if (!is.null(available_query_types) && !is.null(available_ref_types)) {
             # Both datasets available - use dual_only setting
             if (dual_only) {
-                all_available_types <- intersect(available_query_types, available_ref_types)
+                all_available_types <- intersect(
+                    available_query_types, available_ref_types
+                )
             } else {
-                all_available_types <- unique(c(available_query_types, available_ref_types))
+                all_available_types <- unique(c(
+                    available_query_types, available_ref_types
+                ))
             }
         } else {
             # Only one dataset available - use all cell types from that dataset
-            all_available_types <- unique(c(available_query_types, available_ref_types))
+            all_available_types <- unique(c(
+                available_query_types, available_ref_types
+            ))
         }
     } else {
         # User provided cell types - convert to character and validate against
@@ -118,12 +134,20 @@ selectCellTypes <- function(query_data = NULL,
 
         # Determine which types are valid based on dual_only setting
         if (dual_only) {
-            if (is.null(available_query_types) || is.null(available_ref_types)) {
-                stop("When 'dual_only' is TRUE, both datasets must have valid cell type columns.")
+            if (is.null(available_query_types) ||
+                is.null(available_ref_types)) {
+                stop(
+                    "When 'dual_only' is TRUE, both datasets must have ",
+                    "valid cell type columns."
+                )
             }
-            valid_types_pool <- intersect(available_query_types, available_ref_types)
+            valid_types_pool <- intersect(
+                available_query_types, available_ref_types
+            )
         } else {
-            valid_types_pool <- unique(c(available_query_types, available_ref_types))
+            valid_types_pool <- unique(c(
+                available_query_types, available_ref_types
+            ))
         }
 
         # Filter to only those present in valid pool
@@ -134,12 +158,14 @@ selectCellTypes <- function(query_data = NULL,
             missing_types <- setdiff(cell_types, valid_types_pool)
             if (dual_only) {
                 stop(
-                    "None of the specified cell types are present in both datasets. ",
+                    "None of the specified cell types are present ",
+                    "in both datasets. ",
                     "Missing types: ", paste(missing_types, collapse = ", ")
                 )
             } else {
                 stop(
-                    "None of the specified cell types are present in the provided datasets. ",
+                    "None of the specified cell types are present ",
+                    "in the provided datasets. ",
                     "Missing types: ", paste(missing_types, collapse = ", ")
                 )
             }
@@ -150,12 +176,14 @@ selectCellTypes <- function(query_data = NULL,
         if (length(missing_types) > 0) {
             if (dual_only) {
                 warning(
-                    "Some specified cell types are not present in both datasets and will be excluded: ",
+                    "Some specified cell types are not present in both ",
+                    "datasets and will be excluded: ",
                     paste(missing_types, collapse = ", ")
                 )
             } else {
                 warning(
-                    "Some specified cell types are not present in the provided datasets and will be excluded: ",
+                    "Some specified cell types are not present in the ",
+                    "provided datasets and will be excluded: ",
                     paste(missing_types, collapse = ", ")
                 )
             }
@@ -169,7 +197,10 @@ selectCellTypes <- function(query_data = NULL,
     # If no cell types are available, return error
     if (length(all_available_types) == 0) {
         if (dual_only) {
-            stop("No common cell types found between query and reference datasets.")
+            stop(
+                "No common cell types found between query ",
+                "and reference datasets."
+            )
         } else {
             stop("No valid cell types found in the provided datasets.")
         }
@@ -185,14 +216,22 @@ selectCellTypes <- function(query_data = NULL,
             count <- 0
 
             # Count cells in query data if available and cell type is present
-            if (!is.null(available_query_types) && ct %in% available_query_types) {
-                count <- count + sum(as.character(query_data[[query_cell_type_col]]) == ct, na.rm = TRUE)
+            if (!is.null(available_query_types) &&
+                ct %in% available_query_types) {
+                count <- count + sum(
+                    as.character(query_data[[query_cell_type_col]]) == ct,
+                    na.rm = TRUE
+                )
             }
 
             # Count cells in reference data if available and cell type is
             # present
-            if (!is.null(available_ref_types) && ct %in% available_ref_types) {
-                count <- count + sum(as.character(reference_data[[ref_cell_type_col]]) == ct, na.rm = TRUE)
+            if (!is.null(available_ref_types) &&
+                ct %in% available_ref_types) {
+                count <- count + sum(
+                    as.character(reference_data[[ref_cell_type_col]]) == ct,
+                    na.rm = TRUE
+                )
             }
 
             cell_counts[ct] <- count

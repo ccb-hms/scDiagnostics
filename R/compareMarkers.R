@@ -104,18 +104,19 @@
 #' @importFrom utils head
 #'
 # Function to compare marker genes between query and reference datasets
-compareMarkers <- function(query_data,
-                           reference_data,
-                           query_cell_type_col,
-                           ref_cell_type_col,
-                           cell_types = NULL,
-                           n_markers = 50,
-                           min_cells = 10,
-                           anomaly_filter = c("none", "anomalous_only", "non_anomalous_only"),
-                           assay_name = "logcounts",
-                           max_cells_query = 5000,
-                           max_cells_ref = 5000,
-                           ...) {
+compareMarkers <- function(
+    query_data,
+    reference_data,
+    query_cell_type_col,
+    ref_cell_type_col,
+    cell_types = NULL,
+    n_markers = 50,
+    min_cells = 10,
+    anomaly_filter = c("none", "anomalous_only", "non_anomalous_only"),
+    assay_name = "logcounts",
+    max_cells_query = 5000,
+    max_cells_ref = 5000,
+    ...) {
     # Match arguments
     anomaly_filter <- match.arg(anomaly_filter)
 
@@ -178,13 +179,17 @@ compareMarkers <- function(query_data,
                     ref_cell_type_col = ref_cell_type_col,
                     query_cell_type_col = query_cell_type_col,
                     cell_types = cell_types,
-                    max_cells_ref = NULL, # No downsampling in anomaly detection
-                    max_cells_query = NULL, # No downsampling in anomaly detection
+                    # No downsampling in anomaly detection
+                    max_cells_ref = NULL,
+                    max_cells_query = NULL,
                     ...
                 )
             },
             error = function(e) {
-                warning("Anomaly detection failed: ", e[["message"]], ". Proceeding without anomaly filtering.")
+                warning(
+                    "Anomaly detection failed: ", e[["message"]],
+                    ". Proceeding without anomaly filtering."
+                )
                 anomaly_output <<- NULL
             }
         )
@@ -219,7 +224,8 @@ compareMarkers <- function(query_data,
     if (anomaly_filter != "none" && !is.null(anomaly_output)) {
         # Function to filter ONLY query cells based on anomaly results using
         # cell names
-        .filterQueryCellsByAnomalyNames <- function(data, anomaly_data, filter_type) {
+        .filterQueryCellsByAnomalyNames <- function(
+            data, anomaly_data, filter_type) {
             current_cell_names <- colnames(data)
             cells_to_keep <- rep(TRUE, ncol(data))
             current_cell_types <- colData(data)[[query_cell_type_col]]
@@ -233,10 +239,13 @@ compareMarkers <- function(query_data,
 
                     if ("query_anomaly" %in% names(anomaly_data[[cell_type]])) {
                         # Get anomaly status from original detection
-                        anomaly_names <- names(anomaly_data[[cell_type]][["query_anomaly"]])
-                        anomaly_status <- anomaly_data[[cell_type]][["query_anomaly"]]
+                        anomaly_names <-
+                            names(anomaly_data[[cell_type]][["query_anomaly"]])
+                        anomaly_status <-
+                            anomaly_data[[cell_type]][["query_anomaly"]]
 
-                        if (!is.null(anomaly_names) && length(anomaly_names) > 0) {
+                        if (!is.null(anomaly_names) &&
+                            length(anomaly_names) > 0) {
                             # Map current cells to their anomaly status
                             for (i in seq_along(cell_indices)) {
                                 cell_name <- cell_names_this_type[i]
@@ -249,7 +258,9 @@ compareMarkers <- function(query_data,
 
                                     if (filter_type == "anomalous_only") {
                                         cells_to_keep[cell_idx] <- is_anomalous
-                                    } else if (filter_type == "non_anomalous_only") {
+                                    } else if (
+                                        filter_type == "non_anomalous_only"
+                                    ) {
                                         cells_to_keep[cell_idx] <- !is_anomalous
                                     }
                                 } else {
@@ -268,10 +279,15 @@ compareMarkers <- function(query_data,
         }
 
         # Filter ONLY query data using cell names
-        query_keep <- .filterQueryCellsByAnomalyNames(query_data_filtered, anomaly_output, anomaly_filter)
+        query_keep <- .filterQueryCellsByAnomalyNames(
+            query_data_filtered, anomaly_output, anomaly_filter
+        )
 
         if (sum(query_keep) == 0) {
-            warning("Anomaly filtering removed all query cells. Proceeding without filtering.")
+            warning(
+                "Anomaly filtering removed all query cells. ",
+                "Proceeding without filtering."
+            )
         } else {
             query_data_filtered <- query_data_filtered[, query_keep]
             query_cell_types <- query_cell_types[query_keep]
@@ -279,8 +295,10 @@ compareMarkers <- function(query_data,
     }
 
     # Get unique cell types with sufficient cells
-    query_types <- names(table(query_cell_types))[table(query_cell_types) >= min_cells]
-    ref_types <- names(table(ref_cell_types))[table(ref_cell_types) >= min_cells]
+    query_types <-
+        names(table(query_cell_types))[table(query_cell_types) >= min_cells]
+    ref_types <-
+        names(table(ref_cell_types))[table(ref_cell_types) >= min_cells]
     common_cell_types <- intersect(query_types, ref_types)
 
     # Filter by user-specified cell types if provided
@@ -289,7 +307,10 @@ compareMarkers <- function(query_data,
     }
 
     if (length(common_cell_types) == 0) {
-        stop("No common cell types with sufficient cells found between query and reference data")
+        stop(
+            "No common cell types with sufficient cells found ",
+            "between query and reference data"
+        )
     }
 
     # Function to find markers using Wilcoxon test (standard Bioconductor
@@ -321,7 +342,10 @@ compareMarkers <- function(query_data,
             # Wilcoxon test with warning suppression
             test_result <- tryCatch(
                 {
-                    wilcox.test(target_expr, other_expr, alternative = "greater", exact = FALSE)
+                    wilcox.test(
+                        target_expr, other_expr,
+                        alternative = "greater", exact = FALSE
+                    )
                 },
                 error = function(e) {
                     list(p.value = 1)
@@ -345,7 +369,9 @@ compareMarkers <- function(query_data,
         )
 
         # Filter and sort
-        results <- results[results[["adj_pval"]] < 0.05 & results[["logFC"]] > 0, ]
+        results <- results[
+            results[["adj_pval"]] < 0.05 & results[["logFC"]] > 0,
+        ]
         results <- results[order(results[["adj_pval"]], decreasing = FALSE), ]
 
         return(results)
@@ -353,7 +379,8 @@ compareMarkers <- function(query_data,
 
     # Extract expression matrices
     query_matrix <- as.matrix(assay(query_data_filtered, assay_name))
-    ref_matrix <- as.matrix(assay(reference_data_filtered, assay_name)) # Uses ALL reference cells
+    # Uses ALL reference cells
+    ref_matrix <- as.matrix(assay(reference_data_filtered, assay_name))
 
     # Find markers for each cell type
     markers_query <- list()
@@ -362,10 +389,14 @@ compareMarkers <- function(query_data,
     for (cell_type in common_cell_types) {
         # Query markers: use filtered cells (anomalous/non-anomalous if
         # specified)
-        markers_query[[cell_type]] <- .findMarkers(query_matrix, query_cell_types, cell_type)
+        markers_query[[cell_type]] <- .findMarkers(
+            query_matrix, query_cell_types, cell_type
+        )
 
         # Reference markers: ALWAYS use all reference cells
-        markers_ref[[cell_type]] <- .findMarkers(ref_matrix, ref_cell_types, cell_type)
+        markers_ref[[cell_type]] <- .findMarkers(
+            ref_matrix, ref_cell_types, cell_type
+        )
     }
 
     # Calculate marker overlap
@@ -414,7 +445,8 @@ compareMarkers <- function(query_data,
                         consistent_markers <- consistent_markers + 1
                     }
                 }
-                expression_consistency[cell_type] <- consistent_markers / length(ref_markers_available)
+                expression_consistency[cell_type] <-
+                    consistent_markers / length(ref_markers_available)
             }
         }
     }
@@ -426,7 +458,9 @@ compareMarkers <- function(query_data,
 
     consistency_quality <- rep("Poor", length(common_cell_types))
     consistency_quality[expression_consistency >= 0.7] <- "Good"
-    consistency_quality[expression_consistency >= 0.4 & expression_consistency < 0.7] <- "Moderate"
+    consistency_quality[
+        expression_consistency >= 0.4 & expression_consistency < 0.7
+    ] <- "Moderate"
 
     # Overall quality is the WORST of the two
     quality_scores <- rep("Poor", length(common_cell_types))
@@ -439,7 +473,8 @@ compareMarkers <- function(query_data,
         # Take the worst quality (Poor > Moderate > Good in terms of "badness")
         if (overlap_qual == "Poor" || consistency_qual == "Poor") {
             quality_scores[i] <- "Poor"
-        } else if (overlap_qual == "Moderate" || consistency_qual == "Moderate") {
+        } else if (overlap_qual == "Moderate" ||
+            consistency_qual == "Moderate") {
             quality_scores[i] <- "Moderate"
         } else {
             quality_scores[i] <- "Good"

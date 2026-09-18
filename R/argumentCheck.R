@@ -84,7 +84,8 @@ argumentCheck <- function(query_data = NULL,
             stop("'query_data' must be a SingleCellExperiment object.")
         }
 
-        if (!is.null(assay_name) && !(assay_name %in% SummarizedExperiment::assayNames(query_data))) {
+        query_assay_names <- SummarizedExperiment::assayNames(query_data)
+        if (!is.null(assay_name) && !(assay_name %in% query_assay_names)) {
             stop("'query_data' does not contain the specified assay.")
         }
     }
@@ -95,7 +96,8 @@ argumentCheck <- function(query_data = NULL,
             stop("'reference_data' must be a SingleCellExperiment object.")
         }
 
-        if (!is.null(assay_name) && !(assay_name %in% SummarizedExperiment::assayNames(reference_data))) {
+        ref_assay_names <- SummarizedExperiment::assayNames(reference_data)
+        if (!is.null(assay_name) && !(assay_name %in% ref_assay_names)) {
             stop("'reference_data' does not contain the specified assay.")
         }
     }
@@ -106,11 +108,17 @@ argumentCheck <- function(query_data = NULL,
         if (!is.null(query_data)) {
             if (!is.character(query_cell_type_col) ||
                 length(query_cell_type_col) != 1) {
-                stop("'query_cell_type_col' must be a character string of length 1")
+                stop(
+                    "'query_cell_type_col' must be a character ",
+                    "string of length 1"
+                )
             }
 
             if (!(query_cell_type_col %in% names(colData(query_data)))) {
-                stop("'query_cell_type_col' is not an existing column of 'query_data'.")
+                stop(
+                    "'query_cell_type_col' is not an existing column ",
+                    "of 'query_data'."
+                )
             }
         }
     }
@@ -121,11 +129,17 @@ argumentCheck <- function(query_data = NULL,
         if (!is.null(reference_data)) {
             if (!is.character(ref_cell_type_col) ||
                 length(ref_cell_type_col) != 1) {
-                stop("'ref_cell_type_col' must be a character string of length 1")
+                stop(
+                    "'ref_cell_type_col' must be a character ",
+                    "string of length 1"
+                )
             }
 
             if (!(ref_cell_type_col %in% names(colData(reference_data)))) {
-                stop("'ref_cell_type_col' is not an existing column of 'reference_data'.")
+                stop(
+                    "'ref_cell_type_col' is not an existing column ",
+                    "of 'reference_data'."
+                )
             }
         }
     }
@@ -134,19 +148,29 @@ argumentCheck <- function(query_data = NULL,
     if (isTRUE(unique_cell_type)) {
         if (!is.null(query_data)) {
             if (length(unique(query_data[[query_cell_type_col]])) > 1) {
-                stop("This function should be used when there is only one cell type in 'query_data'.")
+                stop(
+                    "This function should be used when there is ",
+                    "only one cell type in 'query_data'."
+                )
             }
         }
 
         if (!is.null(reference_data)) {
             if (length(unique(reference_data[[ref_cell_type_col]])) > 1) {
-                stop("This function should be used when there is only one cell type in 'reference_data'.")
+                stop(
+                    "This function should be used when there is ",
+                    "only one cell type in 'reference_data'."
+                )
             }
         }
 
         if (!is.null(reference_data) && !is.null(query_data)) {
-            if (unique(query_data[[query_cell_type_col]]) != unique(reference_data[[ref_cell_type_col]])) {
-                stop("The cell type of the query data does not match the cell type of the reference data.")
+            if (unique(query_data[[query_cell_type_col]]) !=
+                unique(reference_data[[ref_cell_type_col]])) {
+                stop(
+                    "The cell type of the query data does not match ",
+                    "the cell type of the reference data."
+                )
             }
         }
     }
@@ -154,14 +178,20 @@ argumentCheck <- function(query_data = NULL,
     # Check cell_names contain valid cell names in query_data
     if (!is.null(cell_names_query)) {
         if (!all(cell_names_query %in% colnames(query_data))) {
-            stop("'cell_names' contains one or more cells that are not available in 'query_data'.")
+            stop(
+                "'cell_names' contains one or more cells that are ",
+                "not available in 'query_data'."
+            )
         }
     }
 
     # Check cell_names contain valid cell names in reference_data
     if (!is.null(cell_names_ref)) {
         if (!all(cell_names_ref %in% colnames(reference_data))) {
-            stop("'cell_names' contains one or more cells that are not available in 'reference_data'.")
+            stop(
+                "'cell_names' contains one or more cells that are ",
+                "not available in 'reference_data'."
+            )
         }
     }
 
@@ -177,7 +207,8 @@ argumentCheck <- function(query_data = NULL,
         }
 
         # Check input if PC subset is valid
-        if (!all(pc_subset_query %in% seq_len(ncol(reducedDim(query_data, "PCA"))))) {
+        n_pcs_query <- ncol(reducedDim(query_data, "PCA"))
+        if (!all(pc_subset_query %in% seq_len(n_pcs_query))) {
             stop("'pc_subset' is out of range for 'query_data'.")
         }
     }
@@ -187,14 +218,17 @@ argumentCheck <- function(query_data = NULL,
         # Check if "PCA" is present in reference's reduced dimensions
         if (!"PCA" %in% names(reducedDims(reference_data))) {
             stop(
-                "'reference_data' must have pre-computed PCA in 'reducedDims'. ",
+                "'reference_data' must have pre-computed PCA in ",
+                "'reducedDims'. ",
                 "Use processPCA() to compute PCA: ",
-                "reference_data <- processPCA(reference_data = reference_data)"
+                "reference_data <- processPCA(",
+                "reference_data = reference_data)"
             )
         }
 
         # Check input if PC subset is valid
-        if (!all(pc_subset_ref %in% seq_len(ncol(reducedDim(reference_data, "PCA"))))) {
+        n_pcs_ref <- ncol(reducedDim(reference_data, "PCA"))
+        if (!all(pc_subset_ref %in% seq_len(n_pcs_ref))) {
             stop("'pc_subset' is out of range for 'reference_data'.")
         }
     }
@@ -204,17 +238,21 @@ argumentCheck <- function(query_data = NULL,
         # Check if both datasets have PCA before comparing rotation matrices
         if (!"PCA" %in% names(reducedDims(query_data))) {
             stop(
-                "'query_data' must have pre-computed PCA in 'reducedDims' for rotation matrix comparison. ",
+                "'query_data' must have pre-computed PCA in ",
+                "'reducedDims' for rotation matrix comparison. ",
                 "Use processPCA() to compute PCA for both datasets: ",
-                "result <- processPCA(query_data = query_data, reference_data = reference_data)"
+                "result <- processPCA(query_data = query_data, ",
+                "reference_data = reference_data)"
             )
         }
 
         if (!"PCA" %in% names(reducedDims(reference_data))) {
             stop(
-                "'reference_data' must have pre-computed PCA in 'reducedDims' for rotation matrix comparison. ",
+                "'reference_data' must have pre-computed PCA in ",
+                "'reducedDims' for rotation matrix comparison. ",
                 "Use processPCA() to compute PCA for both datasets: ",
-                "result <- processPCA(query_data = query_data, reference_data = reference_data)"
+                "result <- processPCA(query_data = query_data, ",
+                "reference_data = reference_data)"
             )
         }
 
@@ -225,8 +263,13 @@ argumentCheck <- function(query_data = NULL,
         }
 
         # Check if genes in both rotation matrices are the same
-        if (!all(rownames(attributes(reducedDim(query_data, "PCA"))[["rotation"]]) %in%
-            rownames(attributes(reducedDim(reference_data, "PCA"))[["rotation"]]))) {
+        query_rotation_genes <- rownames(
+            attributes(reducedDim(query_data, "PCA"))[["rotation"]]
+        )
+        ref_rotation_genes <- rownames(
+            attributes(reducedDim(reference_data, "PCA"))[["rotation"]]
+        )
+        if (!all(query_rotation_genes %in% ref_rotation_genes)) {
             stop("The genes in the rotation matrices differ.")
         }
     }
@@ -234,16 +277,19 @@ argumentCheck <- function(query_data = NULL,
     # Check max_cells_ref parameter
     if (!is.null(max_cells_ref)) {
         # Check if max_cells_ref is a positive integer
-        if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 || max_cells_ref != as.integer(max_cells_ref)) {
+        if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 ||
+            max_cells_ref != as.integer(max_cells_ref)) {
             stop("'max_cells_ref' must be a positive integer.")
         }
 
         # Warning for plot functions when max_cells_ref > 50000 and
         # reference_data exists
-        if (plot_function && !is.null(reference_data) && max_cells_ref > 50000) {
+        if (plot_function && !is.null(reference_data) &&
+            max_cells_ref > 50000) {
             warning("'max_cells_ref' is set to ", max_cells_ref,
                 " which is greater than 50,000. For better plot performance, ",
-                "consider using a smaller value for 'max_cells_ref' to downsample the reference data.",
+                "consider using a smaller value for 'max_cells_ref' ",
+                "to downsample the reference data.",
                 call. = FALSE
             )
         }
@@ -252,16 +298,19 @@ argumentCheck <- function(query_data = NULL,
     # Check max_cells_query parameter
     if (!is.null(max_cells_query)) {
         # Check if max_cells_query is a positive integer
-        if (!is.numeric(max_cells_query) || max_cells_query <= 0 || max_cells_query != as.integer(max_cells_query)) {
+        if (!is.numeric(max_cells_query) || max_cells_query <= 0 ||
+            max_cells_query != as.integer(max_cells_query)) {
             stop("'max_cells_query' must be a positive integer.")
         }
 
         # Warning for plot functions when max_cells_query > 50000 and query_data
         # exists
-        if (plot_function && !is.null(query_data) && max_cells_query > 50000) {
+        if (plot_function && !is.null(query_data) &&
+            max_cells_query > 50000) {
             warning("'max_cells_query' is set to ", max_cells_query,
                 " which is greater than 50,000. For better plot performance, ",
-                "consider using a smaller value for 'max_cells_query' to downsample the query data.",
+                "consider using a smaller value for 'max_cells_query' ",
+                "to downsample the query data.",
                 call. = FALSE
             )
         }
