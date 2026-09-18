@@ -682,12 +682,8 @@ decomposeR2 <- function(pc, indep_var, df) {
         interaction_means <- tapply(y, list(df$cell_type, df[[second_var]]), mean)
 
         # Predict using full interaction model
-        y_pred_full <- numeric(length(y))
-        for (i in seq_along(y)) {
-            ct_level <- as.character(df$cell_type[i])
-            sv_level <- as.character(df[[second_var]][i])
-            y_pred_full[i] <- interaction_means[ct_level, sv_level]
-        }
+        y_pred_full <- interaction_means[cbind(as.character(df$cell_type),
+                                               as.character(df[[second_var]]))]
 
         ss_full <- sum((y_pred_full - y_mean)^2)
         ss_interaction <- ss_full - ss_cell_type - ss_second_var
