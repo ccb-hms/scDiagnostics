@@ -22,9 +22,9 @@ calculateWassersteinDistance(
 \method{plot}{calculateWassersteinDistanceObject}(x, cell_types = NULL, bandwidth = NULL, ...)
 }
 \arguments{
-\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing a numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing a numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object with a numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object with a numeric expression matrix for the reference cells.}
 
 \item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies cell types.}
 
@@ -86,12 +86,14 @@ data("reference_data")
 data("query_data")
 
 # Compute Wasserstein distance distributions for all cell types
-wasserstein_data <- calculateWassersteinDistance(query_data = query_data,
-                                                 reference_data = reference_data,
-                                                 query_cell_type_col = "expert_annotation",
-                                                 ref_cell_type_col = "expert_annotation",
-                                                 pc_subset = 1:5,
-                                                 n_resamples = 100)
+wasserstein_data <- calculateWassersteinDistance(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "expert_annotation",
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:5,
+    n_resamples = 100
+)
 plot(wasserstein_data)
 
 }

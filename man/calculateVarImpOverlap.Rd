@@ -18,9 +18,9 @@ calculateVarImpOverlap(
 )
 }
 \arguments{
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
 
-\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
 If NULL, then the variable importance scores are only computed for the reference data. Default is NULL.}
 
 \item{ref_cell_type_col}{A character string specifying the column name in the reference dataset containing cell type annotations.}
@@ -65,12 +65,14 @@ data("reference_data")
 data("query_data")
 
 # Compute important variables for all pairwise cell comparisons
-rf_output <- calculateVarImpOverlap(reference_data = reference_data,
-                                    query_data = query_data,
-                                    query_cell_type_col = "SingleR_annotation",
-                                    ref_cell_type_col = "expert_annotation",
-                                    n_tree = 500,
-                                    n_top = 50)
+rf_output <- calculateVarImpOverlap(
+    reference_data = reference_data,
+    query_data = query_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    n_tree = 500,
+    n_top = 50
+)
 
 # Comparison table
 rf_output$var_imp_comparison

@@ -27,9 +27,9 @@ comparePCA(
 )
 }
 \arguments{
-\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
 
@@ -106,23 +106,25 @@ query_top_genes <- getTopHVGs(query_data_subset, n = 500)
 
 # Intersect the gene symbols to obtain common genes
 common_genes <- intersect(ref_top_genes, query_top_genes)
-ref_data_subset <- ref_data_subset[common_genes,]
-query_data_subset <- query_data_subset[common_genes,]
+ref_data_subset <- ref_data_subset[common_genes, ]
+query_data_subset <- query_data_subset[common_genes, ]
 
 # Run PCA on datasets separately
 ref_data_subset <- runPCA(ref_data_subset)
 query_data_subset <- runPCA(query_data_subset)
 
 # Call the PCA comparison function
-similarity_mat <- comparePCA(query_data = query_data_subset,
-                             reference_data = ref_data_subset,
-                             query_cell_type_col = "expert_annotation",
-                             ref_cell_type_col = "expert_annotation",
-                             pc_subset = 1:5,
-                             n_top_vars = 50,
-                             metric = c("cosine", "correlation")[1],
-                             correlation_method = c("spearman", "pearson")[1],
-                             n_permutation = 100)
+similarity_mat <- comparePCA(
+    query_data = query_data_subset,
+    reference_data = ref_data_subset,
+    query_cell_type_col = "expert_annotation",
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:5,
+    n_top_vars = 50,
+    metric = c("cosine", "correlation")[1],
+    correlation_method = c("spearman", "pearson")[1],
+    n_permutation = 100
+)
 
 # Create the heatmap
 plot(similarity_mat, show_significance = TRUE)

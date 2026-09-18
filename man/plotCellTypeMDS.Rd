@@ -16,10 +16,10 @@ plotCellTypeMDS(
 )
 }
 \arguments{
-\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} containing the single-cell
+\item{query_data}{A \linkS4class{SingleCellExperiment} containing the single-cell
 expression data and metadata.}
 
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing the single-cell
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing the single-cell
 expression data and metadata.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
@@ -61,11 +61,13 @@ data("reference_data")
 data("query_data")
 
 # Generate the MDS scatter plot with cell type coloring
-mds_plot <- plotCellTypeMDS(query_data = query_data,
-                            reference_data = reference_data,
-                            cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid")[1:4],
-                            query_cell_type_col = "SingleR_annotation",
-                            ref_cell_type_col = "expert_annotation")
+mds_plot <- plotCellTypeMDS(
+    query_data = query_data,
+    reference_data = reference_data,
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid")[1:4],
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation"
+)
 mds_plot
 
 }

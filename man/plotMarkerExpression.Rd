@@ -18,9 +18,9 @@ plotMarkerExpression(
 )
 }
 \arguments{
-\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
 
 \item{ref_cell_type_col}{The column name in the \code{colData} of \code{reference_data} that identifies the cell types.}
 
@@ -65,13 +65,15 @@ data("reference_data")
 data("query_data")
 
 # Note: Users can use SingleR or any other method to obtain the cell type annotations.
-plotMarkerExpression(reference_data = reference_data,
-                     query_data = query_data,
-                     ref_cell_type_col = "expert_annotation",
-                     query_cell_type_col = c("expert_annotation", "SingleR_annotation")[1],
-                     gene_name = "CD8A",
-                     cell_type = "CD4",
-                     normalization = "z_score")
+plotMarkerExpression(
+    reference_data = reference_data,
+    query_data = query_data,
+    ref_cell_type_col = "expert_annotation",
+    query_cell_type_col = c("expert_annotation", "SingleR_annotation")[1],
+    gene_name = "CD8A",
+    cell_type = "CD4",
+    normalization = "z_score"
+)
 
 }
 \author{

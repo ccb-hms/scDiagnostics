@@ -18,9 +18,9 @@ calculateHotellingPValue(
 )
 }
 \arguments{
-\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
 
 \item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data}
 that identifies the cell types.}
@@ -60,11 +60,13 @@ data("reference_data")
 data("query_data")
 
 # Get the p-values
-p_values <- calculateHotellingPValue(query_data = query_data,
-                                     reference_data = reference_data,
-                                     query_cell_type_col = "SingleR_annotation",
-                                     ref_cell_type_col = "expert_annotation",
-                                     pc_subset = 1:10)
+p_values <- calculateHotellingPValue(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:10
+)
 round(p_values, 5)
 
 }

@@ -20,10 +20,10 @@ plotPairwiseDistancesDensity(
 )
 }
 \arguments{
-\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} containing the single-cell
+\item{query_data}{A \linkS4class{SingleCellExperiment} containing the single-cell
 expression data and metadata.}
 
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing the single-cell
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing the single-cell
 expression data and metadata.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
@@ -59,7 +59,7 @@ This function calculates pairwise distances or correlations between query and re
 and visualizes the results using ridgeline plots, displaying the density distribution for each comparison.
 }
 \details{
-Designed for \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} objects, this function subsets data for the specified cell type,
+Designed for \linkS4class{SingleCellExperiment} objects, this function subsets data for the specified cell type,
 computes pairwise distances or correlations, and visualizes these measurements through ridgeline plots.
 The plots help evaluate the consistency and differentiation of annotated cell types within single-cell datasets.
 }
@@ -69,14 +69,16 @@ data("reference_data")
 data("query_data")
 
 # Example usage of the function
-plotPairwiseDistancesDensity(query_data = query_data,
-                             reference_data = reference_data,
-                             query_cell_type_col = "SingleR_annotation",
-                             ref_cell_type_col = "expert_annotation",
-                             cell_type = "CD8",
-                             pc_subset = 1:5,
-                             distance_metric = "euclidean",
-                             correlation_method = "pearson")
+plotPairwiseDistancesDensity(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    cell_type = "CD8",
+    pc_subset = 1:5,
+    distance_metric = "euclidean",
+    correlation_method = "pearson"
+)
 
 }
 \seealso{

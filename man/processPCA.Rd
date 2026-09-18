@@ -12,7 +12,7 @@ processPCA(
 )
 }
 \arguments{
-\item{sce_object}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object to process.}
+\item{sce_object}{A \linkS4class{SingleCellExperiment} object to process.}
 
 \item{assay_name}{Name of the assay to use for HVG selection and PCA computation.
 Should contain log-normalized expression values. Default is "logcounts".}
@@ -23,19 +23,19 @@ Should contain log-normalized expression values. Default is "logcounts".}
 If NULL, no downsampling is performed. Default is NULL.}
 }
 \value{
-A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object with valid PCA in the reducedDims slot,
+A \linkS4class{SingleCellExperiment} object with valid PCA in the reducedDims slot,
 including rotation matrix and percentVar attributes. Will have original cell count if PCA was valid,
 or at most max_cells if PCA was computed.
 }
 \description{
-This function ensures that a \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object has valid PCA computed using
+This function ensures that a \linkS4class{SingleCellExperiment} object has valid PCA computed using
 highly variable genes when needed. It only performs downsampling when PCA computation
 is required, preserving existing valid PCA computations without modification.
 }
 \details{
 The function performs the following operations:
 \itemize{
-  \item Checks if PCA exists and is valid in the provided \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object
+  \item Checks if PCA exists and is valid in the provided \linkS4class{SingleCellExperiment} object
   \item Validates PCA integrity including rotation matrix, percentVar, gene consistency, and dimensions
   \item If PCA is valid, returns the object unchanged (no downsampling)
   \item If PCA is missing or invalid and dataset is large, downsamples before computing PCA
@@ -71,30 +71,34 @@ data("query_data")
 
 # Example 1: Dataset without PCA (will compute PCA)
 query_no_pca <- query_data
-reducedDims(query_no_pca) <- list()  # Remove existing PCA
+reducedDims(query_no_pca) <- list() # Remove existing PCA
 
 processed_query <- processPCA(sce_object = query_no_pca, n_hvgs = 500)
-"PCA" \%in\% reducedDimNames(processed_query)  # Should be TRUE
-ncol(processed_query)  # Should be 503 (unchanged)
+"PCA" \%in\% reducedDimNames(processed_query) # Should be TRUE
+ncol(processed_query) # Should be 503 (unchanged)
 
 # Example 2: Dataset with existing valid PCA (will be preserved)
 processed_existing <- processPCA(sce_object = query_data, n_hvgs = 500)
-ncol(processed_existing)  # Should be 503 (unchanged, no downsampling)
+ncol(processed_existing) # Should be 503 (unchanged, no downsampling)
 
 # Example 3: Large dataset requiring downsampling for PCA computation
 ref_no_pca <- reference_data
-reducedDims(ref_no_pca) <- list()  # Remove existing PCA
+reducedDims(ref_no_pca) <- list() # Remove existing PCA
 
-processed_large <- processPCA(sce_object = ref_no_pca,
-                              n_hvgs = 800,
-                              max_cells = 1000)
-ncol(processed_large)  # Should be 1000 (downsampled for PCA computation)
+processed_large <- processPCA(
+    sce_object = ref_no_pca,
+    n_hvgs = 800,
+    max_cells = 1000
+)
+ncol(processed_large) # Should be 1000 (downsampled for PCA computation)
 
 # Example 4: Large dataset with existing PCA (no downsampling)
-processed_large_existing <- processPCA(sce_object = reference_data,
-                                       n_hvgs = 800,
-                                       max_cells = 1000)
-ncol(processed_large_existing)  # Should be 1500 (preserved, no downsampling)
+processed_large_existing <- processPCA(
+    sce_object = reference_data,
+    n_hvgs = 800,
+    max_cells = 1000
+)
+ncol(processed_large_existing) # Should be 1500 (preserved, no downsampling)
 
 }
 \author{

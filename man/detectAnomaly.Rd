@@ -38,9 +38,9 @@ detectAnomaly(
 )
 }
 \arguments{
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
 
-\item{query_data}{An optional \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+\item{query_data}{An optional \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
 If NULL, then the isolation forest anomaly scores are computed for the reference data. Default is NULL.}
 
 \item{ref_cell_type_col}{A character string specifying the column name in the reference dataset containing cell type annotations.}
@@ -129,20 +129,23 @@ data("reference_data")
 data("query_data")
 
 # Store PCA anomaly data
-anomaly_output <- detectAnomaly(reference_data = reference_data,
-                                query_data = query_data,
-                                ref_cell_type_col = "expert_annotation",
-                                query_cell_type_col = "SingleR_annotation",
-                                pc_subset = 1:3,
-                                n_tree = 500,
-                                threshold_method = "MAD",
-                                mad_multiplier = 2)
+anomaly_output <- detectAnomaly(
+    reference_data = reference_data,
+    query_data = query_data,
+    ref_cell_type_col = "expert_annotation",
+    query_cell_type_col = "SingleR_annotation",
+    pc_subset = 1:3,
+    n_tree = 500,
+    threshold_method = "MAD",
+    mad_multiplier = 2
+)
 
 # Plot the output for a cell type
 plot(anomaly_output,
-     cell_type = "CD4",
-     pc_subset = 1:3,
-     data_type = "query")
+    cell_type = "CD4",
+    pc_subset = 1:3,
+    data_type = "query"
+)
 
 }
 \references{

@@ -38,9 +38,9 @@ calculateGraphIntegration(
 )
 }
 \arguments{
-\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
 
 \item{query_cell_type_col}{A character string specifying the column name in the query dataset containing cell type annotations.}
 
@@ -134,7 +134,8 @@ library(SingleR)
 reference_data <- reference_data[, reference_data$expert_annotation != "Myeloid"]
 reference_data <- runPCA(reference_data, ncomponents = 50)
 SingleR_annotation <- SingleR(query_data, reference_data,
-                              labels = reference_data$expert_annotation)
+    labels = reference_data$expert_annotation
+)
 query_data$SingleR_annotation <- SingleR_annotation$labels
 
 # Check annotation data
@@ -146,8 +147,8 @@ graph_diagnostics <- calculateGraphIntegration(
     reference_data = reference_data,
     query_cell_type_col = "SingleR_annotation",
     ref_cell_type_col = "expert_annotation",
-   pc_subset = 1:10,
-   k_neighbors = 30,
+    pc_subset = 1:10,
+    k_neighbors = 30,
     resolution = 0.1,
     high_query_prop_threshold = 0.9,
     cross_type_threshold = 0.15,
@@ -162,8 +163,10 @@ graph_diagnostics$overall_metrics
 plot(graph_diagnostics, plot_type = "community_network", color_by = "cell_type")
 
 # Network graph showing all issue types
-plot(graph_diagnostics, plot_type = "cell_network",
-     max_nodes = 2000, color_by = "community_type")
+plot(graph_diagnostics,
+    plot_type = "cell_network",
+    max_nodes = 2000, color_by = "community_type"
+)
 
 # Network graph showing all issue types
 plot(graph_diagnostics, plot_type = "community_data")

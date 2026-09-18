@@ -14,7 +14,7 @@ histQCvsAnnotation(
 )
 }
 \arguments{
-\item{sce_object}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} containing the single-cell
+\item{sce_object}{A \linkS4class{SingleCellExperiment} containing the single-cell
 expression data and metadata.}
 
 \item{cell_type_col}{The column name in the \code{colData} of \code{sce_object}
@@ -50,16 +50,20 @@ interpretation of cell type annotations.
 data("query_data")
 
 # Generate histograms
-histQCvsAnnotation(sce_object = query_data,
-                   cell_type_col = "SingleR_annotation",
-                   cell_types = c("CD4", "CD8"),
-                   qc_col = "percent_mito",
-                   score_col = "annotation_scores")
+histQCvsAnnotation(
+    sce_object = query_data,
+    cell_type_col = "SingleR_annotation",
+    cell_types = c("CD4", "CD8"),
+    qc_col = "percent_mito",
+    score_col = "annotation_scores"
+)
 
-histQCvsAnnotation(sce_object = query_data,
-                   cell_type_col = "SingleR_annotation",
-                   cell_types = NULL,
-                   qc_col = "percent_mito",
-                   score_col = "annotation_scores")
+histQCvsAnnotation(
+    sce_object = query_data,
+    cell_type_col = "SingleR_annotation",
+    cell_types = NULL,
+    qc_col = "percent_mito",
+    score_col = "annotation_scores"
+)
 
 }

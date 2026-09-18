@@ -23,9 +23,9 @@ compareMarkers(
 \method{plot}{compareMarkersObject}(x, cell_types = NULL, ...)
 }
 \arguments{
-\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing query cells.}
 
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing reference cells.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
 
@@ -103,17 +103,21 @@ data("reference_data")
 data("query_data")
 
 # Compare marker genes
-marker_comparison <- compareMarkers(query_data = query_data,
-                                    reference_data = reference_data,
-                                    query_cell_type_col = "expert_annotation",
-                                    ref_cell_type_col = "expert_annotation")
+marker_comparison <- compareMarkers(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "expert_annotation",
+    ref_cell_type_col = "expert_annotation"
+)
 
 # With anomaly filtering
-marker_comparison_filtered <- compareMarkers(query_data = query_data,
-                                            reference_data = reference_data,
-                                            query_cell_type_col = "expert_annotation",
-                                            ref_cell_type_col = "expert_annotation",
-                                            anomaly_filter = "non_anomalous_only")
+marker_comparison_filtered <- compareMarkers(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "expert_annotation",
+    ref_cell_type_col = "expert_annotation",
+    anomaly_filter = "non_anomalous_only"
+)
 
 # Visualize results
 plot(marker_comparison)

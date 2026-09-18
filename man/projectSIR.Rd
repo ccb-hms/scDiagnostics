@@ -19,9 +19,9 @@ projectSIR(
 )
 }
 \arguments{
-\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
 
 \item{query_cell_type_col}{A character string specifying the column in the \code{colData} of \code{query_data}
 that identifies the cell types.}
@@ -73,10 +73,12 @@ data("reference_data")
 data("query_data")
 
 # Project the query data onto SIR space of reference
-sir_output <- projectSIR(query_data = query_data,
-                         reference_data = reference_data,
-                         query_cell_type_col = "SingleR_annotation",
-                         ref_cell_type_col = "expert_annotation")
+sir_output <- projectSIR(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation"
+)
 
 }
 \author{

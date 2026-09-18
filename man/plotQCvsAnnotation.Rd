@@ -14,7 +14,7 @@ plotQCvsAnnotation(
 )
 }
 \arguments{
-\item{sce_object}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} containing the single-cell
+\item{sce_object}{A \linkS4class{SingleCellExperiment} containing the single-cell
 expression data and metadata.}
 
 \item{cell_type_col}{The column name in the \code{colData} of \code{sce_object}
@@ -53,14 +53,18 @@ data("qc_data")
 
 # Remove cell types with very few cells
 qc_data_subset <- qc_data[, !(qc_data$SingleR_annotation
-                              \%in\% c("Chondrocytes", "DC",
-                                     "Neurons","Platelets"))]
+    \%in\% c(
+        "Chondrocytes", "DC",
+        "Neurons", "Platelets"
+    ))]
 
-p1 <- plotQCvsAnnotation(sce_object = qc_data_subset,
-                         cell_type_col = "SingleR_annotation",
-                         cell_types = NULL,
-                         qc_col = "total",
-                         score_col = "annotation_scores")
+p1 <- plotQCvsAnnotation(
+    sce_object = qc_data_subset,
+    cell_type_col = "SingleR_annotation",
+    cell_types = NULL,
+    qc_col = "total",
+    score_col = "annotation_scores"
+)
 p1 + ggplot2::xlab("Library Size")
 
 }

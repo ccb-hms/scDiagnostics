@@ -17,10 +17,10 @@ projectPCA(
 )
 }
 \arguments{
-\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix
 for the query cells.}
 
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix
 for the reference cells.}
 
 \item{query_cell_type_col}{character. The column name in the \code{colData} of \code{query_data}
@@ -66,21 +66,25 @@ data("reference_data")
 data("query_data")
 
 # Project the query data onto PCA space of reference
-pca_output <- projectPCA(query_data = query_data,
-                         reference_data = reference_data,
-                         query_cell_type_col = "SingleR_annotation",
-                         ref_cell_type_col = "expert_annotation",
-                         pc_subset = 1:10)
+pca_output <- projectPCA(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:10
+)
 
 # Project with cell type filtering and balanced downsampling
-pca_output_filtered <- projectPCA(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = "SingleR_annotation",
-                                  ref_cell_type_col = "expert_annotation",
-                                  pc_subset = 1:5,
-                                  cell_types = c("CD4", "CD8"),
-                                  max_cells_ref = 1000,
-                                  max_cells_query = 1000)
+pca_output_filtered <- projectPCA(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:5,
+    cell_types = c("CD4", "CD8"),
+    max_cells_ref = 1000,
+    max_cells_query = 1000
+)
 
 }
 \author{

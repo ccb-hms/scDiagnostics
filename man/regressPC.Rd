@@ -43,9 +43,9 @@ to \code{plot_type = "coefficient_heatmap"}.}
 
 \item{...}{Additional arguments to be passed to the plotting functions.}
 
-\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.}
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
 If NULL, the PC scores are regressed against the cell types of the query data.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
@@ -84,7 +84,7 @@ The S3 plot method generates plots to visualize the results of regression analys
 performed on principal components (PCs) against cell types, datasets, or their interactions.
 
 This function performs linear regression of a covariate of interest onto one
-or more principal components, based on the data in a \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}}
+or more principal components, based on the data in a \linkS4class{SingleCellExperiment}
 object.
 }
 \details{
@@ -112,22 +112,26 @@ data("reference_data")
 data("query_data")
 
 # Query only analysis
-regress_res <- regressPC(query_data = query_data,
-                         query_cell_type_col = "expert_annotation",
-                         cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                         pc_subset = 1:10)
+regress_res <- regressPC(
+    query_data = query_data,
+    query_cell_type_col = "expert_annotation",
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    pc_subset = 1:10
+)
 # Visualize results
 plot(regress_res, plot_type = "r_squared")
 plot(regress_res, plot_type = "variance_contribution")
 plot(regress_res, plot_type = "coefficient_heatmap")
 
 # Query + Reference analysis
-regress_res <- regressPC(query_data = query_data,
-                         reference_data = reference_data,
-                         query_cell_type_col = "SingleR_annotation",
-                         ref_cell_type_col = "expert_annotation",
-                         cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                         pc_subset = 1:10)
+regress_res <- regressPC(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    pc_subset = 1:10
+)
 # Visualize results
 plot(regress_res, plot_type = "r_squared")
 plot(regress_res, plot_type = "variance_contribution")

@@ -10,8 +10,8 @@
 #' the anomaly scores are computed on the reference data itself. Anomaly scores for the data with all combined cell types are also
 #' provided as part of the output.
 #'
-#' @param reference_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
-#' @param query_data An optional \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
+#' @param query_data An optional \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
 #' If NULL, then the isolation forest anomaly scores are computed for the reference data. Default is NULL.
 #' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
 #' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.

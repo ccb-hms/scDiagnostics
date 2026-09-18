@@ -15,7 +15,7 @@ plotGeneSetScores(
 )
 }
 \arguments{
-\item{sce_object}{An object of class \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} containing numeric expression matrix and other metadata.
+\item{sce_object}{An object of class \linkS4class{SingleCellExperiment} containing numeric expression matrix and other metadata.
 It can be either a reference or query dataset.}
 
 \item{cell_type_col}{The column name in the \code{colData} of \code{sce_object} that identifies the cell types.}
@@ -40,7 +40,7 @@ Plot gene sets or pathway scores on PCA, TSNE, or UMAP. Single cells are color-c
 }
 \details{
 This function plots gene set scores on reduced dimensions such as PCA, t-SNE, or UMAP.
-It extracts the reduced dimensions from the provided \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object.
+It extracts the reduced dimensions from the provided \linkS4class{SingleCellExperiment} object.
 Gene set scores are visualized as a scatter plot with colors indicating the scores.
 For PCA, the function automatically includes the percentage of variance explained
 in the plot's legend.
@@ -50,12 +50,14 @@ in the plot's legend.
 data("query_data")
 
 # Plot gene set scores on PCA
-plotGeneSetScores(sce_object = query_data,
-                  method = "PCA",
-                  score_col = "gene_set_scores",
-                  pc_subset = 1:5,
-                  cell_types = "CD8",
-                  cell_type_col = "SingleR_annotation")
+plotGeneSetScores(
+    sce_object = query_data,
+    method = "PCA",
+    score_col = "gene_set_scores",
+    pc_subset = 1:5,
+    cell_types = "CD8",
+    cell_type_col = "SingleR_annotation"
+)
 
 }
 \author{

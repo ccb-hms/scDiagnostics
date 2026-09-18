@@ -17,7 +17,7 @@ calculateCellSimilarityPCA(
 \method{plot}{calculateCellSimilarityPCAObject}(x, pc_subset = 1:5, ...)
 }
 \arguments{
-\item{sce_object}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing expression data.}
+\item{sce_object}{A \linkS4class{SingleCellExperiment} object containing expression data.}
 
 \item{cell_names}{A character vector specifying the cell names for which to compute the similarity.}
 
@@ -46,7 +46,7 @@ The S3 plot method  creates a heatmap plot to visualize the cosine similarities 
 \details{
 This function calculates the cosine similarity between cells based on the loadings of the selected
 principal components obtained from PCA. It extracts the rotation matrix from the PCA results of the
-\code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object and identifies the high-loading variables for each selected PC.
+\linkS4class{SingleCellExperiment} object and identifies the high-loading variables for each selected PC.
 Then, it computes the cosine similarity between cells using the high-loading variables for each PC.
 
 The S3 plot method reshapes the input data frame to create a long format suitable for plotting as a heatmap. It then
@@ -59,21 +59,25 @@ data("reference_data")
 data("query_data")
 
 # Store PCA anomaly data and plots
-anomaly_output <- detectAnomaly(reference_data = reference_data,
-                                query_data = query_data,
-                                ref_cell_type_col = "expert_annotation",
-                                query_cell_type_col = "SingleR_annotation",
-                                pc_subset = 1:10,
-                                n_tree = 500,
-                                anomaly_threshold = 0.5)
+anomaly_output <- detectAnomaly(
+    reference_data = reference_data,
+    query_data = query_data,
+    ref_cell_type_col = "expert_annotation",
+    query_cell_type_col = "SingleR_annotation",
+    pc_subset = 1:10,
+    n_tree = 500,
+    anomaly_threshold = 0.5
+)
 top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores,
-                             decreasing = TRUE)[1:6])
+    decreasing = TRUE
+)[1:6])
 
 # Compute cosine similarity between anomalies and top PCs
 cosine_similarities <- calculateCellSimilarityPCA(reference_data,
-                                                  cell_names = top6_anomalies,
-                                                  pc_subset = 1:25,
-                                                  n_top_vars = 50)
+    cell_names = top6_anomalies,
+    pc_subset = 1:25,
+    n_top_vars = 50
+)
 cosine_similarities
 
 # Plot similarities

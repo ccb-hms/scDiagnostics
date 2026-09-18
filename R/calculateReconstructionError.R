@@ -20,8 +20,8 @@
 #' "Residuals" (biology that the reference cannot explain). The Sum of Squared Errors (SSE) of
 #' these residuals serves as a highly sensitive anomaly score for novel biological states.
 #'
-#' @param reference_data A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.
-#' @param query_data An optional \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+#' @param reference_data A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.
+#' @param query_data An optional \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
 #' If NULL, the reconstruction errors are computed for the reference data alone. Default is NULL.
 #' @param ref_cell_type_col A character string specifying the column name in the reference dataset containing cell type annotations.
 #' @param query_cell_type_col A character string specifying the column name in the query dataset containing cell type annotations.

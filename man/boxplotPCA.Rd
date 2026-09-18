@@ -18,10 +18,10 @@ boxplotPCA(
 )
 }
 \arguments{
-\item{query_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the
+\item{query_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the
 query cells.}
 
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for
 the reference cells.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of \code{query_data} that identifies the cell types.}
@@ -65,22 +65,26 @@ data("reference_data")
 data("query_data")
 
 # Plot the PC data with boxplots (default)
-pc_plot <- boxplotPCA(query_data = query_data,
-                      reference_data = reference_data,
-                      cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                      query_cell_type_col = "SingleR_annotation",
-                      ref_cell_type_col = "expert_annotation",
-                      pc_subset = 1:6)
+pc_plot <- boxplotPCA(
+    query_data = query_data,
+    reference_data = reference_data,
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:6
+)
 pc_plot
 
 # Plot the PC data with violin plots
-pc_violin <- boxplotPCA(query_data = query_data,
-                        reference_data = reference_data,
-                        cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                        query_cell_type_col = "SingleR_annotation",
-                        ref_cell_type_col = "expert_annotation",
-                        pc_subset = 1:6,
-                        shape = "violin")
+pc_violin <- boxplotPCA(
+    query_data = query_data,
+    reference_data = reference_data,
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:6,
+    shape = "violin"
+)
 pc_violin
 
 }

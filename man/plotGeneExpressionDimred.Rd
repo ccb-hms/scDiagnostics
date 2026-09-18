@@ -16,7 +16,7 @@ plotGeneExpressionDimred(
 )
 }
 \arguments{
-\item{sce_object}{An object of class \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} containing log-transformed expression matrix and other metadata.
+\item{sce_object}{An object of class \linkS4class{SingleCellExperiment} containing log-transformed expression matrix and other metadata.
 It can be either a reference or query dataset.}
 
 \item{method}{The reduction method to use for visualization. It should be one of the supported methods: "TSNE", "UMAP", or "PCA".}
@@ -46,11 +46,13 @@ This function plots gene expression on a dimensional reduction plot using method
 data("query_data")
 
 # Plot gene expression on PCA plot
-plotGeneExpressionDimred(sce_object = query_data,
-                         cell_type_col = "SingleR_annotation",
-                         method = "PCA",
-                         pc_subset = 1:5,
-                         feature = "CD8A",
-                         cell_types = "CD4")
+plotGeneExpressionDimred(
+    sce_object = query_data,
+    cell_type_col = "SingleR_annotation",
+    method = "PCA",
+    pc_subset = 1:5,
+    feature = "CD8A",
+    cell_types = "CD4"
+)
 
 }

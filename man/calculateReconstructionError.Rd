@@ -30,9 +30,9 @@ calculateReconstructionError(
 )
 }
 \arguments{
-\item{reference_data}{A \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the reference cells.}
+\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the reference cells.}
 
-\item{query_data}{An optional \code{\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}} object containing numeric expression matrix for the query cells.
+\item{query_data}{An optional \linkS4class{SingleCellExperiment} object containing numeric expression matrix for the query cells.
 If NULL, the reconstruction errors are computed for the reference data alone. Default is NULL.}
 
 \item{ref_cell_type_col}{A character string specifying the column name in the reference dataset containing cell type annotations.}
@@ -141,8 +141,9 @@ recon_output <- calculateReconstructionError(
 
 # Plot the output for a specific cell type
 plot(recon_output,
-     cell_type = "CD4",
-     plot_type = "violin")
+    cell_type = "CD4",
+    plot_type = "violin"
+)
 
 }
 \seealso{

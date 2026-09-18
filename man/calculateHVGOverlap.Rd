@@ -39,8 +39,10 @@ data("query_data")
 # Selecting highly variable genes
 ref_var <- scran::getTopHVGs(reference_data, n = 500)
 query_var <- scran::getTopHVGs(query_data, n = 500)
-overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var,
-                                           query_genes = query_var)
+overlap_coefficient <- calculateHVGOverlap(
+    reference_genes = ref_var,
+    query_genes = query_var
+)
 overlap_coefficient
 
 }
