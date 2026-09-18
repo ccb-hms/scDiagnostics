@@ -41,15 +41,16 @@
 #' @rdname calculateDiscriminantSpace
 #'
 # Function to plot data projected onto discriminant space
-plot.calculateDiscriminantSpaceObject <- function(x,
-                                                  cell_types = NULL,
-                                                  dv_subset = NULL,
-                                                  lower_facet = c("scatter", "contour", "ellipse", "blank"),
-                                                  diagonal_facet = c("ridge", "density", "boxplot", "blank"),
-                                                  upper_facet = c("blank", "scatter", "contour", "ellipse"),
-                                                  max_cells_ref = NULL,
-                                                  max_cells_query = NULL,
-                                                  ...) {
+plot.calculateDiscriminantSpaceObject <- function(
+    x,
+    cell_types = NULL,
+    dv_subset = NULL,
+    lower_facet = c("scatter", "contour", "ellipse", "blank"),
+    diagonal_facet = c("ridge", "density", "boxplot", "blank"),
+    upper_facet = c("blank", "scatter", "contour", "ellipse"),
+    max_cells_ref = NULL,
+    max_cells_query = NULL,
+    ...) {
     # Check if query data is available in the object
     if (!("query_proj" %in% names(x))) {
         stop("There is no query data to plot.")
@@ -77,7 +78,8 @@ plot.calculateDiscriminantSpaceObject <- function(x,
     # Downsample reference data if max_cells_ref is specified
     if (!is.null(max_cells_ref)) {
         # Input validation for max_cells_ref
-        if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 || max_cells_ref != as.integer(max_cells_ref)) {
+        if (!is.numeric(max_cells_ref) || max_cells_ref <= 0 ||
+            max_cells_ref != as.integer(max_cells_ref)) {
             stop("'max_cells_ref' must be a positive integer.")
         }
 
@@ -90,7 +92,9 @@ plot.calculateDiscriminantSpaceObject <- function(x,
                     # Calculate proportional allocation
                     n_cells_ct <- min(
                         nrow(ct_data),
-                        max(1, round(max_cells_ref * nrow(ct_data) / nrow(ref_data)))
+                        max(1, round(
+                            max_cells_ref * nrow(ct_data) / nrow(ref_data)
+                        ))
                     )
                     if (nrow(ct_data) > n_cells_ct) {
                         sampled_indices <- sample(nrow(ct_data), n_cells_ct)
@@ -107,7 +111,8 @@ plot.calculateDiscriminantSpaceObject <- function(x,
     # Downsample query data if max_cells_query is specified
     if (!is.null(max_cells_query)) {
         # Input validation for max_cells_query
-        if (!is.numeric(max_cells_query) || max_cells_query <= 0 || max_cells_query != as.integer(max_cells_query)) {
+        if (!is.numeric(max_cells_query) || max_cells_query <= 0 ||
+            max_cells_query != as.integer(max_cells_query)) {
             stop("'max_cells_query' must be a positive integer.")
         }
 
@@ -120,7 +125,9 @@ plot.calculateDiscriminantSpaceObject <- function(x,
                     # Calculate proportional allocation
                     n_cells_ct <- min(
                         nrow(ct_data),
-                        max(1, round(max_cells_query * nrow(ct_data) / nrow(query_data)))
+                        max(1, round(
+                            max_cells_query * nrow(ct_data) / nrow(query_data)
+                        ))
                     )
                     if (nrow(ct_data) > n_cells_ct) {
                         sampled_indices <- sample(nrow(ct_data), n_cells_ct)

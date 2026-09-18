@@ -162,7 +162,9 @@ calculateWassersteinDistance <- function(query_data,
     for (cell_type in cell_types) {
         # Skip if cell type not present in data
         if (!cell_type %in% names(cell_list)) {
-            warning(paste("Cell type", cell_type, "not found in data. Skipping."))
+            warning(paste(
+                "Cell type", cell_type, "not found in data. Skipping."
+            ))
             next
         }
 
@@ -172,7 +174,10 @@ calculateWassersteinDistance <- function(query_data,
 
         # Check if we have both reference and query cells for this cell type
         if (sum(ref_indices) == 0 || sum(query_indices) == 0) {
-            warning(paste("Cell type", cell_type, "missing in reference or query data. Skipping."))
+            warning(paste(
+                "Cell type", cell_type,
+                "missing in reference or query data. Skipping."
+            ))
             next
         }
 
@@ -180,13 +185,17 @@ calculateWassersteinDistance <- function(query_data,
         n_sample <- min(floor(sum(ref_indices) / 2), sum(query_indices), 200)
 
         if (n_sample < 10) {
-            warning(paste("Too few cells for cell type", cell_type, ". Skipping."))
+            warning(paste(
+                "Too few cells for cell type", cell_type, ". Skipping."
+            ))
             next
         }
 
         # Extract PCA data for this cell type
         pca_ref <- as.matrix(cell_data[ref_indices, paste0("PC", pc_subset)])
-        pca_query <- as.matrix(cell_data[query_indices, paste0("PC", pc_subset)])
+        pca_query <- as.matrix(
+            cell_data[query_indices, paste0("PC", pc_subset)]
+        )
 
         # Apply variance weighting
         pca_ref_weighted <- t(apply(pca_ref, 1,
@@ -217,7 +226,10 @@ calculateWassersteinDistance <- function(query_data,
         prob_masses <- rep(1 / n_sample, n_sample)
 
         for (iter in seq_len(n_resamples)) {
-            sample_ref_1 <- sample(seq_len(nrow(pca_ref)), n_sample, replace = FALSE)
+            sample_ref_1 <- sample(
+                seq_len(nrow(pca_ref)), n_sample,
+                replace = FALSE
+            )
             sample_ref_2 <- sample(seq_len(nrow(pca_ref))[-sample_ref_1],
                 n_sample,
                 replace = FALSE
@@ -237,8 +249,14 @@ calculateWassersteinDistance <- function(query_data,
         ref_query_distances <- numeric(n_resamples)
 
         for (iter in seq_len(n_resamples)) {
-            sample_ref <- sample(seq_len(nrow(pca_ref)), n_sample, replace = FALSE)
-            sample_query <- sample(seq_len(nrow(pca_query)), n_sample, replace = FALSE)
+            sample_ref <- sample(
+                seq_len(nrow(pca_ref)), n_sample,
+                replace = FALSE
+            )
+            sample_query <- sample(
+                seq_len(nrow(pca_query)), n_sample,
+                replace = FALSE
+            )
             cost_mat <- weighted_dist_query[sample_ref, sample_query]
             opt_plan <- transport::transport(prob_masses, prob_masses,
                 costm = cost_mat
