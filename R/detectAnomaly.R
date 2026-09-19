@@ -289,6 +289,13 @@ detectAnomaly <- function(reference_data,
     cell_types_list <- as.list(cell_types)
     cell_types_list[["Combined"]] <- cell_types
 
+    # Variance explained does not depend on cell type, so compute it once
+    if (!is.null(pc_subset)) {
+        var_explained <- attributes(
+            reducedDim(reference_data, "PCA")
+        )[["percentVar"]][pc_subset]
+    }
+
     for (cell_type in cell_types_list) {
         # Filter reference and query PCA data for the current cell type
         reference_mat_subset <- na.omit(reference_mat[which(
@@ -344,9 +351,7 @@ detectAnomaly <- function(reference_data,
         }
 
         if (!is.null(pc_subset)) {
-            output[[list_name]][["var_explained"]] <- attributes(
-                reducedDim(reference_data, "PCA")
-            )[["percentVar"]][pc_subset]
+            output[[list_name]][["var_explained"]] <- var_explained
         }
 
         # Optionally, store the threshold used so the user (or plotting
