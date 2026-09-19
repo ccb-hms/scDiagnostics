@@ -3,6 +3,8 @@
 ^doc$
 ^Meta$
 ^\.github$
+^\.claude$
+^\.lintr$
 ^docs$
 ^pkgdown$
 ^_pkgdown\.yml$
