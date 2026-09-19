@@ -322,21 +322,17 @@ calculateDiscriminantSpace <- function(reference_data,
             # reference discriminant space
             cosine_similarity <- mahalanobis_dist <- numeric(nrow(query_proj))
             mahalanobis_crit <- numeric(length(cell_types))
+            # DV column names are the same for every cell type in this loop
+            dv_cols <- paste0(
+                "DV", seq_len(length(discriminant_eigenvalues))
+            )
             for (type_idx in seq_along(cell_types)) {
                 type <- cell_types[type_idx]
-                query_cells_of_type <- query_proj[
-                    query_proj[, "cell_type"] == type,
-                    paste0(
-                        "DV",
-                        seq_len(length(discriminant_eigenvalues))
-                    )
-                ]
+                query_type_mask <- query_proj[, "cell_type"] == type
+                query_cells_of_type <- query_proj[query_type_mask, dv_cols]
                 ref_cells_of_type <- ref_proj[
                     ref_proj[, "cell_type"] == type,
-                    paste0(
-                        "DV",
-                        seq_len(length(discriminant_eigenvalues))
-                    )
+                    dv_cols
                 ]
 
                 # Skip if we have no cells of this type
@@ -360,13 +356,13 @@ calculateDiscriminantSpace <- function(reference_data,
                 }
 
                 # Calculate Mahalanobis distance
-                mahalanobis_dist[query_proj[, "cell_type"] == type] <-
+                mahalanobis_dist[query_type_mask] <-
                     mahalanobis(
                         query_cells_of_type, ref_mean, ref_cov
                     )
 
                 # Calculate cosine similarity
-                cosine_similarity[query_proj[, "cell_type"] == type] <-
+                cosine_similarity[query_type_mask] <-
                     apply(query_cells_of_type, 1,
                         function(x, y) {
                             return(
