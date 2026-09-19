@@ -224,16 +224,12 @@ plotGeneExpressionDimred <- function(sce_object,
             plot_names <- paste0("PC", pc_subset)
         }
 
-        # Create a new data frame with selected PCs
-        pc_df <- data.frame(matrix(0,
-            nrow = nrow(plot_mat),
-            ncol = length(pc_subset)
-        ))
+        # Create a new data frame with selected PCs (vectorized column
+        # copy instead of looping; row names reset to match the default
+        # integer row names produced by the previous implementation)
+        pc_df <- as.data.frame(plot_mat)
         colnames(pc_df) <- plot_names
-
-        for (i in 1:length(pc_subset)) {
-            pc_df[, i] <- plot_mat[, i]
-        }
+        rownames(pc_df) <- NULL
 
         # Add expression data
         pc_df[["Expression"]] <- expression
