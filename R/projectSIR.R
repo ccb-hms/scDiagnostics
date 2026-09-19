@@ -268,6 +268,9 @@ conditionalMeans <- function(reference_data,
                              cumulative_variance_threshold = 0.7,
                              n_neighbor = 1) {
     # Compute conditional means for each cell type of reference data
+    # Extracted once since it does not depend on the loop/branch below
+    ref_cell_types_vec <- reference_data[[ref_cell_type_col]]
+
     if (multiple_cond_means) {
         # Matrix to store results
         cond_means <- matrix(nrow = 0, ncol = nrow(reference_data))
@@ -277,7 +280,7 @@ conditionalMeans <- function(reference_data,
             # Compute multiple conditional means per cell type
             assay_mat <- scale(t(as.matrix(assay(
                 reference_data[
-                    , which(reference_data[[ref_cell_type_col]] == cell_type)
+                    , which(ref_cell_types_vec == cell_type)
                 ],
                 assay_name
             ))), center = TRUE, scale = FALSE)
@@ -314,7 +317,7 @@ conditionalMeans <- function(reference_data,
         cond_means <- lapply(cell_types, function(x) {
             apply(as.matrix(assay(
                 reference_data[
-                    , which(reference_data[[ref_cell_type_col]] == x)
+                    , which(ref_cell_types_vec == x)
                 ],
                 assay_name
             )), 1, mean)
