@@ -247,29 +247,21 @@ compareMarkers <- function(
                         if (!is.null(anomaly_names) &&
                             length(anomaly_names) > 0) {
                             # Map current cells to their anomaly status
-                            for (i in seq_along(cell_indices)) {
-                                cell_name <- cell_names_this_type[i]
-                                cell_idx <- cell_indices[i]
+                            # (vectorized match instead of a per-cell loop)
+                            match_idx <-
+                                match(cell_names_this_type, anomaly_names)
+                            found <- !is.na(match_idx)
+                            is_anomalous <- anomaly_status[match_idx[found]]
 
-                                # Find this cell in the anomaly results
-                                anomaly_idx <- match(cell_name, anomaly_names)
-                                if (!is.na(anomaly_idx)) {
-                                    is_anomalous <- anomaly_status[anomaly_idx]
-
-                                    if (filter_type == "anomalous_only") {
-                                        cells_to_keep[cell_idx] <- is_anomalous
-                                    } else if (
-                                        filter_type == "non_anomalous_only"
-                                    ) {
-                                        cells_to_keep[cell_idx] <- !is_anomalous
-                                    }
-                                } else {
-                                    # Cell not found in anomaly results
-                                    # (shouldn't happen) Keep it by default
-                                    if (filter_type == "anomalous_only") {
-                                        cells_to_keep[cell_idx] <- FALSE
-                                    }
-                                }
+                            if (filter_type == "anomalous_only") {
+                                cells_to_keep[cell_indices[found]] <-
+                                    is_anomalous
+                                # Cells not found in anomaly results
+                                # (shouldn't happen) - keep it by default
+                                cells_to_keep[cell_indices[!found]] <- FALSE
+                            } else if (filter_type == "non_anomalous_only") {
+                                cells_to_keep[cell_indices[found]] <-
+                                    !is_anomalous
                             }
                         }
                     }
