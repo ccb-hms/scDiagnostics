@@ -185,17 +185,32 @@ comparePCA <- function(query_data,
         ncol = length(pc_subset)
     )
 
+    # Union of top variables for each PC pair depends only on top_ref and
+    # top_query, not on the (possibly permuted) rotation values, so it is
+    # computed once and reused for the observed and every permuted matrix
+    .getTopVarsList <- function(n_ref_pc, n_query_pc, top_ref, top_query) {
+        top_vars_list <- list()
+        for (i in seq_len(n_ref_pc)) {
+            for (j in seq_len(n_query_pc)) {
+                top_vars_list[[paste(i, j, sep = "_")]] <-
+                    union(top_ref[, i], top_query[, j])
+            }
+        }
+        return(top_vars_list)
+    }
+    top_vars_list <- .getTopVarsList(
+        ncol(ref_rotation), ncol(query_rotation), top_ref, top_query
+    )
+
     # Vectorized similarity computation function
-    .computeSimilarityMatrix <- function(ref_rot, query_rot, top_ref, top_query,
+    .computeSimilarityMatrix <- function(ref_rot, query_rot, top_vars_list,
                                          metric, correlation_method) {
         sim_mat <- matrix(NA, nrow = ncol(ref_rot), ncol = ncol(query_rot))
-        top_vars_list <- list()
 
         for (i in seq_len(ncol(ref_rot))) {
             for (j in seq_len(ncol(query_rot))) {
                 # Get union of top variables for this PC pair
-                combination_union <- union(top_ref[, i], top_query[, j])
-                top_vars_list[[paste(i, j, sep = "_")]] <- combination_union
+                combination_union <- top_vars_list[[paste(i, j, sep = "_")]]
 
                 # Extract relevant loadings
                 ref_loadings <- ref_rot[combination_union, i]
@@ -222,7 +237,7 @@ comparePCA <- function(query_data,
     # Compute similarity matrix
     result <- .computeSimilarityMatrix(
         ref_rotation, query_rotation,
-        top_ref, top_query,
+        top_vars_list,
         metric, correlation_method
     )
     similarity_matrix <- result[["similarity_matrix"]]
@@ -244,16 +259,20 @@ comparePCA <- function(query_data,
             n_permutations
         ))
 
+        # Gene names being permuted do not change across iterations, so
+        # compute this once rather than calling rownames() every iteration
+        ref_gene_names <- rownames(ref_rotation)
+
         for (perm in seq_len(n_permutations)) {
             # Permute gene labels
-            permuted_genes <- sample(rownames(ref_rotation))
+            permuted_genes <- sample(ref_gene_names)
             ref_rotation_perm <- ref_rotation
             rownames(ref_rotation_perm) <- permuted_genes
 
             # Recompute similarities with permuted data
             perm_result <- .computeSimilarityMatrix(
                 ref_rotation_perm, query_rotation,
-                top_ref, top_query,
+                top_vars_list,
                 metric, correlation_method
             )
             permuted_similarities[, , perm] <-

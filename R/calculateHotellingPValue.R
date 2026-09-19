@@ -135,15 +135,18 @@ calculateHotellingPValue <- function(query_data,
             observed_t2_data[!ref_ind, ]
         )
 
+        # The permuted data matrix and its dimensions do not depend on the
+        # permutation draw, so compute them once instead of every iteration
+        n_cells <- nrow(observed_t2_data)
+        n_ref <- sum(ref_ind)
+        perm_t2_data <- observed_t2_data
+
         perm_t2 <- numeric(n_permutation)
         for (perm_id in seq_len(n_permutation)) {
             ref_sample_id <- sample(
-                seq_len(nrow(cell_list[[cell_type]])),
-                sum(ref_ind),
+                seq_len(n_cells),
+                n_ref,
                 replace = FALSE
-            )
-            perm_t2_data <- as.matrix(
-                cell_list[[cell_type]][, paste0("PC", pc_subset)]
             )
             perm_t2[perm_id] <- hotellingT2(
                 perm_t2_data[ref_sample_id, ],
