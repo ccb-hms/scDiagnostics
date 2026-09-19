@@ -173,6 +173,10 @@ calculateCellDistancesSimilarity <- function(query_data,
         # Compute density of reference distances
         ref_density <- density(ref_distances)
 
+        # Build the reference density interpolation function once, since
+        # it does not depend on the query cell being processed below
+        ref_interp_fun <- approxfun(ref_density[["x"]], ref_density[["y"]])
+
         # Initialize an empty vector to store overlap measures for the current
         # cell type
         bhattacharyya_coef <- numeric(length(cell_names_query))
@@ -204,10 +208,7 @@ calculateCellDistancesSimilarity <- function(query_data,
             )
 
             # Interpolate densities onto the common grid
-            ref_density_interp <- approxfun(
-                ref_density[["x"]],
-                ref_density[["y"]]
-            )(common_grid)
+            ref_density_interp <- ref_interp_fun(common_grid)
             ref_density_interp[is.na(ref_density_interp)] <- 0
             cell_density_interp <- approxfun(
                 cell_density[["x"]],

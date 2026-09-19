@@ -272,30 +272,28 @@ computeMMDStatistic <- function(X, Y,
         K_XY_sum <- 0
 
         # Compute K(X,X) sum - kernel evaluations within first dataset
+        # (inner loop over j vectorized; dist_sq terms and their order
+        # of accumulation across i are unchanged from the pairwise loop)
         for (i in seq_len(n - 1)) {
             X_i <- X[i, ]
-            for (j in seq(i + 1, n)) {
-                dist_sq <- sum((X_i - X[j, ])^2)
-                K_XX_sum <- K_XX_sum + 2 * exp(-dist_sq * sigma_sq_2_inv)
-            }
+            rest <- X[seq(i + 1, n), , drop = FALSE]
+            dist_sq <- rowSums(sweep(rest, 2, X_i, "-")^2)
+            K_XX_sum <- K_XX_sum + 2 * sum(exp(-dist_sq * sigma_sq_2_inv))
         }
 
         # Compute K(Y,Y) sum - kernel evaluations within second dataset
         for (i in seq_len(m - 1)) {
             Y_i <- Y[i, ]
-            for (j in seq(i + 1, m)) {
-                dist_sq <- sum((Y_i - Y[j, ])^2)
-                K_YY_sum <- K_YY_sum + 2 * exp(-dist_sq * sigma_sq_2_inv)
-            }
+            rest <- Y[seq(i + 1, m), , drop = FALSE]
+            dist_sq <- rowSums(sweep(rest, 2, Y_i, "-")^2)
+            K_YY_sum <- K_YY_sum + 2 * sum(exp(-dist_sq * sigma_sq_2_inv))
         }
 
         # Compute K(X,Y) sum - kernel evaluations between datasets
         for (i in seq_len(n)) {
             X_i <- X[i, ]
-            for (j in seq_len(m)) {
-                dist_sq <- sum((X_i - Y[j, ])^2)
-                K_XY_sum <- K_XY_sum + exp(-dist_sq * sigma_sq_2_inv)
-            }
+            dist_sq <- rowSums(sweep(Y, 2, X_i, "-")^2)
+            K_XY_sum <- K_XY_sum + sum(exp(-dist_sq * sigma_sq_2_inv))
         }
     } else {
         # Linear kernel - computationally efficient alternative
