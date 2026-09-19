@@ -64,6 +64,10 @@ plot.calculateCellDistancesObject <- function(
     # Extract distances within the reference dataset
     ref_distances <- distance_data[["ref_distances"]]
 
+    # Extract the query-to-reference distance matrix once rather than
+    # looking it up from the list on every loop iteration below
+    query_to_ref_distances <- distance_data[["query_to_ref_distances"]]
+
     # Initialize an empty list to store data frames for each cell
     plot_data_list <- vector("list", length = length(cell_names))
     names(plot_data_list) <- cell_names
@@ -71,7 +75,7 @@ plot.calculateCellDistancesObject <- function(
     # Loop through each cell to create the combined data frame
     for (s in cell_names) {
         # Extract distances for the current cell
-        cell_distances <- distance_data[["query_to_ref_distances"]][s, ]
+        cell_distances <- query_to_ref_distances[s, ]
 
         # Create a data frame for the current cell and reference distances
         cell_data <- data.frame(
