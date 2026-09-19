@@ -124,9 +124,8 @@ plotCellTypePCA <- function(query_data,
     ))
     colnames(pc_df) <- plot_names
 
-    for (i in 1:length(pc_subset)) {
-        pc_df[, i] <- pca_output[, paste0("PC", pc_subset[i])]
-    }
+    pc_df[, seq_along(pc_subset)] <-
+        pca_output[, paste0("PC", pc_subset), drop = FALSE]
 
     # Create a cell type dataset column for coloring
     cell_type_dataset <- paste(pca_output[["dataset"]],
