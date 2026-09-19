@@ -35,18 +35,20 @@ plot.calculateCellSimilarityPCAObject <- function(x,
     # Subset data
     x <- x[, paste0("PC", pc_subset)]
 
-    # Initialize empty vectors for reshaped data
-    cell_names <- c()
-    pc_names <- c()
-    cosine_values <- c()
-
-    # Loop through the data frame to manually reshape it
-    for (cell in rownames(x)) {
-        for (pc in colnames(x)) {
-            cell_names <- c(cell_names, cell)
-            pc_names <- c(pc_names, pc)
-            cosine_values <- c(cosine_values, x[cell, pc])
-        }
+    # Reshape the matrix into long format. Row-major flattening via
+    # t()/as.vector() reproduces exactly the values and order the original
+    # nested loop (outer over cells, inner over PCs) produced, but without
+    # the O(n^2) cost of repeatedly growing vectors with c().
+    if (is.matrix(x)) {
+        n_cells <- nrow(x)
+        n_pcs <- ncol(x)
+        cell_names <- rep(rownames(x), each = n_pcs)
+        pc_names <- rep(colnames(x), times = n_cells)
+        cosine_values <- as.vector(t(x))
+    } else {
+        cell_names <- c()
+        pc_names <- c()
+        cosine_values <- c()
     }
 
     # Create a data frame with the reshaped data
