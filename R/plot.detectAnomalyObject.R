@@ -331,15 +331,14 @@ plot.detectAnomalyObject <- function(
 
     # Train isolation forest for each PC combination
     isolation_forests <- list()
+    ref_mat_subset_full <- x[[cell_type]][["reference_mat_subset"]]
     for (i in seq_along(pc_subset)) {
         for (j in seq_along(pc_subset)) {
             if (i < j) {
                 pc_i <- paste0("PC", pc_subset[i])
                 pc_j <- paste0("PC", pc_subset[j])
 
-                train_data <- x[[cell_type]][["reference_mat_subset"]][
-                    , c(pc_i, pc_j)
-                ]
+                train_data <- ref_mat_subset_full[, c(pc_i, pc_j)]
 
                 isolation_forests[[paste(pc_i, pc_j, sep = "-")]] <-
                     isotree::isolation.forest(train_data, ntree = n_tree, ...)
