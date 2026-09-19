@@ -174,10 +174,10 @@ projectPCA <- function(query_data,
     )
 
     # Extract reference PCA components and rotation matrix
-    ref_mat <- reducedDim(reference_data, "PCA")[, pc_subset, drop = FALSE]
-    rotation_mat <- attributes(
-        reducedDim(reference_data, "PCA")
-    )[["rotation"]][, pc_subset, drop = FALSE]
+    # (fetched once and reused, since reducedDim() is called identically here)
+    ref_pca <- reducedDim(reference_data, "PCA")
+    ref_mat <- ref_pca[, pc_subset, drop = FALSE]
+    rotation_mat <- attributes(ref_pca)[["rotation"]][, pc_subset, drop = FALSE]
     PCA_genes <- rownames(rotation_mat)
 
     # Check if genes used for PCA are available in query data
