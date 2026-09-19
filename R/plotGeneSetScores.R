@@ -244,16 +244,12 @@ plotGeneSetScores <- function(sce_object,
             plot_names <- paste0("PC", pc_subset)
         }
 
-        # Create a new data frame with selected PCs
-        pc_df <- data.frame(matrix(0,
-            nrow = nrow(plot_mat),
-            ncol = length(pc_subset)
-        ))
+        # Create a new data frame with selected PCs (vectorized column
+        # copy instead of looping; row names reset to match the default
+        # integer row names produced by the previous implementation)
+        pc_df <- as.data.frame(plot_mat)
         colnames(pc_df) <- plot_names
-
-        for (i in 1:length(pc_subset)) {
-            pc_df[, i] <- plot_mat[, i]
-        }
+        rownames(pc_df) <- NULL
 
         # Add scores data
         pc_df[["Scores"]] <- scores
@@ -262,6 +258,11 @@ plotGeneSetScores <- function(sce_object,
         if (!is.null(cell_type_col)) {
             pc_df[["CellType"]] <- colData(sce_object)[[cell_type_col]]
         }
+
+        # Score range used for the color scale; hoisted once since it does
+        # not depend on the panel being drawn and .scoresScatterFunc below
+        # is invoked once per lower-triangle panel by GGally::ggpairs
+        scores_range <- range(scores, na.rm = TRUE)
 
         # Create a simple plot to extract the legend with original color scheme
         legend_plot <- ggplot2::ggplot(
@@ -275,9 +276,7 @@ plotGeneSetScores <- function(sce_object,
             ggplot2::scale_color_gradientn(
                 colors = c("#2171B5", "#8AABC1", "#FFEDA0", "#E6550D"),
                 values = seq(0, 1, by = 1 / 3),
-                limits = c(min(scores, na.rm = TRUE), max(scores,
-                    na.rm = TRUE
-                )),
+                limits = scores_range,
                 name = "Scores"
             ) +
             ggplot2::theme(
@@ -297,9 +296,7 @@ plotGeneSetScores <- function(sce_object,
                 ggplot2::scale_color_gradientn(
                     colors = c("#2171B5", "#8AABC1", "#FFEDA0", "#E6550D"),
                     values = seq(0, 1, by = 1 / 3),
-                    limits = c(min(scores, na.rm = TRUE), max(scores,
-                        na.rm = TRUE
-                    ))
+                    limits = scores_range
                 ) +
                 ggplot2::theme_minimal() +
                 ggplot2::theme(
