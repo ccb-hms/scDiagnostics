@@ -70,8 +70,17 @@ downsampleSCE <- function(sce_object,
         seed <- as.integer(seed)
     }
 
-    # Set seed if provided
+    # Set seed if provided, restoring the caller's prior RNG state on exit
+    # so this function does not leak seed state into the calling session
     if (!is.null(seed)) {
+        if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+            stats::runif(1)
+        }
+        old_seed <- get(".Random.seed", envir = .GlobalEnv)
+        on.exit(
+            assign(".Random.seed", old_seed, envir = .GlobalEnv),
+            add = TRUE
+        )
         set.seed(seed)
     }
 
