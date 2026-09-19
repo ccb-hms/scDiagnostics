@@ -256,19 +256,22 @@ argumentCheck <- function(query_data = NULL,
             )
         }
 
+        # Extract rotation matrices once to avoid recomputing them below
+        query_rotation_mat <- attributes(
+            reducedDim(query_data, "PCA")
+        )[["rotation"]]
+        ref_rotation_mat <- attributes(
+            reducedDim(reference_data, "PCA")
+        )[["rotation"]]
+
         # Check if the rotation matrices have the same number of genes
-        if (ncol(attributes(reducedDim(query_data, "PCA"))[["rotation"]]) !=
-            ncol(attributes(reducedDim(reference_data, "PCA"))[["rotation"]])) {
+        if (ncol(query_rotation_mat) != ncol(ref_rotation_mat)) {
             stop("The number of genes in the rotation matrices differ.")
         }
 
         # Check if genes in both rotation matrices are the same
-        query_rotation_genes <- rownames(
-            attributes(reducedDim(query_data, "PCA"))[["rotation"]]
-        )
-        ref_rotation_genes <- rownames(
-            attributes(reducedDim(reference_data, "PCA"))[["rotation"]]
-        )
+        query_rotation_genes <- rownames(query_rotation_mat)
+        ref_rotation_genes <- rownames(ref_rotation_mat)
         if (!all(query_rotation_genes %in% ref_rotation_genes)) {
             stop("The genes in the rotation matrices differ.")
         }
