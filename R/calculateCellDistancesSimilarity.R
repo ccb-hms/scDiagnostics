@@ -80,7 +80,9 @@
 #'     n_tree = 500,
 #'     anomaly_threshold = 0.5
 #' )
-#' cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE)[1:6])
+#' cd4_top6_anomalies <- names(sort(
+#'     cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE
+#' )[1:6])
 #'
 #' # Get overlap measures
 #' overlap_measures <- calculateCellDistancesSimilarity(
@@ -180,7 +182,10 @@ calculateCellDistancesSimilarity <- function(query_data,
         for (i in seq_len(length(cell_names_query))) {
             # Extract distances from the current cell to reference cells
             cell_distances <-
-                distance_data[[cell_type]][["query_to_ref_distances"]][cell_names_query[i], , drop = FALSE]
+                distance_data[[cell_type]][["query_to_ref_distances"]][
+                    cell_names_query[i], ,
+                    drop = FALSE
+                ]
 
             # Compute density of cell distances
             cell_density <- density(cell_distances)
@@ -227,7 +232,9 @@ calculateCellDistancesSimilarity <- function(query_data,
     }
 
     # Return list with overlap measures
-    bhattacharyya_coef <- data.frame(Cell = cell_names_query, bhattacharyya_list)
+    bhattacharyya_coef <- data.frame(
+        Cell = cell_names_query, bhattacharyya_list
+    )
     hellinger_dist <- data.frame(Cell = cell_names_query, hellinger_list)
     return(list(
         bhattacharyya_coef = bhattacharyya_coef,

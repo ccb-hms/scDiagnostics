@@ -38,11 +38,15 @@ plot.comparePCASubspaceObject <- function(x,
                                           ...) {
     # Create a data frame for plotting
     plot_data <- data.frame(
-        PC = paste0("Ref PC", x[["cosine_id"]][, 1], " - Query PC", x[["cosine_id"]][, 2]),
+        PC = paste0(
+            "Ref PC", x[["cosine_id"]][, 1],
+            " - Query PC", x[["cosine_id"]][, 2]
+        ),
         PC_Label = paste0(
             "Ref PC", x[["cosine_id"]][, 1],
             " (", round(x[["var_explained_ref"]], 1), "%) - Query PC",
-            x[["cosine_id"]][, 2], " (", round(x[["var_explained_query"]], 1), "%)"
+            x[["cosine_id"]][, 2], " (",
+            round(x[["var_explained_query"]], 1), "%)"
         ),
         Cosine = x[["cosine_similarity"]],
         VarianceExplained = x[["var_explained_avg"]],
@@ -50,7 +54,8 @@ plot.comparePCASubspaceObject <- function(x,
         QueryVariance = x[["var_explained_query"]],
         VarianceDiff = x[["var_explained_ref"]] - x[["var_explained_query"]]
     )
-    plot_data[["PC_Label"]] <- factor(plot_data[["PC_Label"]], levels = plot_data[["PC_Label"]])
+    plot_data[["PC_Label"]] <-
+        factor(plot_data[["PC_Label"]], levels = plot_data[["PC_Label"]])
 
     # Create plot
     pc_plot <- ggplot2::ggplot(
@@ -62,14 +67,19 @@ plot.comparePCASubspaceObject <- function(x,
         )
     ) +
         ggplot2::geom_point(alpha = 0.8, stroke = 1) +
-        ggplot2::scale_size_continuous(range = c(3, 10), name = "Avg Variance\nExplained (%)") +
+        ggplot2::scale_size_continuous(
+            range = c(3, 10), name = "Avg Variance\nExplained (%)"
+        ) +
         ggplot2::scale_color_gradient2(
             low = "blue", mid = "gray", high = "red", midpoint = 0,
             name = "Variance Diff\n(Ref - Query)"
         ) +
         ggplot2::labs(
             title = "Principal Angles Cosines with Variance Explained",
-            subtitle = paste0("Weighted Cosine Similarity: ", sprintf("%.3f", x[["weighted_cosine_similarity"]])),
+            subtitle = paste0(
+                "Weighted Cosine Similarity: ",
+                sprintf("%.3f", x[["weighted_cosine_similarity"]])
+            ),
             x = "",
             y = "Cosine Similarity of Principal Angle"
         ) +

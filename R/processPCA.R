@@ -174,19 +174,28 @@ processPCA <- function(sce_object,
             stop("Package 'scater' is required but not installed.")
         }
         if (!requireNamespace("BiocSingular", quietly = TRUE)) {
-            stop("Package 'BiocSingular' is required for fast PCA. Please install it.")
+            stop(
+                "Package 'BiocSingular' is required for fast PCA. ",
+                "Please install it."
+            )
         }
 
         # Get HVGs
         var_stats <- scran::modelGeneVar(sce, assay.type = assay_name)
         hvg_genes <- scran::getTopHVGs(var_stats, n = n_hvgs)
 
-        message("Using ", length(hvg_genes), " highly variable genes for PCA computation")
+        message(
+            "Using ", length(hvg_genes),
+            " highly variable genes for PCA computation"
+        )
 
         # SMART SVD SELECTION: Use exact SVD for small datasets, fast IRLBA for
         # large ones
         if (ncol(sce) > 10000) {
-            message("Large dataset detected (>10,000 cells). Using fast IRLBA SVD...")
+            message(
+                "Large dataset detected (>10,000 cells). ",
+                "Using fast IRLBA SVD..."
+            )
             svd_algo <- BiocSingular::IrlbaParam()
         } else {
             svd_algo <- BiocSingular::ExactParam()
@@ -208,7 +217,10 @@ processPCA <- function(sce_object,
 
     if (has_valid_pca) {
         # PCA exists AND is valid - return unchanged (no downsampling)
-        message("Data already has valid PCA - returning unchanged (", n_cells, " cells)")
+        message(
+            "Data already has valid PCA - returning unchanged (",
+            n_cells, " cells)"
+        )
         return(sce_object)
     } else {
         # PCA is missing or invalid - needs to be computed

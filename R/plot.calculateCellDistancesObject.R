@@ -41,7 +41,8 @@
 #'
 # Function to plot density functions for the reference data and the specified
 # cell
-plot.calculateCellDistancesObject <- function(x, ref_cell_type, cell_names, ...) {
+plot.calculateCellDistancesObject <- function(
+    x, ref_cell_type, cell_names, ...) {
     # Check if cell type is available
     if (length(ref_cell_type) != 1 || !(ref_cell_type %in% names(x))) {
         stop("The specified \'ref_cell_type\' is not available.")
@@ -54,7 +55,10 @@ plot.calculateCellDistancesObject <- function(x, ref_cell_type, cell_names, ...)
     if (!all(cell_names %in% rownames(
         distance_data[["query_to_ref_distances"]]
     ))) {
-        stop("One or more specified 'cell_names' are not available for that cell type.")
+        stop(
+            "One or more specified 'cell_names' are not available ",
+            "for that cell type."
+        )
     }
 
     # Extract distances within the reference dataset

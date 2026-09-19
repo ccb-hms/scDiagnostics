@@ -213,7 +213,8 @@ plotGeneExpressionDimred <- function(sce_object,
 
         # Create PC column names with variance explained (always show
         # percentages if available)
-        if (!is.null(pca_percent_var) && length(pca_percent_var) >= max(pc_subset)) {
+        if (!is.null(pca_percent_var) &&
+            length(pca_percent_var) >= max(pc_subset)) {
             plot_names <- paste0(
                 "PC", pc_subset, " (",
                 sprintf("%.1f%%", pca_percent_var[pc_subset]), ")"
@@ -297,7 +298,10 @@ plotGeneExpressionDimred <- function(sce_object,
 
         # Determine the plot title dynamically
         if (!is.null(cell_type_col) && !is.null(cell_types)) {
-            pca_title <- paste0(feature, " Expression in ", paste(cell_types, collapse = ", "), " Cells")
+            pca_title <- paste0(
+                feature, " Expression in ",
+                paste(cell_types, collapse = ", "), " Cells"
+            )
         } else {
             pca_title <- paste0(feature, " Expression")
         }

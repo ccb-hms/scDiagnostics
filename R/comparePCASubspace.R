@@ -58,8 +58,10 @@
 #' data("query_data")
 #'
 #' # Extract CD4 cells
-#' ref_data_subset <- reference_data[, which(reference_data$expert_annotation == "CD4")]
-#' query_data_subset <- query_data[, which(query_data$expert_annotation == "CD4")]
+#' ref_data_subset <-
+#'     reference_data[, which(reference_data$expert_annotation == "CD4")]
+#' query_data_subset <-
+#'     query_data[, which(query_data$expert_annotation == "CD4")]
 #'
 #' # Selecting highly variable genes (can be customized by the user)
 #' ref_top_genes <- getTopHVGs(ref_data_subset, n = 500)

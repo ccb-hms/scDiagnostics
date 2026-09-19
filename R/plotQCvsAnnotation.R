@@ -84,7 +84,10 @@ plotQCvsAnnotation <- function(sce_object,
 
     # Check if score_col is a valid column name in sce_object
     if (!score_col %in% names(colData(sce_object))) {
-        stop("score_col: '", score_col, "' is not a valid column name in sce_object.")
+        stop(
+            "score_col: '", score_col,
+            "' is not a valid column name in sce_object."
+        )
     }
 
     # Select cell types

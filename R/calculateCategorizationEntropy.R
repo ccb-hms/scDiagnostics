@@ -37,20 +37,26 @@
 #' @examples
 #' # Simulate 500 cells with scores on 4 possible cell types
 #' X <- rnorm(500 * 4) |> matrix(nrow = 4)
-#' X[1, 1:250] <- X[1, 1:250] + 5 # Make the first category highly scored in the first 250 cells
+#' # Make the first category highly scored in the first 250 cells
+#' X[1, 1:250] <- X[1, 1:250] + 5
 #'
-#' # The function will issue a message about softmaxing the scores, and the entropy histogram will be
-#' # bimodal since we made half of the cells clearly category 1 while the other half are roughly even.
+#' # The function will issue a message about softmaxing the scores, and the
+#' # entropy histogram will be bimodal since we made half of the cells
+#' # clearly category 1 while the other half are roughly even.
 #' entropy_scores <- calculateCategorizationEntropy(X)
 #'
 # Function to calculate categorization entropy
-calculateCategorizationEntropy <- function(X,
-                                           inverseNormalTransformationform = FALSE,
-                                           plot = TRUE,
-                                           verbose = TRUE) {
+calculateCategorizationEntropy <- function(
+    X,
+    inverseNormalTransformationform = FALSE,
+    plot = TRUE,
+    verbose = TRUE) {
     if (inverseNormalTransformationform) {
-        # https://cran.r-project.org/web/packages/RNOmni/vignettes/RNOmni.html#inverse-normal-transformation
-        if (verbose) message("Applying global inverse normal transformation.")
+        # https://cran.r-project.org/web/packages/RNOmni/vignettes/
+        # RNOmni.html#inverse-normal-transformation
+        if (verbose) {
+            message("Applying global inverse normal transformation.")
+        }
         # You can't do the INT column-wise (by cell) because it will set a
         # constant "range" to the probabilities, eliminating the differences in
         # confidence across methods we're trying to quantify.
@@ -73,7 +79,12 @@ calculateCategorizationEntropy <- function(X,
         all((colSumsX - 1) <= 1e-8)
 
     if (!X_is_probabilities) {
-        if (verbose) message("X doesn't seem to be on the probability scale, applying column-wise softmax.")
+        if (verbose) {
+            message(
+                "X doesn't seem to be on the probability scale, ",
+                "applying column-wise softmax."
+            )
+        }
         expX <- exp(X)
 
         X <- sweep(expX, MARGIN = 2, STATS = colSums(expX), FUN = "/")

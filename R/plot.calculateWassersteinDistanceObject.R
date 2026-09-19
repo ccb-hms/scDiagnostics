@@ -86,7 +86,8 @@ plot.calculateWassersteinDistanceObject <- function(x,
 
     # Set factor levels for cell_type to preserve the order specified in
     # cell_types parameter
-    plot_data[["cell_type"]] <- factor(plot_data[["cell_type"]], levels = cell_types)
+    plot_data[["cell_type"]] <-
+        factor(plot_data[["cell_type"]], levels = cell_types)
 
     # Setting up color data
     plot_data[["cell_type_distribution"]] <-
@@ -127,7 +128,9 @@ plot.calculateWassersteinDistanceObject <- function(x,
         )
     ) +
         do.call(ggridges::geom_density_ridges, ridge_args) +
-        ggplot2::facet_wrap(~ .data[["cell_type"]], scales = "free_x", ncol = 2) +
+        ggplot2::facet_wrap(
+            ~ .data[["cell_type"]], scales = "free_x", ncol = 2
+        ) +
         ggplot2::scale_fill_manual(
             name = "Distribution",
             values = cell_type_distribution_colors,
@@ -137,7 +140,10 @@ plot.calculateWassersteinDistanceObject <- function(x,
             expand = ggplot2::expansion(mult = c(0.02, 0.02))
         ) +
         ggplot2::labs(
-            title = "Comparison of Wasserstein Distance Distributions by Cell Type",
+            title = paste0(
+                "Comparison of Wasserstein Distance Distributions by ",
+                "Cell Type"
+            ),
             x = "Wasserstein Distance",
             y = "Distribution"
         ) +

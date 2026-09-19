@@ -183,7 +183,9 @@ plotGeneSetScores <- function(sce_object,
             ggplot2::scale_color_gradientn(
                 colors = c("#2171B5", "#8AABC1", "#FFEDA0", "#E6550D"),
                 values = seq(0, 1, by = 1 / 3),
-                limits = c(min(scores, na.rm = TRUE), max(scores, na.rm = TRUE)),
+                limits = c(
+                    min(scores, na.rm = TRUE), max(scores, na.rm = TRUE)
+                ),
                 name = "Scores"
             ) +
             ggplot2::xlab("Dimension 1") +
@@ -231,7 +233,8 @@ plotGeneSetScores <- function(sce_object,
 
         # Create PC column names with variance explained (always show
         # percentages if available)
-        if (!is.null(pca_percent_var) && length(pca_percent_var) >= max(pc_subset)) {
+        if (!is.null(pca_percent_var) &&
+            length(pca_percent_var) >= max(pc_subset)) {
             plot_names <- paste0(
                 "PC", pc_subset, " (",
                 sprintf("%.1f%%", pca_percent_var[pc_subset]), ")"
@@ -325,7 +328,10 @@ plotGeneSetScores <- function(sce_object,
 
         # Determine the plot title dynamically
         if (!is.null(cell_type_col) && !is.null(cell_types)) {
-            pca_title <- paste0("Gene Set Scores in ", paste(cell_types, collapse = ", "), " Cells")
+            pca_title <- paste0(
+                "Gene Set Scores in ", paste(cell_types, collapse = ", "),
+                " Cells"
+            )
         } else {
             pca_title <- "Gene Set Scores"
         }

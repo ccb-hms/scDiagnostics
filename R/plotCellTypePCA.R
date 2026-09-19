@@ -49,9 +49,13 @@ plotCellTypePCA <- function(query_data,
                             cell_types = NULL,
                             pc_subset = 1:5,
                             assay_name = "logcounts",
-                            lower_facet = c("scatter", "contour", "ellipse", "blank"),
+                            lower_facet = c(
+                                "scatter", "contour", "ellipse", "blank"
+                            ),
                             diagonal_facet = c("ridge", "density", "boxplot"),
-                            upper_facet = c("blank", "scatter", "contour", "ellipse"),
+                            upper_facet = c(
+                                "blank", "scatter", "contour", "ellipse"
+                            ),
                             max_cells_query = 2000,
                             max_cells_ref = 2000) {
     # Check standard input arguments

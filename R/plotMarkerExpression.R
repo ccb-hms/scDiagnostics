@@ -52,7 +52,8 @@
 #' data("reference_data")
 #' data("query_data")
 #'
-#' # Note: Users can use SingleR or any other method to obtain the cell type annotations.
+#' # Note: Users can use SingleR or any other method to obtain the cell
+#' # type annotations.
 #' plotMarkerExpression(
 #'     reference_data = reference_data,
 #'     query_data = query_data,
@@ -75,7 +76,9 @@ plotMarkerExpression <- function(query_data,
                                  cell_type,
                                  gene_name,
                                  assay_name = "logcounts",
-                                 normalization = c("z_score", "min_max", "rank", "none"),
+                                 normalization = c(
+                                     "z_score", "min_max", "rank", "none"
+                                 ),
                                  max_cells_query = NULL,
                                  max_cells_ref = NULL) {
     # Match normalization argument
@@ -131,7 +134,8 @@ plotMarkerExpression <- function(query_data,
         stop(
             "gene_name: \'",
             gene_name,
-            "\' is not present in the row names of both \'query_data\' and \'reference_data\'."
+            "\' is not present in the row names of both \'query_data\' ",
+            "and \'reference_data\'."
         )
     }
 
@@ -240,7 +244,8 @@ plotMarkerExpression <- function(query_data,
     marker_data <- data.frame(
         GeneExpression = combined_gene_expression,
         Dataset = dataset_types,
-        plot_type = rep(c("Overall Distribution", "Cell Type-Specific Distribution"),
+        plot_type = rep(
+            c("Overall Distribution", "Cell Type-Specific Distribution"),
             times = c(
                 length(ref_gene_expression) +
                     length(query_gene_expression),

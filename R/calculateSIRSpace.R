@@ -105,8 +105,12 @@ calculateSIRSpace <- function(query_data,
 
     # Check if cumulative_variance_threshold is between 0 and 1
     if (!is.numeric(cumulative_variance_threshold) ||
-        cumulative_variance_threshold < 0 || cumulative_variance_threshold > 1) {
-        stop("cumulative_variance_threshold must be a numeric value between 0 and 1.")
+        cumulative_variance_threshold < 0 ||
+        cumulative_variance_threshold > 1) {
+        stop(
+            "cumulative_variance_threshold must be a numeric value ",
+            "between 0 and 1."
+        )
     }
 
     # Check if n_neighbor is a positive integer

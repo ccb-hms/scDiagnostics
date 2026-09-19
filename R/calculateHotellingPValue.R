@@ -127,7 +127,9 @@ calculateHotellingPValue <- function(query_data,
     names(p_values) <- cell_types
     for (cell_type in cell_types) {
         ref_ind <- cell_list[[cell_type]][["dataset"]] == "Reference"
-        observed_t2_data <- as.matrix(cell_list[[cell_type]][, paste0("PC", pc_subset)])
+        observed_t2_data <- as.matrix(
+            cell_list[[cell_type]][, paste0("PC", pc_subset)]
+        )
         observed_t2 <- hotellingT2(
             observed_t2_data[ref_ind, ],
             observed_t2_data[!ref_ind, ]
@@ -135,8 +137,14 @@ calculateHotellingPValue <- function(query_data,
 
         perm_t2 <- numeric(n_permutation)
         for (perm_id in seq_len(n_permutation)) {
-            ref_sample_id <- sample(seq_len(nrow(cell_list[[cell_type]])), sum(ref_ind), replace = FALSE)
-            perm_t2_data <- as.matrix(cell_list[[cell_type]][, paste0("PC", pc_subset)])
+            ref_sample_id <- sample(
+                seq_len(nrow(cell_list[[cell_type]])),
+                sum(ref_ind),
+                replace = FALSE
+            )
+            perm_t2_data <- as.matrix(
+                cell_list[[cell_type]][, paste0("PC", pc_subset)]
+            )
             perm_t2[perm_id] <- hotellingT2(
                 perm_t2_data[ref_sample_id, ],
                 perm_t2_data[-ref_sample_id, ]

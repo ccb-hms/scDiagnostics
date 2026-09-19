@@ -35,7 +35,9 @@ plot.calculateAveragePairwiseCorrelationObject <- function(x, ...) {
         x = .data[["Var2"]],
         y = .data[["Var1"]]
     )) +
-        ggplot2::geom_tile(ggplot2::aes(fill = .data[["Freq"]]), color = "white") +
+        ggplot2::geom_tile(
+            ggplot2::aes(fill = .data[["Freq"]]), color = "white"
+        ) +
         ggplot2::geom_text(ggplot2::aes(label = round(.data[["Freq"]], 2)),
             color = "black", size = 3, family = "sans"
         ) +

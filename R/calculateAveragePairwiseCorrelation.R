@@ -76,7 +76,9 @@ calculateAveragePairwiseCorrelation <- function(query_data,
                                                 ref_cell_type_col,
                                                 cell_types = NULL,
                                                 pc_subset = 1:10,
-                                                correlation_method = c("spearman", "pearson"),
+                                                correlation_method = c(
+                                                    "spearman", "pearson"
+                                                ),
                                                 assay_name = "logcounts",
                                                 max_cells_query = 5000,
                                                 max_cells_ref = 5000) {

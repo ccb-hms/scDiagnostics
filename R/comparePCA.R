@@ -59,8 +59,10 @@
 #' data("query_data")
 #'
 #' # Extract CD4 cells
-#' ref_data_subset <- reference_data[, which(reference_data$expert_annotation == "CD4")]
-#' query_data_subset <- query_data[, which(query_data$expert_annotation == "CD4")]
+#' ref_data_subset <-
+#'     reference_data[, which(reference_data$expert_annotation == "CD4")]
+#' query_data_subset <-
+#'     query_data[, which(query_data$expert_annotation == "CD4")]
 #'
 #' # Selecting highly variable genes (can be customized by the user)
 #' ref_top_genes <- getTopHVGs(ref_data_subset, n = 500)
@@ -144,13 +146,18 @@ comparePCA <- function(query_data,
     query_rotation <-
         attributes(reducedDim(query_data, "PCA"))[["rotation"]][, pc_subset]
     query_rotation <-
-        query_rotation[match(rownames(ref_rotation), rownames(query_rotation)), ]
+        query_rotation[
+            match(rownames(ref_rotation), rownames(query_rotation)),
+        ]
 
     # Check if n_top_vars is reasonable given the number of genes
     n_genes <- nrow(ref_rotation)
     if (n_top_vars > n_genes) {
         warning(sprintf(
-            "n_top_vars (%d) is greater than the number of genes (%d). Using all genes.",
+            paste0(
+                "n_top_vars (%d) is greater than the number of genes (%d). ",
+                "Using all genes."
+            ),
             n_top_vars, n_genes
         ))
         n_top_vars <- n_genes
@@ -249,7 +256,8 @@ comparePCA <- function(query_data,
                 top_ref, top_query,
                 metric, correlation_method
             )
-            permuted_similarities[, , perm] <- perm_result[["similarity_matrix"]]
+            permuted_similarities[, , perm] <-
+                perm_result[["similarity_matrix"]]
         }
 
         # Calculate p-values
@@ -289,7 +297,11 @@ comparePCA <- function(query_data,
         top_variables = top_variables_info,
         p_values = p_values,
         metric = metric,
-        correlation_method = if (metric == "correlation") correlation_method else NULL,
+        correlation_method = if (metric == "correlation") {
+            correlation_method
+        } else {
+            NULL
+        },
         n_top_vars = n_top_vars,
         n_permutations = n_permutations,
         pc_subset = pc_subset

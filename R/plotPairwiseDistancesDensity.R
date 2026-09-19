@@ -77,8 +77,12 @@ plotPairwiseDistancesDensity <- function(query_data,
                                          ref_cell_type_col,
                                          cell_type,
                                          pc_subset = 1:5,
-                                         distance_metric = c("correlation", "euclidean"),
-                                         correlation_method = c("spearman", "pearson"),
+                                         distance_metric = c(
+                                             "correlation", "euclidean"
+                                         ),
+                                         correlation_method = c(
+                                             "spearman", "pearson"
+                                         ),
                                          bandwidth = 0.25,
                                          assay_name = "logcounts",
                                          max_cells_query = 5000,
@@ -112,8 +116,12 @@ plotPairwiseDistancesDensity <- function(query_data,
     correlation_method <- match.arg(correlation_method)
 
     # Check if bandwidth is valid
-    if (!is.numeric(bandwidth) || length(bandwidth) != 1 || bandwidth <= 0 || bandwidth > 2) {
-        stop("\'bandwidth\' must be a single positive numeric value between 0 and 2.")
+    if (!is.numeric(bandwidth) || length(bandwidth) != 1 ||
+        bandwidth <= 0 || bandwidth > 2) {
+        stop(
+            "\'bandwidth\' must be a single positive numeric value ",
+            "between 0 and 2."
+        )
     }
 
     # Check if cell_type only contains one cell type

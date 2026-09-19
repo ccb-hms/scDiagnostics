@@ -166,7 +166,10 @@ calculateMMDPValue <- function(query_data,
             X_perm <-
                 combined_data[perm_indices[seq_len(n_X)], , drop = FALSE]
             Y_perm <-
-                combined_data[perm_indices[seq(n_X + 1, n_total)], , drop = FALSE]
+                combined_data[
+                    perm_indices[seq(n_X + 1, n_total)], ,
+                    drop = FALSE
+                ]
             perm_stat <-
                 computeMMDStatistic(X_perm, Y_perm, kernel_type, sigma)
 
@@ -308,7 +311,8 @@ computeMMDStatistic <- function(X, Y,
     }
 
     # Calculate MMD^2 statistic using unbiased estimator
-    mmd_stat <- K_XX_sum / (n * (n - 1)) + K_YY_sum / (m * (m - 1)) - 2 * K_XY_sum / (n * m)
+    mmd_stat <- K_XX_sum / (n * (n - 1)) + K_YY_sum / (m * (m - 1)) -
+        2 * K_XY_sum / (n * m)
 
     return(mmd_stat)
 }

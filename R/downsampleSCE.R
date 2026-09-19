@@ -63,7 +63,8 @@ downsampleSCE <- function(sce_object,
 
     # Check seed argument
     if (!is.null(seed)) {
-        if (!is.numeric(seed) || length(seed) != 1 || seed != as.integer(seed)) {
+        if (!is.numeric(seed) || length(seed) != 1 ||
+            seed != as.integer(seed)) {
             stop("'seed' must be a single integer or NULL.")
         }
         seed <- as.integer(seed)
@@ -78,8 +79,12 @@ downsampleSCE <- function(sce_object,
     if (!is.null(cell_types)) {
         cell_type_mask <- sce_object[[cell_type_col]] %in% cell_types
         if (sum(cell_type_mask) == 0) {
-            warning("No cells found for the specified cell types. Returning empty sce_object object.")
-            return(sce_object[, FALSE]) # Return empty sce_object with same genes but no cells
+            warning(
+                "No cells found for the specified cell types. ",
+                "Returning empty sce_object object."
+            )
+            # Return empty sce_object with same genes but no cells
+            return(sce_object[, FALSE])
         }
         sce_object <- sce_object[, cell_type_mask]
     }
