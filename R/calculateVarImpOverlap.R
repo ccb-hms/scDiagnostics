@@ -156,18 +156,14 @@ calculateVarImpOverlap <- function(reference_data,
     cell_types <- unique(ref_y)
     cell_types_combn <- combn(length(cell_types), 2)
     for (combn_id in seq_len(ncol(cell_types_combn))) {
-        ref_x_subset <- ref_x[which(
-            ref_y %in% c(
-                cell_types[cell_types_combn[1, combn_id]],
-                cell_types[cell_types_combn[2, combn_id]]
-            )
-        ), ]
-        ref_y_subset <- ref_y[which(
-            ref_y %in% c(
-                cell_types[cell_types_combn[1, combn_id]],
-                cell_types[cell_types_combn[2, combn_id]]
-            )
-        )]
+        # Computed once and reused below (was repeated identically twice)
+        combn_types <- c(
+            cell_types[cell_types_combn[1, combn_id]],
+            cell_types[cell_types_combn[2, combn_id]]
+        )
+        combn_idx <- which(ref_y %in% combn_types)
+        ref_x_subset <- ref_x[combn_idx, ]
+        ref_y_subset <- ref_y[combn_idx]
 
         # Using x/y interface instead of formula interface
         rf_binary <- ranger::ranger(
@@ -177,26 +173,15 @@ calculateVarImpOverlap <- function(reference_data,
             importance = "impurity"
         )
 
-        var_importance_name <- paste0(
-            cell_types[cell_types_combn[1, combn_id]],
-            "-",
-            cell_types[cell_types_combn[2, combn_id]]
+        var_importance_name <- paste0(combn_types[1], "-", combn_types[2])
+        importance_vec <- rf_binary$variable.importance
+        names(importance_vec) <- colnames(ref_x_subset)
+        # order() computed once and reused (was repeated identically twice)
+        importance_order <- order(importance_vec, decreasing = TRUE)
+        var_imp_ref[[var_importance_name]] <- data.frame(
+            Gene = names(importance_vec)[importance_order],
+            RF_Importance = importance_vec[importance_order]
         )
-        var_imp_ref[[var_importance_name]] <- rf_binary$variable.importance
-        names(var_imp_ref[[var_importance_name]]) <- colnames(ref_x_subset)
-        var_imp_ref[[var_importance_name]] <-
-            data.frame(
-                Gene = names(
-                    var_imp_ref[[var_importance_name]]
-                )[order(
-                    var_imp_ref[[var_importance_name]],
-                    decreasing = TRUE
-                )],
-                RF_Importance = var_imp_ref[[var_importance_name]][order(
-                    var_imp_ref[[var_importance_name]],
-                    decreasing = TRUE
-                )]
-            )
         rownames(var_imp_ref[[var_importance_name]]) <- NULL
     }
 
@@ -215,18 +200,14 @@ calculateVarImpOverlap <- function(reference_data,
         cell_types <- unique(intersect(ref_y, query_y))
         var_imp_query <- list()
         for (combn_id in seq_len(ncol(cell_types_combn))) {
-            query_x_subset <- query_x[which(
-                query_y %in% c(
-                    cell_types[cell_types_combn[1, combn_id]],
-                    cell_types[cell_types_combn[2, combn_id]]
-                )
-            ), ]
-            query_y_subset <- query_y[which(
-                query_y %in% c(
-                    cell_types[cell_types_combn[1, combn_id]],
-                    cell_types[cell_types_combn[2, combn_id]]
-                )
-            )]
+            # Computed once and reused below (was repeated identically twice)
+            combn_types <- c(
+                cell_types[cell_types_combn[1, combn_id]],
+                cell_types[cell_types_combn[2, combn_id]]
+            )
+            combn_idx <- which(query_y %in% combn_types)
+            query_x_subset <- query_x[combn_idx, ]
+            query_y_subset <- query_y[combn_idx]
 
             # Using x/y interface instead of formula interface
             rf_binary <- ranger::ranger(
@@ -236,27 +217,16 @@ calculateVarImpOverlap <- function(reference_data,
                 importance = "impurity"
             )
 
-            var_importance_name <- paste0(
-                cell_types[cell_types_combn[1, combn_id]], "-",
-                cell_types[cell_types_combn[2, combn_id]]
+            var_importance_name <- paste0(combn_types[1], "-", combn_types[2])
+            importance_vec <- rf_binary$variable.importance
+            names(importance_vec) <- colnames(query_x_subset)
+            # order() computed once and reused (was repeated identically
+            # twice)
+            importance_order <- order(importance_vec, decreasing = TRUE)
+            var_imp_query[[var_importance_name]] <- data.frame(
+                Gene = names(importance_vec)[importance_order],
+                RF_Importance = importance_vec[importance_order]
             )
-            var_imp_query[[var_importance_name]] <-
-                rf_binary$variable.importance
-            names(var_imp_query[[var_importance_name]]) <-
-                colnames(query_x_subset)
-            var_imp_query[[var_importance_name]] <-
-                data.frame(
-                    Gene = names(
-                        var_imp_query[[var_importance_name]]
-                    )[order(
-                        var_imp_query[[var_importance_name]],
-                        decreasing = TRUE
-                    )],
-                    RF_Importance = var_imp_query[[var_importance_name]][order(
-                        var_imp_query[[var_importance_name]],
-                        decreasing = TRUE
-                    )]
-                )
             rownames(var_imp_query[[var_importance_name]]) <- NULL
         }
 
