@@ -54,10 +54,11 @@ plot.calculateWassersteinDistanceObject <- function(x,
         stop("No valid cell types to plot.")
     }
 
-    # Prepare data for plotting
-    plot_data <- data.frame()
-
-    for (cell_type in cell_types) {
+    # Prepare data for plotting. Build each cell type's rows once and
+    # combine with a single rbind instead of growing plot_data inside the
+    # loop (repeated rbind() on an accumulating data.frame reallocates on
+    # every iteration); the row order is identical either way.
+    plot_data_list <- lapply(cell_types, function(cell_type) {
         # Reference-reference distribution
         ref_ref_data <- data.frame(
             wasserstein_dist = x[["ref_ref_dist"]][[cell_type]],
@@ -72,8 +73,9 @@ plot.calculateWassersteinDistanceObject <- function(x,
             cell_type = cell_type
         )
 
-        plot_data <- rbind(plot_data, ref_ref_data, ref_query_data)
-    }
+        rbind(ref_ref_data, ref_query_data)
+    })
+    plot_data <- do.call(rbind, plot_data_list)
 
     # Set factor levels to control order (Reference-Reference at bottom,
     # Reference-Query at top)
