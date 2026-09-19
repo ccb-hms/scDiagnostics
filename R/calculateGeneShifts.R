@@ -420,6 +420,12 @@ calculateGeneShifts <- function(query_data,
             vector("list", length(pc_subset)), paste0("PC", pc_subset)
         )
 
+        # Cache the top genes/loadings per PC so the second pass (below,
+        # in the analysis loop) does not recompute the same order()/subset
+        # for every PC again.
+        top_genes_by_pc <- list()
+        top_loadings_by_pc <- list()
+
         for (pc in pc_subset) {
             pc_name <- paste0("PC", pc)
             pc_loadings <- pca_rotation[, pc]
@@ -428,6 +434,9 @@ calculateGeneShifts <- function(query_data,
             )[1:min(n_top_loadings, length(pc_loadings))]
             top_genes <- names(pc_loadings)[top_loading_indices]
             top_loadings_vals <- pc_loadings[top_loading_indices]
+
+            top_genes_by_pc[[pc_name]] <- top_genes
+            top_loadings_by_pc[[pc_name]] <- top_loadings_vals
 
             all_top_genes <- unique(c(all_top_genes, top_genes))
             gene_metadata_list[[pc_name]] <- data.frame(
@@ -511,32 +520,45 @@ calculateGeneShifts <- function(query_data,
             pc_results[[1]] <- data.frame()
         }
     } else {
+        # Anomaly-status filtering only depends on cell type, not on pc,
+        # so precompute it once per cell type here instead of recomputing
+        # it inside the pc loop below for every PC. The per-pc length
+        # checks/warnings are still evaluated inside the loop so the
+        # emitted warnings and skip behavior are unchanged.
+        ref_cells_by_ct <- list()
+        query_cells_by_ct <- list()
+        for (ct in available_cell_types) {
+            query_cells_ct <- query_cell_indices[[ct]]
+            ref_cells_ct <- ref_cell_indices[[ct]]
+
+            if (anomaly_comparison && !is.null(anomaly_results)) {
+                ref_cells_ct <- .filterCellsByAnomalyStatus(
+                    ref_cells_ct, colnames(reference_data), anomaly_results,
+                    ct, "reference",
+                    keep_anomalous = FALSE
+                )
+                query_cells_ct <- .filterCellsByAnomalyStatus(
+                    query_cells_ct, colnames(query_data), anomaly_results,
+                    ct, "query",
+                    keep_anomalous = TRUE
+                )
+            }
+
+            ref_cells_by_ct[[ct]] <- ref_cells_ct
+            query_cells_by_ct[[ct]] <- query_cells_ct
+        }
+
         for (pc in pc_subset) {
             pc_name <- paste0("PC", pc)
-            pc_loadings <- pca_rotation[, pc]
-            top_loading_indices <- order(
-                abs(pc_loadings), decreasing = TRUE
-            )[1:min(n_top_loadings, length(pc_loadings))]
-            top_genes <- names(pc_loadings)[top_loading_indices]
-            top_loadings_vals <- pc_loadings[top_loading_indices]
+            top_genes <- top_genes_by_pc[[pc_name]]
+            top_loadings_vals <- top_loadings_by_pc[[pc_name]]
 
             pc_result_list <- list()
             for (ct in available_cell_types) {
-                query_cells_ct <- query_cell_indices[[ct]]
-                ref_cells_ct <- ref_cell_indices[[ct]]
+                query_cells_ct <- query_cells_by_ct[[ct]]
+                ref_cells_ct <- ref_cells_by_ct[[ct]]
 
                 if (anomaly_comparison && !is.null(anomaly_results)) {
-                    ref_cells_ct <- .filterCellsByAnomalyStatus(
-                        ref_cells_ct, colnames(reference_data), anomaly_results,
-                        ct, "reference",
-                        keep_anomalous = FALSE
-                    )
-                    query_cells_ct <- .filterCellsByAnomalyStatus(
-                        query_cells_ct, colnames(query_data), anomaly_results,
-                        ct, "query",
-                        keep_anomalous = TRUE
-                    )
-
                     if (length(query_cells_ct) < 3) {
                         warning(
                             "Cell type '", ct, "' has fewer than 3 ",
@@ -601,6 +623,12 @@ calculateGeneShifts <- function(query_data,
     full_query_assay <- SummarizedExperiment::assay(
         query_data, assay_name
     )[common_genes, ]
+    # Loadings for each PC do not depend on cell type, so compute them
+    # once here instead of inside the cell-type loop below.
+    loadings_pc_list <- stats::setNames(
+        lapply(pc_subset, function(pc) pca_rotation[, pc, drop = FALSE]),
+        paste0("PC", pc_subset)
+    )
 
     for (ct in available_cell_types) {
         ref_cells_ct <- ref_cell_indices[[ct]]
@@ -635,7 +663,7 @@ calculateGeneShifts <- function(query_data,
 
         for (pc in pc_subset) {
             pc_name <- paste0("PC", pc)
-            loadings_pc <- pca_rotation[, pc, drop = FALSE]
+            loadings_pc <- loadings_pc_list[[pc_name]]
 
             if (total_var_ref > .Machine[["double.eps"]]) {
                 ref_scores <- crossprod(ref_expr_ct, loadings_pc)

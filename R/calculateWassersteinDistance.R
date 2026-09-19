@@ -145,12 +145,10 @@ calculateWassersteinDistance <- function(query_data,
     cell_list <- split(pca_output, pca_output[["cell_type"]])
 
     # Extract variance explained for weighting
-    weights <- attributes(reducedDim(
+    var_explained_pcs <- attributes(reducedDim(
         reference_data, "PCA"
-    ))[["varExplained"]][pc_subset] /
-        sum(attributes(reducedDim(
-            reference_data, "PCA"
-        ))[["varExplained"]][pc_subset])
+    ))[["varExplained"]][pc_subset]
+    weights <- var_explained_pcs / sum(var_explained_pcs)
 
     # Initialize results
     ref_ref_dist <- list()
@@ -197,19 +195,10 @@ calculateWassersteinDistance <- function(query_data,
             cell_data[query_indices, paste0("PC", pc_subset)]
         )
 
-        # Apply variance weighting
-        pca_ref_weighted <- t(apply(pca_ref, 1,
-            function(x, weights) {
-                return(x * weights)
-            },
-            weights = sqrt(weights)
-        ))
-        pca_query_weighted <- t(apply(pca_query, 1,
-            function(x, weights) {
-                return(x * weights)
-            },
-            weights = sqrt(weights)
-        ))
+        # Apply variance weighting (column-wise scaling by sqrt(weights),
+        # equivalent to the previous row-wise apply() but vectorized)
+        pca_ref_weighted <- sweep(pca_ref, 2, sqrt(weights), "*")
+        pca_query_weighted <- sweep(pca_query, 2, sqrt(weights), "*")
 
         # Compute reference-reference weighted distances (full distance matrix)
         weighted_dist_ref <- as.matrix(dist(pca_ref_weighted))
@@ -274,17 +263,8 @@ calculateWassersteinDistance <- function(query_data,
 
         # Calculate probability of superiority P(ref_query > ref_ref) when
         # sampling one value from each distribution
-        n_comparisons <- 0
-        n_superiority <- 0
-
-        for (rq_val in ref_query_distances) {
-            for (rr_val in ref_ref_distances) {
-                n_comparisons <- n_comparisons + 1
-                if (rq_val > rr_val) {
-                    n_superiority <- n_superiority + 1
-                }
-            }
-        }
+        n_comparisons <- length(ref_query_distances) * length(ref_ref_distances)
+        n_superiority <- sum(outer(ref_query_distances, ref_ref_distances, ">"))
 
         probability_superiority[cell_type] <- n_superiority / n_comparisons
     }
