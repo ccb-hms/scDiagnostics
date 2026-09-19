@@ -212,26 +212,33 @@ selectCellTypes <- function(query_data = NULL,
         cell_counts <- numeric(length(all_available_types))
         names(cell_counts) <- all_available_types
 
+        # Compute these once, outside the loop, since they do not depend on
+        # the cell type being counted
+        query_types_chr <- if (!is.null(available_query_types)) {
+            as.character(query_data[[query_cell_type_col]])
+        } else {
+            NULL
+        }
+        ref_types_chr <- if (!is.null(available_ref_types)) {
+            as.character(reference_data[[ref_cell_type_col]])
+        } else {
+            NULL
+        }
+
         for (ct in all_available_types) {
             count <- 0
 
             # Count cells in query data if available and cell type is present
             if (!is.null(available_query_types) &&
                 ct %in% available_query_types) {
-                count <- count + sum(
-                    as.character(query_data[[query_cell_type_col]]) == ct,
-                    na.rm = TRUE
-                )
+                count <- count + sum(query_types_chr == ct, na.rm = TRUE)
             }
 
             # Count cells in reference data if available and cell type is
             # present
             if (!is.null(available_ref_types) &&
                 ct %in% available_ref_types) {
-                count <- count + sum(
-                    as.character(reference_data[[ref_cell_type_col]]) == ct,
-                    na.rm = TRUE
-                )
+                count <- count + sum(ref_types_chr == ct, na.rm = TRUE)
             }
 
             cell_counts[ct] <- count
