@@ -375,6 +375,23 @@ plotHeatmap <- function(x, cell_type,
     # Initialize gene collection
     all_genes_to_plot <- c()
 
+    # Gene selection based on significance threshold. This list is also used
+    # below to identify significant genes for annotation, so compute it once
+    # up front instead of recomputing the identical lapply() twice.
+    sig_gene_list <- NULL
+    if (!is.null(significance_threshold)) {
+        sig_gene_list <- lapply(available_pcs, function(pc_name) {
+            pc_results <- x[[pc_name]]
+            if (is.null(pc_results) || nrow(pc_results) == 0) {
+                return(NULL)
+            }
+
+            sig_df <- pc_results[pc_results[["cell_type"]] == cell_type &
+                pc_results[["p_adjusted"]] < significance_threshold, ]
+            return(sig_df[["gene"]])
+        })
+    }
+
     # Gene selection based on n_genes criterion
     if (!is.null(n_genes)) {
         gene_list <- lapply(available_pcs, function(pc_name) {
@@ -401,18 +418,7 @@ plotHeatmap <- function(x, cell_type,
             return(pc_cell_data[selected_indices, "gene"])
         })
         all_genes_to_plot <- unique(unlist(gene_list))
-    } else if (!is.null(significance_threshold)) {
-        # Gene selection based on significance threshold
-        sig_gene_list <- lapply(available_pcs, function(pc_name) {
-            pc_results <- x[[pc_name]]
-            if (is.null(pc_results) || nrow(pc_results) == 0) {
-                return(NULL)
-            }
-
-            sig_df <- pc_results[pc_results[["cell_type"]] == cell_type &
-                pc_results[["p_adjusted"]] < significance_threshold, ]
-            return(sig_df[["gene"]])
-        })
+    } else if (!is.null(sig_gene_list)) {
         all_genes_to_plot <- unique(unlist(sig_gene_list))
     }
 
@@ -423,17 +429,7 @@ plotHeatmap <- function(x, cell_type,
 
     # Identify significant genes for annotation
     significant_genes <- c()
-    if (!is.null(significance_threshold)) {
-        sig_gene_list <- lapply(available_pcs, function(pc_name) {
-            pc_results <- x[[pc_name]]
-            if (is.null(pc_results) || nrow(pc_results) == 0) {
-                return(NULL)
-            }
-
-            sig_df <- pc_results[pc_results[["cell_type"]] == cell_type &
-                pc_results[["p_adjusted"]] < significance_threshold, ]
-            return(sig_df[["gene"]])
-        })
+    if (!is.null(sig_gene_list)) {
         significant_genes <- unique(unlist(sig_gene_list))
     }
 
@@ -863,27 +859,31 @@ plotBarplot <- function(x, cell_type, available_pcs, plot_by,
     # Reference pseudo-bulk (always Reference_Normal or Reference)
     ref_column <- if (has_anomaly_data) "Reference_Normal" else "Reference"
 
+    # Query non-anomaly column and, when needed, the combined query cell set
+    # for the "all query" comparison are the same for every gene, so compute
+    # them once here instead of inside the per-gene loop below.
+    query_normal_column <- if (has_anomaly_data) "Query_Normal" else "Query"
+    if (has_anomaly_data && show_all_query) {
+        # Calculate overall query mean from both normal and anomaly
+        query_normal_cells <- cell_subset[
+            cell_subset[["group"]] == "Query_Normal", "cell_id"
+        ]
+        query_anomaly_cells <- cell_subset[
+            cell_subset[["group"]] == "Query_Anomaly", "cell_id"
+        ]
+        all_query_cells <- c(query_normal_cells, query_anomaly_cells)
+    }
+
     for (gene in gene_order_clustered) {
         ref_expr <- pseudo_bulk_matrix[gene, ref_column]
 
         # Query non-anomaly vs Reference (always calculated)
-        query_normal_column <-
-            if (has_anomaly_data) "Query_Normal" else "Query"
         query_normal_expr <- pseudo_bulk_matrix[gene, query_normal_column]
         query_normal_fc <- query_normal_expr - ref_expr # Log2 fold change
 
         # All Query vs Reference (calculated when anomaly data available AND
         # show_all_query is TRUE)
         if (has_anomaly_data && show_all_query) {
-            # Calculate overall query mean from both normal and anomaly
-            query_normal_cells <- cell_subset[
-                cell_subset[["group"]] == "Query_Normal", "cell_id"
-            ]
-            query_anomaly_cells <- cell_subset[
-                cell_subset[["group"]] == "Query_Anomaly", "cell_id"
-            ]
-            all_query_cells <- c(query_normal_cells, query_anomaly_cells)
-
             if (length(all_query_cells) > 0) {
                 query_all_expr <- mean(
                     expr_matrix[gene, all_query_cells], na.rm = TRUE
