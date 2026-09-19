@@ -147,10 +147,13 @@ comparePCASubspace <- function(query_data,
 
     # Looping to store top cosine similarities and PC IDs
     for (id in seq_len(length(pc_subset))) {
-        # Store data for top cosine
-        top_ref <- which.max(apply(abs(cosine_similarity), 1, max))
-        top_query <- which.max(abs(cosine_similarity)[top_ref, ])
-        top_cosine[id] <- abs(cosine_similarity)[top_ref, top_query]
+        # Store data for top cosine. abs(cosine_similarity) is computed once
+        # per iteration and reused, instead of being recomputed for each of
+        # the three lookups below
+        abs_similarity <- abs(cosine_similarity)
+        top_ref <- which.max(apply(abs_similarity, 1, max))
+        top_query <- which.max(abs_similarity[top_ref, ])
+        top_cosine[id] <- abs_similarity[top_ref, top_query]
         cosine_id[id, ] <- c(top_ref, top_query)
 
         # Remove as candidate
