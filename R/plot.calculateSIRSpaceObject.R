@@ -142,16 +142,20 @@ plot.calculateSIRSpaceObject <- function(
             }
 
             if (nrow(ref_data) > max_cells_ref) {
-                # Stratified sampling by cell type
+                # Stratified sampling by cell type. The cell type column and
+                # total row count are invariant across the loop, so they are
+                # computed once rather than every iteration
                 ref_data_list <- list()
+                ref_cell_type_col <- ref_data[["cell_type"]]
+                n_ref_total <- nrow(ref_data)
                 for (ct in cell_types) {
-                    ct_data <- ref_data[ref_data[["cell_type"]] == ct, ]
+                    ct_data <- ref_data[ref_cell_type_col == ct, ]
                     if (nrow(ct_data) > 0) {
                         # Calculate proportional allocation
                         n_cells_ct <- min(
                             nrow(ct_data),
                             max(1, round(
-                                max_cells_ref * nrow(ct_data) / nrow(ref_data)
+                                max_cells_ref * nrow(ct_data) / n_ref_total
                             ))
                         )
                         if (nrow(ct_data) > n_cells_ct) {
@@ -175,17 +179,21 @@ plot.calculateSIRSpaceObject <- function(
             }
 
             if (nrow(query_data) > max_cells_query) {
-                # Stratified sampling by cell type
+                # Stratified sampling by cell type. The cell type column and
+                # total row count are invariant across the loop, so they are
+                # computed once rather than every iteration
                 query_data_list <- list()
+                query_cell_type_col <- query_data[["cell_type"]]
+                n_query_total <- nrow(query_data)
                 for (ct in cell_types) {
-                    ct_data <- query_data[query_data[["cell_type"]] == ct, ]
+                    ct_data <- query_data[query_cell_type_col == ct, ]
                     if (nrow(ct_data) > 0) {
                         # Calculate proportional allocation
                         n_cells_ct <- min(
                             nrow(ct_data),
                             max(1, round(
                                 max_cells_query * nrow(ct_data) /
-                                    nrow(query_data)
+                                    n_query_total
                             ))
                         )
                         if (nrow(ct_data) > n_cells_ct) {
@@ -295,9 +303,15 @@ plot.calculateSIRSpaceObject <- function(
             p <- ggplot2::ggplot() +
                 ggplot2::theme_minimal()
 
+            # Cell type/dataset column and its levels do not change across
+            # the loop below, so extract them once rather than every
+            # iteration
+            cell_type_dataset_col <- data[["cell_type_dataset"]]
+            cell_type_dataset_levels <- levels(cell_type_dataset_col)
+
             # Process each cell type separately
-            for (ct in unique(data[["cell_type_dataset"]])) {
-                subset_data <- data[data[["cell_type_dataset"]] == ct, ]
+            for (ct in unique(cell_type_dataset_col)) {
+                subset_data <- data[cell_type_dataset_col == ct, ]
 
                 # Skip if too few points
                 if (nrow(subset_data) < 10) next
@@ -316,7 +330,7 @@ plot.calculateSIRSpaceObject <- function(
                     adjust = adjust_factor,
                     bins = 5,
                     color = cell_type_colors[which(
-                        levels(data[["cell_type_dataset"]]) == ct
+                        cell_type_dataset_levels == ct
                     )],
                     linewidth = 0.5,
                     na.rm = TRUE
@@ -376,9 +390,15 @@ plot.calculateSIRSpaceObject <- function(
 
             p <- ggplot2::ggplot(data, mapping)
 
+            # Cell type/dataset column and its levels do not change across
+            # the loop below, so extract them once rather than every
+            # iteration
+            cell_type_dataset_col <- data[["cell_type_dataset"]]
+            cell_type_dataset_levels <- levels(cell_type_dataset_col)
+
             # Split by cell type and create robust ellipses
-            for (ct in unique(data[["cell_type_dataset"]])) {
-                subset_data <- data[data[["cell_type_dataset"]] == ct, ]
+            for (ct in unique(cell_type_dataset_col)) {
+                subset_data <- data[cell_type_dataset_col == ct, ]
                 ellipse_data <- createEllipse(subset_data)
 
                 if (!is.null(ellipse_data)) {
@@ -386,7 +406,7 @@ plot.calculateSIRSpaceObject <- function(
                         data = ellipse_data,
                         ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
                         color = cell_type_colors[
-                            which(levels(data[["cell_type_dataset"]]) == ct)
+                            which(cell_type_dataset_levels == ct)
                         ],
                         linewidth = 0.7
                     )
