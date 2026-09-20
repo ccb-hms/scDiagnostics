@@ -26,13 +26,13 @@ projectPCA(
 - query_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the query cells.
 
 - reference_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the reference cells.
 
 - query_cell_type_col:
@@ -101,19 +101,23 @@ data("reference_data")
 data("query_data")
 
 # Project the query data onto PCA space of reference
-pca_output <- projectPCA(query_data = query_data,
-                         reference_data = reference_data,
-                         query_cell_type_col = "SingleR_annotation",
-                         ref_cell_type_col = "expert_annotation",
-                         pc_subset = 1:10)
+pca_output <- projectPCA(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:10
+)
 
 # Project with cell type filtering and balanced downsampling
-pca_output_filtered <- projectPCA(query_data = query_data,
-                                  reference_data = reference_data,
-                                  query_cell_type_col = "SingleR_annotation",
-                                  ref_cell_type_col = "expert_annotation",
-                                  pc_subset = 1:5,
-                                  cell_types = c("CD4", "CD8"),
-                                  max_cells_ref = 1000,
-                                  max_cells_query = 1000)
+pca_output_filtered <- projectPCA(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:5,
+    cell_types = c("CD4", "CD8"),
+    max_cells_ref = 1000,
+    max_cells_query = 1000
+)
 ```

@@ -1,12 +1,12 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   AnnotationAnomalies: AnnotationAnomalies.html
   DatasetMarkerGeneAlignment: DatasetMarkerGeneAlignment.html
   scDiagnostics: scDiagnostics.html
   VisualizationTools: VisualizationTools.html
-last_built: 2026-07-07T19:47Z
+last_built: 2026-09-20T01:06Z
 urls:
   reference: https://ccb-hms.github.io/scDiagnostics/reference
   article: https://ccb-hms.github.io/scDiagnostics/articles

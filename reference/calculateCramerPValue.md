@@ -23,15 +23,13 @@ calculateCramerPValue(
 
 - query_data:
 
-  A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
-  object containing numeric expression matrix for the query cells.
+  A SingleCellExperiment object containing numeric expression matrix for
+  the query cells.
 
 - reference_data:
 
-  A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
-  object containing numeric expression matrix for the reference cells.
+  A SingleCellExperiment object containing numeric expression matrix for
+  the reference cells.
 
 - query_cell_type_col:
 
@@ -98,12 +96,14 @@ data("reference_data")
 data("query_data")
 
 # Plot the PC data (with query data)
-cramer_test <- calculateCramerPValue(reference_data = reference_data,
-                                     query_data = query_data,
-                                     ref_cell_type_col = "expert_annotation",
-                                     query_cell_type_col = "SingleR_annotation",
-                                     cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                                     pc_subset = 1:5)
+cramer_test <- calculateCramerPValue(
+    reference_data = reference_data,
+    query_data = query_data,
+    ref_cell_type_col = "expert_annotation",
+    query_cell_type_col = "SingleR_annotation",
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    pc_subset = 1:5
+)
 cramer_test
 #> B_and_plasma          CD4          CD8      Myeloid 
 #>   0.11388611   0.08891109   0.00000000   0.92007992 

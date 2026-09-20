@@ -33,13 +33,13 @@ plot(x, ...)
 - query_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the query cells.
 
 - reference_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the reference cells.
 
 - query_cell_type_col:
@@ -169,20 +169,22 @@ query_top_genes <- getTopHVGs(query_data_subset, n = 500)
 
 # Intersect the gene symbols to obtain common genes
 common_genes <- intersect(ref_top_genes, query_top_genes)
-ref_data_subset <- ref_data_subset[common_genes,]
-query_data_subset <- query_data_subset[common_genes,]
+ref_data_subset <- ref_data_subset[common_genes, ]
+query_data_subset <- query_data_subset[common_genes, ]
 
 # Run PCA on datasets separately
 ref_data_subset <- runPCA(ref_data_subset)
 query_data_subset <- runPCA(query_data_subset)
 
 # Compare PCA subspaces
-subspace_comparison <- comparePCASubspace(query_data = query_data_subset,
-                                          reference_data = ref_data_subset,
-                                          query_cell_type_col = "expert_annotation",
-                                          ref_cell_type_col = "expert_annotation",
-                                          n_top_vars = 50,
-                                          pc_subset = 1:5)
+subspace_comparison <- comparePCASubspace(
+    query_data = query_data_subset,
+    reference_data = ref_data_subset,
+    query_cell_type_col = "expert_annotation",
+    ref_cell_type_col = "expert_annotation",
+    n_top_vars = 50,
+    pc_subset = 1:5
+)
 
 # Plot output for PCA subspace comparison
 plot(subspace_comparison)

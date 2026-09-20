@@ -29,13 +29,13 @@ plotPairwiseDistancesDensity(
 - query_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   containing the single-cell expression data and metadata.
 
 - reference_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing the single-cell expression data and metadata.
 
 - query_cell_type_col:
@@ -98,7 +98,7 @@ correlations.
 ## Details
 
 Designed for
-[`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+[SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
 objects, this function subsets data for the specified cell type,
 computes pairwise distances or correlations, and visualizes these
 measurements through ridgeline plots. The plots help evaluate the
@@ -117,13 +117,15 @@ data("reference_data")
 data("query_data")
 
 # Example usage of the function
-plotPairwiseDistancesDensity(query_data = query_data,
-                             reference_data = reference_data,
-                             query_cell_type_col = "SingleR_annotation",
-                             ref_cell_type_col = "expert_annotation",
-                             cell_type = "CD8",
-                             pc_subset = 1:5,
-                             distance_metric = "euclidean",
-                             correlation_method = "pearson")
+plotPairwiseDistancesDensity(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    cell_type = "CD8",
+    pc_subset = 1:5,
+    distance_metric = "euclidean",
+    correlation_method = "pearson"
+)
 
 ```

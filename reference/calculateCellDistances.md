@@ -32,15 +32,13 @@ plot(x, ref_cell_type, cell_names, ...)
 
 - query_data:
 
-  A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
-  object containing numeric expression matrix for the query cells.
+  A SingleCellExperiment object containing numeric expression matrix for
+  the query cells.
 
 - reference_data:
 
-  A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
-  object containing numeric expression matrix for the reference cells.
+  A SingleCellExperiment object containing numeric expression matrix for
+  the reference cells.
 
 - query_cell_type_col:
 
@@ -154,20 +152,24 @@ data("reference_data")
 data("query_data")
 
 # Plot the PC data
-distance_data <- calculateCellDistances(query_data = query_data,
-                                        reference_data = reference_data,
-                                        query_cell_type_col = "SingleR_annotation",
-                                        ref_cell_type_col = "expert_annotation",
-                                        pc_subset = 1:10)
+distance_data <- calculateCellDistances(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:10
+)
 
 # Identify outliers for CD4
-cd4_anomalies <- detectAnomaly(reference_data = reference_data,
-                               query_data = query_data,
-                               query_cell_type_col = "SingleR_annotation",
-                               ref_cell_type_col = "expert_annotation",
-                               pc_subset = 1:10,
-                               n_tree = 500,
-                               anomaly_threshold = 0.5)
+cd4_anomalies <- detectAnomaly(
+    reference_data = reference_data,
+    query_data = query_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:10,
+    n_tree = 500,
+    anomaly_threshold = 0.5
+)
 cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE)[1:6])
 
 # Plot the densities of the distances

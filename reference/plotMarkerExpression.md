@@ -26,13 +26,13 @@ plotMarkerExpression(
 - query_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the query cells.
 
 - reference_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the reference cells.
 
 - ref_cell_type_col:
@@ -106,13 +106,15 @@ data("reference_data")
 data("query_data")
 
 # Note: Users can use SingleR or any other method to obtain the cell type annotations.
-plotMarkerExpression(reference_data = reference_data,
-                     query_data = query_data,
-                     ref_cell_type_col = "expert_annotation",
-                     query_cell_type_col = c("expert_annotation", "SingleR_annotation")[1],
-                     gene_name = "CD8A",
-                     cell_type = "CD4",
-                     normalization = "z_score")
+plotMarkerExpression(
+    reference_data = reference_data,
+    query_data = query_data,
+    ref_cell_type_col = "expert_annotation",
+    query_cell_type_col = c("expert_annotation", "SingleR_annotation")[1],
+    gene_name = "CD8A",
+    cell_type = "CD4",
+    normalization = "z_score"
+)
 #> Picking joint bandwidth of 0.303
 #> Picking joint bandwidth of 0.234
 

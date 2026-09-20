@@ -28,13 +28,13 @@ plotCellTypeMDS(
 - query_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   containing the single-cell expression data and metadata.
 
 - reference_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing the single-cell expression data and metadata.
 
 - query_cell_type_col:
@@ -108,11 +108,13 @@ data("reference_data")
 data("query_data")
 
 # Generate the MDS scatter plot with cell type coloring
-mds_plot <- plotCellTypeMDS(query_data = query_data,
-                            reference_data = reference_data,
-                            cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid")[1:4],
-                            query_cell_type_col = "SingleR_annotation",
-                            ref_cell_type_col = "expert_annotation")
+mds_plot <- plotCellTypeMDS(
+    query_data = query_data,
+    reference_data = reference_data,
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid")[1:4],
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation"
+)
 #> Computing MDS from expression data.
 mds_plot
 

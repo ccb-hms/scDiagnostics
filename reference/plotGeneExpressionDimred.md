@@ -24,7 +24,7 @@ plotGeneExpressionDimred(
 - sce_object:
 
   An object of class
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   containing log-transformed expression matrix and other metadata. It
   can be either a reference or query dataset.
 
@@ -75,11 +75,13 @@ expression.
 data("query_data")
 
 # Plot gene expression on PCA plot
-plotGeneExpressionDimred(sce_object = query_data,
-                         cell_type_col = "SingleR_annotation",
-                         method = "PCA",
-                         pc_subset = 1:5,
-                         feature = "CD8A",
-                         cell_types = "CD4")
+plotGeneExpressionDimred(
+    sce_object = query_data,
+    cell_type_col = "SingleR_annotation",
+    method = "PCA",
+    pc_subset = 1:5,
+    feature = "CD8A",
+    cell_types = "CD4"
+)
 
 ```

@@ -28,13 +28,13 @@ calculateMMDPValue(
 - query_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the query cells.
 
 - reference_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the reference cells.
 
 - query_cell_type_col:
@@ -120,13 +120,15 @@ data("reference_data")
 data("query_data")
 
 # Calculate MMD p-values (with query data)
-mmd_test <- calculateMMDPValue(reference_data = reference_data,
-                              query_data = query_data,
-                              ref_cell_type_col = "expert_annotation",
-                              query_cell_type_col = "SingleR_annotation",
-                              cell_types = c("CD4", "CD8"),
-                              pc_subset = 1:5,
-                              n_permutation = 30)
+mmd_test <- calculateMMDPValue(
+    reference_data = reference_data,
+    query_data = query_data,
+    ref_cell_type_col = "expert_annotation",
+    query_cell_type_col = "SingleR_annotation",
+    cell_types = c("CD4", "CD8"),
+    pc_subset = 1:5,
+    n_permutation = 30
+)
 mmd_test
 #>        CD4        CD8 
 #> 0.03225806 0.03225806 

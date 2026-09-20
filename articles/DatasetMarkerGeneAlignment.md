@@ -915,7 +915,7 @@ markers.
 
     R version 4.6.1 (2026-06-24)
     Platform: x86_64-pc-linux-gnu
-    Running under: Ubuntu 24.04.4 LTS
+    Running under: Ubuntu 24.04.5 LTS
 
     Matrix products: default
     BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -940,9 +940,9 @@ markers.
      [5] SingleCellExperiment_1.34.0 SummarizedExperiment_1.42.0
      [7] Biobase_2.72.0              GenomicRanges_1.64.0       
      [9] Seqinfo_1.2.0               IRanges_2.46.0             
-    [11] S4Vectors_0.50.1            BiocGenerics_0.58.1        
+    [11] S4Vectors_0.50.3            BiocGenerics_0.58.1        
     [13] generics_0.1.4              MatrixGenerics_1.24.0      
-    [15] matrixStats_1.5.0           scDiagnostics_1.7.2        
+    [15] matrixStats_1.5.0           scDiagnostics_1.7.3        
     [17] BiocStyle_2.40.0           
 
     loaded via a namespace (and not attached):
@@ -953,25 +953,25 @@ markers.
     [13] lifecycle_1.0.5     cluster_2.1.8.2     statmod_1.5.2      
     [16] magrittr_2.0.5      compiler_4.6.1      rlang_1.3.0        
     [19] sass_0.4.10         tools_4.6.1         igraph_2.3.3       
-    [22] yaml_2.3.12         data.table_1.18.4   knitr_1.51         
+    [22] yaml_2.3.12         data.table_1.18.6.1 knitr_1.52         
     [25] labeling_0.4.3      S4Arrays_1.12.0     dqrng_0.4.1        
     [28] htmlwidgets_1.6.4   DelayedArray_0.38.2 RColorBrewer_1.1-3 
     [31] abind_1.4-8         BiocParallel_1.46.0 withr_3.0.3        
     [34] desc_1.4.3          grid_4.6.1          cramer_0.9-4       
-    [37] beachmat_2.28.0     edgeR_4.10.1        scales_1.4.0       
-    [40] ggridges_0.5.7      cli_3.6.6           rmarkdown_2.31     
+    [37] beachmat_2.28.0     edgeR_4.10.5        scales_1.4.0       
+    [40] ggridges_0.5.7      cli_3.6.6           rmarkdown_2.32     
     [43] ragg_1.5.2          otel_0.2.0          metapod_1.20.0     
     [46] ggbeeswarm_0.7.3    cachem_1.1.0        stringr_1.6.0      
     [49] parallel_4.6.1      BiocManager_1.30.27 XVector_0.52.0     
     [52] vctrs_0.7.3         boot_1.3-32         Matrix_1.7-5       
-    [55] jsonlite_2.0.0      bookdown_0.47       BiocSingular_1.28.0
+    [55] jsonlite_2.0.0      bookdown_0.48       BiocSingular_1.28.0
     [58] BiocNeighbors_2.6.0 ggrepel_0.9.8       beeswarm_0.4.0     
     [61] irlba_2.3.7         systemfonts_1.3.2   locfit_1.5-9.12    
-    [64] limma_3.68.4        jquerylib_0.1.4     glue_1.8.1         
-    [67] pkgdown_2.2.0       codetools_0.2-20    stringi_1.8.7      
+    [64] limma_3.68.5        jquerylib_0.1.4     glue_1.8.1         
+    [67] pkgdown_2.2.1       codetools_0.2-20    stringi_1.8.9      
     [70] gtable_0.3.6        ScaledMatrix_1.20.0 tibble_3.3.1       
     [73] pillar_1.11.1       htmltools_0.5.9     R6_2.6.1           
     [76] textshaping_1.0.5   evaluate_1.0.5      lattice_0.22-9     
-    [79] bslib_0.11.0        Rcpp_1.1.2          gridExtra_2.3.1    
-    [82] SparseArray_1.12.2  ranger_0.18.0       xfun_0.59          
+    [79] bslib_0.12.0        Rcpp_1.1.2          gridExtra_2.3.1    
+    [82] SparseArray_1.12.2  ranger_0.18.0       xfun_0.61          
     [85] fs_2.1.0            pkgconfig_2.0.3    

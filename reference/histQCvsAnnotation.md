@@ -22,7 +22,7 @@ histQCvsAnnotation(
 - sce_object:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   containing the single-cell expression data and metadata.
 
 - cell_type_col:
@@ -69,17 +69,21 @@ annotations.
 data("query_data")
 
 # Generate histograms
-histQCvsAnnotation(sce_object = query_data,
-                   cell_type_col = "SingleR_annotation",
-                   cell_types = c("CD4", "CD8"),
-                   qc_col = "percent_mito",
-                   score_col = "annotation_scores")
+histQCvsAnnotation(
+    sce_object = query_data,
+    cell_type_col = "SingleR_annotation",
+    cell_types = c("CD4", "CD8"),
+    qc_col = "percent_mito",
+    score_col = "annotation_scores"
+)
 
 
-histQCvsAnnotation(sce_object = query_data,
-                   cell_type_col = "SingleR_annotation",
-                   cell_types = NULL,
-                   qc_col = "percent_mito",
-                   score_col = "annotation_scores")
+histQCvsAnnotation(
+    sce_object = query_data,
+    cell_type_col = "SingleR_annotation",
+    cell_types = NULL,
+    qc_col = "percent_mito",
+    score_col = "annotation_scores"
+)
 
 ```

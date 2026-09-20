@@ -6,7 +6,7 @@ types, datasets, or their interactions.
 
 This function performs linear regression of a covariate of interest onto
 one or more principal components, based on the data in a
-[`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+[SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
 object.
 
 ## Usage
@@ -68,13 +68,13 @@ regressPC(
 - query_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the query cells.
 
 - reference_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the reference cells.
   If NULL, the PC scores are regressed against the cell types of the
   query data.
@@ -190,10 +190,12 @@ data("reference_data")
 data("query_data")
 
 # Query only analysis
-regress_res <- regressPC(query_data = query_data,
-                         query_cell_type_col = "expert_annotation",
-                         cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                         pc_subset = 1:10)
+regress_res <- regressPC(
+    query_data = query_data,
+    query_cell_type_col = "expert_annotation",
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    pc_subset = 1:10
+)
 # Visualize results
 plot(regress_res, plot_type = "r_squared")
 
@@ -203,12 +205,14 @@ plot(regress_res, plot_type = "coefficient_heatmap")
 
 
 # Query + Reference analysis
-regress_res <- regressPC(query_data = query_data,
-                         reference_data = reference_data,
-                         query_cell_type_col = "SingleR_annotation",
-                         ref_cell_type_col = "expert_annotation",
-                         cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-                         pc_subset = 1:10)
+regress_res <- regressPC(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    pc_subset = 1:10
+)
 # Visualize results
 plot(regress_res, plot_type = "r_squared")
 

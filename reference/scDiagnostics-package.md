@@ -106,19 +106,6 @@ type-specific levels.
   Calculates cell similarity in PCA space, with a plot method for
   visualization.
 
-## Calculation of Distances Between Specific Cells and Cell Populations
-
-Functions for calculating distances between specific cells and cell
-populations.
-
-- [`calculateCellDistances`](https://ccb-hms.github.io/scDiagnostics/reference/calculateCellDistances.md):
-  Calculates distances between cells, with a plot method for
-  visualization.
-
-- [`calculateCellDistancesSimilarity`](https://ccb-hms.github.io/scDiagnostics/reference/calculateCellDistancesSimilarity.md):
-  Calculates similarity based on cell distances, with a plot method for
-  visualization.
-
 ## Visualization of QC and Annotation Scores
 
 Functions for visualizing quality control (QC) metrics or other
@@ -139,7 +126,7 @@ Miscellaneous functions for various tasks.
 
 - [`processPCA`](https://ccb-hms.github.io/scDiagnostics/reference/processPCA.md):
   Process
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   objects to compute PCA.
 
 - [`projectPCA`](https://ccb-hms.github.io/scDiagnostics/reference/projectPCA.md):

@@ -18,16 +18,19 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/ccb-hms/scDiagnostics/blob/main/DESCRIPTION)
+[`inst/CITATION`](https://github.com/ccb-hms/scDiagnostics/blob/main/inst/CITATION)
 
-Christidis A, Ghazi A, Chawla S, Geistlinger L, Gentleman R (2026).
-*scDiagnostics: Cell type annotation diagnostics*. R package version
-1.7.2, <https://github.com/ccb-hms/scDiagnostics>.
+Christidis A, Ghazi A, Chawla S, Turaga N, Gentleman R, Geistlinger L
+(2026). scDiagnostics: systematic assessment of cell type annotation in
+single-cell transcriptomics data. Briefings in Bioinformatics, 27(5),
+bbag496. doi:10.1093/bib/bbag496.
 
-    @Manual{,
-      title = {scDiagnostics: Cell type annotation diagnostics},
-      author = {Anthony Christidis and Andrew Ghazi and Smriti Chawla and Ludwig Geistlinger and Robert Gentleman},
+    @Article{,
+      title = {scDiagnostics: systematic assessment of cell type annotation in single-cell transcriptomics data},
+      author = {Anthony Christidis and Andrew Ghazi and Smriti Chawla and Nitesh Turaga and Robert Gentleman and Ludwig Geistlinger},
+      journal = {Briefings in Bioinformatics},
       year = {2026},
-      note = {R package version 1.7.2},
-      url = {https://github.com/ccb-hms/scDiagnostics},
+      volume = {27},
+      number = {5},
+      doi = {10.1093/bib/bbag496},
     }

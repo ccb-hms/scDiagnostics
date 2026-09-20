@@ -1,7 +1,7 @@
 # Convert Specified Columns to Character in SingleCellExperiment Objects
 
 This function converts specified columns in the `colData` of a
-[`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+[SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
 object to character type. It checks that the specified columns exist and
 only performs conversion when necessary (i.e., when columns are not
 already character type).
@@ -17,7 +17,7 @@ convertColumnsToCharacter(sce_object, convert_cols)
 - sce_object:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing single-cell data.
 
 - convert_cols:
@@ -28,7 +28,7 @@ convertColumnsToCharacter(sce_object, convert_cols)
 ## Value
 
 A
-[`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+[SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
 object with the specified columns converted to character type in the
 `colData`.
 
@@ -37,7 +37,7 @@ object with the specified columns converted to character type in the
 The function performs the following operations:
 
 - Validates that the input is a
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object.
 
 - Checks that all specified columns exist in the `colData` of the
@@ -47,7 +47,7 @@ The function performs the following operations:
   character.
 
 - Returns the modified
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object.
 
 - If all specified columns are already character type, returns the

@@ -50,13 +50,13 @@ plot(
 - query_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the query cells.
 
 - reference_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the reference cells.
 
 - query_cell_type_col:
@@ -321,7 +321,8 @@ library(SingleR)
 reference_data <- reference_data[, reference_data$expert_annotation != "Myeloid"]
 reference_data <- runPCA(reference_data, ncomponents = 50)
 SingleR_annotation <- SingleR(query_data, reference_data,
-                              labels = reference_data$expert_annotation)
+    labels = reference_data$expert_annotation
+)
 #> Detected a large SingleCellExperiment as the reference dataset, consider
 #> setting 'de.method = "t"' or "wilcox" and 'aggr.ref = TRUE' for speed in
 #> trainSingleR(). If you know better, this hint can be disabled with
@@ -343,8 +344,8 @@ graph_diagnostics <- calculateGraphIntegration(
     reference_data = reference_data,
     query_cell_type_col = "SingleR_annotation",
     ref_cell_type_col = "expert_annotation",
-   pc_subset = 1:10,
-   k_neighbors = 30,
+    pc_subset = 1:10,
+    k_neighbors = 30,
     resolution = 0.1,
     high_query_prop_threshold = 0.9,
     cross_type_threshold = 0.15,
@@ -390,8 +391,10 @@ plot(graph_diagnostics, plot_type = "community_network", color_by = "cell_type")
 
 
 # Network graph showing all issue types
-plot(graph_diagnostics, plot_type = "cell_network",
-     max_nodes = 2000, color_by = "community_type")
+plot(graph_diagnostics,
+    plot_type = "cell_network",
+    max_nodes = 2000, color_by = "community_type"
+)
 
 
 # Network graph showing all issue types

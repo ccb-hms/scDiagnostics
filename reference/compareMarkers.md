@@ -38,13 +38,13 @@ plot(x, cell_types = NULL, ...)
 - query_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing query cells.
 
 - reference_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing reference cells.
 
 - query_cell_type_col:
@@ -195,17 +195,21 @@ data("reference_data")
 data("query_data")
 
 # Compare marker genes
-marker_comparison <- compareMarkers(query_data = query_data,
-                                    reference_data = reference_data,
-                                    query_cell_type_col = "expert_annotation",
-                                    ref_cell_type_col = "expert_annotation")
+marker_comparison <- compareMarkers(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "expert_annotation",
+    ref_cell_type_col = "expert_annotation"
+)
 
 # With anomaly filtering
-marker_comparison_filtered <- compareMarkers(query_data = query_data,
-                                            reference_data = reference_data,
-                                            query_cell_type_col = "expert_annotation",
-                                            ref_cell_type_col = "expert_annotation",
-                                            anomaly_filter = "non_anomalous_only")
+marker_comparison_filtered <- compareMarkers(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "expert_annotation",
+    ref_cell_type_col = "expert_annotation",
+    anomaly_filter = "non_anomalous_only"
+)
 #> Warning: 'fitTrendVar' is deprecated.
 #> Use 'scrapper::fitVarianceTrend' instead.
 #> See help("Deprecated")

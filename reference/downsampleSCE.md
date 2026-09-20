@@ -1,7 +1,7 @@
 # Downsample SingleCellExperiment Objects
 
 This internal function downsamples
-[`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+[SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
 objects while preserving reducedDims coordinate information (PCA, UMAP,
 t-SNE, etc.). Optionally, it can also subset by cell types before
 downsampling.
@@ -23,7 +23,7 @@ downsampleSCE(
 - sce_object:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object to potentially downsample. May contain PCA, UMAP, TSNE, or
   other reducedDims.
 
@@ -51,7 +51,7 @@ downsampleSCE(
 ## Value
 
 A
-[`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+[SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
 object with at most max_cells cells and optionally filtered by cell
 types. ReducedDims coordinates are preserved through standard
 subsetting. If max_cells is NULL, the original object is returned

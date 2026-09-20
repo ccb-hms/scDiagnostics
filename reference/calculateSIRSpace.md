@@ -44,13 +44,13 @@ plot(
 - query_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing the numeric expression matrix for the query cells.
 
 - reference_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing the numeric expression matrix for the reference
   cells.
 
@@ -186,27 +186,31 @@ data("reference_data")
 data("query_data")
 
 # Compute important variables for all pairwise cell comparisons
-sir_output <- calculateSIRSpace(reference_data = reference_data,
-                                query_data = query_data,
-                                query_cell_type_col = "expert_annotation",
-                                ref_cell_type_col = "expert_annotation",
-                                multiple_cond_means = TRUE,
-                                cumulative_variance_threshold = 0.9,
-                                n_neighbor = 1)
+sir_output <- calculateSIRSpace(
+    reference_data = reference_data,
+    query_data = query_data,
+    query_cell_type_col = "expert_annotation",
+    ref_cell_type_col = "expert_annotation",
+    multiple_cond_means = TRUE,
+    cumulative_variance_threshold = 0.9,
+    n_neighbor = 1
+)
 
 # Generate plots SIR projections
 plot(sir_output,
-     sir_subset = 1:5,
-     cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
-     lower_facet = "scatter",
-     diagonal_facet = "boxplot",
-     upper_facet = "blank")
+    sir_subset = 1:5,
+    cell_types = c("CD4", "CD8", "B_and_plasma", "Myeloid"),
+    lower_facet = "scatter",
+    diagonal_facet = "boxplot",
+    upper_facet = "blank"
+)
 
 
 # Plot top loadings
 plot(sir_output,
-     sir_subset = 1:5,
-     plot_type = "loadings",
-     n_top = 10)
+    sir_subset = 1:5,
+    plot_type = "loadings",
+    n_top = 10
+)
 
 ```

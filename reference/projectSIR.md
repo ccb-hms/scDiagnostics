@@ -29,13 +29,13 @@ projectSIR(
 - query_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the query cells.
 
 - reference_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the reference cells.
 
 - query_cell_type_col:
@@ -127,8 +127,10 @@ data("reference_data")
 data("query_data")
 
 # Project the query data onto SIR space of reference
-sir_output <- projectSIR(query_data = query_data,
-                         reference_data = reference_data,
-                         query_cell_type_col = "SingleR_annotation",
-                         ref_cell_type_col = "expert_annotation")
+sir_output <- projectSIR(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation"
+)
 ```

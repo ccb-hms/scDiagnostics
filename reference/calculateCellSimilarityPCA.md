@@ -26,9 +26,7 @@ plot(x, pc_subset = 1:5, ...)
 
 - sce_object:
 
-  A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
-  object containing expression data.
+  A SingleCellExperiment object containing expression data.
 
 - cell_names:
 
@@ -72,10 +70,9 @@ similarity heatmap.
 This function calculates the cosine similarity between cells based on
 the loadings of the selected principal components obtained from PCA. It
 extracts the rotation matrix from the PCA results of the
-[`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
-object and identifies the high-loading variables for each selected PC.
-Then, it computes the cosine similarity between cells using the
-high-loading variables for each PC.
+SingleCellExperiment object and identifies the high-loading variables
+for each selected PC. Then, it computes the cosine similarity between
+cells using the high-loading variables for each PC.
 
 The S3 plot method reshapes the input data frame to create a long format
 suitable for plotting as a heatmap. It then creates a heatmap plot using
@@ -100,21 +97,25 @@ data("reference_data")
 data("query_data")
 
 # Store PCA anomaly data and plots
-anomaly_output <- detectAnomaly(reference_data = reference_data,
-                                query_data = query_data,
-                                ref_cell_type_col = "expert_annotation",
-                                query_cell_type_col = "SingleR_annotation",
-                                pc_subset = 1:10,
-                                n_tree = 500,
-                                anomaly_threshold = 0.5)
+anomaly_output <- detectAnomaly(
+    reference_data = reference_data,
+    query_data = query_data,
+    ref_cell_type_col = "expert_annotation",
+    query_cell_type_col = "SingleR_annotation",
+    pc_subset = 1:10,
+    n_tree = 500,
+    anomaly_threshold = 0.5
+)
 top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores,
-                             decreasing = TRUE)[1:6])
+    decreasing = TRUE
+)[1:6])
 
 # Compute cosine similarity between anomalies and top PCs
 cosine_similarities <- calculateCellSimilarityPCA(reference_data,
-                                                  cell_names = top6_anomalies,
-                                                  pc_subset = 1:25,
-                                                  n_top_vars = 50)
+    cell_names = top6_anomalies,
+    pc_subset = 1:25,
+    n_top_vars = 50
+)
 cosine_similarities
 #>                           PC1         PC2        PC3         PC4        PC5
 #> ACACCAATCTTAACCT-1 -0.4339110  0.09963651  0.3110854 -0.08549224 -0.4661250

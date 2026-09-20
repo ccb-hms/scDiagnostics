@@ -35,13 +35,13 @@ plot(x, cell_types = NULL, bandwidth = NULL, ...)
 - query_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing a numeric expression matrix for the query cells.
 
 - reference_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object with a numeric expression matrix for the reference cells.
 
 - ref_cell_type_col:
@@ -165,12 +165,14 @@ data("reference_data")
 data("query_data")
 
 # Compute Wasserstein distance distributions for all cell types
-wasserstein_data <- calculateWassersteinDistance(query_data = query_data,
-                                                 reference_data = reference_data,
-                                                 query_cell_type_col = "expert_annotation",
-                                                 ref_cell_type_col = "expert_annotation",
-                                                 pc_subset = 1:5,
-                                                 n_resamples = 100)
+wasserstein_data <- calculateWassersteinDistance(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "expert_annotation",
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:5,
+    n_resamples = 100
+)
 plot(wasserstein_data)
 #> Picking joint bandwidth of 0.0188
 #> Picking joint bandwidth of 0.0149

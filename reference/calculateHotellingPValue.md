@@ -26,13 +26,13 @@ calculateHotellingPValue(
 - query_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the query cells.
 
 - reference_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the reference cells.
 
 - query_cell_type_col:
@@ -106,11 +106,13 @@ data("reference_data")
 data("query_data")
 
 # Get the p-values
-p_values <- calculateHotellingPValue(query_data = query_data,
-                                     reference_data = reference_data,
-                                     query_cell_type_col = "SingleR_annotation",
-                                     ref_cell_type_col = "expert_annotation",
-                                     pc_subset = 1:10)
+p_values <- calculateHotellingPValue(
+    query_data = query_data,
+    reference_data = reference_data,
+    query_cell_type_col = "SingleR_annotation",
+    ref_cell_type_col = "expert_annotation",
+    pc_subset = 1:10
+)
 round(p_values, 5)
 #> B_and_plasma          CD4          CD8      Myeloid 
 #>        0.228        0.002        0.000        0.382 

@@ -77,8 +77,10 @@ query_var <- scran::getTopHVGs(query_data, n = 500)
 #> See help("Deprecated")
 #> Warning: 'combineBlocks' is deprecated.
 #> See help("Deprecated")
-overlap_coefficient <- calculateHVGOverlap(reference_genes = ref_var,
-                                           query_genes = query_var)
+overlap_coefficient <- calculateHVGOverlap(
+    reference_genes = ref_var,
+    query_genes = query_var
+)
 overlap_coefficient
 #> [1] 0.93
 ```

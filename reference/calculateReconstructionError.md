@@ -46,13 +46,13 @@ plot(
 - reference_data:
 
   A
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the reference cells.
 
 - query_data:
 
   An optional
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   object containing numeric expression matrix for the query cells. If
   NULL, the reconstruction errors are computed for the reference data
   alone. Default is NULL.
@@ -284,7 +284,8 @@ recon_output <- calculateReconstructionError(
 
 # Plot the output for a specific cell type
 plot(recon_output,
-     cell_type = "CD4",
-     plot_type = "violin")
+    cell_type = "CD4",
+    plot_type = "violin"
+)
 
 ```

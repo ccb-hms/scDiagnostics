@@ -428,7 +428,7 @@ overlap_measures
 
     R version 4.6.1 (2026-06-24)
     Platform: x86_64-pc-linux-gnu
-    Running under: Ubuntu 24.04.4 LTS
+    Running under: Ubuntu 24.04.5 LTS
 
     Matrix products: default
     BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -447,11 +447,11 @@ overlap_measures
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-    [1] scDiagnostics_1.7.2 BiocStyle_2.40.0   
+    [1] scDiagnostics_1.7.3 BiocStyle_2.40.0   
 
     loaded via a namespace (and not attached):
      [1] SummarizedExperiment_1.42.0 gtable_0.3.6               
-     [3] xfun_0.59                   bslib_0.11.0               
+     [3] xfun_0.61                   bslib_0.12.0               
      [5] ggplot2_4.0.3               htmlwidgets_1.6.4          
      [7] GGally_2.4.0                Biobase_2.72.0             
      [9] lattice_0.22-9              vctrs_0.7.3                
@@ -460,27 +460,27 @@ overlap_measures
     [15] tibble_3.3.1                pkgconfig_2.0.3            
     [17] Matrix_1.7-5                RColorBrewer_1.1-3         
     [19] S7_0.2.2                    desc_1.4.3                 
-    [21] S4Vectors_0.50.1            ggridges_0.5.7             
+    [21] S4Vectors_0.50.3            ggridges_0.5.7             
     [23] lifecycle_1.0.5             compiler_4.6.1             
     [25] farver_2.1.2                textshaping_1.0.5          
     [27] RhpcBLASctl_0.23-42         Seqinfo_1.2.0              
     [29] htmltools_0.5.9             sass_0.4.10                
     [31] yaml_2.3.12                 tidyr_1.3.2                
-    [33] pkgdown_2.2.0               pillar_1.11.1              
+    [33] pkgdown_2.2.1               pillar_1.11.1              
     [35] jquerylib_0.1.4             SingleCellExperiment_1.34.0
     [37] DelayedArray_0.38.2         cachem_1.1.0               
-    [39] abind_1.4-8                 ggstats_0.13.0             
+    [39] abind_1.4-8                 ggstats_0.14.0             
     [41] tidyselect_1.2.1            digest_0.6.39              
     [43] purrr_1.2.2                 dplyr_1.2.1                
-    [45] bookdown_0.47               labeling_0.4.3             
+    [45] bookdown_0.48               labeling_0.4.3             
     [47] fastmap_1.2.0               grid_4.6.1                 
     [49] cli_3.6.6                   SparseArray_1.12.2         
     [51] magrittr_2.0.5              S4Arrays_1.12.0            
     [53] withr_3.0.3                 scales_1.4.0               
-    [55] rmarkdown_2.31              XVector_0.52.0             
+    [55] rmarkdown_2.32              XVector_0.52.0             
     [57] matrixStats_1.5.0           otel_0.2.0                 
     [59] ragg_1.5.2                  isotree_0.6.1-5            
-    [61] evaluate_1.0.5              knitr_1.51                 
+    [61] evaluate_1.0.5              knitr_1.52                 
     [63] GenomicRanges_1.64.0        IRanges_2.46.0             
     [65] rlang_1.3.0                 Rcpp_1.1.2                 
     [67] glue_1.8.1                  BiocManager_1.30.27        

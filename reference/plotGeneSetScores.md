@@ -22,7 +22,7 @@ plotGeneSetScores(
 - sce_object:
 
   An object of class
-  [`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   containing numeric expression matrix and other metadata. It can be
   either a reference or query dataset.
 
@@ -65,7 +65,7 @@ specified reduced dimensions.
 
 This function plots gene set scores on reduced dimensions such as PCA,
 t-SNE, or UMAP. It extracts the reduced dimensions from the provided
-[`SingleCellExperiment`](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+[SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
 object. Gene set scores are visualized as a scatter plot with colors
 indicating the scores. For PCA, the function automatically includes the
 percentage of variance explained in the plot's legend.
@@ -81,11 +81,13 @@ Anthony Christidis, <anthony-alexander_christidis@hms.harvard.edu>
 data("query_data")
 
 # Plot gene set scores on PCA
-plotGeneSetScores(sce_object = query_data,
-                  method = "PCA",
-                  score_col = "gene_set_scores",
-                  pc_subset = 1:5,
-                  cell_types = "CD8",
-                  cell_type_col = "SingleR_annotation")
+plotGeneSetScores(
+    sce_object = query_data,
+    method = "PCA",
+    score_col = "gene_set_scores",
+    pc_subset = 1:5,
+    cell_types = "CD8",
+    cell_type_col = "SingleR_annotation"
+)
 
 ```
