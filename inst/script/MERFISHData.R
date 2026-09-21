@@ -15,6 +15,13 @@ bfc <- BiocFileCache::BiocFileCache(ask = FALSE)
 healthy_data <- readRDS(BiocFileCache::bfcrpath(bfc, paste0(zenodo_base, "healthy_data.rds")))
 dss9_data <- readRDS(BiocFileCache::bfcrpath(bfc, paste0(zenodo_base, "dss9_data.rds")))
 
+# These objects were serialized by the manuscript's own (older) pipeline, so
+# normalize their internal S4 representation to the current Bioconductor
+# classes now, rather than relying on a lazy, version-dependent
+# updateObject() the first time a (possibly newer) Bioconductor loads them
+healthy_data <- updateObject(healthy_data, check = FALSE)
+dss9_data <- updateObject(dss9_data, check = FALSE)
+
 # The Day 9 (query) data further splits some cell states into an
 # inflammation-associated variant (e.g. "Inflamed Fibroblast") that does not
 # exist at Day 0 (reference). Collapse those back into their parent lineage

@@ -16,6 +16,13 @@ bfc <- BiocFileCache::BiocFileCache(ask = FALSE)
 normal_data <- readRDS(BiocFileCache::bfcrpath(bfc, paste0(zenodo_base, "normal_data_sce.rds")))
 covid_data <- readRDS(BiocFileCache::bfcrpath(bfc, paste0(zenodo_base, "covid_data_sce.rds")))
 
+# These objects were serialized by the manuscript's own (older) pipeline, so
+# normalize their internal S4 representation to the current Bioconductor
+# classes now, rather than relying on a lazy, version-dependent
+# updateObject() the first time a (possibly newer) Bioconductor loads them
+normal_data <- updateObject(normal_data, check = FALSE)
+covid_data <- updateObject(covid_data, check = FALSE)
+
 # Restrict to a handful of shared cell types for PCA context, matched by name
 # between the author ground-truth (reference) and Azimuth (query) merged
 # annotation columns

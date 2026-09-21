@@ -47,6 +47,10 @@ SummarizedExperiment::assays(zeisel_query_data) <-
     SummarizedExperiment::assays(zeisel_query_data)[-which(
         names(SummarizedExperiment::assays(zeisel_query_data)) == "counts")]
 
+# Normalize internal S4 representation to the current Bioconductor classes
+zeisel_reference_data <- SingleCellExperiment::updateObject(zeisel_reference_data, check = FALSE)
+zeisel_query_data <- SingleCellExperiment::updateObject(zeisel_query_data, check = FALSE)
+
 # Save datasets to data/ folder
 usethis::use_data(zeisel_reference_data, compress = "xz", overwrite = TRUE)
 usethis::use_data(zeisel_query_data, compress = "xz", overwrite = TRUE)

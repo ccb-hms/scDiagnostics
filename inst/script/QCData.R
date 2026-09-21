@@ -54,6 +54,11 @@ SummarizedExperiment::assays(qc_data) <-
     SummarizedExperiment::assays(qc_data)[-which(
         names(SummarizedExperiment::assays(qc_data)) == "counts")]
 
+# Normalize internal S4 representation to the current Bioconductor classes,
+# so re-running this script with a newer Bioconductor doesn't ship a
+# bundled dataset that needs a lazy updateObject() when later loaded
+qc_data <- SingleCellExperiment::updateObject(qc_data, check = FALSE)
+
 # Save dataset to data/ folder
 usethis::use_data(qc_data, compress = "xz", overwrite = TRUE)
 
