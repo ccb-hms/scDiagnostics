@@ -156,13 +156,17 @@ jobs:
           install.packages("Matrix", type = "source")
           install.packages("irlba", type = "source")
           if (Sys.info()[["sysname"]] == "Darwin") {
-            ## CRAN's macOS binary for RhpcBLASctl (a hard Import of
-            ## isotree, which detectAnomaly() calls) fails to dlopen on
-            ## some GitHub Actions macOS runners with "symbol not found
-            ## in flat namespace '_omp_get_max_threads'". A source build
-            ## compiles without OpenMP support instead of linking against
-            ## a runtime that isn't there, avoiding the crash.
+            ## CRAN's macOS binaries for RhpcBLASctl and isotree (the
+            ## latter is what detectAnomaly() calls) are built with
+            ## OpenMP support that isn't resolvable at runtime on some
+            ## GitHub Actions macOS runners: RhpcBLASctl fails to dlopen
+            ## with "symbol not found ... '_omp_get_max_threads'", and
+            ## once that's fixed, isotree's own binary fails the same
+            ## way on '___kmpc_barrier'. A source build of each compiles
+            ## without OpenMP (Apple clang has no -fopenmp by default),
+            ## so the resulting library never references that symbol.
             install.packages("RhpcBLASctl", type = "source")
+            install.packages("isotree", type = "source")
           }
         shell: Rscript {0}
 
