@@ -13,14 +13,14 @@ navbar:
   left:
     - text: Vignettes
       menu:
-        - text: Getting Started with scDiagnostics
-          href: articles/scDiagnostics.html
-        - text: Visualization of Cell Type Annotations
-          href: articles/VisualizationTools.html
-        - text: Evaluation of Dataset and Marker Gene Alignment
-          href: articles/DatasetMarkerGeneAlignment.html
-        - text: Detection and Analysis of Annotation Anomalies
-          href: articles/AnnotationAnomalies.html
+        - text: Introduction to scDiagnostics
+          href: articles/Introduction.html
+        - text: Benchmarking Anomaly Detection Against Ground Truth
+          href: articles/ZeiselBenchmarking.html
+        - text: "Case Study: COVID-19 Monocyte State"
+          href: articles/COVIDCaseStudy.html
+        - text: "Case Study: Spatial Colitis Data"
+          href: articles/MERFISHCaseStudy.html
     - text: Reference
       href: reference/index.html
     - text: News
@@ -95,3 +95,10 @@ reference:
       - reference_data
       - query_data
       - qc_data
+      - zeisel_reference_data
+      - zeisel_query_data
+      - zeisel_benchmark_results
+      - covid_reference_data
+      - covid_query_data
+      - merfish_reference_data
+      - merfish_query_data

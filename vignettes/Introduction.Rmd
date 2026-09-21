@@ -1,0 +1,364 @@
+---
+title: "1. Introduction to `scDiagnostics`"
+author:
+    - name: Anthony Christidis
+      affiliation:
+        - &core_affiliation Core for Computational Biomedicine, Harvard Medical School
+    - name: Andrew Ghazi
+      affiliation:
+        - *core_affiliation
+    - name: Smriti Chawla
+      affiliation:
+        - *core_affiliation
+    - name: Nitesh Turaga
+      affiliation:
+        - *core_affiliation
+    - name: Ludwig Geistlinger
+      affiliation:
+        - *core_affiliation
+    - name: Robert Gentleman
+      affiliation:
+        - *core_affiliation
+package: scDiagnostics
+output:
+  BiocStyle::html_document:
+    toc: true
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{1. Introduction to scDiagnostics}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, include = FALSE}
+knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  dev = "ragg_png",
+  dpi = 72,
+  fig.retina = 2,
+  fig.align = "center",
+  out.width = "100%",
+  pngquant = "--speed=1 --quality=1-5"
+)
+```
+
+# Purpose
+
+Automated cell type annotation - transferring labels from a reference
+dataset onto a new query dataset - is now a routine step in single-cell
+RNA-seq (scRNA-seq) analysis. It is fast and reproducible, but it is
+only as trustworthy as the alignment between reference and query: batch
+effects, cell states missing from the reference, or systematic
+differences in sequencing depth can all produce confidently-labeled
+cells that are, in fact, misannotated.
+
+`scDiagnostics` provides diagnostics for exactly this problem. Rather
+than another annotation method, it is a toolkit for **auditing**
+annotations you already have: is the query well-aligned with the
+reference in PCA space? Are there cells that look anomalous relative to
+their assigned cell type? If so, which genes distinguish them from the
+reference? Answering these questions helps decide whether an annotation
+transfer can be trusted, and where to look if it cannot.
+
+The package operates on `r BiocStyle::Biocpkg("SingleCellExperiment")`
+objects and is not specific to scRNA-seq: the same diagnostics apply
+directly to spatial data stored as a `r
+BiocStyle::Biocpkg("SpatialExperiment")` or `r
+BiocStyle::Biocpkg("SpatialFeatureExperiment")` object, without any
+modification, since both extend `SingleCellExperiment`. [Vignette
+4](https://ccb-hms.github.io/scDiagnostics/articles/MERFISHCaseStudy.html)
+demonstrates this on MERFISH spatial data.
+
+# Overview of the workflow
+
+Across the case-study vignettes in this package (see below), the same
+three-step diagnostic pattern recurs:
+
+1. **Project** the query data onto the reference's PCA space and
+   visualize how each cell type compares (e.g. `plotCellTypePCA()`,
+   `projectPCA()`).
+2. **Detect** cells whose projection looks anomalous relative to their
+   assigned reference cell type (`detectAnomaly()`).
+3. **Characterize** what makes the anomalous cells different, by testing
+   for expression shifts in genes that drive the relevant principal
+   components (`calculateGeneShifts()`).
+
+The four panels below illustrate this on the COVID-19 case study
+described in [vignette
+3](https://ccb-hms.github.io/scDiagnostics/articles/COVIDCaseStudy.html):
+CD14 monocytes from a severe COVID-19 query project further along PC1
+and PC2 than the healthy reference (panel A); a subset of those cells is
+flagged as anomalous by `detectAnomaly()` (panel B); and
+`calculateGeneShifts()` shows that the anomalous cells specifically
+over-express a panel of interferon-response genes, both as a heatmap of
+per-gene z-scores (panel C) and as fold-changes relative to the
+reference (panel D).
+
+::: {style="text-align: center;"}
+A. Projection onto reference PCA space
+
+![](figures/Introduction/overview_pca_projection.png){width="90%"}
+
+B. Anomaly detection within CD14 monocytes
+
+![](figures/Introduction/overview_anomaly_detection.png){width="90%"}
+
+C. Interferon-response genes distinguishing anomalous cells
+
+![](figures/Introduction/overview_gene_shifts_heatmap.png){width="70%"}
+
+D. Fold-change of the same genes, anomalous vs. non-anomalous query cells
+
+![](figures/Introduction/overview_gene_shifts_barplot.png){width="90%"}
+:::
+
+These specific results are from the COVID-19 case study and should not
+be read as a general property of every dataset - see [vignette
+2](https://ccb-hms.github.io/scDiagnostics/articles/ZeiselBenchmarking.html)
+for how detection accuracy was benchmarked against known ground truth
+more broadly.
+
+# Installation
+
+## Installation from Bioconductor (Release)
+
+Users interested in using the stable release version of the
+`scDiagnostics` package: please follow the installation instructions
+[**here**](https://bioconductor.org/packages/release/bioc/html/scDiagnostics.html).
+This is the recommended way of installing the package.
+
+## Installation from GitHub (Development)
+
+To install the development version of the package from Github, use the
+following command:
+
+```{r, eval = FALSE}
+BiocManager::install("ccb-hms/scDiagnostics")
+```
+
+To build the package vignettes upon installation use:
+
+```{r, eval=FALSE}
+BiocManager::install("ccb-hms/scDiagnostics",
+                     build_vignettes = TRUE,
+                     dependencies = TRUE)
+```
+
+Once you have installed the package, you can load it with the following
+code:
+
+```{r, message=FALSE}
+library(scDiagnostics)
+```
+
+# A worked example with known ground truth
+
+Before applying `detectAnomaly()` to real data (as in the case-study
+vignettes), it helps to see it work on data where the "right answer" is
+known. We simulate two batches of cells with the
+`r BiocStyle::Biocpkg("splatter")` package, three cell types each, and
+treat one batch as the reference and the other as the query.
+
+```{r, message=FALSE}
+library(splatter)
+library(scuttle)
+library(scater)
+library(SingleR)
+
+set.seed(100)
+
+# Simulate two batches of 500 cells, 3 balanced cell types
+sce_ref <- mockSCE()
+params <- splatEstimate(sce_ref)
+params <- setParams(
+    params,
+    batchCells = c(500, 500), batch.facLoc = 0, batch.facScale = 0,
+    group.prob = c(1 / 3, 1 / 3, 1 / 3),
+    de.prob = c(0.1, 0.2, 0.2),
+    de.facLoc = c(0.250, 0.375, 0.375),
+    de.facScale = c(0.2, 0.3, 0.4),
+    out.prob = 0, out.facLoc = 4, out.facScale = 0.5)
+simulated_data <- splatSimulate(params, method = "groups", verbose = FALSE)
+
+# Treat Batch1 as reference, Batch2 as query
+reference_data <- simulated_data[, simulated_data$Batch == "Batch1"]
+query_data <- simulated_data[, simulated_data$Batch == "Batch2"]
+
+reference_data$Cell_Type <- factor(reference_data$Group)
+levels(reference_data$Cell_Type) <- c("Cell Type A", "Cell Type B", "Cell Type C")
+query_data$Cell_Type <- factor(query_data$Group)
+levels(query_data$Cell_Type) <- c("Cell Type A", "Cell Type B", "Cell Type C")
+
+reference_data <- logNormCounts(reference_data)
+query_data <- logNormCounts(query_data)
+```
+
+When the reference contains all three cell types, `SingleR` recovers
+the ground-truth labels essentially perfectly:
+
+```{r, message=FALSE}
+reference_data <- runPCA(reference_data, ncomponents = 10)
+query_data <- runPCA(query_data, ncomponents = 10)
+
+pred <- SingleR(query_data, reference_data, labels = reference_data$Cell_Type)
+query_data$SingleR_annotation <- pred$labels
+
+mean(query_data$SingleR_annotation == query_data$Cell_Type)
+```
+
+Now suppose "Cell Type C" is missing from the reference entirely - a
+common real-world scenario where a cell state present in the query
+simply was not sampled in the reference. `SingleR` is forced to assign
+those cells to the closest remaining type:
+
+```{r, message=FALSE}
+reference_missing <- reference_data[, reference_data$Cell_Type != "Cell Type C"]
+reference_missing <- runPCA(reference_missing, ncomponents = 10)
+
+pred_missing <- SingleR(query_data, reference_missing,
+                        labels = reference_missing$Cell_Type)
+query_data$SingleR_annotation_missing <- pred_missing$labels
+
+# Where do the true Cell Type C cells get misannotated to?
+table(query_data$SingleR_annotation_missing[query_data$Cell_Type == "Cell Type C"])
+```
+
+Most of the true "Cell Type C" cells are misannotated as "Cell Type A".
+Because we know which cells are truly misannotated in this simulation,
+we can check whether `detectAnomaly()` actually flags them as such,
+relative to the correctly-annotated "Cell Type A" cells:
+
+```{r, fig.height=5, fig.width=10}
+anomaly_output <- detectAnomaly(
+    reference_data = reference_missing,
+    query_data = query_data,
+    ref_cell_type_col = "Cell_Type",
+    query_cell_type_col = "SingleR_annotation_missing",
+    cell_types = "Cell Type A",
+    pc_subset = 1:2,
+    n_tree = 1000,
+    threshold_method = "absolute",
+    anomaly_threshold = 0.5)
+
+is_anomalous <- anomaly_output[["Cell Type A"]]$query_anomaly
+labels_a <- query_data$Cell_Type[query_data$SingleR_annotation_missing == "Cell Type A"]
+
+# Fraction flagged as anomalous, split by true identity
+tapply(is_anomalous, labels_a, mean)
+```
+
+In this run, roughly half of the truly-misannotated "Cell Type C" cells
+are flagged as anomalous, compared to a small fraction of the correctly
+labeled "Cell Type A" cells - `detectAnomaly()` is picking up a real
+signal here, though far from a perfect separation. We can visualize the
+same result:
+
+```{r, fig.height=5, fig.width=10}
+plot(anomaly_output, cell_type = "Cell Type A", data_type = "query", pc_subset = 1:2)
+```
+
+For a systematic evaluation of how detection accuracy holds up across
+label noise, class imbalance, and batch effects - rather than this one
+simulated example - see [vignette
+2](https://ccb-hms.github.io/scDiagnostics/articles/ZeiselBenchmarking.html).
+
+# Finding the function you need
+
+`scDiagnostics` groups its functions into five broad categories.
+Functions marked with a vignette link are walked through in more depth
+there; the rest are documented in the reference manual (e.g.
+`?detectAnomaly`). The [full, finer-grained reference
+index](https://ccb-hms.github.io/scDiagnostics/reference/index.html) is
+also available if you'd rather browse by a more specific task.
+
+## Visualization
+
+Visualizing cell types, marker genes, and QC/annotation scores across
+reference and query.
+
+- `plotCellTypePCA()`, `plotCellTypeMDS()` - PCA/MDS visualization of
+  cell types across reference and query. `plotCellTypePCA()` is used in
+  [vignette 3](https://ccb-hms.github.io/scDiagnostics/articles/COVIDCaseStudy.html)
+  and [vignette 4](https://ccb-hms.github.io/scDiagnostics/articles/MERFISHCaseStudy.html).
+- `boxplotPCA()` - boxplots of PC scores by cell type.
+- `calculateDiscriminantSpace()`, `calculateSIRSpace()` - projection
+  onto a discriminant (FDA) or Sliced Inverse Regression space fit on
+  the reference.
+- `plotMarkerExpression()`, `plotGeneExpressionDimred()` - marker gene
+  expression as density plots or on a dimensionality reduction.
+- `plotQCvsAnnotation()`, `histQCvsAnnotation()`, `plotGeneSetScores()` -
+  relate QC metrics and annotation confidence scores.
+
+## Dataset alignment and statistical comparison
+
+Comparing reference and query datasets as a whole - are they
+well-aligned, and is any difference statistically significant?
+
+- `comparePCA()`, `comparePCASubspace()` - compare PCA results/subspaces
+  between reference and query.
+- `calculateWassersteinDistance()` - Wasserstein distance between
+  reference and query, per cell type.
+- `plotPairwiseDistancesDensity()` - density of pairwise distances or
+  correlations.
+- `calculateGraphIntegration()` - graph-based integration diagnostics.
+- `calculateAveragePairwiseCorrelation()`, `calculateCramerPValue()`,
+  `calculateHotellingPValue()`, `calculateMMDPValue()`, `regressPC()` -
+  formal statistical tests/summaries of reference-query alignment.
+
+## Anomaly detection and cell distances
+
+Flagging specific cells that look anomalous, and quantifying how far
+they are from reference/query populations.
+
+- `detectAnomaly()` - Isolation Forest anomaly detection on PCA
+  projections. Used in vignette 1 above and in [vignette
+  2](https://ccb-hms.github.io/scDiagnostics/articles/ZeiselBenchmarking.html),
+  [vignette 3](https://ccb-hms.github.io/scDiagnostics/articles/COVIDCaseStudy.html),
+  and [vignette 4](https://ccb-hms.github.io/scDiagnostics/articles/MERFISHCaseStudy.html).
+- `calculateReconstructionError()` - PCA reconstruction-error anomaly
+  detection. Used in [vignette
+  2](https://ccb-hms.github.io/scDiagnostics/articles/ZeiselBenchmarking.html).
+- `calculateCellSimilarityPCA()` - cosine similarity between cells and
+  PCA loadings.
+- `calculateCellDistances()`, `calculateCellDistancesSimilarity()` -
+  distances (and Bhattacharyya/Hellinger similarity) between specific
+  cells and reference/query populations.
+
+## Marker gene alignment
+
+Comparing which genes matter, and how they behave, between reference
+and query.
+
+- `calculateGeneShifts()` - expression shifts in top-loading genes
+  between reference and query, optionally focused on anomalous cells.
+  Used in [vignette 3](https://ccb-hms.github.io/scDiagnostics/articles/COVIDCaseStudy.html)
+  and [vignette 4](https://ccb-hms.github.io/scDiagnostics/articles/MERFISHCaseStudy.html).
+- `calculateHVGOverlap()` - overlap of highly variable genes.
+- `calculateVarImpOverlap()` - overlap of random-forest gene importance.
+- `compareMarkers()` - compare marker gene expression between reference
+  and query.
+
+## Utilities
+
+Lower-level building blocks used internally by the functions above, and
+available directly for custom workflows.
+
+- `processPCA()`, `projectPCA()`, `projectSIR()` - PCA/SIR computation
+  and projection.
+- `calculateCategorizationEntropy()` - entropy of a cell-type-by-score
+  category matrix.
+
+------------------------------------------------------------------------
+
+# R Session Info
+
+```{r SessionInfo, echo=FALSE, message=FALSE, warning=FALSE, comment=NA}
+options(width = 80)
+sessionInfo()
+```
