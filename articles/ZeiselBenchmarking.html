@@ -21,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">scDiagnostics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -201,7 +201,7 @@ correctly-labeled pyramidal CA1 cells they were mapped alongside:</p>
 <span>        <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">reconstruction_output</span><span class="op">[[</span><span class="va">target</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">query_anomaly</span><span class="op">[</span><span class="va">labels_target</span> <span class="op">==</span> <span class="va">target</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                             Method True pyramidal SS flagged</span></span>
-<span><span class="co">#&gt; 1 detectAnomaly (Isolation Forest)                 0.8301887</span></span>
+<span><span class="co">#&gt; 1 detectAnomaly (Isolation Forest)                 0.8113208</span></span>
 <span><span class="co">#&gt; 2     calculateReconstructionError                 0.8962264</span></span>
 <span><span class="co">#&gt;   True pyramidal CA1 flagged</span></span>
 <span><span class="co">#&gt; 1                  0.2292490</span></span>
@@ -405,7 +405,7 @@ method alone is perfect, and their errors don’t fully overlap:</p>
 <span>        <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">union_flag</span><span class="op">[</span><span class="va">labels_target</span> <span class="op">==</span> <span class="va">target</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                        Rule True pyramidal SS flagged</span></span>
-<span><span class="co">#&gt; 1     Isolation Forest only                 0.8301887</span></span>
+<span><span class="co">#&gt; 1     Isolation Forest only                 0.8113208</span></span>
 <span><span class="co">#&gt; 2 Reconstruction Error only                 0.8962264</span></span>
 <span><span class="co">#&gt; 3      Either flags (union)                 0.9528302</span></span>
 <span><span class="co">#&gt;   True pyramidal CA1 flagged</span></span>
@@ -457,7 +457,7 @@ other attached packages:
  [9] IRanges_2.46.0              S4Vectors_0.50.3           
 [11] BiocGenerics_0.58.1         generics_0.1.4             
 [13] MatrixGenerics_1.24.0       matrixStats_1.5.0          
-[15] scDiagnostics_1.7.9         BiocStyle_2.40.0           
+[15] scDiagnostics_1.7.10        BiocStyle_2.40.0           
 
 loaded via a namespace (and not attached):
  [1] gridExtra_2.3.1     rlang_1.3.0         magrittr_2.0.5     
