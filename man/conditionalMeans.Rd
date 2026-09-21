@@ -52,11 +52,11 @@ before clustering when computing multiple conditional means.
 }
 \details{
 The function offers two modes of operation:
-- **Single conditional mean per cell type**: For each cell type, it computes the mean expression
-across all observations.
-- **Multiple conditional means per cell type**: For each cell type, the function performs PCA to
-reduce dimensionality, followed by clustering to compute multiple conditional
-means.
+- **Single conditional mean per cell type**: For each cell type, it
+computes the mean expression across all observations.
+- **Multiple conditional means per cell type**: For each cell type, the
+function performs PCA to reduce dimensionality, followed by clustering to
+compute multiple conditional means.
 }
 \author{
 Anthony Christidis,

@@ -2,7 +2,7 @@
 #'
 #' @description This function performs linear regression of a covariate of
 #' interest onto one or more principal components, based on the data in a
-#' \linkS4class{SingleCellExperiment} object.
+#' \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object.
 #'
 #' @details Principal component regression, derived from PCA, can be used to
 #' quantify the variance explained by a covariate of interest. Applications for
@@ -23,9 +23,9 @@
 #' as "Reference" for reference data and "Query_BatchName" for query batches,
 #' with Reference set as the first factor level for interpretation.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' @param query_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' @param reference_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' numeric expression matrix for the reference cells. If NULL, the PC scores are
 #' regressed against the cell types of the query data.
 #' @param query_cell_type_col The column name in the \code{colData} of

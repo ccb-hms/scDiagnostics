@@ -38,10 +38,10 @@ calculateGraphIntegration(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+\item{query_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+\item{reference_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 numeric expression matrix for the reference cells.}
 
 \item{query_cell_type_col}{A character string specifying the column name in
@@ -160,7 +160,9 @@ data("query_data")
 # Remove a cell type (Myeloid)
 library(scater)
 library(SingleR)
-reference_data <- reference_data[, reference_data$expert_annotation != "Myeloid"]
+reference_data <- reference_data[
+    , reference_data$expert_annotation != "Myeloid"
+]
 reference_data <- runPCA(reference_data, ncomponents = 50)
 SingleR_annotation <- SingleR(query_data, reference_data,
     labels = reference_data$expert_annotation
@@ -168,7 +170,10 @@ SingleR_annotation <- SingleR(query_data, reference_data,
 query_data$SingleR_annotation <- SingleR_annotation$labels
 
 # Check annotation data
-table(Expert = query_data$expert_annotation, SingleR = query_data$SingleR_annotation)
+table(
+    Expert = query_data$expert_annotation,
+    SingleR = query_data$SingleR_annotation
+)
 
 # Run comprehensive annotation consistency diagnostics
 graph_diagnostics <- calculateGraphIntegration(
@@ -189,7 +194,9 @@ graph_diagnostics <- calculateGraphIntegration(
 graph_diagnostics$overall_metrics
 
 # Network graph showing all issue types (color by cell type)
-plot(graph_diagnostics, plot_type = "community_network", color_by = "cell_type")
+plot(graph_diagnostics,
+    plot_type = "community_network", color_by = "cell_type"
+)
 
 # Network graph showing all issue types
 plot(graph_diagnostics,

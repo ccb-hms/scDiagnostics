@@ -35,10 +35,10 @@ calculateDiscriminantSpace(
 )
 }
 \arguments{
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+\item{reference_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 numeric expression matrix for the reference cells.}
 
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+\item{query_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 numeric expression matrix for the query cells. If NULL, only the projected
 reference data is returned. Default is NULL.}
 

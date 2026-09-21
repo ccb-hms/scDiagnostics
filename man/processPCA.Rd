@@ -12,7 +12,7 @@ processPCA(
 )
 }
 \arguments{
-\item{sce_object}{A \linkS4class{SingleCellExperiment} object to process.}
+\item{sce_object}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object to process.}
 
 \item{assay_name}{Name of the assay to use for HVG selection and PCA
 computation. Should contain log-normalized expression values. Default is
@@ -25,13 +25,13 @@ Default is 2000.}
 for PCA computation. If NULL, no downsampling is performed. Default is NULL.}
 }
 \value{
-A \linkS4class{SingleCellExperiment} object with valid PCA in the
+A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object with valid PCA in the
 reducedDims slot, including rotation matrix and percentVar attributes. Will
 have original cell count if PCA was valid, or at most max_cells if PCA was
 computed.
 }
 \description{
-This function ensures that a \linkS4class{SingleCellExperiment}
+This function ensures that a \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}
 object has valid PCA computed using highly variable genes when needed. It
 only performs downsampling when PCA computation is required, preserving
 existing valid PCA computations without modification.
@@ -40,7 +40,7 @@ existing valid PCA computations without modification.
 The function performs the following operations:
 \itemize{
  \item Checks if PCA exists and is valid in the provided
- \linkS4class{SingleCellExperiment} object
+ \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object
  \item Validates PCA integrity including rotation matrix, percentVar, gene
  consistency, and dimensions
  \item If PCA is valid, returns the object unchanged (no downsampling)

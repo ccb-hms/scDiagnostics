@@ -3,7 +3,7 @@
 #' @description Computes the average pairwise correlations between specified
 #' cell types in single-cell gene expression data.
 #'
-#' @details This function operates on \linkS4class{SingleCellExperiment}
+#' @details This function operates on \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}
 #' objects, ideal for single-cell analysis workflows. It calculates pairwise
 #' correlations between query and reference cells using a specified correlation
 #' method, then averages these correlations for each cell type pair. This
@@ -11,9 +11,9 @@
 #' query datasets, providing insights into the reliability of cell type
 #' annotations in single-cell gene expression data.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' @param query_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' @param reference_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' numeric expression matrix for the reference cells.
 #' @param query_cell_type_col The column name in the \code{colData} of
 #' \code{query_data} that identifies the cell types.

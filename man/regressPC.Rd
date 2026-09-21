@@ -45,10 +45,10 @@ available coefficient types. Only applies to \code{plot_type =
 
 \item{...}{Additional arguments to be passed to the plotting functions.}
 
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+\item{query_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+\item{reference_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 numeric expression matrix for the reference cells. If NULL, the PC scores are
 regressed against the cell types of the query data.}
 
@@ -99,7 +99,7 @@ types, datasets, or their interactions.
 
 This function performs linear regression of a covariate of
 interest onto one or more principal components, based on the data in a
-\linkS4class{SingleCellExperiment} object.
+\link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object.
 }
 \details{
 Principal component regression, derived from PCA, can be used to

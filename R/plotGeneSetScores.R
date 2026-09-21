@@ -6,12 +6,12 @@
 #'
 #' @details This function plots gene set scores on reduced dimensions such as
 #' PCA, t-SNE, or UMAP. It extracts the reduced dimensions from the provided
-#' \linkS4class{SingleCellExperiment} object. Gene set scores are visualized as
+#' \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object. Gene set scores are visualized as
 #' a scatter plot with colors indicating the scores. For PCA, the function
 #' automatically includes the percentage of variance explained in the plot's
 #' legend.
 #'
-#' @param sce_object An object of class \linkS4class{SingleCellExperiment}
+#' @param sce_object An object of class \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}
 #' containing numeric expression matrix and other metadata. It can be either a
 #' reference or query dataset.
 #' @param cell_type_col The column name in the \code{colData} of

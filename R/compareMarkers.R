@@ -20,9 +20,9 @@
 #' type against all others. High overlap and consistent expression of markers
 #' indicate good annotation quality.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' @param query_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' @param reference_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' reference cells.
 #' @param query_cell_type_col The column name in the \code{colData} of
 #' \code{query_data} that identifies the cell types.

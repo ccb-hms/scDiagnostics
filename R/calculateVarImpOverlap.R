@@ -10,9 +10,9 @@
 #' genes identified in both datasets to determine the overlap in their
 #' importance scores.
 #'
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' @param reference_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' numeric expression matrix for the reference cells.
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' @param query_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' numeric expression matrix for the query cells. If NULL, then the variable
 #' importance scores are only computed for the reference data. Default is NULL.
 #' @param ref_cell_type_col A character string specifying the column name in the

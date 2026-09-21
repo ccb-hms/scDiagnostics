@@ -11,9 +11,9 @@
 #' same type, and (3) Local analysis of each query cell's immediate neighbors to
 #' detect annotation inconsistencies even within mixed communities.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' @param query_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' @param reference_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' numeric expression matrix for the reference cells.
 #' @param query_cell_type_col A character string specifying the column name in
 #' the query dataset containing cell type annotations.

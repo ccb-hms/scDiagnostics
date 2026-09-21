@@ -23,9 +23,9 @@
 #' explain). The Sum of Squared Errors (SSE) of these residuals serves as a
 #' highly sensitive anomaly score for novel biological states.
 #'
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' @param reference_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' numeric expression matrix for the reference cells.
-#' @param query_data An optional \linkS4class{SingleCellExperiment} object
+#' @param query_data An optional \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object
 #' containing numeric expression matrix for the query cells. If NULL, the
 #' reconstruction errors are computed for the reference data alone. Default is
 #' NULL.

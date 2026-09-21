@@ -38,10 +38,10 @@ detectAnomaly(
 )
 }
 \arguments{
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+\item{reference_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 numeric expression matrix for the reference cells.}
 
-\item{query_data}{An optional \linkS4class{SingleCellExperiment} object
+\item{query_data}{An optional \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object
 containing numeric expression matrix for the query cells. If NULL, then the
 isolation forest anomaly scores are computed for the reference data. Default
 is NULL.}

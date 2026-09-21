@@ -16,7 +16,7 @@ plotGeneExpressionDimred(
 )
 }
 \arguments{
-\item{sce_object}{An object of class \linkS4class{SingleCellExperiment}
+\item{sce_object}{An object of class \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}
 containing log-transformed expression matrix and other metadata. It can be
 either a reference or query dataset.}
 

@@ -21,10 +21,10 @@ calculateCellDistances(
 \method{plot}{calculateCellDistancesObject}(x, ref_cell_type, cell_names, ...)
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+\item{query_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+\item{reference_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 numeric expression matrix for the reference cells.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of
@@ -127,7 +127,9 @@ cd4_anomalies <- detectAnomaly(
     n_tree = 500,
     anomaly_threshold = 0.5
 )
-cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE)[1:6])
+cd4_top6_anomalies <- names(sort(
+    cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE
+)[1:6])
 
 # Plot the densities of the distances
 plot(distance_data, ref_cell_type = "CD4", cell_names = cd4_top6_anomalies)

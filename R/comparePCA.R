@@ -14,9 +14,9 @@
 #' resulting matrix contains the similarity values, where rows represent
 #' reference PCs and columns represent query PCs.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' @param query_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' @param reference_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' numeric expression matrix for the reference cells.
 #' @param query_cell_type_col The column name in the \code{colData} of
 #' \code{query_data} that identifies the cell types.

@@ -7,7 +7,7 @@
 convertColumnsToCharacter(sce_object, convert_cols)
 }
 \arguments{
-\item{sce_object}{A \linkS4class{SingleCellExperiment} object containing
+\item{sce_object}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 single-cell data.}
 
 \item{convert_cols}{A character vector specifying the column names in
@@ -15,25 +15,25 @@ single-cell data.}
 in the \code{colData}.}
 }
 \value{
-A \linkS4class{SingleCellExperiment} object with the specified
+A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object with the specified
 columns converted to character type in the \code{colData}.
 }
 \description{
 This function converts specified columns in the \code{colData}
-of a \linkS4class{SingleCellExperiment} object to character type. It checks
+of a \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object to character type. It checks
 that the specified columns exist and only performs conversion when necessary
 (i.e., when columns are not already character type).
 }
 \details{
 The function performs the following operations:
 \itemize{
- \item Validates that the input is a \linkS4class{SingleCellExperiment}
+ \item Validates that the input is a \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}
  object.
  \item Checks that all specified columns exist in the \code{colData} of the
  object.
  \item Converts each specified column to character type if it is not already
  character.
- \item Returns the modified \linkS4class{SingleCellExperiment} object.
+ \item Returns the modified \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object.
  \item If all specified columns are already character type, returns the
  object unchanged.
 }

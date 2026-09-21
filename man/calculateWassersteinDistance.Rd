@@ -23,10 +23,10 @@ calculateWassersteinDistance(
 \method{plot}{calculateWassersteinDistanceObject}(x, cell_types = NULL, bandwidth = NULL, ...)
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing a
+\item{query_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing a
 numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object with a
+\item{reference_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object with a
 numeric expression matrix for the reference cells.}
 
 \item{ref_cell_type_col}{The column name in the \code{colData} of

@@ -11,9 +11,9 @@
 #' function to perform the actual projection and allows the user to specify
 #' particular cell types for analysis.
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing the
+#' @param query_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing the
 #' numeric expression matrix for the query cells.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' @param reference_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' the numeric expression matrix for the reference cells.
 #' @param query_cell_type_col A character string specifying the column name in
 #' the \code{colData} of \code{query_data} that identifies the cell types.

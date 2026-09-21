@@ -23,10 +23,10 @@ compareMarkers(
 \method{plot}{compareMarkersObject}(x, cell_types = NULL, ...)
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+\item{query_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+\item{reference_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 reference cells.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of

@@ -14,7 +14,7 @@ plotQCvsAnnotation(
 )
 }
 \arguments{
-\item{sce_object}{A \linkS4class{SingleCellExperiment} containing the
+\item{sce_object}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} containing the
 single-cell expression data and metadata.}
 
 \item{cell_type_col}{The column name in the \code{colData} of

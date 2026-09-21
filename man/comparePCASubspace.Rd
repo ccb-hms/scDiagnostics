@@ -18,10 +18,10 @@ comparePCASubspace(
 \method{plot}{comparePCASubspaceObject}(x, ...)
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} object containing
+\item{query_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 numeric expression matrix for the query cells.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+\item{reference_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 numeric expression matrix for the reference cells.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of
@@ -99,8 +99,10 @@ data("reference_data")
 data("query_data")
 
 # Extract CD4 cells
-ref_data_subset <- reference_data[, which(reference_data$expert_annotation == "CD4")]
-query_data_subset <- query_data[, which(query_data$expert_annotation == "CD4")]
+ref_data_subset <-
+    reference_data[, which(reference_data$expert_annotation == "CD4")]
+query_data_subset <-
+    query_data[, which(query_data$expert_annotation == "CD4")]
 
 # Selecting highly variable genes (can be customized by the user)
 ref_top_genes <- getTopHVGs(ref_data_subset, n = 500)

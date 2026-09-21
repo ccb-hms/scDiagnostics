@@ -4,7 +4,7 @@
 #' plot using methods like t-SNE, UMAP, or PCA. Each single cell is color-coded
 #' based on the expression of a specific gene or feature.
 #'
-#' @param sce_object An object of class \linkS4class{SingleCellExperiment}
+#' @param sce_object An object of class \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment}
 #' containing log-transformed expression matrix and other metadata. It can be
 #' either a reference or query dataset.
 #' @param method The reduction method to use for visualization. It should be one

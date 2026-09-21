@@ -20,10 +20,10 @@ plotPairwiseDistancesDensity(
 )
 }
 \arguments{
-\item{query_data}{A \linkS4class{SingleCellExperiment} containing the
+\item{query_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} containing the
 single-cell expression data and metadata.}
 
-\item{reference_data}{A \linkS4class{SingleCellExperiment} object containing
+\item{reference_data}{A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 the single-cell expression data and metadata.}
 
 \item{query_cell_type_col}{The column name in the \code{colData} of
@@ -72,7 +72,7 @@ results using ridgeline plots, displaying the density distribution for each
 comparison.
 }
 \details{
-Designed for \linkS4class{SingleCellExperiment} objects, this
+Designed for \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} objects, this
 function subsets data for the specified cell type, computes pairwise
 distances or correlations, and visualizes these measurements through
 ridgeline plots. The plots help evaluate the consistency and differentiation

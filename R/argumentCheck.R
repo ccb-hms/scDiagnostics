@@ -1,18 +1,18 @@
 #' @title Argument Validation for SingleCellExperiment Analysis
 #'
 #' @description This function validates the input arguments for functions that
-#' analyze \linkS4class{SingleCellExperiment} objects. It checks that the inputs
+#' analyze \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} objects. It checks that the inputs
 #' are of the correct types and formats, and that required columns and cell
 #' types are present in the data.
 #'
 #' @details The function performs a series of checks to ensure that:
 #' \itemize{
 #'  \item `query_data` and `reference_data` are
-#'  \linkS4class{SingleCellExperiment} objects.
+#'  \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} objects.
 #'  \item `query_cell_type_col` and `ref_cell_type_col` exist in the column data
-#'  of their respective \linkS4class{SingleCellExperiment} objects.
+#'  of their respective \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} objects.
 #'  \item If `unique_cell_type` is `TRUE`, there should only be one cell type in
-#'  the \linkS4class{SingleCellExperiment} objects.
+#'  the \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} objects.
 #'  \item `cell_names_query` are valid cell names in the provided query dataset.
 #'  \item `cell_names_ref` are valid cell names in the provided reference
 #'  dataset.
@@ -22,10 +22,10 @@
 #'  NULL.
 #' }
 #'
-#' @param query_data A \linkS4class{SingleCellExperiment} object containing
+#' @param query_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' numeric expression matrix for the query cells. If `NULL`, no check is
 #' performed.
-#' @param reference_data A \linkS4class{SingleCellExperiment} object containing
+#' @param reference_data A \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} object containing
 #' numeric expression matrix for the reference cells. If `NULL`, no check is
 #' performed.
 #' @param query_cell_type_col The column name in the \code{colData} of
@@ -35,7 +35,7 @@
 #' \code{reference_data} that identifies the cell types. If `NULL`, no check is
 #' performed.
 #' @param unique_cell_type If `TRUE`, there should only be one cell type in the
-#' provided \linkS4class{SingleCellExperiment} objects. Default is `FALSE`.
+#' provided \link[SingleCellExperiment:SingleCellExperiment-class]{SingleCellExperiment} objects. Default is `FALSE`.
 #' @param plot_function A logical value indicating whether the function is being
 #' called to generate a plot. Default is `FALSE`.
 #' @param cell_names_query A character vector of cell names in query data to be
