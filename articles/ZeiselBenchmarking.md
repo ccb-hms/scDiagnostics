@@ -428,7 +428,7 @@ the union always beats each method individually.
      [9] IRanges_2.46.0              S4Vectors_0.50.3           
     [11] BiocGenerics_0.58.1         generics_0.1.4             
     [13] MatrixGenerics_1.24.0       matrixStats_1.5.0          
-    [15] scDiagnostics_1.7.6         BiocStyle_2.40.0           
+    [15] scDiagnostics_1.7.7         BiocStyle_2.40.0           
 
     loaded via a namespace (and not attached):
      [1] gridExtra_2.3.1     rlang_1.3.0         magrittr_2.0.5     
