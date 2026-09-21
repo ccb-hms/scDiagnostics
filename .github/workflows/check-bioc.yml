@@ -155,6 +155,15 @@ jobs:
           remotes::install_cran("BiocManager")
           install.packages("Matrix", type = "source")
           install.packages("irlba", type = "source")
+          if (Sys.info()[["sysname"]] == "Darwin") {
+            ## CRAN's macOS binary for RhpcBLASctl (a hard Import of
+            ## isotree, which detectAnomaly() calls) fails to dlopen on
+            ## some GitHub Actions macOS runners with "symbol not found
+            ## in flat namespace '_omp_get_max_threads'". A source build
+            ## compiles without OpenMP support instead of linking against
+            ## a runtime that isn't there, avoiding the crash.
+            install.packages("RhpcBLASctl", type = "source")
+          }
         shell: Rscript {0}
 
       - name: Set BiocVersion
