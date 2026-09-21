@@ -65,10 +65,12 @@ Andrew Ghazi, <andrew_ghazi@hms.harvard.edu>
 ``` r
 # Simulate 500 cells with scores on 4 possible cell types
 X <- rnorm(500 * 4) |> matrix(nrow = 4)
-X[1, 1:250] <- X[1, 1:250] + 5 # Make the first category highly scored in the first 250 cells
+# Make the first category highly scored in the first 250 cells
+X[1, 1:250] <- X[1, 1:250] + 5
 
-# The function will issue a message about softmaxing the scores, and the entropy histogram will be
-# bimodal since we made half of the cells clearly category 1 while the other half are roughly even.
+# The function will issue a message about softmaxing the scores, and the
+# entropy histogram will be bimodal since we made half of the cells
+# clearly category 1 while the other half are roughly even.
 entropy_scores <- calculateCategorizationEntropy(X)
 #> X doesn't seem to be on the probability scale, applying column-wise softmax.
 #> Max possible entropy given 4 categories: 1.39

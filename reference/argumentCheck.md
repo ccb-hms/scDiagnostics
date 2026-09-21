@@ -1,9 +1,9 @@
 # Argument Validation for SingleCellExperiment Analysis
 
 This function validates the input arguments for functions that analyze
-SingleCellExperiment objects. It checks that the inputs are of the
-correct types and formats, and that required columns and cell types are
-present in the data.
+[SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+objects. It checks that the inputs are of the correct types and formats,
+and that required columns and cell types are present in the data.
 
 ## Usage
 
@@ -30,13 +30,17 @@ argumentCheck(
 
 - query_data:
 
-  A SingleCellExperiment object containing numeric expression matrix for
-  the query cells. If \`NULL\`, no check is performed.
+  A
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  object containing numeric expression matrix for the query cells. If
+  \`NULL\`, no check is performed.
 
 - reference_data:
 
-  A SingleCellExperiment object containing numeric expression matrix for
-  the reference cells. If \`NULL\`, no check is performed.
+  A
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  object containing numeric expression matrix for the reference cells.
+  If \`NULL\`, no check is performed.
 
 - query_cell_type_col:
 
@@ -51,7 +55,8 @@ argumentCheck(
 - unique_cell_type:
 
   If \`TRUE\`, there should only be one cell type in the provided
-  SingleCellExperiment objects. Default is \`FALSE\`.
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  objects. Default is \`FALSE\`.
 
 - plot_function:
 
@@ -106,14 +111,19 @@ None.
 
 The function performs a series of checks to ensure that:
 
-- \`query_data\` and \`reference_data\` are SingleCellExperiment
+- \`query_data\` and \`reference_data\` are
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
   objects.
 
 - \`query_cell_type_col\` and \`ref_cell_type_col\` exist in the column
-  data of their respective SingleCellExperiment objects.
+  data of their respective
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  objects.
 
 - If \`unique_cell_type\` is \`TRUE\`, there should only be one cell
-  type in the SingleCellExperiment objects.
+  type in the
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  objects.
 
 - \`cell_names_query\` are valid cell names in the provided query
   dataset.

@@ -19,7 +19,7 @@ mixing, and local annotation inconsistencies."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">scDiagnostics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -361,7 +361,9 @@ neighborhood-level inconsistencies.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: scuttle</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: ggplot2</span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/SingleR-inc/SingleR" class="external-link">SingleR</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">reference_data</span> <span class="op">&lt;-</span> <span class="va">reference_data</span><span class="op">[</span>, <span class="va">reference_data</span><span class="op">$</span><span class="va">expert_annotation</span> <span class="op">!=</span> <span class="st">"Myeloid"</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">reference_data</span> <span class="op">&lt;-</span> <span class="va">reference_data</span><span class="op">[</span></span></span>
+<span class="r-in"><span>    , <span class="va">reference_data</span><span class="op">$</span><span class="va">expert_annotation</span> <span class="op">!=</span> <span class="st">"Myeloid"</span></span></span>
+<span class="r-in"><span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">reference_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">reference_data</span>, ncomponents <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">SingleR_annotation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SingleR/man/SingleR.html" class="external-link">SingleR</a></span><span class="op">(</span><span class="va">query_data</span>, <span class="va">reference_data</span>,</span></span>
 <span class="r-in"><span>    labels <span class="op">=</span> <span class="va">reference_data</span><span class="op">$</span><span class="va">expert_annotation</span></span></span>
@@ -373,7 +375,10 @@ neighborhood-level inconsistencies.</p>
 <span class="r-in"><span><span class="va">query_data</span><span class="op">$</span><span class="va">SingleR_annotation</span> <span class="op">&lt;-</span> <span class="va">SingleR_annotation</span><span class="op">$</span><span class="va">labels</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Check annotation data</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span>Expert <span class="op">=</span> <span class="va">query_data</span><span class="op">$</span><span class="va">expert_annotation</span>, SingleR <span class="op">=</span> <span class="va">query_data</span><span class="op">$</span><span class="va">SingleR_annotation</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    Expert <span class="op">=</span> <span class="va">query_data</span><span class="op">$</span><span class="va">expert_annotation</span>,</span></span>
+<span class="r-in"><span>    SingleR <span class="op">=</span> <span class="va">query_data</span><span class="op">$</span><span class="va">SingleR_annotation</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               SingleR</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Expert         B_and_plasma CD4 CD8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   B_and_plasma           98   3   1</span>
@@ -430,7 +435,9 @@ neighborhood-level inconsistencies.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Network graph showing all issue types (color by cell type)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">graph_diagnostics</span>, plot_type <span class="op">=</span> <span class="st">"community_network"</span>, color_by <span class="op">=</span> <span class="st">"cell_type"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">graph_diagnostics</span>,</span></span>
+<span class="r-in"><span>    plot_type <span class="op">=</span> <span class="st">"community_network"</span>, color_by <span class="op">=</span> <span class="st">"cell_type"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="calculateGraphIntegration-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Network graph showing all issue types</span></span></span>

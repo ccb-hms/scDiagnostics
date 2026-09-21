@@ -32,13 +32,15 @@ plot(x, ref_cell_type, cell_names, ...)
 
 - query_data:
 
-  A SingleCellExperiment object containing numeric expression matrix for
-  the query cells.
+  A
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  object containing numeric expression matrix for the query cells.
 
 - reference_data:
 
-  A SingleCellExperiment object containing numeric expression matrix for
-  the reference cells.
+  A
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  object containing numeric expression matrix for the reference cells.
 
 - query_cell_type_col:
 
@@ -170,7 +172,9 @@ cd4_anomalies <- detectAnomaly(
     n_tree = 500,
     anomaly_threshold = 0.5
 )
-cd4_top6_anomalies <- names(sort(cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE)[1:6])
+cd4_top6_anomalies <- names(sort(
+    cd4_anomalies$CD4$query_anomaly_scores, decreasing = TRUE
+)[1:6])
 
 # Plot the densities of the distances
 plot(distance_data, ref_cell_type = "CD4", cell_names = cd4_top6_anomalies)

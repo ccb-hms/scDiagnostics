@@ -2,9 +2,11 @@
 
 This dataset contains a downsampled reference (Day 0, healthy colon)
 subset of the Cadinu et al. (2024) mouse colitis MERFISH dataset. It is
-a SpatialExperiment on a 943-gene targeted panel, preprocessed to
-include log-normalized counts, a cell-type column, and PCA results,
-restricted to 5 shared cell types (including fibroblasts).
+a
+[SpatialExperiment](https://rdrr.io/pkg/SpatialExperiment/man/SpatialExperiment.html)
+on a 943-gene targeted panel, preprocessed to include log-normalized
+counts, a cell-type column, and PCA results, restricted to 5 shared cell
+types (including fibroblasts).
 
 ## Usage
 

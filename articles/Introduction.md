@@ -405,7 +405,7 @@ available directly for custom workflows.
     [11] IRanges_2.46.0              S4Vectors_0.50.3           
     [13] BiocGenerics_0.58.1         generics_0.1.4             
     [15] MatrixGenerics_1.24.0       matrixStats_1.5.0          
-    [17] scDiagnostics_1.7.7         BiocStyle_2.40.0           
+    [17] scDiagnostics_1.7.8         BiocStyle_2.40.0           
 
     loaded via a namespace (and not attached):
      [1] tidyselect_1.2.1    viridisLite_0.4.3   dplyr_1.2.1        

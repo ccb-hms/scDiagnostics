@@ -26,7 +26,9 @@ plot(x, pc_subset = 1:5, ...)
 
 - sce_object:
 
-  A SingleCellExperiment object containing expression data.
+  A
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  object containing expression data.
 
 - cell_names:
 
@@ -70,9 +72,10 @@ similarity heatmap.
 This function calculates the cosine similarity between cells based on
 the loadings of the selected principal components obtained from PCA. It
 extracts the rotation matrix from the PCA results of the
-SingleCellExperiment object and identifies the high-loading variables
-for each selected PC. Then, it computes the cosine similarity between
-cells using the high-loading variables for each PC.
+[SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+object and identifies the high-loading variables for each selected PC.
+Then, it computes the cosine similarity between cells using the
+high-loading variables for each PC.
 
 The S3 plot method reshapes the input data frame to create a long format
 suitable for plotting as a heatmap. It then creates a heatmap plot using
@@ -106,7 +109,8 @@ anomaly_output <- detectAnomaly(
     n_tree = 500,
     anomaly_threshold = 0.5
 )
-top6_anomalies <- names(sort(anomaly_output$Combined$reference_anomaly_scores,
+top6_anomalies <- names(sort(
+    anomaly_output$Combined$reference_anomaly_scores,
     decreasing = TRUE
 )[1:6])
 

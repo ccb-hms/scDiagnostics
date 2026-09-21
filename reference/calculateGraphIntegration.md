@@ -318,7 +318,9 @@ library(scater)
 #> Loading required package: scuttle
 #> Loading required package: ggplot2
 library(SingleR)
-reference_data <- reference_data[, reference_data$expert_annotation != "Myeloid"]
+reference_data <- reference_data[
+    , reference_data$expert_annotation != "Myeloid"
+]
 reference_data <- runPCA(reference_data, ncomponents = 50)
 SingleR_annotation <- SingleR(query_data, reference_data,
     labels = reference_data$expert_annotation
@@ -330,7 +332,10 @@ SingleR_annotation <- SingleR(query_data, reference_data,
 query_data$SingleR_annotation <- SingleR_annotation$labels
 
 # Check annotation data
-table(Expert = query_data$expert_annotation, SingleR = query_data$SingleR_annotation)
+table(
+    Expert = query_data$expert_annotation,
+    SingleR = query_data$SingleR_annotation
+)
 #>               SingleR
 #> Expert         B_and_plasma CD4 CD8
 #>   B_and_plasma           98   3   1
@@ -387,7 +392,9 @@ graph_diagnostics$overall_metrics
 #> 
 
 # Network graph showing all issue types (color by cell type)
-plot(graph_diagnostics, plot_type = "community_network", color_by = "cell_type")
+plot(graph_diagnostics,
+    plot_type = "community_network", color_by = "cell_type"
+)
 
 
 # Network graph showing all issue types

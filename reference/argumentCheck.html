@@ -13,7 +13,7 @@ types are present in the data."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">scDiagnostics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +46,7 @@ types are present in the data."></head><body>
 
     <div class="ref-description section level2">
     <p>This function validates the input arguments for functions that
-analyze SingleCellExperiment objects. It checks that the inputs
+analyze <a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a> objects. It checks that the inputs
 are of the correct types and formats, and that required columns and cell
 types are present in the data.</p>
     </div>
@@ -76,13 +76,13 @@ types are present in the data.</p>
 
 
 <dl><dt id="arg-query-data">query_data<a class="anchor" aria-label="anchor" href="#arg-query-data"></a></dt>
-<dd><p>A SingleCellExperiment object containing
+<dd><p>A <a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a> object containing
 numeric expression matrix for the query cells. If `NULL`, no check is
 performed.</p></dd>
 
 
 <dt id="arg-reference-data">reference_data<a class="anchor" aria-label="anchor" href="#arg-reference-data"></a></dt>
-<dd><p>A SingleCellExperiment object containing
+<dd><p>A <a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a> object containing
 numeric expression matrix for the reference cells. If `NULL`, no check is
 performed.</p></dd>
 
@@ -101,7 +101,7 @@ performed.</p></dd>
 
 <dt id="arg-unique-cell-type">unique_cell_type<a class="anchor" aria-label="anchor" href="#arg-unique-cell-type"></a></dt>
 <dd><p>If `TRUE`, there should only be one cell type in the
-provided SingleCellExperiment objects. Default is `FALSE`.</p></dd>
+provided <a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a> objects. Default is `FALSE`.</p></dd>
 
 
 <dt id="arg-plot-function">plot_function<a class="anchor" aria-label="anchor" href="#arg-plot-function"></a></dt>
@@ -157,11 +157,11 @@ check is performed.</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The function performs a series of checks to ensure that:</p><ul><li><p>`query_data` and `reference_data` are
- SingleCellExperiment objects.</p></li>
+ <a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a> objects.</p></li>
 <li><p>`query_cell_type_col` and `ref_cell_type_col` exist in the column data
- of their respective SingleCellExperiment objects.</p></li>
+ of their respective <a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a> objects.</p></li>
 <li><p>If `unique_cell_type` is `TRUE`, there should only be one cell type in
- the SingleCellExperiment objects.</p></li>
+ the <a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a> objects.</p></li>
 <li><p>`cell_names_query` are valid cell names in the provided query dataset.</p></li>
 <li><p>`cell_names_ref` are valid cell names in the provided reference
  dataset.</p></li>

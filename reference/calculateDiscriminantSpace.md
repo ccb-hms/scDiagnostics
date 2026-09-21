@@ -47,14 +47,16 @@ plot(
 
 - reference_data:
 
-  A SingleCellExperiment object containing numeric expression matrix for
-  the reference cells.
+  A
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  object containing numeric expression matrix for the reference cells.
 
 - query_data:
 
-  A SingleCellExperiment object containing numeric expression matrix for
-  the query cells. If NULL, only the projected reference data is
-  returned. Default is NULL.
+  A
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  object containing numeric expression matrix for the query cells. If
+  NULL, only the projected reference data is returned. Default is NULL.
 
 - ref_cell_type_col:
 

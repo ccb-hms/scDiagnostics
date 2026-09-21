@@ -105,7 +105,8 @@ Anthony Christidis, <anthony-alexander_christidis@hms.harvard.edu>
 data("reference_data")
 data("query_data")
 
-# Note: Users can use SingleR or any other method to obtain the cell type annotations.
+# Note: Users can use SingleR or any other method to obtain the cell
+# type annotations.
 plotMarkerExpression(
     reference_data = reference_data,
     query_data = query_data,

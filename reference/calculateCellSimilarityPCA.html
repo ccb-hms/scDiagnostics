@@ -15,7 +15,7 @@ cosine similarities between cells and principal components (PCs)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">scDiagnostics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@ cosine similarities between cells and principal components (PCs).</p>
 
 
 <dl><dt id="arg-sce-object">sce_object<a class="anchor" aria-label="anchor" href="#arg-sce-object"></a></dt>
-<dd><p>A SingleCellExperiment object containing
+<dd><p>A <a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a> object containing
 expression data.</p></dd>
 
 
@@ -118,7 +118,7 @@ cosine similarity heatmap.</p>
     <p>This function calculates the cosine similarity between cells based
 on the loadings of the selected principal components obtained from PCA. It
 extracts the rotation matrix from the PCA results of the
-SingleCellExperiment object and identifies the high-loading
+<a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a> object and identifies the high-loading
 variables for each selected PC. Then, it computes the cosine similarity
 between cells using the high-loading variables for each PC.</p>
 <p>The S3 plot method reshapes the input data frame to create a long
@@ -153,7 +153,8 @@ cells, and the color intensity represents the cosine similarity values.</p>
 <span class="r-in"><span>    n_tree <span class="op">=</span> <span class="fl">500</span>,</span></span>
 <span class="r-in"><span>    anomaly_threshold <span class="op">=</span> <span class="fl">0.5</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">top6_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">anomaly_output</span><span class="op">$</span><span class="va">Combined</span><span class="op">$</span><span class="va">reference_anomaly_scores</span>,</span></span>
+<span class="r-in"><span><span class="va">top6_anomalies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">anomaly_output</span><span class="op">$</span><span class="va">Combined</span><span class="op">$</span><span class="va">reference_anomaly_scores</span>,</span></span>
 <span class="r-in"><span>    decreasing <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

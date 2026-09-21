@@ -31,13 +31,15 @@ plot(x, ...)
 
 - query_data:
 
-  A SingleCellExperiment object containing numeric expression matrix for
-  the query cells.
+  A
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  object containing numeric expression matrix for the query cells.
 
 - reference_data:
 
-  A SingleCellExperiment object containing numeric expression matrix for
-  the reference cells.
+  A
+  [SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+  object containing numeric expression matrix for the reference cells.
 
 - query_cell_type_col:
 
@@ -100,13 +102,15 @@ plot.
 
 ## Details
 
-This function operates on SingleCellExperiment objects, ideal for
-single-cell analysis workflows. It calculates pairwise correlations
-between query and reference cells using a specified correlation method,
-then averages these correlations for each cell type pair. This function
-aids in assessing the similarity between cells in reference and query
-datasets, providing insights into the reliability of cell type
-annotations in single-cell gene expression data.
+This function operates on
+[SingleCellExperiment](https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html)
+objects, ideal for single-cell analysis workflows. It calculates
+pairwise correlations between query and reference cells using a
+specified correlation method, then averages these correlations for each
+cell type pair. This function aids in assessing the similarity between
+cells in reference and query datasets, providing insights into the
+reliability of cell type annotations in single-cell gene expression
+data.
 
 The S3 plot method converts the correlation matrix into a dataframe,
 creates a heatmap using ggplot2, and customizes the appearance of the
