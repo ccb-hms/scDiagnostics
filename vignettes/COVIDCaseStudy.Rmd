@@ -62,6 +62,8 @@ reference, and if so, what distinguishes them.
 ```{r, message=FALSE}
 library(scDiagnostics)
 library(SingleCellExperiment)
+
+set.seed(100)
 ```
 
 # The data

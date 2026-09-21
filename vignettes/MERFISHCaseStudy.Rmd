@@ -69,6 +69,8 @@ reference) versus tissue at peak inflammation (Day 9, query).
 library(scDiagnostics)
 library(SingleCellExperiment)
 library(SpatialExperiment)
+
+set.seed(100)
 ```
 
 # The data
