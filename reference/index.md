@@ -125,3 +125,17 @@
   : Query Single-Cell RNA-Seq Dataset
 - [`qc_data`](https://ccb-hms.github.io/scDiagnostics/reference/qc_data.md)
   : Quality Control Single-Cell RNA-Seq Dataset
+- [`zeisel_reference_data`](https://ccb-hms.github.io/scDiagnostics/reference/zeisel_reference_data.md)
+  : Zeisel Brain Reference Single-Cell RNA-Seq Dataset
+- [`zeisel_query_data`](https://ccb-hms.github.io/scDiagnostics/reference/zeisel_query_data.md)
+  : Zeisel Brain Query Single-Cell RNA-Seq Dataset
+- [`zeisel_benchmark_results`](https://ccb-hms.github.io/scDiagnostics/reference/zeisel_benchmark_results.md)
+  : Zeisel Brain Anomaly Detection Benchmark Results
+- [`covid_reference_data`](https://ccb-hms.github.io/scDiagnostics/reference/covid_reference_data.md)
+  : COVID-19 PBMC Reference (Healthy) Single-Cell RNA-Seq Dataset
+- [`covid_query_data`](https://ccb-hms.github.io/scDiagnostics/reference/covid_query_data.md)
+  : COVID-19 PBMC Query (Severe COVID-19) Single-Cell RNA-Seq Dataset
+- [`merfish_reference_data`](https://ccb-hms.github.io/scDiagnostics/reference/merfish_reference_data.md)
+  : MERFISH Colitis Reference (Healthy) Spatial Dataset
+- [`merfish_query_data`](https://ccb-hms.github.io/scDiagnostics/reference/merfish_query_data.md)
+  : MERFISH Colitis Query (Day 9 Colitis) Spatial Dataset

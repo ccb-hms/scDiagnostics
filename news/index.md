@@ -44,6 +44,17 @@
   [`calculateReconstructionError()`](https://ccb-hms.github.io/scDiagnostics/reference/calculateReconstructionError.md)
   to detect out-of-distribution anomalies using cell-type-specific PCA
   reconstruction errors.
+- Replaced the 4 general-purpose vignettes with 4 vignettes built around
+  the package’s manuscript: an introduction with a simulated
+  ground-truth example, a benchmark of
+  [`detectAnomaly()`](https://ccb-hms.github.io/scDiagnostics/reference/detectAnomaly.md)/[`calculateReconstructionError()`](https://ccb-hms.github.io/scDiagnostics/reference/calculateReconstructionError.md)
+  against known ground truth on the Zeisel brain dataset, and two case
+  studies (COVID-19 PBMC scRNA-seq and MERFISH spatial colitis data)
+  walking through the project/detect/characterize diagnostic workflow.
+- Added new example datasets (`zeisel_reference_data`,
+  `zeisel_query_data`, `zeisel_benchmark_results`,
+  `covid_reference_data`, `covid_query_data`, `merfish_reference_data`,
+  `merfish_query_data`) supporting the new vignettes.
 - Added
   [`plot.calculateReconstructionErrorObject()`](https://ccb-hms.github.io/scDiagnostics/reference/calculateReconstructionError.md)
   featuring robust visualization options (violin, boxplot, ridge, and

@@ -1,10 +1,10 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/404.html</loc></url>
-<url><loc>https://ccb-hms.github.io/scDiagnostics/articles/AnnotationAnomalies.html</loc></url>
-<url><loc>https://ccb-hms.github.io/scDiagnostics/articles/DatasetMarkerGeneAlignment.html</loc></url>
-<url><loc>https://ccb-hms.github.io/scDiagnostics/articles/VisualizationTools.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/articles/COVIDCaseStudy.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/articles/Introduction.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/articles/MERFISHCaseStudy.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/articles/ZeiselBenchmarking.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/articles/index.html</loc></url>
-<url><loc>https://ccb-hms.github.io/scDiagnostics/articles/scDiagnostics.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/authors.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/index.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/news/index.html</loc></url>
@@ -34,6 +34,8 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/computeMMDStatistic.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/conditionalMeans.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/convertColumnsToCharacter.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/covid_query_data.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/covid_reference_data.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/decomposeR2.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/detectAnomaly.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/dot-getAvailableCoefficients.html</loc></url>
@@ -45,6 +47,8 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/index.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/inverseNormalTransformation.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/ledoitWolf.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/merfish_query_data.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/merfish_reference_data.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/nElements.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotBarplot.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/plotBoxplot.html</loc></url>
@@ -69,5 +73,8 @@
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/regressPC.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/scDiagnostics-package.html</loc></url>
 <url><loc>https://ccb-hms.github.io/scDiagnostics/reference/selectCellTypes.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/zeisel_benchmark_results.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/zeisel_query_data.html</loc></url>
+<url><loc>https://ccb-hms.github.io/scDiagnostics/reference/zeisel_reference_data.html</loc></url>
 </urlset>
 

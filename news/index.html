@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">scDiagnostics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -17,10 +17,10 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><a class="dropdown-item" href="../articles/scDiagnostics.html">Getting Started with scDiagnostics</a></li>
-    <li><a class="dropdown-item" href="../articles/VisualizationTools.html">Visualization of Cell Type Annotations</a></li>
-    <li><a class="dropdown-item" href="../articles/DatasetMarkerGeneAlignment.html">Evaluation of Dataset and Marker Gene Alignment</a></li>
-    <li><a class="dropdown-item" href="../articles/AnnotationAnomalies.html">Detection and Analysis of Annotation Anomalies</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><a class="dropdown-item" href="../articles/Introduction.html">Introduction to scDiagnostics</a></li>
+    <li><a class="dropdown-item" href="../articles/ZeiselBenchmarking.html">Benchmarking Anomaly Detection Against Ground Truth</a></li>
+    <li><a class="dropdown-item" href="../articles/COVIDCaseStudy.html">Case Study: COVID-19 Monocyte State</a></li>
+    <li><a class="dropdown-item" href="../articles/MERFISHCaseStudy.html">Case Study: Spatial Colitis Data</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
@@ -62,6 +62,8 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.8.0" id="changes-in-version-180">CHANGES IN VERSION 1.8.0<a class="anchor" aria-label="anchor" href="#changes-in-version-180"></a></h2>
 <ul><li>Added <code><a href="../reference/calculateReconstructionError.html">calculateReconstructionError()</a></code> to detect out-of-distribution anomalies using cell-type-specific PCA reconstruction errors.</li>
+<li>Replaced the 4 general-purpose vignettes with 4 vignettes built around the package’s manuscript: an introduction with a simulated ground-truth example, a benchmark of <code><a href="../reference/detectAnomaly.html">detectAnomaly()</a></code>/<code><a href="../reference/calculateReconstructionError.html">calculateReconstructionError()</a></code> against known ground truth on the Zeisel brain dataset, and two case studies (COVID-19 PBMC scRNA-seq and MERFISH spatial colitis data) walking through the project/detect/characterize diagnostic workflow.</li>
+<li>Added new example datasets (<code>zeisel_reference_data</code>, <code>zeisel_query_data</code>, <code>zeisel_benchmark_results</code>, <code>covid_reference_data</code>, <code>covid_query_data</code>, <code>merfish_reference_data</code>, <code>merfish_query_data</code>) supporting the new vignettes.</li>
 <li>Added <code><a href="../reference/calculateReconstructionError.html">plot.calculateReconstructionErrorObject()</a></code> featuring robust visualization options (violin, boxplot, ridge, and ComplexHeatmap).</li>
 <li>Upgraded <code><a href="../reference/detectAnomaly.html">detectAnomaly()</a></code> to resolve the curse of dimensionality by allowing Isolation Forests to run on the union of query and reference Highly Variable Genes (via <code>n_hvgs</code>) when <code>pc_subset = NULL</code>.</li>
 <li>Improved anomaly detection by switching default thresholding to a dynamic, data-driven Median Absolute Deviation method (<code>threshold_method = "MAD"</code>, <code>mad_multiplier = 2</code>) across relevant functions.</li>
