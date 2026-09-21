@@ -297,10 +297,21 @@ detectAnomaly <- function(reference_data,
     }
 
     for (cell_type in cell_types_list) {
+        list_name <- ifelse(length(cell_type) == 1, cell_type, "Combined")
+
         # Filter reference and query PCA data for the current cell type
         reference_mat_subset <- na.omit(reference_mat[which(
             reference_cell_types %in% cell_type
-        ), ])
+        ), , drop = FALSE])
+
+        # An isolation forest needs at least two reference cells to split on
+        if (nrow(reference_mat_subset) < 2) {
+            warning(paste(
+                "Fewer than two reference cells in", list_name,
+                "to fit an isolation forest. Skipping."
+            ))
+            next
+        }
 
         # Build isolation forest on reference PCA data for this cell type
         isolation_forest <- isotree::isolation.forest(reference_mat_subset,
@@ -326,15 +337,22 @@ detectAnomaly <- function(reference_data,
         if (!is.null(query_data)) {
             query_mat_subset <- na.omit(query_mat[which(
                 query_cell_types %in% cell_type
-            ), ])
-            query_anomaly_scores <- predict(isolation_forest,
-                newdata = query_mat_subset,
-                type = "score"
-            )
+            ), , drop = FALSE])
+
+            # A reference cell type may be absent from the query, which is a
+            # normal outcome rather than an error: report no query scores for
+            # it and keep the reference results.
+            if (nrow(query_mat_subset) > 0) {
+                query_anomaly_scores <- predict(isolation_forest,
+                    newdata = query_mat_subset,
+                    type = "score"
+                )
+            } else {
+                query_anomaly_scores <- numeric(0)
+            }
         }
 
         # Store cell type anomaly scores and PCA data
-        list_name <- ifelse(length(cell_type) == 1, cell_type, "Combined")
         output[[list_name]] <- list()
         output[[list_name]][["reference_anomaly_scores"]] <-
             reference_anomaly_scores
