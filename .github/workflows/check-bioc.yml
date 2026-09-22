@@ -282,12 +282,52 @@ jobs:
         env:
           DISPLAY: 99.0
         run: |
-          BiocCheck::BiocCheck(
+          ## BiocCheck's very first check ("Checking for deprecated package
+          ## usage...") downloads meat-index.dcf from bioconductor.org for
+          ## both the release and the devel branch. A failed download is a
+          ## hard error (we hit "HTTP 504 Gateway Timeout" -> "not all
+          ## 'rnames' found or unique") that has nothing to do with this
+          ## package. Populate BiocCheck's own BiocFileCache first, retrying
+          ## a few times, and only if bioconductor.org is still unreachable
+          ## skip that single check rather than failing the whole build.
+          warm_deprecated_cache <- function(tries = 3L) {
+              prefetch <- tryCatch(
+                  get("getAllDeprecatedPkgs", envir = asNamespace("BiocCheck")),
+                  error = function(e) NULL
+              )
+              ## Nothing to pre-fetch (BiocCheck internals changed): leave the
+              ## check enabled and let BiocCheck decide.
+              if (!is.function(prefetch)) return(TRUE)
+              for (attempt in seq_len(tries)) {
+                  ok <- tryCatch({
+                      prefetch()
+                      TRUE
+                  }, error = function(e) {
+                      message(paste('**** attempt', attempt,
+                          'at caching the Bioconductor deprecation index failed:',
+                          conditionMessage(e)))
+                      FALSE
+                  })
+                  if (ok) return(TRUE)
+                  if (attempt < tries) Sys.sleep(30 * attempt)
+              }
+              FALSE
+          }
+
+          check_deprecated <- warm_deprecated_cache()
+          if (!check_deprecated)
+              message('**** bioconductor.org unreachable: skipping the deprecated package check ****')
+
+          bioccheck_args <- list(
               dir('check', 'tar.gz$', full.names = TRUE),
               `quit-with-status` = TRUE,
               `no-check-R-ver` = TRUE,
               `no-check-bioc-help` = TRUE
           )
+          if (!check_deprecated)
+              bioccheck_args[['no-check-deprecated']] <- TRUE
+
+          do.call(BiocCheck::BiocCheck, bioccheck_args)
         shell: Rscript {0}
 
       - name: Test coverage
