@@ -126,6 +126,17 @@ jobs:
       - name: Install macOS system dependencies
         if: matrix.config.os == 'macOS-latest'
         run: |
+          ## CRAN's macOS package binaries that use OpenMP (RhpcBLASctl,
+          ## isotree, stringdist - a BiocCheck dependency, and
+          ## potentially others) are built against this specific libomp,
+          ## which this runner doesn't ship. Without it they fail with
+          ## "symbol not found in flat namespace '___kmpc_barrier'" (or
+          ## '_omp_get_max_threads') on dyn.load(). Homebrew's libomp
+          ## installs to a different path and does not fix this; this is
+          ## the official recipe from https://mac.r-project.org/openmp/
+          curl -O https://mac.r-project.org/openmp/openmp-17.0.6-darwin20-Release.tar.gz
+          sudo tar fvxz openmp-17.0.6-darwin20-Release.tar.gz -C /
+
           ## Enable installing XML from source if needed
           brew install libxml2
           echo "XML_CONFIG=/usr/local/opt/libxml2/bin/xml2-config" >> $GITHUB_ENV
