@@ -88,6 +88,16 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
+          ## Posit Package Manager's macOS arm64 binaries are built with
+          ## OpenMP enabled; this runner's environment can't resolve
+          ## those OpenMP symbols at runtime ("symbol not found in flat
+          ## namespace '___kmpc_barrier'" for RhpcBLASctl/isotree/
+          ## stringdist and, per upstream reports, potentially others
+          ## down the dependency chain). CRAN's own macOS binaries are
+          ## built without OpenMP and don't hit this at all, so disable
+          ## the public RSPM/P3M mirror rather than continuing to patch
+          ## individual OpenMP-linked packages one at a time.
+          use-public-rspm: false
 
       ## pandoc is already included in the Bioconductor docker images
       - name: Setup pandoc from r-lib
@@ -133,9 +143,14 @@ jobs:
           ## "symbol not found in flat namespace '___kmpc_barrier'" (or
           ## '_omp_get_max_threads') on dyn.load(). Homebrew's libomp
           ## installs to a different path and does not fix this; this is
-          ## the official recipe from https://mac.r-project.org/openmp/
-          curl -O https://mac.r-project.org/openmp/openmp-17.0.6-darwin20-Release.tar.gz
-          sudo tar fvxz openmp-17.0.6-darwin20-Release.tar.gz -C /
+          ## the official recipe from https://mac.r-project.org/openmp/.
+          ## Use the LLVM 19.1.5 build (current Xcode range at the time
+          ## of writing) since installing an older LLVM's libomp here did
+          ## not resolve the symbol - CRAN's actual build farm compiles
+          ## against whatever Xcode/LLVM is current, and an ABI mismatch
+          ## reproduces the same failure.
+          curl -O https://mac.r-project.org/openmp/openmp-19.1.5-darwin20-Release.tar.gz
+          sudo tar fvxz openmp-19.1.5-darwin20-Release.tar.gz -C /
 
           ## Enable installing XML from source if needed
           brew install libxml2
