@@ -155,7 +155,7 @@ processed_large <- processPCA(
 #> Warning: 'scran::getTopHVGs' is deprecated.
 #> Use 'scrapper::chooseHighlyVariableGenes' instead.
 #> See help("Deprecated")
-#> Using 235 highly variable genes for PCA computation
+#> Using 239 highly variable genes for PCA computation
 ncol(processed_large) # Should be 1000 (downsampled for PCA computation)
 #> [1] 1000
 
