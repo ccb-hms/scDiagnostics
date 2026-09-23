@@ -115,14 +115,6 @@ reducedDims(query_no_pca) <- list() # Remove existing PCA
 processed_query <- processPCA(sce_object = query_no_pca, n_hvgs = 500)
 #> Data missing PCA - computing...
 #> Computing PCA...
-#> Warning: 'fitTrendVar' is deprecated.
-#> Use 'scrapper::fitVarianceTrend' instead.
-#> See help("Deprecated")
-#> Warning: 'combineBlocks' is deprecated.
-#> See help("Deprecated")
-#> Warning: 'scran::getTopHVGs' is deprecated.
-#> Use 'scrapper::chooseHighlyVariableGenes' instead.
-#> See help("Deprecated")
 #> Using 231 highly variable genes for PCA computation
 "PCA" %in% reducedDimNames(processed_query) # Should be TRUE
 #> [1] TRUE
@@ -147,14 +139,6 @@ processed_large <- processPCA(
 #> Data missing PCA - computing...
 #> Downsampling data from 1500 to 1000 cells before PCA computation
 #> Computing PCA...
-#> Warning: 'fitTrendVar' is deprecated.
-#> Use 'scrapper::fitVarianceTrend' instead.
-#> See help("Deprecated")
-#> Warning: 'combineBlocks' is deprecated.
-#> See help("Deprecated")
-#> Warning: 'scran::getTopHVGs' is deprecated.
-#> Use 'scrapper::chooseHighlyVariableGenes' instead.
-#> See help("Deprecated")
 #> Using 235 highly variable genes for PCA computation
 ncol(processed_large) # Should be 1000 (downsampled for PCA computation)
 #> [1] 1000

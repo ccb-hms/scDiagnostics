@@ -184,24 +184,12 @@ query_data_subset <-
     query_data[, which(query_data$expert_annotation == "CD4")]
 
 # Selecting highly variable genes (can be customized by the user)
-ref_top_genes <- getTopHVGs(ref_data_subset, n = 500)
-#> Warning: 'getTopHVGs' is deprecated.
-#> Use 'scrapper::chooseHighlyVariableGenes' instead.
-#> See help("Deprecated")
-#> Warning: 'fitTrendVar' is deprecated.
-#> Use 'scrapper::fitVarianceTrend' instead.
-#> See help("Deprecated")
-#> Warning: 'combineBlocks' is deprecated.
-#> See help("Deprecated")
-query_top_genes <- getTopHVGs(query_data_subset, n = 500)
-#> Warning: 'getTopHVGs' is deprecated.
-#> Use 'scrapper::chooseHighlyVariableGenes' instead.
-#> See help("Deprecated")
-#> Warning: 'fitTrendVar' is deprecated.
-#> Use 'scrapper::fitVarianceTrend' instead.
-#> See help("Deprecated")
-#> Warning: 'combineBlocks' is deprecated.
-#> See help("Deprecated")
+# (scran's HVG helpers are deprecated in favour of scrapper, so their
+# deprecation warnings are muffled here)
+ref_top_genes <- suppressWarnings(getTopHVGs(ref_data_subset, n = 500))
+query_top_genes <- suppressWarnings(
+    getTopHVGs(query_data_subset, n = 500)
+)
 
 # Intersect the gene symbols to obtain common genes
 common_genes <- intersect(ref_top_genes, query_top_genes)

@@ -140,14 +140,6 @@ gene_shifts <- calculateGeneShifts(
     n_top_loadings = 25,
     detect_anomalies = TRUE,
     anomaly_comparison = TRUE)
-#> Warning in fitTrendVar(fm, fv, ...): 'fitTrendVar' is deprecated.
-#> Use 'scrapper::fitVarianceTrend' instead.
-#> See help("Deprecated")
-#> Warning in combineBlocks(collected, method = method, equiweight = equiweight, : 'combineBlocks' is deprecated.
-#> See help("Deprecated")
-#> Warning in scran::getTopHVGs(var_stats, n = n_hvgs): 'scran::getTopHVGs' is deprecated.
-#> Use 'scrapper::chooseHighlyVariableGenes' instead.
-#> See help("Deprecated")
 #> Warning in check_numbers(x, k = k, nu = nu, nv = nv): more singular
 #> values/vectors requested than available
 
@@ -247,7 +239,7 @@ that cross-tool comparison is not reproduced in this vignette.
      [5] Seqinfo_1.2.0               IRanges_2.46.0             
      [7] S4Vectors_0.50.3            BiocGenerics_0.58.1        
      [9] generics_0.1.4              MatrixGenerics_1.24.0      
-    [11] matrixStats_1.5.0           scDiagnostics_1.7.14       
+    [11] matrixStats_1.5.0           scDiagnostics_1.7.15       
     [13] BiocStyle_2.40.0           
 
     loaded via a namespace (and not attached):

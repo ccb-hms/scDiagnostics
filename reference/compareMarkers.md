@@ -210,22 +210,6 @@ marker_comparison_filtered <- compareMarkers(
     ref_cell_type_col = "expert_annotation",
     anomaly_filter = "non_anomalous_only"
 )
-#> Warning: 'fitTrendVar' is deprecated.
-#> Use 'scrapper::fitVarianceTrend' instead.
-#> See help("Deprecated")
-#> Warning: 'combineBlocks' is deprecated.
-#> See help("Deprecated")
-#> Warning: 'scran::getTopHVGs' is deprecated.
-#> Use 'scrapper::chooseHighlyVariableGenes' instead.
-#> See help("Deprecated")
-#> Warning: 'fitTrendVar' is deprecated.
-#> Use 'scrapper::fitVarianceTrend' instead.
-#> See help("Deprecated")
-#> Warning: 'combineBlocks' is deprecated.
-#> See help("Deprecated")
-#> Warning: 'scran::getTopHVGs' is deprecated.
-#> Use 'scrapper::chooseHighlyVariableGenes' instead.
-#> See help("Deprecated")
 
 # Visualize results
 plot(marker_comparison)

@@ -99,22 +99,6 @@ reconstruction_output <- calculateReconstructionError(
     reference_data = reference_missing, query_data = zeisel_query_data,
     ref_cell_type_col = "true_cell_type", query_cell_type_col = "SingleR_annotation",
     cell_types = target, n_hvgs = 30, pc_subset = 1:8)
-#> Warning in fitTrendVar(fm, fv, ...): 'fitTrendVar' is deprecated.
-#> Use 'scrapper::fitVarianceTrend' instead.
-#> See help("Deprecated")
-#> Warning in combineBlocks(collected, method = method, equiweight = equiweight, : 'combineBlocks' is deprecated.
-#> See help("Deprecated")
-#> Warning in scran::getTopHVGs(var_stats, n = n_hvgs_actual): 'scran::getTopHVGs' is deprecated.
-#> Use 'scrapper::chooseHighlyVariableGenes' instead.
-#> See help("Deprecated")
-#> Warning in fitTrendVar(fm, fv, ...): 'fitTrendVar' is deprecated.
-#> Use 'scrapper::fitVarianceTrend' instead.
-#> See help("Deprecated")
-#> Warning in combineBlocks(collected, method = method, equiweight = equiweight, : 'combineBlocks' is deprecated.
-#> See help("Deprecated")
-#> Warning in scran::getTopHVGs(var_stats, n = n_hvgs_actual): 'scran::getTopHVGs' is deprecated.
-#> Use 'scrapper::chooseHighlyVariableGenes' instead.
-#> See help("Deprecated")
 
 labels_target <- zeisel_query_data$true_cell_type[zeisel_query_data$SingleR_annotation == target]
 
@@ -428,7 +412,7 @@ the union always beats each method individually.
      [9] IRanges_2.46.0              S4Vectors_0.50.3           
     [11] BiocGenerics_0.58.1         generics_0.1.4             
     [13] MatrixGenerics_1.24.0       matrixStats_1.5.0          
-    [15] scDiagnostics_1.7.14        BiocStyle_2.40.0           
+    [15] scDiagnostics_1.7.15        BiocStyle_2.40.0           
 
     loaded via a namespace (and not attached):
      [1] gridExtra_2.3.1     rlang_1.3.0         magrittr_2.0.5     

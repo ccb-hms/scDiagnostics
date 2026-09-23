@@ -241,46 +241,6 @@ recon_output <- calculateReconstructionError(
     n_hvgs = 100,
     mad_multiplier = 2
 )
-#> Warning: 'fitTrendVar' is deprecated.
-#> Use 'scrapper::fitVarianceTrend' instead.
-#> See help("Deprecated")
-#> Warning: 'combineBlocks' is deprecated.
-#> See help("Deprecated")
-#> Warning: 'scran::getTopHVGs' is deprecated.
-#> Use 'scrapper::chooseHighlyVariableGenes' instead.
-#> See help("Deprecated")
-#> Warning: 'fitTrendVar' is deprecated.
-#> Use 'scrapper::fitVarianceTrend' instead.
-#> See help("Deprecated")
-#> Warning: 'combineBlocks' is deprecated.
-#> See help("Deprecated")
-#> Warning: 'scran::getTopHVGs' is deprecated.
-#> Use 'scrapper::chooseHighlyVariableGenes' instead.
-#> See help("Deprecated")
-#> Warning: 'fitTrendVar' is deprecated.
-#> Use 'scrapper::fitVarianceTrend' instead.
-#> See help("Deprecated")
-#> Warning: 'combineBlocks' is deprecated.
-#> See help("Deprecated")
-#> Warning: 'scran::getTopHVGs' is deprecated.
-#> Use 'scrapper::chooseHighlyVariableGenes' instead.
-#> See help("Deprecated")
-#> Warning: 'fitTrendVar' is deprecated.
-#> Use 'scrapper::fitVarianceTrend' instead.
-#> See help("Deprecated")
-#> Warning: 'combineBlocks' is deprecated.
-#> See help("Deprecated")
-#> Warning: 'scran::getTopHVGs' is deprecated.
-#> Use 'scrapper::chooseHighlyVariableGenes' instead.
-#> See help("Deprecated")
-#> Warning: 'fitTrendVar' is deprecated.
-#> Use 'scrapper::fitVarianceTrend' instead.
-#> See help("Deprecated")
-#> Warning: 'combineBlocks' is deprecated.
-#> See help("Deprecated")
-#> Warning: 'scran::getTopHVGs' is deprecated.
-#> Use 'scrapper::chooseHighlyVariableGenes' instead.
-#> See help("Deprecated")
 
 # Plot the output for a specific cell type
 plot(recon_output,
