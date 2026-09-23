@@ -256,6 +256,13 @@ jobs:
       - name: Run CMD check
         env:
           _R_CHECK_CRAN_INCOMING_: false
+          ## scRNAseq and celldex are referenced from the documentation and
+          ## from inst/script, never from code that runs during the check, but
+          ## a suggested package that is missing is an R CMD check ERROR by
+          ## default and both were unavailable on the macOS runner for
+          ## Bioconductor 3.24 (both also currently fail their own devel
+          ## builds). Don't fail this package's check over them.
+          _R_CHECK_FORCE_SUGGESTS_: false
           DISPLAY: 99.0
         run: |
           options(crayon.enabled = TRUE)

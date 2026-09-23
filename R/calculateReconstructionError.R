@@ -222,9 +222,13 @@ calculateReconstructionError <- function(reference_data,
         ref_sce_sub <- reference_data[, ref_subset_idx]
 
         # 2. Find Local HVGs for this cell type
-        var_stats <- scran::modelGeneVar(ref_sce_sub, assay.type = assay_name)
+        var_stats <- muffleDeprecation(
+            scran::modelGeneVar(ref_sce_sub, assay.type = assay_name)
+        )
         n_hvgs_actual <- min(n_hvgs, nrow(ref_sce_sub))
-        local_hvgs <- scran::getTopHVGs(var_stats, n = n_hvgs_actual)
+        local_hvgs <- muffleDeprecation(
+            scran::getTopHVGs(var_stats, n = n_hvgs_actual)
+        )
 
         # Ensure genes exist in query
         if (!is.null(query_data)) {

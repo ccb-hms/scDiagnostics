@@ -245,8 +245,12 @@ detectAnomaly <- function(reference_data,
         }
 
         # Get Reference HVGs
-        var_ref <- scran::modelGeneVar(reference_data, assay.type = assay_name)
-        hvg_ref <- scran::getTopHVGs(var_ref, n = n_hvgs)
+        var_ref <- muffleDeprecation(
+            scran::modelGeneVar(reference_data, assay.type = assay_name)
+        )
+        hvg_ref <- muffleDeprecation(
+            scran::getTopHVGs(var_ref, n = n_hvgs)
+        )
 
         hvg_combined <- hvg_ref
 
@@ -260,9 +264,12 @@ detectAnomaly <- function(reference_data,
             )
 
             # Get Query HVGs
-            var_query <-
+            var_query <- muffleDeprecation(
                 scran::modelGeneVar(query_data, assay.type = assay_name)
-            hvg_query <- scran::getTopHVGs(var_query, n = n_hvgs)
+            )
+            hvg_query <- muffleDeprecation(
+                scran::getTopHVGs(var_query, n = n_hvgs)
+            )
 
             # Combine and take unique (Union of Ref and Query HVGs)
             hvg_combined <- unique(c(hvg_ref, hvg_query))

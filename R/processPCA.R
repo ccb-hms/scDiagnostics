@@ -181,8 +181,12 @@ processPCA <- function(sce_object,
         }
 
         # Get HVGs
-        var_stats <- scran::modelGeneVar(sce, assay.type = assay_name)
-        hvg_genes <- scran::getTopHVGs(var_stats, n = n_hvgs)
+        var_stats <- muffleDeprecation(
+            scran::modelGeneVar(sce, assay.type = assay_name)
+        )
+        hvg_genes <- muffleDeprecation(
+            scran::getTopHVGs(var_stats, n = n_hvgs)
+        )
 
         message(
             "Using ", length(hvg_genes),

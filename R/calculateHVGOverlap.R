@@ -40,8 +40,10 @@
 #' data("query_data")
 #'
 #' # Selecting highly variable genes
-#' ref_var <- scran::getTopHVGs(reference_data, n = 500)
-#' query_var <- scran::getTopHVGs(query_data, n = 500)
+#' # (scran's HVG helpers are deprecated in favour of scrapper, so their
+#' # deprecation warnings are muffled here)
+#' ref_var <- suppressWarnings(scran::getTopHVGs(reference_data, n = 500))
+#' query_var <- suppressWarnings(scran::getTopHVGs(query_data, n = 500))
 #' overlap_coefficient <- calculateHVGOverlap(
 #'     reference_genes = ref_var,
 #'     query_genes = query_var
