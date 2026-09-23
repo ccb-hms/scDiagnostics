@@ -128,7 +128,7 @@ data.frame(
         mean(reconstruction_output[[target]]$query_anomaly[labels_target == target])),
     check.names = FALSE)
 #>                             Method True pyramidal SS flagged
-#> 1 detectAnomaly (Isolation Forest)                 0.8301887
+#> 1 detectAnomaly (Isolation Forest)                 0.8113208
 #> 2     calculateReconstructionError                 0.8962264
 #>   True pyramidal CA1 flagged
 #> 1                  0.2292490
@@ -374,7 +374,7 @@ data.frame(
         mean(union_flag[labels_target == target])),
     check.names = FALSE)
 #>                        Rule True pyramidal SS flagged
-#> 1     Isolation Forest only                 0.8301887
+#> 1     Isolation Forest only                 0.8113208
 #> 2 Reconstruction Error only                 0.8962264
 #> 3      Either flags (union)                 0.9528302
 #>   True pyramidal CA1 flagged
@@ -428,7 +428,7 @@ the union always beats each method individually.
      [9] IRanges_2.46.0              S4Vectors_0.50.3           
     [11] BiocGenerics_0.58.1         generics_0.1.4             
     [13] MatrixGenerics_1.24.0       matrixStats_1.5.0          
-    [15] scDiagnostics_1.7.13        BiocStyle_2.40.0           
+    [15] scDiagnostics_1.7.14        BiocStyle_2.40.0           
 
     loaded via a namespace (and not attached):
      [1] gridExtra_2.3.1     rlang_1.3.0         magrittr_2.0.5     
